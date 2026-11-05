@@ -1,0 +1,14 @@
+test_child_interpreter_matches_the_utf8_pipe_even_with_legacy_locale (test_ultra_chat_storage.ProcessDiagnosticTests.test_child_interpreter_matches_the_utf8_pipe_even_with_legacy_locale) ... FAIL
+
+======================================================================
+FAIL: test_child_interpreter_matches_the_utf8_pipe_even_with_legacy_locale (test_ultra_chat_storage.ProcessDiagnosticTests.test_child_interpreter_matches_the_utf8_pipe_even_with_legacy_locale)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_ultra_chat_storage.py", line 72, in test_child_interpreter_matches_the_utf8_pipe_even_with_legacy_locale
+    self.assertEqual(info['utf8'],1,'child startup must explicitly select UTF-8 for the UTF-8 pipes')
+AssertionError: 0 != 1 : child startup must explicitly select UTF-8 for the UTF-8 pipes
+
+----------------------------------------------------------------------
+Ran 1 test in 0.180s
+
+FAILED (failures=1)

@@ -1,0 +1,63 @@
+{
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "-v",
+    "test_web_alarm_ultra_chat_storage",
+    "test_web_alarm_ultra_chat",
+    "test_web_alarm_ui",
+    "test_web_alarm_ui_ux",
+    "test_ultra_chat_storage",
+    "test_ultra_chat_read",
+    "test_web_alarm_workspace_registry",
+    "test_web_alarm_folder_picker"
+  ],
+  "exit_code": 0,
+  "seconds": 69.08,
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "counts": {
+    "tests": 174,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 5,
+    "passed": 169
+  },
+  "source": {
+    "context_storage.py": {
+      "size": 98138,
+      "sha256": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64"
+    },
+    "test_ultra_chat_storage.py": {
+      "size": 99585,
+      "sha256": "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+    },
+    "run_store.py": {
+      "size": 38605,
+      "sha256": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e"
+    },
+    "web_alarm/turn_service.py": {
+      "size": 15370,
+      "sha256": "0b532c0386670f8645d6cfde339dbb0474ffa95bccd5d759b981580da18b6f6a"
+    },
+    "web_alarm/server.py": {
+      "size": 74952,
+      "sha256": "b2bf2b20635b120e9a273d8691305dea8687c42693e47ed365bd966eec205f27"
+    },
+    "web_alarm/ultra_chat.py": {
+      "size": 28937,
+      "sha256": "164c2f76fa4d6cdc935a2e4189eabe9d07b1f8206b179df64d27f1d5009c7035"
+    },
+    "web_alarm/ui.py": {
+      "size": 192434,
+      "sha256": "c9c8c60143a99d7e03a352672c8c9511c150f1ca024803a2921d929c3d293442"
+    }
+  },
+  "source_unchanged": true,
+  "guard_receipts": 28,
+  "guard_denials": 0
+}

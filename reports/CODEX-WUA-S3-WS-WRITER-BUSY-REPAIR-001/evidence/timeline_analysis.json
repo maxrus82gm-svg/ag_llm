@@ -1,0 +1,139 @@
+{
+  "failed_pid": 8584,
+  "failed_phase": "append_raw_message:p1-8",
+  "failed_wait_seconds": 10.003523999999743,
+  "failed_byte_attempts": 904,
+  "errno_counts": {
+    "13": 904
+  },
+  "competing_critical_sections": 20,
+  "competing_body_seconds_within_wait": 9.966146399987338,
+  "max_single_competing_body_seconds": 0.5331278000012389,
+  "max_observed_body_gap_seconds": 0.003911699997843243,
+  "poll_seconds": 0.01,
+  "intervals": [
+    {
+      "pid": 35308,
+      "start": 47447.842957,
+      "end": 47448.3604219,
+      "phase": "create_chat"
+    },
+    {
+      "pid": 35308,
+      "start": 47448.3615524,
+      "end": 47448.8799915,
+      "phase": "rename_chat"
+    },
+    {
+      "pid": 35308,
+      "start": 47448.882101,
+      "end": 47449.3952872,
+      "phase": "append_raw_message:p0-1"
+    },
+    {
+      "pid": 35308,
+      "start": 47449.3972728,
+      "end": 47449.9126702,
+      "phase": "append_raw_message:p0-2"
+    },
+    {
+      "pid": 35308,
+      "start": 47449.9154096,
+      "end": 47450.4302462,
+      "phase": "append_raw_message:p0-3"
+    },
+    {
+      "pid": 35308,
+      "start": 47450.4319039,
+      "end": 47450.9412954,
+      "phase": "rename_chat"
+    },
+    {
+      "pid": 35308,
+      "start": 47450.9425487,
+      "end": 47451.4588723,
+      "phase": "append_raw_message:p0-4"
+    },
+    {
+      "pid": 35308,
+      "start": 47451.4607287,
+      "end": 47451.9761292,
+      "phase": "append_raw_message:p0-5"
+    },
+    {
+      "pid": 35308,
+      "start": 47451.9788763,
+      "end": 47452.4985175,
+      "phase": "create_chat"
+    },
+    {
+      "pid": 35308,
+      "start": 47452.5002101,
+      "end": 47453.0241527,
+      "phase": "append_raw_message:p0-6"
+    },
+    {
+      "pid": 35308,
+      "start": 47453.0280644,
+      "end": 47453.543324,
+      "phase": "rename_chat"
+    },
+    {
+      "pid": 35308,
+      "start": 47453.5451645,
+      "end": 47454.0651736,
+      "phase": "append_raw_message:p0-7"
+    },
+    {
+      "pid": 35308,
+      "start": 47454.0674859,
+      "end": 47454.6006137,
+      "phase": "append_raw_message:p0-8"
+    },
+    {
+      "pid": 35308,
+      "start": 47454.6026673,
+      "end": 47455.1210173,
+      "phase": "append_raw_message:p0-9"
+    },
+    {
+      "pid": 35308,
+      "start": 47455.122524,
+      "end": 47455.6391005,
+      "phase": "rename_chat"
+    },
+    {
+      "pid": 35308,
+      "start": 47455.6409832,
+      "end": 47456.1517479,
+      "phase": "append_raw_message:p0-10"
+    },
+    {
+      "pid": 35308,
+      "start": 47456.1531916,
+      "end": 47456.670402,
+      "phase": "create_chat"
+    },
+    {
+      "pid": 35308,
+      "start": 47456.6721129,
+      "end": 47457.1866831,
+      "phase": "append_raw_message:p0-11"
+    },
+    {
+      "pid": 35308,
+      "start": 47457.1886356,
+      "end": 47457.7036198,
+      "phase": "append_raw_message:p0-12"
+    },
+    {
+      "pid": 35308,
+      "start": 47457.7051876,
+      "end": 47458.2231832,
+      "phase": "rename_chat"
+    }
+  ],
+  "incomplete_live_lines": [],
+  "interpretation": "Repeated short competing acquisitions exhaust the absolute wait deadline; no single >10s holder required. Body intervals underestimate actual OS ownership.",
+  "ci_attribution": "Same selector/error/deadline mechanism reproduced under explicitly injected slow I/O. Original CI per-lock timings and exact I/O source remain unavailable."
+}

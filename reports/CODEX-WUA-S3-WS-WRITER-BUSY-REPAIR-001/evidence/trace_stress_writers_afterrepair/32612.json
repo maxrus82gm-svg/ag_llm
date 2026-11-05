@@ -1,0 +1,63 @@
+{
+  "pid": 32612,
+  "events": [
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47855.1334762,
+      "end": 47855.1347579,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47855.1399975,
+      "end": 47855.1408913,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47855.1303668,
+      "acquired": 47855.1309938,
+      "released": 47855.1418096,
+      "end": 47855.1418665,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47855.1451662,
+      "end": 47855.1471579,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47855.1428448,
+      "acquired": 47855.1432376,
+      "released": 47855.153631,
+      "end": 47855.153669,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47855.1555707,
+      "end": 47855.1569022,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47855.1541872,
+      "acquired": 47855.1546013,
+      "released": 47855.1624886,
+      "end": 47855.1625255,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+ "_comment": [
+  "Выбор запуска для Start_WebAlarm.bat. Сам BAT не меняется никогда.",
+  "\"active\": \"standard\" — основной запуск (зелёный): Web Alarm Ultra со штатным постоянным хранилищем.",
+  "Любое другое значение active — тестовый профиль из test_profiles (красное предупреждение с его именем).",
+  "Стандартный запуск встроен в web_alarm/launcher.py и здесь не описывается и не переопределяется.",
+  "Профиль kind web_alarm: то же основное приложение, но только storage \"temp\" и порт, отличный от стандартного.",
+  "Профиль kind python_script: тестовый скрипт внутри проекта (путь через \"/\"); браузер он не помечает.",
+  "После тестов верните \"active\": \"standard\"."
+ ],
+ "schema_version": 1,
+ "active": "standard",
+ "test_profiles": {
+  "isolated-empty": {
+   "title": "Основное приложение на пустом временном хранилище",
+   "kind": "web_alarm",
+   "storage": "temp",
+   "port": 8766
+  },
+  "ultra-chat-demo": {
+   "title": "Ultra Chat этапа 1 на синтетических данных",
+   "kind": "python_script",
+   "script": "reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/tools/demo_ultra_chat.py",
+   "args": ["--port", "8767"]
+  },
+  "wa4o-review": {
+   "title": "Демо операторской панели WA4-O на одноразовых данных",
+   "kind": "python_script",
+   "script": "wa4o_ui_launcher.py"
+  }
+ }
+}

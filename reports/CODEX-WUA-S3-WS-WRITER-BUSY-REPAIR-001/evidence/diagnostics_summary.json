@@ -1,0 +1,263 @@
+[
+  {
+    "label": "baseline",
+    "rounds": [
+      {
+        "round": 1,
+        "exit": 0,
+        "seconds": 1.562,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.2946233000038774,
+        "max_hold": 0.023249300000315998
+      },
+      {
+        "round": 2,
+        "exit": 0,
+        "seconds": 1.457,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.15876929999649292,
+        "max_hold": 0.023557999993499834
+      },
+      {
+        "round": 3,
+        "exit": 0,
+        "seconds": 1.538,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.2125226999996812,
+        "max_hold": 0.024990099998831283
+      },
+      {
+        "round": 4,
+        "exit": 0,
+        "seconds": 1.516,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.22966069999529282,
+        "max_hold": 0.055390499997884035
+      },
+      {
+        "round": 5,
+        "exit": 0,
+        "seconds": 1.475,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.2847246000019368,
+        "max_hold": 0.027435600000899285
+      }
+    ]
+  },
+  {
+    "label": "slow350",
+    "rounds": [
+      {
+        "round": 1,
+        "exit": 0,
+        "seconds": 29.591,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 7.936762600002112,
+        "max_hold": 0.7139351999940118
+      },
+      {
+        "round": 2,
+        "exit": 0,
+        "seconds": 29.581,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 9.02953890000208,
+        "max_hold": 0.7130781999949249
+      }
+    ]
+  },
+  {
+    "label": "slow500",
+    "rounds": [
+      {
+        "round": 1,
+        "exit": 0,
+        "seconds": 41.822,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 8.692592599996715,
+        "max_hold": 1.012418800004525
+      },
+      {
+        "round": 2,
+        "exit": 1,
+        "seconds": 13.445,
+        "passed": 0,
+        "failures": 0,
+        "errors": 1,
+        "lock_errors": [
+          {
+            "kind": "lock",
+            "phase": "setup",
+            "nested": false,
+            "start": 47218.8169153,
+            "acquired": null,
+            "end": 47228.8141894,
+            "error": "WorkspaceBusyError",
+            "code": "workspace_busy"
+          }
+        ],
+        "max_wait": 0.00048689999675843865,
+        "max_hold": 1.0115766000017175
+      }
+    ]
+  },
+  {
+    "label": "slow500live",
+    "rounds": [
+      {
+        "round": 1,
+        "exit": 0,
+        "seconds": 43.86,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 8.731349599998794,
+        "max_hold": 1.0135468000007677
+      },
+      {
+        "round": 2,
+        "exit": 1,
+        "seconds": 29.094,
+        "passed": 0,
+        "failures": 0,
+        "errors": 1,
+        "lock_errors": [
+          {
+            "kind": "lock",
+            "phase": "append_raw_message:p1-8",
+            "nested": false,
+            "start": 47447.8429339,
+            "acquired": null,
+            "end": 47457.8464579,
+            "error": "WorkspaceBusyError",
+            "code": "workspace_busy"
+          }
+        ],
+        "max_wait": 6.939325599996664,
+        "max_hold": 1.01623390000168
+      }
+    ]
+  },
+  {
+    "label": "slow500utf8",
+    "rounds": [
+      {
+        "round": 1,
+        "exit": 1,
+        "seconds": 35.591,
+        "passed": 0,
+        "failures": 1,
+        "errors": 0,
+        "lock_errors": [
+          {
+            "kind": "lock",
+            "phase": "append_raw_message:p1-16",
+            "nested": false,
+            "start": 47607.5799882,
+            "acquired": null,
+            "end": 47617.5804563,
+            "error": "WorkspaceBusyError",
+            "code": "workspace_busy"
+          }
+        ],
+        "max_wait": 6.733511500002351,
+        "max_hold": 1.013888000001316
+      },
+      {
+        "round": 2,
+        "exit": 0,
+        "seconds": 42.571,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 5.151366899997811,
+        "max_hold": 1.0258175999988453
+      }
+    ]
+  },
+  {
+    "label": "afterrepair",
+    "rounds": [
+      {
+        "round": 1,
+        "exit": 0,
+        "seconds": 2.113,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.21469639999850187,
+        "max_hold": 0.034014299999398645
+      },
+      {
+        "round": 2,
+        "exit": 0,
+        "seconds": 1.791,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.28745770000386983,
+        "max_hold": 0.04200680000212742
+      },
+      {
+        "round": 3,
+        "exit": 0,
+        "seconds": 1.969,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.2553217000022414,
+        "max_hold": 0.05549230000178795
+      },
+      {
+        "round": 4,
+        "exit": 0,
+        "seconds": 2.004,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.22446710000076564,
+        "max_hold": 0.03194710000389023
+      },
+      {
+        "round": 5,
+        "exit": 0,
+        "seconds": 1.917,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "lock_errors": [],
+        "max_wait": 0.3983497000008356,
+        "max_hold": 0.033692200006044004
+      }
+    ]
+  }
+]

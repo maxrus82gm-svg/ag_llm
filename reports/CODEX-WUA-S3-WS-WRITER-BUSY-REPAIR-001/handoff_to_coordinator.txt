@@ -1,0 +1,22 @@
+TASK: CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001
+HISTORY ID: H-CODEX-000014
+STATUS: BLOCKED по точной причине исходного CI / PARTIAL диагностики и подтверждённого ремонта. FOLLOWUP-WUA-S3-WS-WRITER-BUSY-001 OPEN. Independent review NOT VERIFIED.
+
+Первый CI FAIL сохранён как user-provided EXCERPT (не полный traceback): run42040238153/job127288825334, 16.75с тест, 171 cases/285.636с, tail WorkspaceBusyError. Старый helper сохранял только 800 stderr chars. Git/GitHub Codex не использовал.
+
+Локально baseline5/5 PASS. С fsync+350мс 2/2 PASS, ожидание до9.03с. При+500мс получены сохранённые отказы того же selector: старый harness замаскировал Busy ошибкой UnicodeDecodeError; после test-diagnostics fix сохранён полный child stderr/FAIL. Timeline: 10.0035с ожидания, 904 EACCES, 20 competing sections (max0.533с), gaps<=3.9мс приpoll10мс. Это объясняет локальный bounded timeout без единственного >10с holder; не доказывает точный CI источник замедления.
+
+Минимальные подтверждённые исправления: context_storage._try_lock_byte повторяет только EACCES/EAGAIN, неожиданные OSError сохраняют первопричину; test helper явно запускает child -X utf8 и сохраняет полный stderr. 3 новых negative-regression cases; каждый исходный RED сохранён. Timeout10с, byte offset, native mode, shared lock/reentrant/identity/path safety не менялись. Нет автоматического retry неидемпотентного append. Исходный functional concurrency workload и все oracles сохранены.
+
+Финальная регрессия: Python169 PASS/5 SKIP (174cases), neighbors92 PASS +26subtests; lock subset14 PASS/1SKIP overlaps Python. Unique261 PASS/5SKIP, 266 cases. Исходный selector после ремонта5/5 PASS. Дополнительно 4processes×40 RAW +1 old =161, 16newChats, точные IDs/text/order/exclusion/no-staging/oldSHA PASS. Genuine held lock после ремонта даёт ожидаемый Busy~10.005с и unchanged snapshot; explicit idempotent continuation создаёт ровно1RAW.
+
+595/595 пользовательских storage files unchanged. Внешняя .obsidian/workspace.json delta сохранена отдельно. 12source before copies intact. Run Store/audit/Turn/API/UI/launcher/finish sources unchanged; STANDARD throughout. Real LLM/Colibri/paid/MCP/Git/live writes не запускались.
+
+finish ROTATED exit0; H-CODEX-000014; БЛОК1 WAITING, exact TASK+amendment preserved; oldH13snapshot reused. Пакет готов для ОДНОЙ публикации пользователем.
+
+REPORT: reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/report.md
+MANIFEST: reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/manifest.json
+EVIDENCE: reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/
+
+OPEN/NEXT: сохранить исходный FOLLOWUP OPEN; независимый comparative CI с full stderr+wait/hold/errno/fsync evidence. Если нужна гарантированная progress/fairness либо caller-policy, назначить адресную задачу с постоянными IDs и проверкой durable outcome. Не просто повышать timeout и не скрывать валидный Busy. POSIX/nativeTk/clean-machine/сетевыеFS/powerloss/fullGit-dependent tests NOT RUN. Предшествующие TOCTOU/staging/picker/portability OPEN.
+DOC IMPACT: координатор после одной публикации обновляет существующие записи/№05/06/34/40; этот авторский результат не закрывает основной CI gate и не даёт Stage4/live GO.

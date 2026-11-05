@@ -1,0 +1,46 @@
+{
+  "pid": 32912,
+  "events": [
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47820.1120711,
+      "end": 47820.1138501,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47820.1231661,
+      "end": 47820.1239505,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47820.1074987,
+      "acquired": 47820.1098557,
+      "released": 47820.1271612,
+      "end": 47820.1272678,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47820.1350205,
+      "end": 47820.1369707,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47820.1297963,
+      "acquired": 47820.1305001,
+      "released": 47820.1517513,
+      "end": 47820.1518085,
+      "error": null
+    }
+  ]
+}

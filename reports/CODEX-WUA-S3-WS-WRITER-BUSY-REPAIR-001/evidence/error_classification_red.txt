@@ -1,0 +1,28 @@
+test_unexpected_os_lock_error_is_not_misreported_as_workspace_busy (test_ultra_chat_storage.LockTests.test_unexpected_os_lock_error_is_not_misreported_as_workspace_busy) ... ERROR
+
+======================================================================
+ERROR: test_unexpected_os_lock_error_is_not_misreported_as_workspace_busy (test_ultra_chat_storage.LockTests.test_unexpected_os_lock_error_is_not_misreported_as_workspace_busy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_ultra_chat_storage.py", line 473, in test_unexpected_os_lock_error_is_not_misreported_as_workspace_busy
+    cs.commit_raw_message(root,chat,mid(807),'user','must not be published')
+  File "M:\GitHub\ag_llm\context_storage.py", line 741, in commit_raw_message
+    with _existing_workspace_writer(workspace_root, expected_workspace_id) as writer:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\context_storage.py", line 2032, in _existing_workspace_writer
+    with _workspace_writer_lock(anchor):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\context_storage.py", line 1967, in _workspace_writer_lock
+    raise WorkspaceBusyError()
+context_storage.WorkspaceBusyError: Workspace занят другой операцией записи. Повторите позже.
+
+----------------------------------------------------------------------
+Ran 1 test in 0.085s
+
+FAILED (errors=1)

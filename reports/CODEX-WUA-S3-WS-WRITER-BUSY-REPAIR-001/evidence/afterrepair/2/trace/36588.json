@@ -1,0 +1,1136 @@
+{
+  "pid": 36588,
+  "events": [
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-0",
+      "start": 47816.5497065,
+      "end": 47816.549717,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-0",
+      "start": 47816.5621128,
+      "end": 47816.5647671,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-0",
+      "nested": false,
+      "start": 47816.549022,
+      "acquired": 47816.5604792,
+      "released": 47816.5714301,
+      "end": 47816.5714746,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "create_chat",
+      "start": 47816.573026,
+      "end": 47816.5730346,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "create_chat",
+      "start": 47816.5834404,
+      "end": 47816.5834581,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "create_chat",
+      "start": 47816.5943919,
+      "end": 47816.5944119,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47816.6086162,
+      "end": 47816.6103332,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47816.5725035,
+      "acquired": 47816.6053904,
+      "released": 47816.6185744,
+      "end": 47816.6186241,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47816.6206163,
+      "end": 47816.6219544,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47816.619193,
+      "acquired": 47816.619628,
+      "released": 47816.6286382,
+      "end": 47816.6286818,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-1",
+      "start": 47816.6306526,
+      "end": 47816.6319334,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-1",
+      "nested": false,
+      "start": 47816.629231,
+      "acquired": 47816.6296475,
+      "released": 47816.6378518,
+      "end": 47816.6378898,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-2",
+      "start": 47816.6398013,
+      "end": 47816.6410053,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-2",
+      "nested": false,
+      "start": 47816.6384149,
+      "acquired": 47816.6388188,
+      "released": 47816.647343,
+      "end": 47816.6473934,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.6487685,
+      "end": 47816.6487764,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.6596923,
+      "end": 47816.6597089,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.6697725,
+      "end": 47816.6697922,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.6802775,
+      "end": 47816.6802954,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.6904644,
+      "end": 47816.6904854,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.7015511,
+      "end": 47816.7015683,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.7116243,
+      "end": 47816.7116423,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.7226226,
+      "end": 47816.7226429,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.7337634,
+      "end": 47816.7337812,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.744595,
+      "end": 47816.7446129,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.7554123,
+      "end": 47816.7554284,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.7656019,
+      "end": 47816.765623,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.776767,
+      "end": 47816.7767839,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.7870745,
+      "end": 47816.7870923,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.797594,
+      "end": 47816.7976105,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.8084894,
+      "end": 47816.8085047,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.8191413,
+      "end": 47816.8191595,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.8296548,
+      "end": 47816.8296727,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.8399093,
+      "end": 47816.8399295,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.8509995,
+      "end": 47816.8510173,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.8613233,
+      "end": 47816.8613413,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.8724171,
+      "end": 47816.8724354,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.883314,
+      "end": 47816.8833362,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.8934638,
+      "end": 47816.89348,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.9039805,
+      "end": 47816.9039972,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.9142433,
+      "end": 47816.9145349,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.9247104,
+      "end": 47816.9247339,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-3",
+      "start": 47816.937575,
+      "end": 47816.9393073,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-3",
+      "nested": false,
+      "start": 47816.6482262,
+      "acquired": 47816.9356839,
+      "released": 47816.9487388,
+      "end": 47816.9488393,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47816.9513988,
+      "end": 47816.9529802,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47816.9495948,
+      "acquired": 47816.9502297,
+      "released": 47816.9630127,
+      "end": 47816.9630638,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-4",
+      "start": 47816.9661,
+      "end": 47816.9674865,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-4",
+      "nested": false,
+      "start": 47816.9638443,
+      "acquired": 47816.9644669,
+      "released": 47816.976339,
+      "end": 47816.9763897,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-5",
+      "start": 47816.9794037,
+      "end": 47816.9812849,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-5",
+      "nested": false,
+      "start": 47816.9771607,
+      "acquired": 47816.9778065,
+      "released": 47816.9903725,
+      "end": 47816.9904217,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "create_chat",
+      "start": 47816.9926227,
+      "end": 47816.992633,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47817.0081503,
+      "end": 47817.0107396,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47816.9918561,
+      "acquired": 47817.0030987,
+      "released": 47817.0209991,
+      "end": 47817.0210545,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-6",
+      "start": 47817.0241432,
+      "end": 47817.0255935,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-6",
+      "nested": false,
+      "start": 47817.0218747,
+      "acquired": 47817.0225284,
+      "released": 47817.0347539,
+      "end": 47817.0348107,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47817.037548,
+      "end": 47817.0390641,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47817.0355853,
+      "acquired": 47817.0361907,
+      "released": 47817.0488349,
+      "end": 47817.0488925,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-7",
+      "start": 47817.0524362,
+      "end": 47817.0538743,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-7",
+      "nested": false,
+      "start": 47817.0502173,
+      "acquired": 47817.050854,
+      "released": 47817.0627908,
+      "end": 47817.0628412,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-8",
+      "start": 47817.0656956,
+      "end": 47817.0670202,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-8",
+      "nested": false,
+      "start": 47817.0636048,
+      "acquired": 47817.0642064,
+      "released": 47817.0758903,
+      "end": 47817.0759433,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-9",
+      "start": 47817.0788927,
+      "end": 47817.0809382,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-9",
+      "nested": false,
+      "start": 47817.0767162,
+      "acquired": 47817.0773341,
+      "released": 47817.0913569,
+      "end": 47817.091408,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47817.0938887,
+      "end": 47817.0983547,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47817.0921822,
+      "acquired": 47817.0927893,
+      "released": 47817.1072235,
+      "end": 47817.1072764,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-10",
+      "start": 47817.1104763,
+      "end": 47817.1127018,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-10",
+      "nested": false,
+      "start": 47817.1080985,
+      "acquired": 47817.1087411,
+      "released": 47817.1231313,
+      "end": 47817.1231815,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47817.131881,
+      "end": 47817.1332434,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47817.1249558,
+      "acquired": 47817.1257097,
+      "released": 47817.1433186,
+      "end": 47817.1433719,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-11",
+      "start": 47817.1454015,
+      "end": 47817.1454114,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-11",
+      "start": 47817.1565565,
+      "end": 47817.1565762,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-11",
+      "start": 47817.1675009,
+      "end": 47817.1675612,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-11",
+      "start": 47817.1790809,
+      "end": 47817.1790991,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-11",
+      "start": 47817.1895272,
+      "end": 47817.1895455,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-11",
+      "start": 47817.2040323,
+      "end": 47817.2053793,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-11",
+      "nested": false,
+      "start": 47817.1442482,
+      "acquired": 47817.2004623,
+      "released": 47817.2212303,
+      "end": 47817.2212857,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-12",
+      "start": 47817.2260813,
+      "end": 47817.2260913,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-12",
+      "start": 47817.2369663,
+      "end": 47817.2369844,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-12",
+      "start": 47817.247573,
+      "end": 47817.2475909,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-12",
+      "start": 47817.2582369,
+      "end": 47817.2582549,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-12",
+      "start": 47817.2692977,
+      "end": 47817.2693167,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-12",
+      "start": 47817.2797027,
+      "end": 47817.2797201,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-12",
+      "start": 47817.2901609,
+      "end": 47817.2901776,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-12",
+      "start": 47817.3015543,
+      "end": 47817.301572,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-12",
+      "start": 47817.3136195,
+      "end": 47817.3156585,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-12",
+      "nested": false,
+      "start": 47817.2251422,
+      "acquired": 47817.3119874,
+      "released": 47817.3241286,
+      "end": 47817.3241727,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47817.3279419,
+      "end": 47817.3302672,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47817.3261195,
+      "acquired": 47817.3267743,
+      "released": 47817.3408012,
+      "end": 47817.3408543,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-13",
+      "start": 47817.3440178,
+      "end": 47817.3454674,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-13",
+      "nested": false,
+      "start": 47817.3418712,
+      "acquired": 47817.3425097,
+      "released": 47817.3557736,
+      "end": 47817.3558214,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-14",
+      "start": 47817.3590678,
+      "end": 47817.3610007,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-14",
+      "nested": false,
+      "start": 47817.3565488,
+      "acquired": 47817.3572751,
+      "released": 47817.3702402,
+      "end": 47817.3702926,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-15",
+      "start": 47817.3734719,
+      "end": 47817.3755282,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-15",
+      "nested": false,
+      "start": 47817.3710915,
+      "acquired": 47817.3717186,
+      "released": 47817.3851263,
+      "end": 47817.3851757,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47817.3943826,
+      "end": 47817.396014,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47817.3868817,
+      "acquired": 47817.3874697,
+      "released": 47817.4066591,
+      "end": 47817.4067918,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47817.4099904,
+      "end": 47817.414488,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47817.4077164,
+      "acquired": 47817.4084031,
+      "released": 47817.423769,
+      "end": 47817.4238359,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-16",
+      "start": 47817.4272226,
+      "end": 47817.4285568,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-16",
+      "nested": false,
+      "start": 47817.424698,
+      "acquired": 47817.4254846,
+      "released": 47817.4390021,
+      "end": 47817.4390527,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-17",
+      "start": 47817.441925,
+      "end": 47817.4432936,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-17",
+      "nested": false,
+      "start": 47817.4397879,
+      "acquired": 47817.4404007,
+      "released": 47817.4664682,
+      "end": 47817.4665321,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-18",
+      "start": 47817.4908508,
+      "end": 47817.490866,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-18",
+      "start": 47817.501488,
+      "end": 47817.5015155,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-18",
+      "start": 47817.5120522,
+      "end": 47817.5120743,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-18",
+      "start": 47817.5331627,
+      "end": 47817.5378747,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-18",
+      "nested": false,
+      "start": 47817.4784958,
+      "acquired": 47817.5231866,
+      "released": 47817.547142,
+      "end": 47817.5471891,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47817.5532191,
+      "end": 47817.554526,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47817.5498132,
+      "acquired": 47817.5514874,
+      "released": 47817.5625641,
+      "end": 47817.5626164,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-19",
+      "start": 47817.564326,
+      "end": 47817.5643378,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-19",
+      "start": 47817.5749825,
+      "end": 47817.5750019,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-19",
+      "start": 47817.5860304,
+      "end": 47817.5860491,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "append_raw_message:p1-19",
+      "start": 47817.5967986,
+      "end": 47817.5968191,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-19",
+      "start": 47817.6088446,
+      "end": 47817.6104297,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-19",
+      "nested": false,
+      "start": 47817.5636546,
+      "acquired": 47817.6071595,
+      "released": 47817.6194228,
+      "end": 47817.6194743,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-20",
+      "start": 47817.6224559,
+      "end": 47817.6237507,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-20",
+      "nested": false,
+      "start": 47817.62018,
+      "acquired": 47817.6207989,
+      "released": 47817.6304829,
+      "end": 47817.6305279,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47817.6378234,
+      "end": 47817.6391636,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47817.6318238,
+      "acquired": 47817.6325057,
+      "released": 47817.6484102,
+      "end": 47817.6484655,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-21",
+      "start": 47817.6514699,
+      "end": 47817.6532376,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-21",
+      "nested": false,
+      "start": 47817.649237,
+      "acquired": 47817.6498574,
+      "released": 47817.6598707,
+      "end": 47817.6599087,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47817.6616379,
+      "end": 47817.6628774,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47817.6604408,
+      "acquired": 47817.6608522,
+      "released": 47817.6692437,
+      "end": 47817.669284,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-22",
+      "start": 47817.6719342,
+      "end": 47817.6731731,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-22",
+      "nested": false,
+      "start": 47817.6698265,
+      "acquired": 47817.670284,
+      "released": 47817.6795155,
+      "end": 47817.6795569,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-23",
+      "start": 47817.6819498,
+      "end": 47817.6832656,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-23",
+      "nested": false,
+      "start": 47817.680082,
+      "acquired": 47817.6805956,
+      "released": 47817.6894683,
+      "end": 47817.6895075,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "append_raw_message:p1-24",
+      "start": 47817.6914284,
+      "end": 47817.6926782,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-24",
+      "nested": false,
+      "start": 47817.6900239,
+      "acquired": 47817.6904428,
+      "released": 47817.6990836,
+      "end": 47817.6991314,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47817.7010099,
+      "end": 47817.7022599,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47817.6996818,
+      "acquired": 47817.700078,
+      "released": 47817.7080998,
+      "end": 47817.7081418,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+--- before/context_storage.py
++++ after/context_storage.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ 
+ import contextlib
++import errno
+ import json
+ import os
+ import re
+@@ -1918,8 +1919,12 @@
+             import fcntl
+ 
+             fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+-    except OSError:
+-        return False
++    except OSError as exc:
++        # Only a locking conflict is retryable. Bad descriptors/arguments and filesystem failures must retain
++        # their real cause, not become a misleading WorkspaceBusyError after ten seconds.
++        if exc.errno in {errno.EACCES, errno.EAGAIN}:
++            return False
++        raise
+     return True
+ 
+ 

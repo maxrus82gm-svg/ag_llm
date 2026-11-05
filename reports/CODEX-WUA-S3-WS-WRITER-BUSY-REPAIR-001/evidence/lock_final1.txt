@@ -1,0 +1,20 @@
+test_child_interpreter_matches_the_utf8_pipe_even_with_legacy_locale (test_ultra_chat_storage.ProcessDiagnosticTests.test_child_interpreter_matches_the_utf8_pipe_even_with_legacy_locale) ... ok
+test_failed_child_retains_full_stderr_in_the_assertion (test_ultra_chat_storage.ProcessDiagnosticTests.test_failed_child_retains_full_stderr_in_the_assertion) ... ok
+test_a_held_lock_makes_writers_wait_and_then_refuse_visibly (test_ultra_chat_storage.LockTests.test_a_held_lock_makes_writers_wait_and_then_refuse_visibly) ... ok
+test_a_workspace_can_be_read_and_copied_while_a_writer_holds_the_lock (test_ultra_chat_storage.LockTests.test_a_workspace_can_be_read_and_copied_while_a_writer_holds_the_lock) ... ok
+test_a_writer_waits_for_a_short_holder_and_then_succeeds (test_ultra_chat_storage.LockTests.test_a_writer_waits_for_a_short_holder_and_then_succeeds) ... ok
+test_nested_calls_reenter_and_other_threads_wait (test_ultra_chat_storage.LockTests.test_nested_calls_reenter_and_other_threads_wait) ... ok
+test_reads_take_no_lock_and_create_nothing (test_ultra_chat_storage.LockTests.test_reads_take_no_lock_and_create_nothing) ... ok
+test_the_lock_file_is_never_a_symlink_when_the_platform_allows_creating_one (test_ultra_chat_storage.LockTests.test_the_lock_file_is_never_a_symlink_when_the_platform_allows_creating_one) ... skipped 'symlink creation needs a privilege this host does not grant (NOT RUN, junctions covered)'
+test_the_lock_folder_is_never_a_junction (test_ultra_chat_storage.LockTests.test_the_lock_folder_is_never_a_junction) ... ok
+test_unexpected_os_lock_error_is_not_misreported_as_workspace_busy (test_ultra_chat_storage.LockTests.test_unexpected_os_lock_error_is_not_misreported_as_workspace_busy) ... ok
+test_ensure_chat_from_two_processes_makes_one_chat (test_ultra_chat_storage.ConcurrencyTests.test_ensure_chat_from_two_processes_makes_one_chat) ... ok
+test_processes_that_initialise_one_folder_share_one_identity (test_ultra_chat_storage.ConcurrencyTests.test_processes_that_initialise_one_folder_share_one_identity) ... ok
+test_two_processes_commit_one_message_id (test_ultra_chat_storage.ConcurrencyTests.test_two_processes_commit_one_message_id) ... ok
+test_two_processes_write_raw_create_and_rename_without_losing_anything (test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything) ... ok
+test_two_renames_from_the_same_seen_title_never_lose_one_silently (test_ultra_chat_storage.ConcurrencyTests.test_two_renames_from_the_same_seen_title_never_lose_one_silently) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 7.767s
+
+OK (skipped=1)

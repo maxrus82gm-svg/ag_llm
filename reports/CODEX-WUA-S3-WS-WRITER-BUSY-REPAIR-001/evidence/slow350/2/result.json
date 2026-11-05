@@ -1,0 +1,23 @@
+{
+  "round": 2,
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "-v",
+    "test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything"
+  ],
+  "exit_code": 0,
+  "seconds": 29.581,
+  "lock_operations": 80,
+  "wait_max": 9.02953890000208,
+  "hold_max": 0.7130781999949249,
+  "lock_errors": [],
+  "byte_refusal_errno_counts": {
+    "13": 1963
+  },
+  "fsync_delay_ms": 350
+}

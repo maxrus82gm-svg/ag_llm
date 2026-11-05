@@ -1,0 +1,34 @@
+{
+  "round": 1,
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "-v",
+    "test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything"
+  ],
+  "exit_code": 1,
+  "seconds": 35.591,
+  "lock_operations": 68,
+  "wait_max": 6.733511500002351,
+  "hold_max": 1.013888000001316,
+  "lock_errors": [
+    {
+      "kind": "lock",
+      "phase": "append_raw_message:p1-16",
+      "nested": false,
+      "start": 47607.5799882,
+      "acquired": null,
+      "end": 47617.5804563,
+      "error": "WorkspaceBusyError",
+      "code": "workspace_busy"
+    }
+  ],
+  "byte_refusal_errno_counts": {
+    "13": 2836
+  },
+  "fsync_delay_ms": 500
+}

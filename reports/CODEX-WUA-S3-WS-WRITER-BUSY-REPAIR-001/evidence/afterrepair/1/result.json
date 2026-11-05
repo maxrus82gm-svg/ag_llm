@@ -1,0 +1,28 @@
+{
+  "round": 1,
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "-v",
+    "test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything"
+  ],
+  "exit_code": 0,
+  "seconds": 2.113,
+  "lock_operations": 80,
+  "wait_max": 0.21469639999850187,
+  "hold_max": 0.034014299999398645,
+  "lock_errors": [],
+  "byte_refusal_errno_counts": {
+    "13": 104
+  },
+  "fsync_delay_ms": 0,
+  "source_before": {
+    "context_storage.py": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64",
+    "test_ultra_chat_storage.py": "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+  },
+  "source_unchanged": true
+}

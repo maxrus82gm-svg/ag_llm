@@ -8,6 +8,7 @@ need no privilege and run here; a file symlink needs one and is skipped honestly
 from __future__ import annotations
 
 import hashlib
+import errno
 import json
 import os
 import shutil
@@ -59,6 +60,37 @@ def cid(n: int) -> str:
     return "chat_" + f"{n:032x}"
 
 
+class ProcessDiagnosticTests(unittest.TestCase):
+    def test_failed_child_retains_full_stderr_in_the_assertion(self):
+        with patch.dict(os.environ, {'PYTHONUTF8':'1'}):
+            fixture=Base();fixture.setUp()
+            try:
+                child=fixture.spawn("sys.stderr.write('OPERATION_START_MARKER:'+'x'*3000+'\\n')\nraise cs.WorkspaceBusyError()\n")
+                with self.assertRaises(AssertionError) as caught:fixture.finish(child)
+                self.assertIn('OPERATION_START_MARKER:',str(caught.exception))
+                self.assertIn('context_storage.WorkspaceBusyError',str(caught.exception))
+            finally:fixture._cleanup()
+
+    def test_child_interpreter_matches_the_utf8_pipe_even_with_legacy_locale(self):
+        # A parent -X utf8 does not propagate that flag to its children. The fixture's UTF-8 pipes need it too.
+        with patch.dict(os.environ, {'PYTHONUTF8':'0'}):
+            os.environ.pop('PYTHONIOENCODING',None)
+            fixture=Base()
+            fixture.setUp()
+            try:
+                child=fixture.spawn("print(json.dumps({'utf8':sys.flags.utf8_mode,'stderr':sys.stderr.encoding}))\n")
+                info=json.loads(fixture.finish(child))
+                self.assertEqual(info['utf8'],1,'child startup must explicitly select UTF-8 for the UTF-8 pipes')
+                self.assertEqual(info['stderr'].lower().replace('-',''),'utf8')
+                child=fixture.spawn("raise cs.WorkspaceBusyError()\n")
+                out,err=child.communicate(timeout=15)
+                self.assertEqual(child.returncode,1)
+                self.assertIsInstance(err,str)
+                self.assertIn('context_storage.WorkspaceBusyError',err)
+                self.assertIn('Workspace занят',err)
+            finally:fixture._cleanup()
+
+
 class Base(unittest.TestCase):
     def setUp(self):
         self.base = Path(tempfile.mkdtemp(prefix="wa_s2_store_")).resolve()
@@ -91,14 +123,14 @@ class Base(unittest.TestCase):
         return root, workspace_id, chat
 
     def spawn(self, code: str, *args) -> subprocess.Popen:
-        child = subprocess.Popen([sys.executable, "-B", "-c", CHILD + code, str(ROOT), *map(str, args)],
+        child = subprocess.Popen([sys.executable, "-B", "-X", "utf8", "-c", CHILD + code, str(ROOT), *map(str, args)],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding="utf-8")
         self.children.append(child)
         return child
 
     def finish(self, child: subprocess.Popen, timeout: float = 120) -> str:
         out, err = child.communicate(timeout=timeout)
-        self.assertEqual(child.returncode, 0, err[-800:])
+        self.assertEqual(child.returncode, 0, err)
         return out
 
     def wait_for(self, path: Path, timeout: float = 60) -> None:
@@ -428,6 +460,21 @@ class LockTests(Base):
             "with cs._workspace_writer_lock(anchor):\n"
             "    open(sys.argv[3], 'w').close()\n"
             "    time.sleep(float(sys.argv[4]))\n")
+
+    def test_unexpected_os_lock_error_is_not_misreported_as_workspace_busy(self):
+        root,_,chat=self.workspace()
+        before=without_lock(snapshot(root))
+        if os.name=='nt':
+            target='context_storage.msvcrt.locking'
+        else:
+            target='fcntl.flock'
+        with patch(target,side_effect=OSError(errno.EBADF,'injected bad descriptor')), patch.object(cs,'WRITER_LOCK_TIMEOUT_SECONDS',.05):
+            with self.assertRaises(OSError) as caught:
+                cs.commit_raw_message(root,chat,mid(807),'user','must not be published')
+        self.assertEqual(caught.exception.errno,errno.EBADF)
+        self.assertEqual(cs._held_writer_locks(),{})
+        self.assertEqual(before,without_lock(snapshot(root)))
+        self.assertTrue(cs.commit_raw_message(root,chat,mid(807),'user','after refusal')['created'])
 
     def test_reads_take_no_lock_and_create_nothing(self):
         root, _, chat = self.workspace()

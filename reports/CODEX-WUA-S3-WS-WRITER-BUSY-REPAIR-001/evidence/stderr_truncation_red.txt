@@ -1,0 +1,14 @@
+test_failed_child_retains_full_stderr_in_the_assertion (test_ultra_chat_storage.ProcessDiagnosticTests.test_failed_child_retains_full_stderr_in_the_assertion) ... FAIL
+
+======================================================================
+FAIL: test_failed_child_retains_full_stderr_in_the_assertion (test_ultra_chat_storage.ProcessDiagnosticTests.test_failed_child_retains_full_stderr_in_the_assertion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_ultra_chat_storage.py", line 69, in test_failed_child_retains_full_stderr_in_the_assertion
+    self.assertIn('OPERATION_START_MARKER:',str(caught.exception))
+AssertionError: 'OPERATION_START_MARKER:' not found in '1 != 0 : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nTraceback (most recent call last):\n  File "<string>", line 6, in <module>\ncontext_storage.WorkspaceBusyError: Workspace занят другой операцией записи. Повторите позже.\n'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.091s
+
+FAILED (failures=1)

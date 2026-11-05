@@ -1,0 +1,2425 @@
+{
+  "pid": 28916,
+  "events": [
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.291854,
+      "end": 47855.2918616,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.3020577,
+      "end": 47855.3020746,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.3121481,
+      "end": 47855.3121668,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.3228867,
+      "end": 47855.3229022,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.3339368,
+      "end": 47855.3339542,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.3441039,
+      "end": 47855.3441226,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.3543041,
+      "end": 47855.3543249,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.3647777,
+      "end": 47855.3647975,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.3758269,
+      "end": 47855.3758472,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.386766,
+      "end": 47855.3867816,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.3974984,
+      "end": 47855.3975169,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.4077627,
+      "end": 47855.4077816,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.4179139,
+      "end": 47855.4179357,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47855.4293832,
+      "end": 47855.4306883,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47855.2911597,
+      "acquired": 47855.4280995,
+      "released": 47855.4371784,
+      "end": 47855.4372229,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47855.4406691,
+      "end": 47855.442037,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47855.4377225,
+      "acquired": 47855.4381085,
+      "released": 47855.4493885,
+      "end": 47855.4494315,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "rename_chat",
+      "start": 47855.4506134,
+      "end": 47855.45062,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "rename_chat",
+      "start": 47855.4609911,
+      "end": 47855.4610113,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "rename_chat",
+      "start": 47855.4715853,
+      "end": 47855.4716125,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "rename_chat",
+      "start": 47855.4824189,
+      "end": 47855.4824329,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "rename_chat",
+      "start": 47855.4933223,
+      "end": 47855.4933422,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "rename_chat",
+      "start": 47855.5039735,
+      "end": 47855.5039867,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "rename_chat",
+      "start": 47855.5140639,
+      "end": 47855.5140806,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "rename_chat",
+      "start": 47855.5241921,
+      "end": 47855.5242074,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "rename_chat",
+      "start": 47855.5342919,
+      "end": 47855.5343049,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47855.5467497,
+      "end": 47855.5512223,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47855.4500893,
+      "acquired": 47855.5454726,
+      "released": 47855.5571095,
+      "end": 47855.5571512,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47855.5591147,
+      "end": 47855.5603067,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47855.5576619,
+      "acquired": 47855.5580293,
+      "released": 47855.5664342,
+      "end": 47855.566473,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.5676967,
+      "end": 47855.5677032,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.5784252,
+      "end": 47855.5784431,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.5885098,
+      "end": 47855.5885243,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.5987424,
+      "end": 47855.598756,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.6098004,
+      "end": 47855.6098136,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.6200987,
+      "end": 47855.6201183,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47855.6317019,
+      "end": 47855.6330013,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47855.5672319,
+      "acquired": 47855.6303547,
+      "released": 47855.6384867,
+      "end": 47855.638531,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47855.6405594,
+      "end": 47855.6423548,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47855.6390225,
+      "acquired": 47855.6393982,
+      "released": 47855.6498182,
+      "end": 47855.6498623,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.650813,
+      "end": 47855.6508208,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.6613073,
+      "end": 47855.6613214,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.6718543,
+      "end": 47855.6718714,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.6826926,
+      "end": 47855.6827132,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.6927631,
+      "end": 47855.6927803,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7033659,
+      "end": 47855.7033828,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7137707,
+      "end": 47855.7137871,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7238294,
+      "end": 47855.723845,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7341632,
+      "end": 47855.7341778,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7446594,
+      "end": 47855.7446752,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7550069,
+      "end": 47855.7550211,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7655172,
+      "end": 47855.7655352,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7760353,
+      "end": 47855.7760562,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7867188,
+      "end": 47855.7867381,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.7969166,
+      "end": 47855.7969344,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.8073801,
+      "end": 47855.8073988,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47855.8199427,
+      "end": 47855.821251,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47855.6503809,
+      "acquired": 47855.8182718,
+      "released": 47855.8285954,
+      "end": 47855.8286369,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47855.8310618,
+      "end": 47855.8353072,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47855.8292418,
+      "acquired": 47855.8298938,
+      "released": 47855.8415378,
+      "end": 47855.8415752,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.8426484,
+      "end": 47855.8426549,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.8532509,
+      "end": 47855.8532646,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.8637338,
+      "end": 47855.8637519,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.873905,
+      "end": 47855.8739231,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.8844325,
+      "end": 47855.8844488,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.8946727,
+      "end": 47855.8946871,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.9050142,
+      "end": 47855.9050281,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.9152685,
+      "end": 47855.9152845,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.9257095,
+      "end": 47855.9257245,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.9359975,
+      "end": 47855.9360148,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.9464357,
+      "end": 47855.9464546,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.9574202,
+      "end": 47855.9574345,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.9684192,
+      "end": 47855.9684362,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.9788328,
+      "end": 47855.9788503,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47855.9892388,
+      "end": 47855.989256,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.0004239,
+      "end": 47856.0004395,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.0111958,
+      "end": 47856.0112138,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.0221828,
+      "end": 47856.0221988,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.0331279,
+      "end": 47856.0331457,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.0437273,
+      "end": 47856.0437424,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.05474,
+      "end": 47856.0547566,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.0649164,
+      "end": 47856.064932,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.0757786,
+      "end": 47856.0757952,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.0863025,
+      "end": 47856.0863202,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.0965054,
+      "end": 47856.0965251,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.1066647,
+      "end": 47856.1066826,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.116767,
+      "end": 47856.116784,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.1275754,
+      "end": 47856.1275963,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.1385706,
+      "end": 47856.1385911,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.149135,
+      "end": 47856.1491537,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.1592618,
+      "end": 47856.1592795,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.1694198,
+      "end": 47856.1694338,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.1800356,
+      "end": 47856.180054,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.1909162,
+      "end": 47856.1909344,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.2012544,
+      "end": 47856.2012711,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.2117876,
+      "end": 47856.2118042,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.2228422,
+      "end": 47856.2228619,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.2331478,
+      "end": 47856.2331697,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.2447279,
+      "end": 47856.2459464,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47855.8422031,
+      "acquired": 47856.2432654,
+      "released": 47856.2526557,
+      "end": 47856.2526937,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.2548131,
+      "end": 47856.2561689,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.2532162,
+      "acquired": 47856.2536332,
+      "released": 47856.2616687,
+      "end": 47856.2617008,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.2640453,
+      "end": 47856.2656418,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.2621661,
+      "acquired": 47856.2625365,
+      "released": 47856.2719672,
+      "end": 47856.2720016,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.2738669,
+      "end": 47856.2750679,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.2724736,
+      "acquired": 47856.2728219,
+      "released": 47856.2808051,
+      "end": 47856.2808431,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47856.282545,
+      "end": 47856.2838208,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47856.281346,
+      "acquired": 47856.2817197,
+      "released": 47856.2897762,
+      "end": 47856.2898097,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.290647,
+      "end": 47856.2906533,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.3011511,
+      "end": 47856.3011664,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.3128264,
+      "end": 47856.3143282,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.2902838,
+      "acquired": 47856.31151,
+      "released": 47856.3206499,
+      "end": 47856.3206851,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.3215701,
+      "end": 47856.3215758,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.3320189,
+      "end": 47856.3320354,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.3421123,
+      "end": 47856.3421293,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.3524666,
+      "end": 47856.3524842,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.3631025,
+      "end": 47856.3631192,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.3732819,
+      "end": 47856.3732937,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.3835233,
+      "end": 47856.3835571,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.3953718,
+      "end": 47856.3966868,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.3211698,
+      "acquired": 47856.3940427,
+      "released": 47856.4020808,
+      "end": 47856.4021153,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47856.4067551,
+      "end": 47856.4080649,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47856.4025787,
+      "acquired": 47856.4029455,
+      "released": 47856.4148863,
+      "end": 47856.414925,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.4158625,
+      "end": 47856.4158688,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.4261774,
+      "end": 47856.4261901,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.4367523,
+      "end": 47856.4367731,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.4471211,
+      "end": 47856.4471367,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.4576302,
+      "end": 47856.4576448,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.4695859,
+      "end": 47856.4709214,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.4154421,
+      "acquired": 47856.4678598,
+      "released": 47856.4764335,
+      "end": 47856.4764664,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.4783056,
+      "end": 47856.479581,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.4769295,
+      "acquired": 47856.4772931,
+      "released": 47856.4860616,
+      "end": 47856.4860994,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47856.4878019,
+      "end": 47856.4890495,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47856.4865849,
+      "acquired": 47856.486963,
+      "released": 47856.4951391,
+      "end": 47856.4951747,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.4960634,
+      "end": 47856.4960709,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.5064566,
+      "end": 47856.5064711,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.5169531,
+      "end": 47856.5169667,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.5273471,
+      "end": 47856.5273649,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.5378696,
+      "end": 47856.5378823,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.5487244,
+      "end": 47856.5487398,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.5594262,
+      "end": 47856.5594567,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.5697031,
+      "end": 47856.5697144,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.5805552,
+      "end": 47856.580571,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.5910995,
+      "end": 47856.5911249,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.6020663,
+      "end": 47856.6020807,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.6124588,
+      "end": 47856.612475,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.6227264,
+      "end": 47856.6227405,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.6330239,
+      "end": 47856.6330443,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.6436543,
+      "end": 47856.6436697,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.6538647,
+      "end": 47856.6538803,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.6643334,
+      "end": 47856.6643485,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.6744047,
+      "end": 47856.6744182,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.6869379,
+      "end": 47856.6910819,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.4956589,
+      "acquired": 47856.6850664,
+      "released": 47856.6972962,
+      "end": 47856.6973391,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.6992836,
+      "end": 47856.7036586,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.697835,
+      "acquired": 47856.6982151,
+      "released": 47856.7095079,
+      "end": 47856.7095445,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.7115039,
+      "end": 47856.712731,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.7100314,
+      "acquired": 47856.7104129,
+      "released": 47856.7188798,
+      "end": 47856.7189235,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.7209264,
+      "end": 47856.7226286,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.7194419,
+      "acquired": 47856.7198238,
+      "released": 47856.7283191,
+      "end": 47856.7283513,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47856.7300155,
+      "end": 47856.7316231,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47856.728812,
+      "acquired": 47856.7291612,
+      "released": 47856.7375559,
+      "end": 47856.7375926,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.7384522,
+      "end": 47856.7384587,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.7488204,
+      "end": 47856.7488346,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.7593341,
+      "end": 47856.7593496,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.7696683,
+      "end": 47856.7696851,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.7799156,
+      "end": 47856.7799325,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.7901901,
+      "end": 47856.7902119,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.8003906,
+      "end": 47856.800406,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.8108838,
+      "end": 47856.8108994,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.8218928,
+      "end": 47856.8219091,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.8323964,
+      "end": 47856.8324091,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.8434299,
+      "end": 47856.8434483,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.853506,
+      "end": 47856.8535313,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47856.8652769,
+      "end": 47856.8665551,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.7380784,
+      "acquired": 47856.8639801,
+      "released": 47856.8727843,
+      "end": 47856.8728223,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.8738671,
+      "end": 47856.8738738,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.8839406,
+      "end": 47856.8839755,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.8941598,
+      "end": 47856.8941795,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.9044196,
+      "end": 47856.9044383,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.9145072,
+      "end": 47856.9145215,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.9248249,
+      "end": 47856.9248371,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.9350819,
+      "end": 47856.9351014,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.9456182,
+      "end": 47856.9456308,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.956242,
+      "end": 47856.9562557,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.9668823,
+      "end": 47856.9668988,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.9774835,
+      "end": 47856.9774999,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.9881106,
+      "end": 47856.9881313,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47856.9987407,
+      "end": 47856.9987552,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.0091879,
+      "end": 47857.0092193,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.0197193,
+      "end": 47857.0197345,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.0298565,
+      "end": 47857.0298739,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.0405209,
+      "end": 47857.0405386,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.0511031,
+      "end": 47857.0511261,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.0618488,
+      "end": 47857.0618815,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.0731045,
+      "end": 47857.0731177,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.0849228,
+      "end": 47857.0866484,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47856.8734535,
+      "acquired": 47857.0835028,
+      "released": 47857.0938523,
+      "end": 47857.0938969,
+      "error": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.0952084,
+      "end": 47857.0952159,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.1061337,
+      "end": 47857.1061491,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.1163189,
+      "end": 47857.1163452,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.1266806,
+      "end": 47857.1266948,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.1369335,
+      "end": 47857.1369514,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.1473284,
+      "end": 47857.1473456,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.1578667,
+      "end": 47857.1578847,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.1680087,
+      "end": 47857.1680214,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.1783778,
+      "end": 47857.1784045,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.1891676,
+      "end": 47857.1891851,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.200134,
+      "end": 47857.2001507,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.2103078,
+      "end": 47857.2103215,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.220768,
+      "end": 47857.220785,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.2310615,
+      "end": 47857.2310789,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.2413767,
+      "end": 47857.2413967,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.2518716,
+      "end": 47857.2518869,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.262329,
+      "end": 47857.2623452,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.2731116,
+      "end": 47857.273128,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "byte_refusal",
+      "phase": "setup",
+      "start": 47857.2832254,
+      "end": 47857.283243,
+      "mode": 2,
+      "errno": 13,
+      "winerror": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.2952811,
+      "end": 47857.2969672,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.0946344,
+      "acquired": 47857.2933949,
+      "released": 47857.3038116,
+      "end": 47857.3038569,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.3060584,
+      "end": 47857.3073379,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.304386,
+      "acquired": 47857.3047928,
+      "released": 47857.3133835,
+      "end": 47857.3134357,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47857.3195725,
+      "end": 47857.3209445,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47857.31414,
+      "acquired": 47857.3145525,
+      "released": 47857.3280032,
+      "end": 47857.3280448,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47857.3300173,
+      "end": 47857.3319447,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47857.3285918,
+      "acquired": 47857.3290252,
+      "released": 47857.3408422,
+      "end": 47857.3408847,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.3429436,
+      "end": 47857.3442212,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.3414145,
+      "acquired": 47857.3418022,
+      "released": 47857.3516715,
+      "end": 47857.3517221,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.3538686,
+      "end": 47857.3552545,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.3522896,
+      "acquired": 47857.3526919,
+      "released": 47857.3621791,
+      "end": 47857.3622208,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.3645679,
+      "end": 47857.3658424,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.3627325,
+      "acquired": 47857.3631139,
+      "released": 47857.372673,
+      "end": 47857.3727147,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.3747196,
+      "end": 47857.3759846,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.3732487,
+      "acquired": 47857.3736315,
+      "released": 47857.382949,
+      "end": 47857.3829883,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47857.3847575,
+      "end": 47857.385966,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47857.3835003,
+      "acquired": 47857.3838967,
+      "released": 47857.3914471,
+      "end": 47857.3914855,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.3935692,
+      "end": 47857.398086,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.3920868,
+      "acquired": 47857.3924895,
+      "released": 47857.4043762,
+      "end": 47857.4044129,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.4063818,
+      "end": 47857.4076584,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.4049172,
+      "acquired": 47857.4052945,
+      "released": 47857.4153549,
+      "end": 47857.4154007,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.4176072,
+      "end": 47857.4189269,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.415956,
+      "acquired": 47857.4163847,
+      "released": 47857.4257122,
+      "end": 47857.4257514,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.4279395,
+      "end": 47857.4292562,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.426263,
+      "acquired": 47857.4266498,
+      "released": 47857.4357261,
+      "end": 47857.4357731,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47857.4379154,
+      "end": 47857.4403891,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47857.4364391,
+      "acquired": 47857.4370204,
+      "released": 47857.4464937,
+      "end": 47857.4465289,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.4486957,
+      "end": 47857.4499526,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.4470518,
+      "acquired": 47857.4475062,
+      "released": 47857.4557656,
+      "end": 47857.4558122,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.4578678,
+      "end": 47857.459143,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.4563243,
+      "acquired": 47857.456707,
+      "released": 47857.4660365,
+      "end": 47857.4660759,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "create_chat",
+      "start": 47857.4719042,
+      "end": 47857.4735127,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "create_chat",
+      "nested": false,
+      "start": 47857.4665655,
+      "acquired": 47857.4669816,
+      "released": 47857.4798534,
+      "end": 47857.4798907,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.4821656,
+      "end": 47857.4834907,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.4804587,
+      "acquired": 47857.4809178,
+      "released": 47857.4900855,
+      "end": 47857.4901326,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.4927045,
+      "end": 47857.4940056,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.4907786,
+      "acquired": 47857.4911727,
+      "released": 47857.4998086,
+      "end": 47857.499856,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47857.501962,
+      "end": 47857.5039979,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47857.5004378,
+      "acquired": 47857.5008248,
+      "released": 47857.5098547,
+      "end": 47857.5098956,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.511975,
+      "end": 47857.5132117,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.5104078,
+      "acquired": 47857.5108116,
+      "released": 47857.5196385,
+      "end": 47857.5196806,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.5217729,
+      "end": 47857.5229868,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.5202022,
+      "acquired": 47857.5205985,
+      "released": 47857.5288701,
+      "end": 47857.5289129,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.5309051,
+      "end": 47857.5324699,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.5294131,
+      "acquired": 47857.5297891,
+      "released": 47857.5416729,
+      "end": 47857.5417147,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.5441622,
+      "end": 47857.5454302,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.5423329,
+      "acquired": 47857.5427365,
+      "released": 47857.552255,
+      "end": 47857.5522998,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47857.5542478,
+      "end": 47857.5555539,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47857.5529823,
+      "acquired": 47857.5533941,
+      "released": 47857.561598,
+      "end": 47857.5616425,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.5636667,
+      "end": 47857.5653163,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.5621359,
+      "acquired": 47857.5625275,
+      "released": 47857.5714384,
+      "end": 47857.5714842,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.5737662,
+      "end": 47857.5750364,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.5722349,
+      "acquired": 47857.5726577,
+      "released": 47857.5807085,
+      "end": 47857.5807543,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47857.5831148,
+      "end": 47857.5844978,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47857.5814467,
+      "acquired": 47857.5819396,
+      "released": 47857.5908978,
+      "end": 47857.5909432,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "rename_chat",
+      "start": 47857.5931601,
+      "end": 47857.5944462,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "rename_chat",
+      "nested": false,
+      "start": 47857.5914782,
+      "acquired": 47857.592064,
+      "released": 47857.6006273,
+      "end": 47857.6006708,
+      "error": null
+    }
+  ]
+}

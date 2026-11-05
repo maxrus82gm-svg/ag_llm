@@ -1,0 +1,1698 @@
+{
+  "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+  "status": "BLOCKED / ORIGINAL CI CAUSE OPEN; PARTIAL DIAGNOSTIC REPAIR",
+  "history_id": "H-CODEX-000014",
+  "independent_review": "NOT VERIFIED",
+  "publication": "LOCAL ONLY; one user publication pending",
+  "sources": [
+    {
+      "path": "context_storage.py",
+      "size": 98138,
+      "sha256": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64"
+    },
+    {
+      "path": "test_ultra_chat_storage.py",
+      "size": 99585,
+      "sha256": "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+    }
+  ],
+  "files": [
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/analyse_timeline.py",
+      "size": 2497,
+      "sha256": "b63fd41d00714f927d011bb142c6d743b9af0c0d38dd3801b2621548ec9b7132"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/audit_storage.py.source.txt",
+      "size": 31728,
+      "sha256": "5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/context_storage.py.source.txt",
+      "size": 97846,
+      "sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/native_finish/reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/handoff_task.md.source.txt",
+      "size": 12955,
+      "sha256": "7efe959bbb12a5d8d28b81defd53d68d232f74ccac4ab1d2cc0c22530c684460"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/native_finish/reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/task_record.json.source.txt",
+      "size": 3350,
+      "sha256": "ce432b101240b3e3fba746a602a40b477f9b4e010972b5acab817ccf6967ec53"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/native_finish/reports/task_history_sequences.json.source.txt",
+      "size": 28,
+      "sha256": "eeb97086c6db960ad1584b596ec6454494ce6915018ac07668f4e660a5651aaa"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/run_store.py.source.txt",
+      "size": 38605,
+      "sha256": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/Start_WebAlarm.bat.source.txt",
+      "size": 1482,
+      "sha256": "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/test_ultra_chat_storage.py.source.txt",
+      "size": 96913,
+      "sha256": "d1b8733f00f8d33cd36552b1ee16aaf3aeb879b971c22559fe94c66b5c780cc2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/tools/task_slot_rotate.py.source.txt",
+      "size": 48188,
+      "sha256": "d87645b20c92cb0c01cc7734765b74b4cf29a0f1b2fa4cf8fbb8afd39cac0d17"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/web_alarm/launch_config.json.source.txt",
+      "size": 1769,
+      "sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/web_alarm/server.py.source.txt",
+      "size": 74952,
+      "sha256": "b2bf2b20635b120e9a273d8691305dea8687c42693e47ed365bd966eec205f27"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/web_alarm/turn_service.py.source.txt",
+      "size": 15370,
+      "sha256": "0b532c0386670f8645d6cfde339dbb0474ffa95bccd5d759b981580da18b6f6a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/web_alarm/ui.py.source.txt",
+      "size": 192434,
+      "sha256": "c9c8c60143a99d7e03a352672c8c9511c150f1ca024803a2921d929c3d293442"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/web_alarm/ultra_chat.py.source.txt",
+      "size": 28937,
+      "sha256": "164c2f76fa4d6cdc935a2e4189eabe9d07b1f8206b179df64d27f1d5009c7035"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/before/Документация/000_Задачи Codex.md.source.txt",
+      "size": 41864,
+      "sha256": "1d79f38cd177b075f7caf2e65dbe55b884a035042b36a52e9376b985cb8a3ce3"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/chat_amendment_01.md",
+      "size": 2574,
+      "sha256": "0f4db3712ad9918ca9113f348051144775ba53005aabb2b8b2f322e67a89b0fc"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/controlled_wait.py",
+      "size": 3027,
+      "sha256": "d2d8f57088415f801532c21dea24b300918d111ec8bab4a297261ffa9adb660a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/context_storage.py.source.txt",
+      "size": 98138,
+      "sha256": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/guard/23864.json",
+      "size": 86,
+      "sha256": "94455586a0e562044e37cdc9d63124c42c6b916c4003d252146f48451a6dbecf"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/guard/36628.json",
+      "size": 86,
+      "sha256": "92b17b291f9cdf6fea0862212cd1f67e205e8df3146cbd960bc79b6c7b7e6d46"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/guard/6972.json",
+      "size": 85,
+      "sha256": "d045f9a2dcb838c367434c0b97367f1e028a178b1d51e43befee8b93a78a1c42"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/output.txt",
+      "size": 295,
+      "sha256": "0b1e4a17b02b1f2bfdf2a45f12c7fc4d4b476eb964ecce11c3eab7d5f1aa2444"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/result.json",
+      "size": 782,
+      "sha256": "f4981f949e3de4d195d5bd69040af4f41f0b03162d3f706b4b4f6bc146acf792"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/test_ultra_chat_storage.py.source.txt",
+      "size": 99585,
+      "sha256": "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/trace/23864.json",
+      "size": 25458,
+      "sha256": "6bafb43e8dfbf78e0297d76994c4b8f88f8012786e2970314c83a23986136728"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/trace/36628.json",
+      "size": 28377,
+      "sha256": "f84aa385e0306b7806f6ed8e2cacf17ca66179b7b3c2c5cd3cce8c6a5046a351"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/1/trace/6972.json",
+      "size": 981,
+      "sha256": "0a3278ad592be40719dde5f3225a635d6f4f80c1ab5ae70b4f1e618cfcd54044"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/context_storage.py.source.txt",
+      "size": 98138,
+      "sha256": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/guard/32012.json",
+      "size": 86,
+      "sha256": "0d61d27d140cb6c3909f0bccecb58a35b1c37a95d1eb5f1e2202089f89bd8126"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/guard/35244.json",
+      "size": 86,
+      "sha256": "734d4a708ad83921bffe9a3a3e016eccda324d29f57dd313c249c0a0884d351e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/guard/36588.json",
+      "size": 86,
+      "sha256": "9e10d5ab0bd1020e173efebbc0c5b91839493a1b04ce4794f1641e4c4546d324"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/output.txt",
+      "size": 295,
+      "sha256": "e4e8817b269d64c76d49dbcc5d0726f74a4d422218ca6543416cab35aa60c061"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/result.json",
+      "size": 780,
+      "sha256": "09fc2921911bcd13b595d17172d20d150d4198373b2153bc36b531af07047746"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/test_ultra_chat_storage.py.source.txt",
+      "size": 99585,
+      "sha256": "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/trace/32012.json",
+      "size": 981,
+      "sha256": "29248bb08385e5c73d987b68012cf3aafa7e8d8002daf5db776123658b00d001"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/trace/35244.json",
+      "size": 25314,
+      "sha256": "bead3b09e7dd768df6d1655224dca8df952ee1e9076cd464bb7a2140d09295fa"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/2/trace/36588.json",
+      "size": 27210,
+      "sha256": "42249775ac8c33727f222901f90b4b6b8f1ba93978daa9e3a4c09a98735e9576"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/context_storage.py.source.txt",
+      "size": 98138,
+      "sha256": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/guard/22348.json",
+      "size": 86,
+      "sha256": "4389845bb64c1986d4c00c4ede245395a924df99bc506dba709609e51a0758df"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/guard/33692.json",
+      "size": 86,
+      "sha256": "d926fa51763cc01595476c2b4d3bb31b479e87acebf9884b633dbf7c551c17f1"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/guard/36776.json",
+      "size": 86,
+      "sha256": "08c39dde7f4c5fc4dd1a10b91ee79884a73738a08ec66fd3ed923d1b1dde1252"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/output.txt",
+      "size": 295,
+      "sha256": "3b05caaa4261f586568d36038935cd16bc85819049d7b5ed2eca5c708c70b0df"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/result.json",
+      "size": 779,
+      "sha256": "8624c7b6d1a28087428a4571f4751fe15f5f0640491038a67dba00601a95dbd4"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/test_ultra_chat_storage.py.source.txt",
+      "size": 99585,
+      "sha256": "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/trace/22348.json",
+      "size": 982,
+      "sha256": "555f5ff7e2262a309f481977c137913eef1e07a1c944adad386110fb9029b171"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/trace/33692.json",
+      "size": 17493,
+      "sha256": "c04670bcdc9ef094b8f7ba0efdd0a08cdd3771e3f801ddbddfe7a9b80f2d3e34"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/3/trace/36776.json",
+      "size": 25324,
+      "sha256": "0a385a3a9ddd75ba8fd05b5dbdbc4bb5d21f5e15886edd8a1d3d53d2df074f02"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/context_storage.py.source.txt",
+      "size": 98138,
+      "sha256": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/guard/32912.json",
+      "size": 86,
+      "sha256": "cfcec9c6d488a917f968f7aeb10e7b2fdb19adb02738ed3904d0fabd218f0a7c"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/guard/33272.json",
+      "size": 86,
+      "sha256": "b7295a3d9e9faf3a3b05d41a0bc19a22be01fee5846aa8cf71ef7dc5bd2ab408"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/guard/36804.json",
+      "size": 86,
+      "sha256": "4416e187e0dc87f484d7c5a04f4d773dffb3a6362a4053380e6ec411b868c717"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/output.txt",
+      "size": 295,
+      "sha256": "2c09480cad928946640850ebeb12eed516fb0651996283da55961a1c8bde38ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/result.json",
+      "size": 780,
+      "sha256": "fdfad084711a6cd26b6e85553e221609af7afa1f8127fee9ff3fd1fd16a5a058"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/test_ultra_chat_storage.py.source.txt",
+      "size": 99585,
+      "sha256": "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/trace/32912.json",
+      "size": 983,
+      "sha256": "9dcb38ea51acf0d6b9f905c3d105d2d724d3d7caea1cb25e561314bc86f876fb"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/trace/33272.json",
+      "size": 20229,
+      "sha256": "ef9f50514b02b8f64e8d50412456c9e5b6af3c7fdfe4ace6461f28273511e9be"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/4/trace/36804.json",
+      "size": 26655,
+      "sha256": "ff0633420cec3ffcb891e6fe6b106e56c29cde29353b38f7419227b834acabf9"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/context_storage.py.source.txt",
+      "size": 98138,
+      "sha256": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/guard/34368.json",
+      "size": 86,
+      "sha256": "e51f236377205d4271aa85b08fe8a0383276882bba92fe492d3a1254c88f26a1"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/guard/36572.json",
+      "size": 86,
+      "sha256": "b2a493f9f69fadcc0b2baf52aa876133412893311f8df6b6bd279425483f02c3"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/guard/6972.json",
+      "size": 85,
+      "sha256": "d045f9a2dcb838c367434c0b97367f1e028a178b1d51e43befee8b93a78a1c42"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/output.txt",
+      "size": 295,
+      "sha256": "a133883cde6f8e8b5027896d9d1308f349a6c398dae0601935ca7eed947c120f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/result.json",
+      "size": 780,
+      "sha256": "7bbeb4c6bbd121298e69f538a4b04863363316dcb0685357513fe60cc6538ac9"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/test_ultra_chat_storage.py.source.txt",
+      "size": 99585,
+      "sha256": "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/trace/34368.json",
+      "size": 28560,
+      "sha256": "62a51ac1a575a8b5511a003d4cffb73f83266cb7f6bddc8b8f93ed3c5106e44b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/trace/36572.json",
+      "size": 18788,
+      "sha256": "3ce89cc097c15bfdbe8c9a146e48342690cd419aebfa3a836a55861b2c348ff3"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/5/trace/6972.json",
+      "size": 982,
+      "sha256": "731741b6b67a9d299304e1f874990ba32a93a72d8908b0c8635dbcc6ec0cd7dd"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/afterrepair/summary.json",
+      "size": 4861,
+      "sha256": "2d6fedbf28f0d94be5dc77f5a12172488eb83e602f3c78e82c4e50b303afbe8d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/1/guard/3700.json",
+      "size": 85,
+      "sha256": "315bbdff19591131bc13a56c2013cb8174cc0956fb09a44df1b74657b6aaa90f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/1/guard/5224.json",
+      "size": 85,
+      "sha256": "21089a46e9a482507bc4c73381479a9e31c569a59b7b6a40db7fd428e3f21a41"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/1/guard/8536.json",
+      "size": 85,
+      "sha256": "4293bf2abd62aee5ea2228fb09b6291e1797f0b8b359085c966c73e7e1f2affd"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/1/output.txt",
+      "size": 295,
+      "sha256": "09fb086cfdf43d990d7511a96e50e09ab16c023e85e7e4030ab055876f5b2bd4"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/1/result.json",
+      "size": 526,
+      "sha256": "42cc26ec63d87ec0d51897c6e1832b7b255158e038d644beb67a0e1c42ba1fb9"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/1/trace/3700.json",
+      "size": 25409,
+      "sha256": "a8c7da70f2fbbe9bf70533593c8d43397a7efec55a6a8b8bb1f1c9edaa32b93f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/1/trace/5224.json",
+      "size": 23862,
+      "sha256": "9624ceb51b5a3fd266aea13b98c2247f38e4c0878ab2c88250f6d92d0ed1e9f0"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/1/trace/8536.json",
+      "size": 968,
+      "sha256": "55cf9f96371cbb8e25196dcc98eef078fe4c7e8a74ab2d6423ed9299aeab4e3e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/2/guard/11624.json",
+      "size": 86,
+      "sha256": "398dcaa20468c6f49452397a1568d954b3d545eff6a96e2f34029ceac9df1b40"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/2/guard/25776.json",
+      "size": 86,
+      "sha256": "5851ad9548cc66f0a43a7ca75fc0f1586b579f904dedea4e53b7d16103f8a2b6"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/2/guard/31716.json",
+      "size": 86,
+      "sha256": "3b2c32666e22ba9d070580c1cb9da21abedbe1262e411aa1580aacece475c877"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/2/output.txt",
+      "size": 295,
+      "sha256": "a67a83edfcf30abe0b381e68e471b67b3051febd5a5b153f881693f5305f03cc"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/2/result.json",
+      "size": 527,
+      "sha256": "01367f584e98a03c062de463ad379a0a237e25e12cbcc13bdcdc763c784aab75"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/2/trace/11624.json",
+      "size": 25215,
+      "sha256": "8ebdddb3cfae4b56c8f23a8f83f7e41d8e0b22176ed8d68dc8bf442056256397"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/2/trace/25776.json",
+      "size": 17106,
+      "sha256": "9d064f48c19c9683b26c0d0a4bd37be9e8308e41d868a260af2da85cb88d1262"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/2/trace/31716.json",
+      "size": 969,
+      "sha256": "b136be4f010eb66db2932e1d73f8f905095aae9d3683e11affb83c2e19c9f0b6"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/3/guard/30800.json",
+      "size": 86,
+      "sha256": "159e146b7c9403a66dd0bd48a26f104433ced3025469fb789be208c49fca3aa2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/3/guard/36332.json",
+      "size": 86,
+      "sha256": "6e5771fb6853c5cdca8f3392ccf83d19e493c6814227234135f63306c17f29bc"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/3/guard/36512.json",
+      "size": 86,
+      "sha256": "2e860603872e8720bf37231bc2efe49c69eabcae8b7ed497b23c81fba309ba58"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/3/output.txt",
+      "size": 295,
+      "sha256": "08cc86cde932656a05859d3d9d2523c76ae38d57d5333a970b3a6ccea939028d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/3/result.json",
+      "size": 526,
+      "sha256": "ea4fb1f36a7b23bec68a08a750901bd90834fc4329875898a6ed09e1d1580b4b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/3/trace/30800.json",
+      "size": 970,
+      "sha256": "6ca7f2c4452ceb6926bd312cf5fa478175c9e429c954c44791a9de6d1193c05b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/3/trace/36332.json",
+      "size": 25973,
+      "sha256": "93b4ea265f52a9fccf53506e8e21cd3ec08653ad136b091a5a44284e76276524"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/3/trace/36512.json",
+      "size": 21552,
+      "sha256": "a71f93ec02e18db5b2e0517ef23b88b688b49f172e2a65f0c8b5ff0490019f35"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/4/guard/10028.json",
+      "size": 86,
+      "sha256": "2fab334e4b8603acd358a4e0f12db40cd40781807bc5b29b47fd78971b0d5a75"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/4/guard/14080.json",
+      "size": 86,
+      "sha256": "3d9e70e639cab9bc8c7259799c95ef9fe9985e797dc6a3f3ce847b73b5e27e65"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/4/guard/20668.json",
+      "size": 86,
+      "sha256": "d1c110c55ff72967d489c6f7c4c0361a6cb510e732fc8b97f689799c2daa5870"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/4/output.txt",
+      "size": 295,
+      "sha256": "bff0ffe5e6cee2a82843a3666b695a3ba9fd14f36987f50f84bb292adc0416c2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/4/result.json",
+      "size": 527,
+      "sha256": "d634c5480fc6541f9d2c40b546e11a0e1650ddcf74e640d119ee821c1019abfb"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/4/trace/10028.json",
+      "size": 25027,
+      "sha256": "481d469edc28333d550eda7647aab4bab577507bede8372857a53ca363393069"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/4/trace/14080.json",
+      "size": 19036,
+      "sha256": "e5ad31d5fc6cf5bff69a7457066f0dcfdf0c5d14dd82eef9a3903a73d9294faf"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/4/trace/20668.json",
+      "size": 970,
+      "sha256": "effc9d4863dc603d777b7c01dc65afc3af4c10f90ba92cc4b6e1a352854e22e3"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/5/guard/21632.json",
+      "size": 86,
+      "sha256": "a91586918d1eb6b46bcb03a44c71b485263c2219b19609895de32bf8ad094ff5"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/5/guard/24980.json",
+      "size": 86,
+      "sha256": "43dbc523a31c88b7f0233309bc8fa345d84877a0d505bb2d0b8b497b61c20cd6"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/5/guard/36644.json",
+      "size": 86,
+      "sha256": "a62f0fde0db566ef7649aeab228bcb73f7597f17995b6ce809b9a16363c03139"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/5/output.txt",
+      "size": 295,
+      "sha256": "9a381b061d4e2fb9974b7889e5c2ed87a430466f08f52fd7de8c4266785c3d77"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/5/result.json",
+      "size": 526,
+      "sha256": "48823bdc79d5c48935cd2bb33610e0e3f5b2c5f5d9c0a041f75fd2d4d5e05bec"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/5/trace/21632.json",
+      "size": 24442,
+      "sha256": "08f918f9e42b83851200013d7c93e7226cf3bb4c2e27660048c77158a055d958"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/5/trace/24980.json",
+      "size": 969,
+      "sha256": "1e5334d1b0e8a73753dc944f5da3033f6518877b937cbfdbada7cb25bf31428b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/5/trace/36644.json",
+      "size": 18275,
+      "sha256": "0add71735f2e8767024585371842a100c8f6f40e8a7eb1c37f99aca7167713e9"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline/summary.json",
+      "size": 3492,
+      "sha256": "2333d6629fcf278ad3d310deec78f2ca27b6b1b7af287dce0a9ea40eb7f13aa4"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/baseline.json",
+      "size": 141258,
+      "sha256": "66bc22d4e9249573e7bd18df6aa7e69cfb5a7293a45d8a370d430cce0c47da96"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/ci_original_user_excerpt.txt",
+      "size": 1428,
+      "sha256": "91d57c64aa41f44897ba18fc64114e764b113d303d9012c9c2c9e75a02aacc0c"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/conservation_after_finish.json",
+      "size": 1986,
+      "sha256": "aa7fa7f8a1c798f684d09465591a9f7ba55d14494f030072005853d55c60b523"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/conservation_before_finish.json",
+      "size": 1986,
+      "sha256": "00fa7b37d093195948b883fd4732f8e960fbe88f731420cd019910a722c95a08"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/context_storage.py.diff.txt",
+      "size": 720,
+      "sha256": "3448c533bf88db1b31a97162777b195569b74374827b879891eea23b8083fbbc"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/controlled_trace/33256.json",
+      "size": 185720,
+      "sha256": "3f5a7c354e63ff4c094e155c8e4196036eadd41adf386d0930b95fe8795da969"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/controlled_trace/36748.json",
+      "size": 276,
+      "sha256": "c93e0f6cfcaee16fb70e831ce9c82757497aa5417b37ad0ec94d0c1978571abc"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/controlled_wait.txt",
+      "size": 316,
+      "sha256": "4d8c4774d81672994458308d5485f738f173a8ac6c9a3d85d669077a5a86b286"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/controlled_wait_afterrepair.json",
+      "size": 510,
+      "sha256": "c13073d9fd0ac4b3239e8ca4ed77a453439205063fb18373c94eb5c1ce7cab62"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/controlled_wait_afterrepair.txt",
+      "size": 318,
+      "sha256": "f12c9abba1d629174505577c357bc9582bbf10cddae907cd99a8269177358aae"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/controlled_wait_result.json",
+      "size": 209,
+      "sha256": "7a952a7cfb3485ff5eb336e3911468aab03d7beec409a07589c09044cf31217a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/diagnostics_summary.json",
+      "size": 6113,
+      "sha256": "8bce1991cb1b954ab288fcc2d61ab2e545d08451ab6c29b2f5a40d891337f35f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/error_classification_red.json",
+      "size": 281,
+      "sha256": "8f5b2e91b7f7d94d5af10bcc0baf644a2f4870ac482432c189465cb58c5821b7"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/error_classification_red.txt",
+      "size": 1853,
+      "sha256": "f6a04bf2fe9ee1e9d2aa4b5ce43a928f3efd4510d13010267769e2d19de4cdcd"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/finish.json",
+      "size": 4831,
+      "sha256": "fd8e5f979f048e81214aba4ea404e62ff88069831af8d861c7ce970a7fb0452b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/finish_result.json",
+      "size": 479,
+      "sha256": "9d77971f42fc4e72cecf92a4a6533814d42d3b8fe63c1f8a826e204a4cb5b8b2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/finish_stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_controlled/33256.json",
+      "size": 86,
+      "sha256": "2978f50a8c86e39d233a298d9cf9285adafff336dde41f5211bad71a93917b8e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_controlled/36748.json",
+      "size": 86,
+      "sha256": "9d4ccc55dbf0b44ac6ec1e493571d8810d9a34e34478256969b76d769923c7f6"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_controlled_wait_afterrepair/35436.json",
+      "size": 86,
+      "sha256": "6c2e92db5c64f98f6165b7a73ae78accbacefbc84d769084f87a9c0d19f53ad4"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_controlled_wait_afterrepair/36188.json",
+      "size": 86,
+      "sha256": "7b6f040434efa2983e23fb814521808140d0a4363604a4ecb08176c97eb0b078"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_finish/35144.json",
+      "size": 86,
+      "sha256": "8aed0b629b56cc7bba9aec72fb782ec0a48640e19f3bcf669a9b0a60d793245b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_history_readback/19732.json",
+      "size": 86,
+      "sha256": "ea6fc5fb96f373db51bec01ed8086ee53b55c08bef2d177e37fa33f50e57da61"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/13956.json",
+      "size": 86,
+      "sha256": "3f537dd346c2b3a9bbd65a6c8c65885f5f51984b51eb8d8f3cd9b1ceff34dbf2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/15300.json",
+      "size": 86,
+      "sha256": "16f03c776a6174525726b07f8da9c1fd368b5ad053ea294414d6a07948fd4a11"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/16044.json",
+      "size": 86,
+      "sha256": "618d2a6ce89ce14498af1250c6ec873a2cb054ac643a4eaf38b837149f81e9d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/1656.json",
+      "size": 85,
+      "sha256": "184631345abe4b5b053d8c6340e91037cc984d641004815f1ce1406404421ce4"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/17132.json",
+      "size": 86,
+      "sha256": "5c05c44fea1c6ff912bbe48e70a5814cb8684703930cbf88b53689c8e6866f6a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/29028.json",
+      "size": 86,
+      "sha256": "700b6f75e96b4d6f11cbe56c03395d83c2371aee68be2a1b5d677a1ea6d52f4a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/29244.json",
+      "size": 86,
+      "sha256": "dd10607ee8a3060a7bb4f65792100bb0311fa6d6c49ed3d91bfddac616a7f617"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/31160.json",
+      "size": 86,
+      "sha256": "45b05172afb0c4ce34a8ffc4026a819d8341fd77294cf01eee13bc82b01e4242"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/33108.json",
+      "size": 86,
+      "sha256": "a000105dd4d87d41931895a8a9d5a98740d890395a3f5b6e7c564709262633f2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/34124.json",
+      "size": 86,
+      "sha256": "703ad5aca37e52e713421eecbf0a38943cc2862152a78fabd810621e92006488"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/34764.json",
+      "size": 86,
+      "sha256": "fb71c3505be975897e1d59c73dfc9d8da15823cc93ebcfd26cc06d55bcb8bd97"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/34808.json",
+      "size": 86,
+      "sha256": "a6be76a6241c745116babf79b72830b7d090751e28cd7326cca010cc8b567477"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/34912.json",
+      "size": 86,
+      "sha256": "f111e85a28d1b6188aec6b09b9d7ea4c1d8cd3c6f0f5f7758c61ed022b4f189e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/35540.json",
+      "size": 86,
+      "sha256": "82c673dfd2e5b7a9f61485f449d2dd1176bd5aedee34b508a6240365913d007e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/35572.json",
+      "size": 86,
+      "sha256": "a0b1e78ccdf5be5a8e6fa09e7b306df1826e2cd9eea254d9b79329894f028720"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/35776.json",
+      "size": 86,
+      "sha256": "ad1e7c74ab7fa1835bef576545916e5be253b616fb02498bc97c52c14a748426"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_lock_final1/36760.json",
+      "size": 86,
+      "sha256": "761d008e4dbe670246c5e2a15dd0fba3d0f28c2ccb6e362e2a7dcb0c35a3f9ea"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/14944.json",
+      "size": 86,
+      "sha256": "f578552834b8cc4f931d065735ac47c5be70ae2521918ee47634b343d7a28f95"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/16496.json",
+      "size": 86,
+      "sha256": "74309d89b233e634a52463bc2b2bdb46de33e6e7082a2d475fa613e45f3ed4c3"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/1656.json",
+      "size": 85,
+      "sha256": "184631345abe4b5b053d8c6340e91037cc984d641004815f1ce1406404421ce4"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/22808.json",
+      "size": 86,
+      "sha256": "747bfe0e22512c8d3e15ae5f83e348d6fd30033f73f8458c4da94695e542c709"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/24652.json",
+      "size": 86,
+      "sha256": "73e2c3e865624e973305b7299a028fbb84b85160f4a83915b7c5f83b8811c7ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/24672.json",
+      "size": 86,
+      "sha256": "1ad0baed0fe649e356d4eb080753630d175dd9e5c1a1834e2e4fe4d7e886156f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/26140.json",
+      "size": 86,
+      "sha256": "f5ffa444138dc483091ccc76f3e03d95c1b2069e48baac5cfcb7e47ccc37fc6d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/29096.json",
+      "size": 86,
+      "sha256": "ca29d20d509ea06d58fe2f8829a529a9cf6831b9d1869604d6418834bf3c0319"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/300.json",
+      "size": 84,
+      "sha256": "3fac55ee0a48de4d37de790ae6e64a6f68c63cd77f93d8a504f630850138122d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/30204.json",
+      "size": 86,
+      "sha256": "a49b461677078221e48d9b8fac7cd124708bd8d0d559d12dde7c4d4ddf2e4301"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/32164.json",
+      "size": 86,
+      "sha256": "10cfcd476ef54b069afdddf47834d96390bcdd4b1f00601e16bf4cf76f72c3a1"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/33788.json",
+      "size": 86,
+      "sha256": "448d83cd8b3eee8d4bc6e40464df474017ced7d5b9c1f275ac4fbcf74272a8bb"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/34776.json",
+      "size": 86,
+      "sha256": "d2c0a13b3d347289b7ba65378e74cc986b3ff16a49ea58bfb1dd77971a308f21"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/35572.json",
+      "size": 86,
+      "sha256": "a0b1e78ccdf5be5a8e6fa09e7b306df1826e2cd9eea254d9b79329894f028720"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/35644.json",
+      "size": 86,
+      "sha256": "2653e8e3550da6e3eadc86741f7a133341cf8094b4c89fb3d31fdd1562a98b51"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/35736.json",
+      "size": 86,
+      "sha256": "f100c9e7ffdf17daffdef9e722f83239e1e045064a41c1c9f8615625dc4a3cba"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/36164.json",
+      "size": 86,
+      "sha256": "bbecbf0eec2a1278dadf230ce7c45530512708ce002c9401da8fee8d6be5f5d1"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/36692.json",
+      "size": 86,
+      "sha256": "b0b507b5f8eec91de7f3bbdfca555a9bdcdeefaf1c680bd8b8eb44f81f31b765"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/36848.json",
+      "size": 86,
+      "sha256": "44f867cf92b40de47e1bb6a6933c6daac63d507b767c4041d424a24a54f65176"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_neighbors_final1/8736.json",
+      "size": 85,
+      "sha256": "3055d51fdb77fab04a986f23d65e2048ca431c5beaaf0ea907cf32cbaae274a5"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/1440.json",
+      "size": 85,
+      "sha256": "64bf6a32b14f5397fddefd68f0f432b4f36bba57689631670915b2231aafedf3"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/14524.json",
+      "size": 86,
+      "sha256": "2edff75559e9d83b62619345d9d81f2ce3e7d35c942f3302ef682396558b1b44"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/18720.json",
+      "size": 86,
+      "sha256": "c707acbdb3a5642034e39a0f62d23934fe88595113dadcaaf547dbfecbc8ea60"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/21028.json",
+      "size": 86,
+      "sha256": "e71a6d4ed245e6a06d8e990c91d244072f49e359d689d21fcdca2dfdd2f66399"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/22284.json",
+      "size": 86,
+      "sha256": "bcc0500393c9f8da5463b586caa1dd8548fa03f9e84fc767da8307bca5b0a854"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/22376.json",
+      "size": 86,
+      "sha256": "8adba3317f165ad9e1b9cc34f7dac710a5a03d7ca6e5bbd484a1cca327ec342f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/23236.json",
+      "size": 86,
+      "sha256": "1e0b093205ca9c6d9d4de78f7a9f2be11daed179e8ba07d185f469f8d77f5ab3"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/23348.json",
+      "size": 86,
+      "sha256": "58c0acbe32c4755531c5864e622413c28902bbfebe926d544a5e9c493b04601d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/24652.json",
+      "size": 86,
+      "sha256": "73e2c3e865624e973305b7299a028fbb84b85160f4a83915b7c5f83b8811c7ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/24980.json",
+      "size": 86,
+      "sha256": "43dbc523a31c88b7f0233309bc8fa345d84877a0d505bb2d0b8b497b61c20cd6"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/2656.json",
+      "size": 85,
+      "sha256": "7e3a38675b276ac17a0b3515f5cd51e0c3fc1faa07c80290d091c6ca3cb84012"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/30020.json",
+      "size": 86,
+      "sha256": "5ea9a69a41b933d5a68ef1041466e88da69b915ed7bcd95a1dc9b6a3db737aca"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/30536.json",
+      "size": 86,
+      "sha256": "6ccfda9b9e3e67256a7a348a8c31885be5f596cd69c1472401efb5c1238ac449"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/30616.json",
+      "size": 86,
+      "sha256": "d4b933665541ea54070fcb1843b6907680d72b8ee0f83fd0463517f7246d41e8"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/32560.json",
+      "size": 86,
+      "sha256": "1eeda5a86f1c72208d8e862257fd30cae77218387a43d104a98a9bcdcdc55264"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/32724.json",
+      "size": 86,
+      "sha256": "db7d7183898f491cbe5920c806d0b418195b0ae66fcc2b859ab41b9b6c604d56"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/33160.json",
+      "size": 86,
+      "sha256": "df7bf8acbbde5f8f52487ca585d215339486063eb2a841d6d615b6767e4a295a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/33272.json",
+      "size": 86,
+      "sha256": "b7295a3d9e9faf3a3b05d41a0bc19a22be01fee5846aa8cf71ef7dc5bd2ab408"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/33420.json",
+      "size": 86,
+      "sha256": "cd2dd806fb6454270e7f9065322a2fa3c97f994ec7df821448d3ff37fe23c06a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/34624.json",
+      "size": 86,
+      "sha256": "4392acf2e693f49cb9467086f92c171bb95c9c822902d3a727b4c6c31f6ff690"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/35188.json",
+      "size": 86,
+      "sha256": "a2964a63533e8428c44f2199ef75f7556046b057fafd54c6df1cfdd1966b7ef8"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/35208.json",
+      "size": 86,
+      "sha256": "e2171916c9d9718760ccc43a3e3b45fc56dae22df44d445e285bc1dfeec2b0af"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/35384.json",
+      "size": 86,
+      "sha256": "82d0311b667d867268bc579dfde9303bca320da44796a0b2c8012029f2321277"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/35644.json",
+      "size": 86,
+      "sha256": "2653e8e3550da6e3eadc86741f7a133341cf8094b4c89fb3d31fdd1562a98b51"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/35780.json",
+      "size": 86,
+      "sha256": "e5a7996b0ee1e8af4a7c07c2f72f6a9f1b1453e1c42923e9b5c69962eab543bc"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/3596.json",
+      "size": 85,
+      "sha256": "a4683b81fc57c2ccba0916e73756e8006fd869a35a6d0661e23fab0dfeeff395"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/36848.json",
+      "size": 86,
+      "sha256": "44f867cf92b40de47e1bb6a6933c6daac63d507b767c4041d424a24a54f65176"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_python_final1/6116.json",
+      "size": 85,
+      "sha256": "1423a15830dbda67660c8d717a038156dac3098cb9d48a694de60a08916fb329"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress/29244.json",
+      "size": 86,
+      "sha256": "dd10607ee8a3060a7bb4f65792100bb0311fa6d6c49ed3d91bfddac616a7f617"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress/30036.json",
+      "size": 86,
+      "sha256": "c151099b8b9f0236d574d164ff56eb32192bd75d20b7bbc334ef8c1186cac73e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress/32924.json",
+      "size": 86,
+      "sha256": "04f0ec0443c75090338305c4927ecf8b7bcb1dd16fba78f1665266310643ac24"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress/33532.json",
+      "size": 86,
+      "sha256": "47ca4937cf16b58d493de76074b723da0a0b02f9af1a282de55197f6021ab281"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress/35940.json",
+      "size": 86,
+      "sha256": "1948cc6b124de4d4d75639dd04feea1b963b4d16847074710bb44a0d0fed1fb6"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress_writers_afterrepair/14620.json",
+      "size": 86,
+      "sha256": "f05146ad2e5fff069661e8bde6ff7dc23db86f69ddb9864c8fa9fb3e485735ac"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress_writers_afterrepair/2656.json",
+      "size": 85,
+      "sha256": "7e3a38675b276ac17a0b3515f5cd51e0c3fc1faa07c80290d091c6ca3cb84012"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress_writers_afterrepair/28916.json",
+      "size": 86,
+      "sha256": "e736136b70e021634b34b09186dae9d46b01283a86e7d849969395ff1df02a26"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress_writers_afterrepair/32612.json",
+      "size": 86,
+      "sha256": "b0bdc6e23300c964367f70fa44187989510aa575ca750ef3e75313cc19aecc91"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/guard_stress_writers_afterrepair/8736.json",
+      "size": 85,
+      "sha256": "3055d51fdb77fab04a986f23d65e2048ca431c5beaaf0ea907cf32cbaae274a5"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/history_readback.json",
+      "size": 795,
+      "sha256": "b65ee9968ef5b5cc43dcd762e73b40f4163d9ef515f8165fc9498048f46f4801"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/history_readback_result.json",
+      "size": 229,
+      "sha256": "f26cf76df092174af1f17a0b7a000d2bf322c960067c26aaa11dd670006f7e3f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/lock_final1.json",
+      "size": 1707,
+      "sha256": "43fbdc69d9224f3f335bc8982b73e95e4953c2427aa9dbf73a938123e63e1d6c"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/lock_final1.txt",
+      "size": 2687,
+      "sha256": "ad2eb0cb1837dd9ceeeb17314e1095d997bb29ed23fd0c388deece242051020d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/native_finish_before.json",
+      "size": 499,
+      "sha256": "a3ec6ffac52a4ec3cf40369bf02db44c1d402d5b7b8952f57c67b6588bec4f97"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/neighbors_final1.json",
+      "size": 1783,
+      "sha256": "654bc29d9bdc8d604bbc0b2bee2fa29626fde295ca4005fe6e3e56a34fd5c02a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/neighbors_final1.txt",
+      "size": 178,
+      "sha256": "d17525b775a504436ab75ee71beb4cac985ae53f29a8125296c5823aa907afef"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/package_verification.json",
+      "size": 258,
+      "sha256": "bcd92ba454e59a3b802f7ff66753cc022cd4a5571400c00bdcfbc0c5bd3c545c"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/provenance_notes.json",
+      "size": 765,
+      "sha256": "479251fd272adfe120bd1a67b8078ed3cc0627080610b70d02ed92d6485b7bcb"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/published_first_fail.json",
+      "size": 619,
+      "sha256": "b053d407c48746f44c5dd822c3dcd6b21cd189902fad1d2668aff132434a23f8"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/published_review.source.txt",
+      "size": 6756,
+      "sha256": "3e98e4c7a3e76081ceff521f9b8e72babb5510be75d23f9bf0716eee6eb79799"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/python_final1.json",
+      "size": 1834,
+      "sha256": "766892f2ef384578f522928ef5dc1f8d77fe7059006d31411daf2badcab3a783"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/python_final1.txt",
+      "size": 31396,
+      "sha256": "30c66fe08faf87b9a441f02601329d94b79596d7982f14bcc6f376b82f3c8357"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/results_summary.json",
+      "size": 6937,
+      "sha256": "bad60f46b8f90ccb7a8dda65a2100ac4c6ec0698b5e9dbb27937d80520359436"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/1/guard/35020.json",
+      "size": 86,
+      "sha256": "ac13fd0a9371efdf4a86bddf0f0b5d7a0a8dc41a8fe67400114e41530224e234"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/1/guard/35104.json",
+      "size": 86,
+      "sha256": "9a688f070b314d85551f71cc2a421209f74b91996162d45546abc0c0b80eb862"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/1/guard/36684.json",
+      "size": 86,
+      "sha256": "cfde00e704f85b0d7c6d9a4577cab15472d9f18b5ce2e6e7f6f9b2eeb3aa143a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/1/output.txt",
+      "size": 296,
+      "sha256": "abc3916005aef1809741cc830138b3c288c29a885063a219b48ff6e7a476dbaf"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/1/result.json",
+      "size": 528,
+      "sha256": "45473d7c9eb3e910087e5304be4b279331f3814516dce4d707beb8ed1a651882"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/1/trace/35020.json",
+      "size": 274132,
+      "sha256": "bb0c752a9ce7cbc5d363dc285328557e0aef5ffb6a588f5f70b496efd3aaf3b1"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/1/trace/35104.json",
+      "size": 972,
+      "sha256": "9505dacc037055d8a80e47d7ba585aaba3087a2523b1b52a186ad63a86a13804"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/1/trace/36684.json",
+      "size": 247373,
+      "sha256": "60acad35ffc3eebb35dd73e5dedc36563646baad3aac497870948f3a8cc1d533"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/2/guard/23932.json",
+      "size": 86,
+      "sha256": "879464c8a3e9761108a0bac0da3b5367290bf444123c182f7e90e191e2166311"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/2/guard/34256.json",
+      "size": 86,
+      "sha256": "ad3023bf2321f7632e97eb250ae3775bc3fb569a73b6addc8c54ebac8b7e1ba0"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/2/guard/35536.json",
+      "size": 86,
+      "sha256": "e7d5e3c26778d398f4c48efc56597c141be44c8813a3a3677378580a43ba4b3b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/2/output.txt",
+      "size": 296,
+      "sha256": "d434ccffae3c40381c05f0779fcd3f621599efd0899846b5b8f90ccbaa1c062e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/2/result.json",
+      "size": 527,
+      "sha256": "16f12238eda59216d0743f2345ebb8edc4da453be273c537c3012176866c045f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/2/trace/23932.json",
+      "size": 134556,
+      "sha256": "c4ffd713b038d695d8bf7487d600df21156b6f5062d98f6206f909980e034044"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/2/trace/34256.json",
+      "size": 973,
+      "sha256": "0aa5937d2734834603406fd8fa094b5e3bd5d1ff15c1e9238b78fd8096bfb3c4"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/2/trace/35536.json",
+      "size": 274326,
+      "sha256": "1c69fd6ee8606ddb95612db4483910cb2aeda5f0f85958a69f86c5bd8c9a0943"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow350/summary.json",
+      "size": 1630,
+      "sha256": "5a2792ac74e226ca3d8108052c52e7d73ca366bec9e666445cc064a33c2f0452"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/1/guard/11536.json",
+      "size": 86,
+      "sha256": "0a86d0ccde2981555bf77d0cfc1e459b9b0eafb5429964ce2292817beb7a110c"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/1/guard/36348.json",
+      "size": 86,
+      "sha256": "29c205b45fe0306824c308708cfce94c3dff3b3a1916782999e24c5caa25c1b2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/1/guard/9496.json",
+      "size": 85,
+      "sha256": "98b3cf7921413336f9c8c8913714942e704578e64b7f017ce7e0aa1be2d21aee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/1/output.txt",
+      "size": 296,
+      "sha256": "30b4e2f9dc94bc369ad77b2e0a93eceb118415c3e93574a26abe51e39cba0a87"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/1/result.json",
+      "size": 527,
+      "sha256": "a9f95263a7a2c61581e932c8d7b167c4a8f42d91e4d43d87b69ecda5b0c1f10d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/1/trace/11536.json",
+      "size": 969,
+      "sha256": "0991db9a765491ce8f320843aa20bae2e410d084b0ca7ceab66b224a0500a69b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/1/trace/36348.json",
+      "size": 278321,
+      "sha256": "e22658e4d6203746f629dcad74686f975fd84910f5381b83dcfd0efb9ec7e596"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/1/trace/9496.json",
+      "size": 382279,
+      "sha256": "3dccccbbf3120abcf01fcb88f09e2db275bd61db133ce1ddd23920b73948e9ec"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/2/guard/27952.json",
+      "size": 86,
+      "sha256": "d4952ec450e7a2a98231deb4a7fd5495e51317be58a213ad46f39f20a236fd90"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/2/guard/30868.json",
+      "size": 86,
+      "sha256": "0b160083c66cdb3d02807d025584ddd19207dcdeebcde84854f136a7d8dc0a81"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/2/output.txt",
+      "size": 1848,
+      "sha256": "a0c144d88f72e9a1825f9cc4405311124531df87cf126ffd4a339a1a52cab116"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/2/result.json",
+      "size": 776,
+      "sha256": "856f1e47eee647476c2bb24d5dc0018197544dcdae18a2b6b75809d5b4436bce"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/2/trace/27952.json",
+      "size": 185756,
+      "sha256": "2c9012d424dfe8ff0a19c998a4275717c4308ff9a31f0e0c3255be1a4b0495cc"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/2/trace/30868.json",
+      "size": 971,
+      "sha256": "d2153119646516cc7126bde26ba0780c5cb929a4082fa46d60cf78a079818da4"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500/summary.json",
+      "size": 1922,
+      "sha256": "bc4855f702db41db06fac4eddcb4bf7839f7ea4a7670b50446ff67529b48228c"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/guard/18632.json",
+      "size": 86,
+      "sha256": "449ecae8e402aa06cfee17e9bcc43d8689c73a7ccd16f8885a8922142933f3e4"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/guard/29044.json",
+      "size": 86,
+      "sha256": "ec77f77ee89dfcc9cf2005507dfb55a094caed2af20a4fe23a10c037f40cb15d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/guard/36712.json",
+      "size": 86,
+      "sha256": "baf6ed9edb1aedcc8293733f9e630152a9c43f1ae5e4a2d1596661c78b19f6f9"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/output.txt",
+      "size": 296,
+      "sha256": "6320cf0628dcc8aca98352a0cf3d1fa86d5f054aa1c79a8322dff0f0b3d52dda"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/result.json",
+      "size": 527,
+      "sha256": "5f0755a670e7970c81258d99378aefdcbdab67ab67866192852c90291ac11930"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/trace/18632.json",
+      "size": 403770,
+      "sha256": "1064b4a9147aa2945ae5a725e9749422641dce69de89063572c583ecea617580"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/trace/18632.live.jsonl",
+      "size": 7329,
+      "sha256": "6ab21b95a0b1ea0ddbde1a0685e9e4176b526928dca9cc58901de6f1a83e8c2a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/trace/29044.json",
+      "size": 981,
+      "sha256": "e5f27c5139bdbd694fc2abd5e704707fb331286fde02be74a47d98a5f75523c8"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/trace/29044.live.jsonl",
+      "size": 332,
+      "sha256": "499b5c43f2397b2eee2d8d933df5f6a6ab513b7ad2ae3df7c3f6534f378138b8"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/trace/36712.json",
+      "size": 310517,
+      "sha256": "9306b297fa6b0376d12904eb682b693f906a1464aefb8cc88dc675f3668f8910"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/1/trace/36712.live.jsonl",
+      "size": 7330,
+      "sha256": "20fd7e630ec5f7ec963d8531ef2ddf7841dc9e6e0973b4d84a9bd82e633c4cb8"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/guard/35308.json",
+      "size": 86,
+      "sha256": "481b8b7cabb787ab60ca766da2ea87018615b9926e4b61a75e685a6dbd83b7eb"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/guard/8584.json",
+      "size": 85,
+      "sha256": "4cc15b5281f450dfa7ff6ba04cdbd8b5bade164bdded7a5b3146fc4478f83379"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/guard/9764.json",
+      "size": 85,
+      "sha256": "85925fbe0948b0fe0486c15cf47dae0758b5eb6cf06b748c40b912b832569c14"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/output.txt",
+      "size": 1848,
+      "sha256": "1d8aabfe0a39e60a5cee51a42702c4d7c8ab6e37364a0e6ebccdbb509a99e946"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/result.json",
+      "size": 789,
+      "sha256": "9cd257b4d58355fe01e25e09c88284b6c61288df3799e768dbcdf99330415daa"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/trace/35308.json",
+      "size": 144304,
+      "sha256": "a9d4e81df2f05ea1fac0c01b964d2e309d0ab419bbb366f6bf940a08031c5dce"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/trace/35308.live.jsonl",
+      "size": 7331,
+      "sha256": "de6f4dc2420ab7f84939c7f47e14b282807b205c2287f264fa9ddfeda73095a7"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/trace/8584.json",
+      "size": 206573,
+      "sha256": "1975ced6e3635844b924d3581e8d3e413f7601e8e3352f5a0dc56d9a776a5070"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/trace/8584.live.jsonl",
+      "size": 2550,
+      "sha256": "b12db9168ddc98475d9424484aac8aa1acc250f9983d9907b585905e02473487"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/trace/9764.json",
+      "size": 980,
+      "sha256": "ff456e58b55c8c50d85e8e2163b0e5da1d8aebdee9f4918787b107037738c8d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/2/trace/9764.live.jsonl",
+      "size": 331,
+      "sha256": "120fc39c56219fe7e456b0228f8e227aee0f2ee81bcfb9d77740de506e3d9995"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500live/summary.json",
+      "size": 1935,
+      "sha256": "1ad7ee30a29540928516f760f32a7769c3aabd1dcd0dd42a716633867f3912ac"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/guard/15308.json",
+      "size": 86,
+      "sha256": "518b8a237b7655b127da9e7afe6de2bdf9f8f636ba9cd8222ae7006734c6dc75"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/guard/35180.json",
+      "size": 86,
+      "sha256": "9cc4f1065913499e2209a52275a6ee3e3c85a5be7caa405cba406a81bd9a9972"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/guard/36808.json",
+      "size": 86,
+      "sha256": "5f831f5d44a1479647c324d3f0346520980c42d99a5c63c14ed9ddffa87f7883"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/output.txt",
+      "size": 2817,
+      "sha256": "73e0f2ef662466354e659317491eef7ac21351d142626313bc4c6681a4b6a94a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/result.json",
+      "size": 791,
+      "sha256": "b16548781f919d73446a6fb24035ce8a54ab77356d5f6161081869f6e10b42fe"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/trace/15308.json",
+      "size": 271060,
+      "sha256": "2c716e7986e2043be35c1cd790cd8d4321d5fa1333dde3d9932d18a6c2917492"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/trace/15308.live.jsonl",
+      "size": 7331,
+      "sha256": "1e05fbb5a607100cb30843e0d59f31fe79b4417dacc321b73437dc6d06ca4ec6"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/trace/35180.json",
+      "size": 981,
+      "sha256": "e96b116f55e7d0c93b658f48cdc1c2ae7b6628befb91fb66273e54e1709aab4b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/trace/35180.live.jsonl",
+      "size": 332,
+      "sha256": "ea93c71f6aa2e5ddc54b11d0a923c546ee4a573dbc52ce585ddd403ed8847b5f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/trace/36808.json",
+      "size": 341768,
+      "sha256": "6bb1117ea3621da9e0c9f9ede8dc2c9c104b36cf4f0cb02099f9e46270444fed"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/1/trace/36808.live.jsonl",
+      "size": 4991,
+      "sha256": "181f70d14c1d12d2092de4ce3c89b7bbc2544530c66ebc717f305f139d3cca4d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/guard/31160.json",
+      "size": 86,
+      "sha256": "45b05172afb0c4ce34a8ffc4026a819d8341fd77294cf01eee13bc82b01e4242"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/guard/32516.json",
+      "size": 86,
+      "sha256": "58b21d9e5f40f6677f5b12b8c5d81aae4c4e647c4154a2a6d7cc1bd9e06b73a8"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/guard/33512.json",
+      "size": 86,
+      "sha256": "2079920497d8fed556696228ba6242ec508c6064c006f4f1f1d913f7e7385f67"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/output.txt",
+      "size": 296,
+      "sha256": "859df5566ac43eb638a331035cbfd0d296aa4ec9c94b328d769bf0e140acad9d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/result.json",
+      "size": 528,
+      "sha256": "bb0455a9ee64d2f42f72f0d42bcc89f7ccf776c81ccdc3dbed851c21aca38341"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/trace/31160.json",
+      "size": 979,
+      "sha256": "96fca34370439863ff5bc7cb562f624ebc5c411de22273c47dc5828786a8f304"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/trace/31160.live.jsonl",
+      "size": 332,
+      "sha256": "fb1beff6bdc051a80b96c5b486cd44da897d2ab4261637f7a61eebf236c2966b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/trace/32516.json",
+      "size": 392953,
+      "sha256": "2337a888827021a92d3a0d903550ada01f20fb50f8437b87ba934b3b0bf87d17"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/trace/32516.live.jsonl",
+      "size": 7332,
+      "sha256": "c0ccaa415546568ff64738f4fe3dce786d16cb4ab863e1ba5ad3b6c1433fdd1f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/trace/33512.json",
+      "size": 333534,
+      "sha256": "3dd8798bd57c836cc7b47e8534688c19f755549cae268f017dcf9635eaf5ccab"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/2/trace/33512.live.jsonl",
+      "size": 7329,
+      "sha256": "e53b3bd386f33e8d02092e988e1b1fda8a0616ee0657b397eb3a714e573c6330"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/slow500utf8/summary.json",
+      "size": 1938,
+      "sha256": "d4c40c93eeacaef4943e14694f9818129a1fac1a2dfe5ae8111162d2a6f39d0c"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stderr_truncation_red.json",
+      "size": 282,
+      "sha256": "b1c2f7ab5d2105b22e5cc6ed7b1bfe07481751e3a3369202e2731714d28796fa"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stderr_truncation_red.txt",
+      "size": 1738,
+      "sha256": "a5319d2d14d32e128a999091c368dadd340878e67feab6ea9380d2474629ab7a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stress_trace/29244.json",
+      "size": 56482,
+      "sha256": "21e543a4fe59542a51182dd14e57cfc591aa3e67c73b17ded125856f3c34d6ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stress_trace/30036.json",
+      "size": 54172,
+      "sha256": "760db6fad3a243281230e1cad66e2c03c5a2b6a1c0074b52c7b479da8a7e2c63"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stress_trace/32924.json",
+      "size": 1358,
+      "sha256": "059aaf3744085a6ef4e443f045c509a0dac84b78edc6fd1614e548e7e2a78ab2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stress_trace/33532.json",
+      "size": 47047,
+      "sha256": "f3a375431631110f19775e889c9514b9ebe5d9e05409c839a3d75f828a416ea7"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stress_trace/35940.json",
+      "size": 41058,
+      "sha256": "9cb6719548addae04985e03738df3dfc331979dc51b05faaa180dd0da807b86a"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stress_writers.txt",
+      "size": 7617,
+      "sha256": "41ee14eed10bb827064bc92f430f8a500b63dd697e5df7a3c7887bea8df05ad9"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stress_writers_afterrepair.json",
+      "size": 509,
+      "sha256": "262de858a864746062bd9cf8e412f4b14d2c8f63a95e1adff0c1504a57fef3c3"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stress_writers_afterrepair.txt",
+      "size": 7615,
+      "sha256": "d357416619ce62581c364385f7798d950b830a20d79b9bc4c6c1878e54105ca2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/stress_writers_result.json",
+      "size": 208,
+      "sha256": "697a2a660becd8c5699a0f6642a8c76b041f0bbf880f689340b9cd6e0fa356d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/test_ultra_chat_storage.py.diff.txt",
+      "size": 4303,
+      "sha256": "0034f7659a1e5886276c67064440e52b7b4f5c003c87904834f3275de817bf30"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/timeline_analysis.json",
+      "size": 3510,
+      "sha256": "a2ec78216fabbf83b88c00b034ca8bed654fc95602b95a7c4177dc385a9f4732"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/trace_controlled_wait_afterrepair/35436.json",
+      "size": 276,
+      "sha256": "d30bb9e4f7e7905a6b6d9a7dc1148f1c75b0264617489d43238ca407eb453a9e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/trace_controlled_wait_afterrepair/36188.json",
+      "size": 185741,
+      "sha256": "8f09c8728b9d05d7b7ca7b893a242267b11073aa967970e6cfbdbf8371f065d5"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/trace_stress_writers_afterrepair/14620.json",
+      "size": 47968,
+      "sha256": "15ff5392990a2818a4e7f6c23b07b302b5183c739da1b625442c067ec6d8d75d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/trace_stress_writers_afterrepair/2656.json",
+      "size": 36821,
+      "sha256": "4644ce5b005dae266b0962b5d68123a1fd3fb2c19bea0ff6c280e9ca31ea9de7"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/trace_stress_writers_afterrepair/28916.json",
+      "size": 53455,
+      "sha256": "b1ed6ad74258c06dd73433542c3f1105c27e2f18a2762a3ffb43fd769442576e"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/trace_stress_writers_afterrepair/32612.json",
+      "size": 1370,
+      "sha256": "f43f5ac1e3582317532235a1f60fef8b3197c670d4e82ee6d14305622666e261"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/trace_stress_writers_afterrepair/8736.json",
+      "size": 43787,
+      "sha256": "9c9885c95f0f7bd5e9b21ec019df6f401cffd916b2a7fd8352329a75a839d378"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/utf8_diagnostic_red.json",
+      "size": 227,
+      "sha256": "b2ec6963513452bb08aacb71ec57c5419cac488d297cb945481b19ab1dc2d01d"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/evidence/utf8_diagnostic_red.txt",
+      "size": 1020,
+      "sha256": "eb964560a281d400d7f4877c5ff565639a1f550a05a0012baee2fa87e057d35b"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/finish_receipt.md",
+      "size": 1653,
+      "sha256": "b4d762d70998db9994da7fd57ee6539e006b0e79792a67ba4d36c991e94178bd"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/guard/sitecustomize.py",
+      "size": 2283,
+      "sha256": "031e3bdfc1b43a6e8f59c931bdca428b33d77db8d2ddafddcb0e524b8619096c"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/guard/writer_trace.py",
+      "size": 3033,
+      "sha256": "092a579424e03d0a1a387df58e5b06035f9699d1a6600ccf376f9d2693af75ad"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/handoff_task.md",
+      "size": 15291,
+      "sha256": "445554a5bd6e811292aee1bf2c8a0f7b95b9ae4e15ba842593f577ebbd27213f"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/handoff_to_coordinator.txt",
+      "size": 4141,
+      "sha256": "94cfe1e5130ab0adcf26d9f129892e94de6d47932908e687cef29e69b6d3b4ce"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/report.md",
+      "size": 23830,
+      "sha256": "0706425047d31e749fef93b4cc58c4fe28b268e68eb1047d737a89e1eb0d3a57"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/run_diagnostics.py",
+      "size": 3033,
+      "sha256": "433eb3501750583f4a8fdb0374daab75ce9aac4da4490f71039a6ea8765cf167"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/run_probe.py",
+      "size": 1627,
+      "sha256": "a98c4006f0b5e9fb773ab5dafa8f1ead159436a19c6f030cc3e002c237adaaff"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/run_regression.py",
+      "size": 3386,
+      "sha256": "51ce633f1aedc5c6431bdbec9a5233a78a6e07fe9e590df416373a66ed316f33"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/stress_writers.py",
+      "size": 4465,
+      "sha256": "9290d91bede201cef27e168363a1bbbf7d6f2b260ce2b7d540bcfa3b6d06b2e1"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/task_record.json",
+      "size": 746,
+      "sha256": "977bccf6ef4f390b3ca2be394cf4892349bc7ce7565d619a4b1df83fd91498ce"
+    },
+    {
+      "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/verify_package.py",
+      "size": 4116,
+      "sha256": "b4a89af8e9c1caace41afad37ca43883f0eacea93e6aea90e955a49cc2f352dc"
+    }
+  ],
+  "open": [
+    "Original CI physical slowdown and per-lock timing not established",
+    "No FIFO/liveness guarantee under arbitrary slow I/O; legitimate busy remains",
+    "Independent CI/portability and existing storage residual risks remain OPEN"
+  ],
+  "native_finish_exception": "Unmodified task_slot_rotate.py finish; own card/history artifacts generated by it",
+  "self_hash": "excluded to avoid circular digest"
+}

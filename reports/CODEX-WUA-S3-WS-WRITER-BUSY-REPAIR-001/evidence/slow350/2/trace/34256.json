@@ -1,0 +1,46 @@
+{
+  "pid": 34256,
+  "events": [
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47125.9060364,
+      "end": 47126.2585469,
+      "injected_delay": 0.35
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47126.265314,
+      "end": 47126.6165431,
+      "injected_delay": 0.35
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47125.9042772,
+      "acquired": 47125.9047512,
+      "released": 47126.6178294,
+      "end": 47126.6178769,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47126.6210642,
+      "end": 47126.9732618,
+      "injected_delay": 0.35
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47126.6187571,
+      "acquired": 47126.6191454,
+      "released": 47126.9801526,
+      "end": 47126.9801918,
+      "error": null
+    }
+  ]
+}

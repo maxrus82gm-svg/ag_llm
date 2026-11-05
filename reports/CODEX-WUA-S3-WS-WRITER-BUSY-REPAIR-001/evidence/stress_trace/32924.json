@@ -1,0 +1,63 @@
+{
+  "pid": 32924,
+  "events": [
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47286.4628867,
+      "end": 47286.4646907,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47286.4707038,
+      "end": 47286.4714365,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47286.4612487,
+      "acquired": 47286.4617358,
+      "released": 47286.4725542,
+      "end": 47286.4726054,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47286.47581,
+      "end": 47286.4771396,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47286.4735253,
+      "acquired": 47286.4739086,
+      "released": 47286.4830735,
+      "end": 47286.4831055,
+      "error": null
+    },
+    {
+      "kind": "fsync",
+      "phase": "setup",
+      "start": 47286.4848987,
+      "end": 47286.4862228,
+      "injected_delay": 0.0
+    },
+    {
+      "kind": "lock",
+      "phase": "setup",
+      "nested": false,
+      "start": 47286.4836028,
+      "acquired": 47286.4839845,
+      "released": 47286.4920346,
+      "end": 47286.4920673,
+      "error": null
+    }
+  ]
+}

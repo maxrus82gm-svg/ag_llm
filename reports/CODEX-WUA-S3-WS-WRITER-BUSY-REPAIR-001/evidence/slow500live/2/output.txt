@@ -1,0 +1,29 @@
+test_two_processes_write_raw_create_and_rename_without_losing_anything (test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything) ... Exception in thread Thread-4 (_readerthread):
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 1599, in _readerthread
+    buffer.append(fh.read())
+                  ^^^^^^^^^
+  File "<frozen codecs>", line 322, in decode
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xe7 in position 1640: invalid continuation byte
+ERROR
+
+======================================================================
+ERROR: test_two_processes_write_raw_create_and_rename_without_losing_anything (test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_ultra_chat_storage.py", line 572, in test_two_processes_write_raw_create_and_rename_without_losing_anything
+    made = [json.loads(self.finish(child)) for child in children]
+                       ^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_ultra_chat_storage.py", line 101, in finish
+    self.assertEqual(child.returncode, 0, err[-800:])
+                                          ~~~^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+----------------------------------------------------------------------
+Ran 1 test in 28.849s
+
+FAILED (errors=1)

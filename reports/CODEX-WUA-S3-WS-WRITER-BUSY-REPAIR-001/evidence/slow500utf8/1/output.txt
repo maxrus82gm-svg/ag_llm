@@ -1,0 +1,46 @@
+test_two_processes_write_raw_create_and_rename_without_losing_anything (test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything) ... FAIL
+
+======================================================================
+FAIL: test_two_processes_write_raw_create_and_rename_without_losing_anything (test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_ultra_chat_storage.py", line 603, in test_two_processes_write_raw_create_and_rename_without_losing_anything
+    made = [json.loads(self.finish(child)) for child in children]
+                       ^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_ultra_chat_storage.py", line 132, in finish
+    self.assertEqual(child.returncode, 0, err)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<string>", line 12, in <module>
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001\guard\writer_trace.py", line 61, in call
+    try:return original(*args,**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\context_storage.py", line 794, in append_raw_message
+    result = commit_raw_message(
+             ^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\context_storage.py", line 741, in commit_raw_message
+    with _existing_workspace_writer(workspace_root, expected_workspace_id) as writer:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\context_storage.py", line 2032, in _existing_workspace_writer
+    with _workspace_writer_lock(anchor):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001\guard\writer_trace.py", line 30, in traced_lock
+    with lock(anchor):
+         ^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\context_storage.py", line 1967, in _workspace_writer_lock
+    raise WorkspaceBusyError()
+context_storage.WorkspaceBusyError: Workspace занят другой операцией записи. Повторите позже.
+
+
+----------------------------------------------------------------------
+Ran 1 test in 35.337s
+
+FAILED (failures=1)

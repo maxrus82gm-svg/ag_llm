@@ -1,0 +1,67 @@
+{
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "results": [
+    {
+      "round": 1,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything"
+      ],
+      "exit_code": 0,
+      "seconds": 43.86,
+      "lock_operations": 80,
+      "wait_max": 8.731349599998794,
+      "hold_max": 1.0135468000007677,
+      "lock_errors": [],
+      "byte_refusal_errno_counts": {
+        "13": 3288
+      },
+      "fsync_delay_ms": 500
+    },
+    {
+      "round": 2,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything"
+      ],
+      "exit_code": 1,
+      "seconds": 29.094,
+      "lock_operations": 55,
+      "wait_max": 6.939325599996664,
+      "hold_max": 1.01623390000168,
+      "lock_errors": [
+        {
+          "kind": "lock",
+          "phase": "append_raw_message:p1-8",
+          "nested": false,
+          "start": 47447.8429339,
+          "acquired": null,
+          "end": 47457.8464579,
+          "error": "WorkspaceBusyError",
+          "code": "workspace_busy"
+        }
+      ],
+      "byte_refusal_errno_counts": {
+        "13": 1597
+      },
+      "fsync_delay_ms": 500
+    }
+  ],
+  "source": {
+    "context_storage.py": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280",
+    "test_ultra_chat_storage.py": "d1b8733f00f8d33cd36552b1ee16aaf3aeb879b971c22559fe94c66b5c780cc2"
+  }
+}

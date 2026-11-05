@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "1d79f38cd177b075f7caf2e65dbe55b884a035042b36a52e9376b985cb8a3ce3",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 196,
+    "b11b": 202,
+    "b11e": 362
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+    "problems": [],
+    "title": "",
+    "lines": 147
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+    "copy_sha256": "6ad32e2e68c145bca38a04429b94ab54f67172430d4b369491210b5b7edd75bd",
+    "history_id": "H-CODEX-000013",
+    "history_record": "reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "1d79f38cd177b075f7caf2e65dbe55b884a035042b36a52e9376b985cb8a3ce3",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+    "copy_sha256": "6ad32e2e68c145bca38a04429b94ab54f67172430d4b369491210b5b7edd75bd",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/handoff_task.md",
+    "archive_sha256": "7efe959bbb12a5d8d28b81defd53d68d232f74ccac4ab1d2cc0c22530c684460"
+   },
+   "history_id": "H-CODEX-000014",
+   "new_card_sha256": "a7268eeb67bd8f24ab382f71321f93fa8a21f901e75e05a30b89261e0fdc0ccd",
+   "copy_sha256_lf": "245d7f8b18cc8e2f10997ca83540eae41ecb0f95e526eb1d5bf43b64a60f3ae8",
+   "copy_lines": 147,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 1,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "1d79f38cd177b075f7caf2e65dbe55b884a035042b36a52e9376b985cb8a3ce3",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+    "copy_sha256": "6ad32e2e68c145bca38a04429b94ab54f67172430d4b369491210b5b7edd75bd",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/handoff_task.md",
+    "archive_sha256": "7efe959bbb12a5d8d28b81defd53d68d232f74ccac4ab1d2cc0c22530c684460"
+   },
+   "history_id": "H-CODEX-000014",
+   "new_card_sha256": "a7268eeb67bd8f24ab382f71321f93fa8a21f901e75e05a30b89261e0fdc0ccd",
+   "copy_sha256_lf": "245d7f8b18cc8e2f10997ca83540eae41ecb0f95e526eb1d5bf43b64a60f3ae8",
+   "copy_lines": 147,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 1,
+   "history": {
+    "id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+    "history_id": "H-CODEX-000014",
+    "record": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "445554a5bd6e811292aee1bf2c8a0f7b95b9ae4e15ba842593f577ebbd27213f",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "a7268eeb67bd8f24ab382f71321f93fa8a21f901e75e05a30b89261e0fdc0ccd",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 206
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+    "copy_sha256": "245d7f8b18cc8e2f10997ca83540eae41ecb0f95e526eb1d5bf43b64a60f3ae8",
+    "history_id": "H-CODEX-000014",
+    "history_record": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+ "history": {
+  "id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+  "history_id": "H-CODEX-000014",
+  "record": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}
