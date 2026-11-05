@@ -1,0 +1,147 @@
+{
+  "task_id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+  "runs": [
+    {
+      "receipt": "js_final1.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 161,
+        "pass": 161,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "js_final2.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 161,
+        "pass": 161,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "prerequisites_final1.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 3
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "python_final1.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 171,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 5,
+        "passed": 166
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "python_final2.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 171,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 5,
+        "passed": 166
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "python_final3.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 171,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 5,
+        "passed": 166
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "runstore_final1.json",
+      "exit_code": 0,
+      "counts": {
+        "passed": 62
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "turn_final1.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 23,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 23
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "turn_final2.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 23,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 23
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "turn_final3.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 26
+      },
+      "guard_denials": 0
+    },
+    {
+      "receipt": "turn_final4.json",
+      "exit_code": 0,
+      "counts": {
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 27
+      },
+      "guard_denials": 0
+    }
+  ],
+  "final_distinct": {
+    "passed": 419,
+    "skipped": 5,
+    "failures": 0,
+    "errors": 0,
+    "total": 424
+  },
+  "non_runner": "Browser happy path + final TEST smoke + compile are separate",
+  "negative_results": [
+    "initial_red: 2 ERROR missing implementation",
+    "iteration01: 2 ERROR missing max_bytes argument",
+    "http_iteration01: 1 harness ERROR bad helper name",
+    "stale_projection_red: 1 product FAIL fixed"
+  ]
+}

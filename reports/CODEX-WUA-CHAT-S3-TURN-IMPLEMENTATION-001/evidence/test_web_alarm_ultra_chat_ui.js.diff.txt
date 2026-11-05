@@ -1,0 +1,49 @@
+--- before/test_web_alarm_ultra_chat_ui.js
++++ after/test_web_alarm_ultra_chat_ui.js
+@@ -321,6 +321,46 @@
+   assert.equal(h.calls.filter(c => c.method !== 'GET').length, 0);
+ });
+ 
++const testTurnCap=()=>({...cap(),turn_test:{available:true,mode:'TEST'}});
++const testTurnResult=(key,state='SUCCEEDED')=>({mode:'TEST',turn_id:'turn_'+'a'.repeat(64),idempotency_key:key,state,answer:state==='SUCCEEDED'?'TEST: сообщение принято.':null});
++test('S3 TEST composer sends one stable key on double click and renders a saved reply', async()=>{
++  let release;
++  const wait=new Promise(resolve=>release=resolve);
++  const h=harness({routes:{'/ui/ultra-chat/capability':testTurnCap,
++    '/ui/ultra-chat/write-capability':()=>({ultra_chat_write:{available:true,header:'X-WebAlarm-Ultra-Chat-Write-Token',token:'W'.repeat(43)}}),
++    '/ultra/chat/workspaces/ws_a/chats/chat_a/turns':async opts=>{await wait;return testTurnResult(JSON.parse(opts.body).idempotency_key)}}});
++  await settle();assert.equal(h.el('chatSend').disabled,false);assert.match(h.el('chatComposerNote').textContent,/TEST/);
++  h.el('chatInput').value='<script>сырой текст</script>';
++  const pending=h.el('chatSend').onclick();h.el('chatSend').onclick();await settle();
++  assert.equal(h.calls.filter(c=>c.url.endsWith('/turns')).length,1);
++  const stored=h.stored.filter(([key])=>key.startsWith('webAlarm.testTurn.'));
++  assert.equal(stored.length,1);assert.equal(stored[0][1].includes('сырой'),false);assert.equal(stored[0][1].includes('token'),false);
++  release();await pending;await settle();assert.equal(h.el('chatInput').value,'');assert.match(h.el('chatTurnStatus').textContent,/сохранён/);
++});
++test('S3 lost reply retains key across reload; GET restores result without POST',async()=>{
++  const storage=new Map();let originalKey;
++  const routes={'/ui/ultra-chat/capability':testTurnCap,
++    '/ui/ultra-chat/write-capability':()=>({ultra_chat_write:{available:true,header:'X-WebAlarm-Ultra-Chat-Write-Token',token:'W'.repeat(43)}}),
++    '/ultra/chat/workspaces/ws_a/chats/chat_a/turns':opts=>{originalKey=JSON.parse(opts.body).idempotency_key;throw Error('lost reply')}};
++  const first=harness({routes,storage});await settle();first.el('chatInput').value='не хранить в браузере';await first.el('chatSend').onclick();await settle();
++  assert.equal(JSON.parse(storage.get('webAlarm.testTurn.ws_a.chat_a')).key,originalKey);
++  routes['/ultra/chat/workspaces/ws_a/chats/chat_a/turns/by-key/'+originalKey]=()=>testTurnResult(originalKey);
++  const second=harness({routes,storage});await settle();
++  assert.equal(second.calls.filter(c=>c.method==='POST').length,0);assert.match(second.el('chatTurnStatus').textContent,/сохранён/);
++});
++test('S3 unknown outcome is visible, Enter sends, Shift+Enter and IME do not send',async()=>{
++  const h=harness({routes:{'/ui/ultra-chat/capability':testTurnCap,
++    '/ui/ultra-chat/write-capability':()=>({ultra_chat_write:{available:true,header:'X-WebAlarm-Ultra-Chat-Write-Token',token:'W'.repeat(43)}}),
++    '/ultra/chat/workspaces/ws_a/chats/chat_a/turns':opts=>testTurnResult(JSON.parse(opts.body).idempotency_key,'UNKNOWN')}});
++  await settle();h.el('chatInput').value='текст';let prevented=false;
++  await h.el('chatInput').onkeydown({key:'Enter',shiftKey:true,preventDefault:()=>prevented=true});
++  await h.el('chatInput').onkeydown({key:'Enter',isComposing:true,preventDefault:()=>prevented=true});
++  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
++  await h.el('chatInput').onkeydown({key:'Enter',preventDefault:()=>prevented=true});await settle();
++  assert.equal(prevented,true);assert.match(h.el('chatTurnStatus').textContent,/неизвестен/);assert.equal(h.el('chatTurnNew').hidden,false);
++  h.el('chatTurnNew').onclick();assert.equal(h.run('turnPending()'),null);
++});
++
+ test('U9 sections switch both ways and #operator / #evm open a section directly', async () => {
+   const h = harness({hash: ''}); await settle();
+   h.el('viewOperator').onclick(); await settle();

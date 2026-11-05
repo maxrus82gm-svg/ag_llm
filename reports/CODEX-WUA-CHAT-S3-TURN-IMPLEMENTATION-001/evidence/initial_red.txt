@@ -1,0 +1,23 @@
+test_conflict_and_distinct_keys (test_web_alarm_ultra_chat_turn_service.TurnTests.test_conflict_and_distinct_keys) ... ERROR
+test_roundtrip_replay_and_reopen (test_web_alarm_ultra_chat_turn_service.TurnTests.test_roundtrip_replay_and_reopen) ... ERROR
+
+======================================================================
+ERROR: test_conflict_and_distinct_keys (test_web_alarm_ultra_chat_turn_service.TurnTests.test_conflict_and_distinct_keys)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn_service.py", line 21, in setUp
+    from web_alarm.turn_service import TurnService
+ModuleNotFoundError: No module named 'web_alarm.turn_service'
+
+======================================================================
+ERROR: test_roundtrip_replay_and_reopen (test_web_alarm_ultra_chat_turn_service.TurnTests.test_roundtrip_replay_and_reopen)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn_service.py", line 21, in setUp
+    from web_alarm.turn_service import TurnService
+ModuleNotFoundError: No module named 'web_alarm.turn_service'
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.061s
+
+FAILED (errors=2)

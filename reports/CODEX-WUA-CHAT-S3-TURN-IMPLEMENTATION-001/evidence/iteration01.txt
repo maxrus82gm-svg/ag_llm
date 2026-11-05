@@ -1,0 +1,55 @@
+test_conflict_and_distinct_keys (test_web_alarm_ultra_chat_turn_service.TurnTests.test_conflict_and_distinct_keys) ... ERROR
+test_roundtrip_replay_and_reopen (test_web_alarm_ultra_chat_turn_service.TurnTests.test_roundtrip_replay_and_reopen) ... ERROR
+
+======================================================================
+ERROR: test_conflict_and_distinct_keys (test_web_alarm_ultra_chat_turn_service.TurnTests.test_conflict_and_distinct_keys)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn_service.py", line 45, in test_conflict_and_distinct_keys
+    first=self.send(); before={p.name:p.read_bytes() for p in self.raw()}
+          ^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn_service.py", line 27, in send
+    return self.service.submit(self.root,self.ws,self.chat,body or self.body)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\turn_service.py", line 192, in submit
+    return self._execute(root,workspace_id,chat_id,ids['turn_id'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\turn_service.py", line 226, in _execute
+    return self._view(root,turn)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\turn_service.py", line 144, in _view
+    user = self._raw(root, turn, 'user')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\turn_service.py", line 114, in _raw
+    value = core.read_ultra_json_bounded(root, ('chats', turn['chat_id'], 'messages', message_id+'.json'))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: read_ultra_json_bounded() missing 1 required keyword-only argument: 'max_bytes'
+
+======================================================================
+ERROR: test_roundtrip_replay_and_reopen (test_web_alarm_ultra_chat_turn_service.TurnTests.test_roundtrip_replay_and_reopen)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn_service.py", line 33, in test_roundtrip_replay_and_reopen
+    result=self.send()
+           ^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn_service.py", line 27, in send
+    return self.service.submit(self.root,self.ws,self.chat,body or self.body)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\turn_service.py", line 192, in submit
+    return self._execute(root,workspace_id,chat_id,ids['turn_id'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\turn_service.py", line 226, in _execute
+    return self._view(root,turn)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\turn_service.py", line 144, in _view
+    user = self._raw(root, turn, 'user')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\turn_service.py", line 114, in _raw
+    value = core.read_ultra_json_bounded(root, ('chats', turn['chat_id'], 'messages', message_id+'.json'))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: read_ultra_json_bounded() missing 1 required keyword-only argument: 'max_bytes'
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.859s
+
+FAILED (errors=2)

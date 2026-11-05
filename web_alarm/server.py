@@ -1278,7 +1278,7 @@ class _JsonHandler(BaseHTTPRequestHandler):
                 if query:
                     raise ApiError(400, 'invalid_ultra_chat_request', 'Query parameters are not supported')
                 if path == ULTRA_CHAT_CAPABILITY_PATH:
-                    self._send_json(200, {'ultra_chat': access.capability()})
+                    self._send_json(200, {'ultra_chat': access.capability(), 'turn_test': service.turns.capability()})
                 else:
                     self._send_json(200, {'ultra_chat_write': self.server.web_alarm_ultra_chat_write_access.capability()})
                 return
@@ -1422,6 +1422,7 @@ def create_server(
     folder_picker_timeout: float = 120,
     enable_ultra_chat: bool = True,
     enable_ultra_chat_write: bool = True,
+    test_turn_roots: Sequence[str | Path] = (),
 ) -> ThreadingHTTPServer:
     if not allow_non_loopback and host not in LOOPBACK_HOSTS:
         raise ValueError(
@@ -1442,7 +1443,8 @@ def create_server(
     # Stage 2 Chat create/rename: a second token of its own scope; off with reading or with --disable-ultra-chat-write.
     server.web_alarm_ultra_chat_write_access = UltraChatWriteAccess(  # type: ignore[attr-defined]
         enabled=enable_ultra_chat and enable_ultra_chat_write, loopback=host in LOOPBACK_HOSTS)
-    server.web_alarm_ultra_chat = UltraChatService(api.registry)  # type: ignore[attr-defined]
+    server.web_alarm_ultra_chat = UltraChatService(api.registry, test_turn_roots=
+        test_turn_roots if enable_ultra_chat and enable_ultra_chat_write and host in LOOPBACK_HOSTS else ())  # type: ignore[attr-defined]
     return server
 
 

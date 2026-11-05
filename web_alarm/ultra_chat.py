@@ -122,12 +122,26 @@ def _core():
 class UltraChatService:
     """Routes of /ultra/chat/*; every answer is built from the registry and the bounded core functions."""
 
-    def __init__(self, registry: WorkspaceRegistry) -> None:
+    def __init__(self, registry: WorkspaceRegistry, *, test_turn_roots=()) -> None:
         self.registry = registry
+        from .turn_service import TurnService
+        self.turns = TurnService(test_roots=test_turn_roots)
 
     def route(self, path: str, raw_query: str) -> Callable[[], dict[str, Any]]:
         """Validate route, IDs and query without touching any disk; the caller checks the token, then runs it."""
         parts = path.split("/")[1:]
+        if len(parts) == 9 and parts[:3] == ['ultra','chat','workspaces'] and parts[4] == 'chats' and parts[6:8] == ['turns','by-key']:
+            parse_query(raw_query, frozenset())
+            workspace, chat_id = _wa_id(parts[3]), parts[5]
+            if not _CHAT_ID_RE.fullmatch(chat_id):
+                raise UltraChatError(400,'invalid_ultra_chat_request','Invalid chat_id')
+            return lambda: self._turn_request('lookup',workspace,chat_id,parts[8])
+        if len(parts) == 8 and parts[:3] == ['ultra','chat','workspaces'] and parts[4] == 'chats' and parts[6] == 'turns':
+            parse_query(raw_query, frozenset())
+            workspace, chat_id = _wa_id(parts[3]), parts[5]
+            if not _CHAT_ID_RE.fullmatch(chat_id):
+                raise UltraChatError(400,'invalid_ultra_chat_request','Invalid chat_id')
+            return lambda: self._turn_request('get',workspace,chat_id,parts[7])
         if parts == ["ultra", "chat", "workspaces"]:
             parse_query(raw_query, frozenset())
             return self.workspaces
@@ -168,12 +182,21 @@ class UltraChatService:
     def is_write_path(path: str) -> bool:
         parts = path.split("/")[1:]
         create = len(parts) == 5 and parts[:3] == ["ultra", "chat", "workspaces"] and parts[4] == "chats"
-        return create or UltraChatService._is_rename_path(parts) or UltraChatService._is_workspace_rename_path(parts)
+        turn = (len(parts) in {7,9} and parts[:3] == ['ultra','chat','workspaces'] and parts[4] == 'chats'
+                and parts[6] == 'turns' and (len(parts)==7 or parts[8]=='cancel'))
+        return create or turn or UltraChatService._is_rename_path(parts) or UltraChatService._is_workspace_rename_path(parts)
 
     def write_route(self, path: str, raw_query: str) -> Callable[[Any], tuple[int, dict[str, Any]]]:
         """Validate a POST route and its IDs without touching any disk; the caller checks the token first."""
         parse_query(raw_query, frozenset())
         parts = path.split("/")[1:]
+        if (len(parts) in {7,9} and parts[:3] == ['ultra','chat','workspaces'] and parts[4] == 'chats'
+                and parts[6] == 'turns' and (len(parts)==7 or parts[8]=='cancel')):
+            workspace, chat_id = _wa_id(parts[3]), parts[5]
+            if not _CHAT_ID_RE.fullmatch(chat_id):
+                raise UltraChatError(400,'invalid_ultra_chat_request','Invalid chat_id')
+            action = 'submit' if len(parts)==7 else 'cancel'
+            return lambda body: (200,self._turn_request(action,workspace,chat_id,body if action=='submit' else parts[7],body))
         if len(parts) == 5 and parts[:3] == ["ultra", "chat", "workspaces"] and parts[4] == "chats":
             wa_workspace_id = _wa_id(parts[3])
             return lambda body: self.create_chat(wa_workspace_id, body)
@@ -186,6 +209,13 @@ class UltraChatService:
             wa_workspace_id = _wa_id(parts[3])
             return lambda body: self.rename_workspace(wa_workspace_id, body)
         raise UltraChatError(404, "not_found", "Unknown Ultra Chat route")
+
+    def _turn_request(self, action, wa_workspace_id, chat_id, value, body=None):
+        root, workspace_id = self._writable_workspace(_core(),wa_workspace_id)
+        if action == 'submit': return self.turns.submit(root,workspace_id,chat_id,value)
+        if action == 'cancel': return self.turns.cancel(root,workspace_id,chat_id,value,body)
+        if action == 'lookup': return self.turns.lookup(root,workspace_id,chat_id,value)
+        return self.turns.get(root,workspace_id,chat_id,value)
 
     def rename_workspace(self, wa_workspace_id: str, body: Any) -> tuple[int, dict[str, Any]]:
         """Rename only the registered label. Existing shared Ultra data is never changed."""

@@ -1,0 +1,17 @@
+test_stale_ready_projection_cannot_execute_a_started_turn_again (test_web_alarm_ultra_chat_turn_service.TurnTests.test_stale_ready_projection_cannot_execute_a_started_turn_again) ... FAIL
+
+======================================================================
+FAIL: test_stale_ready_projection_cannot_execute_a_started_turn_again (test_web_alarm_ultra_chat_turn_service.TurnTests.test_stale_ready_projection_cannot_execute_a_started_turn_again)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn_service.py", line 226, in test_stale_ready_projection_cannot_execute_a_started_turn_again
+    imitate.assert_not_called()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py", line 910, in assert_not_called
+    raise AssertionError(msg)
+AssertionError: Expected '_imitate' to not have been called. Called 1 times.
+Calls: [call()].
+
+----------------------------------------------------------------------
+Ran 1 test in 0.882s
+
+FAILED (failures=1)

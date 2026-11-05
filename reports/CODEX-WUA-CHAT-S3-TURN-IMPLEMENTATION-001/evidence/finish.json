@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "8120b6c18591bb568a5c8af4d7d703390ff1ef1d5a33de466eb4d996b8c16df8",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 206,
+    "b11b": 212,
+    "b11e": 300
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+    "problems": [],
+    "title": "Web Alarm Ultra — Stage 3: первая отправка сообщения, устойчивый Turn и восстановление",
+    "lines": 157
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001",
+    "copy_sha256": "b6399d2c9e353ac91dfbfbc69e79b1bd8a95bd0e39ecaba9e8a830429e21c0bb",
+    "history_id": "H-CODEX-000012",
+    "history_record": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "8120b6c18591bb568a5c8af4d7d703390ff1ef1d5a33de466eb4d996b8c16df8",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001",
+    "copy_sha256": "b6399d2c9e353ac91dfbfbc69e79b1bd8a95bd0e39ecaba9e8a830429e21c0bb",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/handoff_task.md",
+    "archive_sha256": "eb98519ca41ad905e424c1cc30665e4004058d8a5cbba240bc59d6401a9156e0"
+   },
+   "history_id": "H-CODEX-000013",
+   "new_card_sha256": "48de52d8538bdd67307643e55e1b53a4eff6de20c27ca3b05fcdaa981b894377",
+   "copy_sha256_lf": "6ad32e2e68c145bca38a04429b94ab54f67172430d4b369491210b5b7edd75bd",
+   "copy_lines": 157,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "8120b6c18591bb568a5c8af4d7d703390ff1ef1d5a33de466eb4d996b8c16df8",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001",
+    "copy_sha256": "b6399d2c9e353ac91dfbfbc69e79b1bd8a95bd0e39ecaba9e8a830429e21c0bb",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/handoff_task.md",
+    "archive_sha256": "eb98519ca41ad905e424c1cc30665e4004058d8a5cbba240bc59d6401a9156e0"
+   },
+   "history_id": "H-CODEX-000013",
+   "new_card_sha256": "48de52d8538bdd67307643e55e1b53a4eff6de20c27ca3b05fcdaa981b894377",
+   "copy_sha256_lf": "6ad32e2e68c145bca38a04429b94ab54f67172430d4b369491210b5b7edd75bd",
+   "copy_lines": 157,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+    "history_id": "H-CODEX-000013",
+    "record": "reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "7efe959bbb12a5d8d28b81defd53d68d232f74ccac4ab1d2cc0c22530c684460",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "48de52d8538bdd67307643e55e1b53a4eff6de20c27ca3b05fcdaa981b894377",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 216
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+    "copy_sha256": "6ad32e2e68c145bca38a04429b94ab54f67172430d4b369491210b5b7edd75bd",
+    "history_id": "H-CODEX-000013",
+    "history_record": "reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+ "history": {
+  "id": "CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001",
+  "history_id": "H-CODEX-000013",
+  "record": "reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

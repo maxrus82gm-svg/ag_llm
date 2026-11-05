@@ -1,0 +1,67 @@
+{
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "test_run_store_v2.py",
+    "test_audit_v2_compatibility.py",
+    "test_audit_observability.py::AuditStorageTests"
+  ],
+  "exit_code": 0,
+  "seconds": 36.67,
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "counts": {
+    "passed": 62
+  },
+  "source": {
+    "web_alarm/turn_service.py": {
+      "size": 14518,
+      "sha256": "18c51024bc5670db1ee933eda4d0bef6cb6b86b9e2c137ed2aefc6d605144152"
+    },
+    "web_alarm/ultra_chat.py": {
+      "size": 28937,
+      "sha256": "164c2f76fa4d6cdc935a2e4189eabe9d07b1f8206b179df64d27f1d5009c7035"
+    },
+    "web_alarm/server.py": {
+      "size": 74952,
+      "sha256": "b2bf2b20635b120e9a273d8691305dea8687c42693e47ed365bd966eec205f27"
+    },
+    "web_alarm/ui.py": {
+      "size": 191295,
+      "sha256": "4822d7cc9870198f726a5154e67b463a4ff15995c62f9d50dc6ec73531f40e47"
+    },
+    "context_storage.py": {
+      "size": 97846,
+      "sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280"
+    },
+    "run_store.py": {
+      "size": 38605,
+      "sha256": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e"
+    },
+    "audit_storage.py": {
+      "size": 31728,
+      "sha256": "5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c"
+    },
+    "test_web_alarm_ultra_chat_turn_service.py": {
+      "size": 13643,
+      "sha256": "08b94ed30a756d65a4b7747bddfaf3a08e30650d8ac9cfaae2e810f626f9a45a"
+    },
+    "test_web_alarm_ultra_chat_turn_http.py": {
+      "size": 5585,
+      "sha256": "2dec5eac09a311d0ae43527f9835aa13ee1a63441c879672aea26fc8723c62af"
+    },
+    "test_web_alarm_ultra_chat_ui.js": {
+      "size": 64938,
+      "sha256": "dfd7b37a9104ec5c4fa98588c424fafaf4dda9858f2c99bb401ffb57f1fa0fbc"
+    }
+  },
+  "guard_receipts": 16,
+  "guard_denials": 0
+}

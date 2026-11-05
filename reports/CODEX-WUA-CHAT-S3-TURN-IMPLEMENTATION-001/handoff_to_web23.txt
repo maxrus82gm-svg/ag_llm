@@ -1,0 +1,25 @@
+TASK: CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001
+HISTORY ID: H-CODEX-000013
+EXECUTOR: Codex 007
+VERIFIER: ChatGPT WEB23
+STATUS: RESULT READY / SUBMITTED / REVIEW PENDING. LOCAL ONLY, INDEPENDENT REVIEW NOT VERIFIED.
+
+Реализован Stage 3 TEST: ввод/отправка/ответ константного локального имитатора; устойчивый Turn с fixed model/context/config references и scoped idempotency; общие RAW и Run Store; GET/retry/cancel; restart/UNKNOWN без повторного вызова начатой попытки. Turn projection хранится в существующем RUN summary, events в том же RUN; отдельного attempts/Turn storage нет. STANDARD sending disabled. Реальных LLM/Colibri/GigaChat/paid/MCP и Git/GitHub операций не было.
+
+Изменения: web_alarm/turn_service.py (new), ultra_chat.py, server.py, ui.py; два новых test_web_alarm_ultra_chat_turn_*.py; 3 добавленных S3 JS cases. context_storage.py/run_store.py/audit_storage.py и launcher/config unchanged.
+
+Итог без сложения повторов: 419 PASS / 5 SKIP / 0 FAIL/ERROR (424 tests): Turn/HTTP27, Run Store/audit62, prerequisites3, Python166 PASS/5 SKIP, JS161. Отдельно compile6, final HTTP create/send/server-restart/history smoke и реальный браузер (click/Enter/reload). Исходные errors/RED и product stale-READY repeated-execution FAIL сохранены; final invariant предотвращает новый вызов и сохраняет bytes.
+
+595/595 файлов текущего пользовательского storage baseline unchanged (.ultra586, Чат_pro9). Внешнее изменение .obsidian/workspace.json сохранено отдельно, не откатывалось. TEST servers остановлены, TEMP cleanup подтверждён. Launcher STANDARD всё время.
+
+finish: ROTATED exit0, БЛОК1 WAITING, точная TASK в 1.1, H-CODEX-000013/task_record.json. Прежний H-CODEX-000012 snapshot сохранён.
+
+REPORT: reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/report.md
+MANIFEST: reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/manifest.json
+CONTRACT: reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/turn_contract.md
+EVIDENCE: reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/evidence/
+TEST DEMO: .venv\Scripts\python.exe -B -X utf8 reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/demo_turn_chat.py --seconds 600
+
+OPEN/LIMITS: existing 5 native symlink SKIP; shared-core final TOCTOU/staging/picker/portability/P9 wider runtime gates; conservative UNKNOWN across server processes; coherent GET uses existing lock and can return busy503; only empty frozen TEST context. Browser happy path before final service-only stale-projection refusal; final service exact source covered by final4 + final demo. Hardware power loss, native Tk/picker, clean machine, independent CI and providers NOT RUN.
+
+DOC IMPACT: после пользовательской публикации и независимой проверки актуализировать существующую запись/№05/06/34/37/40, оценить FOLLOWUP-WUA-S3-TURN-IMPLEMENTATION-001; сохранять все прежние OPEN. Не выдавать TEST Stage3 за real sending GO. Stage4+/live/paid/MCP требуют отдельного USER GO.

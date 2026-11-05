@@ -1,0 +1,22 @@
+Browser tab: 1, Title: "Web Alarm Workspace", URL: "http://127.0.0.1:62153/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 44-50, 52-59
++					26 text ▾
++			37 text TEST: ответы создаёт локальный имитатор. История хранится общим ядром Ultra.
++			42 text TEST · локальный имитатор
+~			43 content list Description: История диалога, ID: chatHistory
++				44 container
++					45 text Вы 2026-11-05 08:44:20 Проверка Stage 3 через Enter
++				46 container
++					47 text Ultra 2026-11-05 08:44:20 TEST · локальный имитатор TEST: сообщение принято.
++			48 container Description: Новое сообщение, ID: chatComposer
++				49 text Сообщение
++				50 text entry area (settable) Сообщение, ID: chatInput
++				51 container chatTurnControls
++					52 button Проверить Turn, ID: chatTurnCheck
++					53 button (disabled) Отменить, ID: chatTurnCancel
++				54 text TEST · локальный имитатор. Выбранная модель не вызывается. Enter — отправить, Shift+Enter — новая строка.
++				55 pop up button (disabled, collapsed) TEST · без LLM, Help: Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются, ID: chatModelPick, Secondary Actions: Expand
++				56 button (disabled) Description: Голосовой ввод — появится позже, Help: Голосовой ввод появится позже, ID: chatMic
++				57 button Отправить, ID: chatSend
+The focused UI element is 1 AXWebArea Web Alarm Workspace, URL: 127.0.0.1:62153/

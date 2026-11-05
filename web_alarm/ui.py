@@ -321,7 +321,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div class="chat-actions"><button type="submit" id="chatNameSave" class="primary">Сохранить</button><button type="button" id="chatNameCancel">Отмена</button></div>
 <p id="chatNameError" class="chat-model-error" role="alert" hidden></p>
 </form>
-<p class="muted spaced">Нажмите на Workspace, чтобы раскрыть чаты. «+» создаёт диалог, карандаш меняет название. История остаётся в исходной папке. Отправка сообщений пока отключена.</p>
+<p id="chatSidebarNote" class="muted spaced">Нажмите на Workspace, чтобы раскрыть чаты. «+» создаёт диалог, карандаш меняет название. История остаётся в исходной папке. Отправка сообщений пока отключена.</p>
 </nav>
 <div id="chatMain" class="chat-main" tabindex="-1" role="region" aria-labelledby="chatTitle">
 <div class="chat-head"><div><span class="eyebrow" id="chatWorkspaceName">Ultra Chat</span><h2 id="chatTitle">Выберите диалог</h2></div><span id="chatModel" class="tag" title="Модель, выбранная в EVM">Модель: —</span></div>
@@ -331,6 +331,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
 <label for="chatInput">Сообщение</label>
 <textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea>
+<div id="chatTurnControls" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><button type="button" id="chatTurnCheck">Проверить Turn</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button></div>
 <div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
 </form>
 </div>
@@ -1899,13 +1900,69 @@ if(typeof window!=='undefined'&&window.addEventListener){
 // lives only in this object and goes only to /ultra/chat/* in its own header; nothing here writes anything.
 const CHAT_TOKEN_HEADER='X-WebAlarm-Ultra-Chat-Token',CHAT_PAGE=50;
 const chat={epoch:0,started:false,token:null,workspaces:[],workspace:null,expanded:null,chats:[],chat:null,messages:[],page:null,olderBusy:false,creatingWorkspace:false,renamingWorkspace:false};
+const chatTurn={available:false,busy:false,state:null};
+function turnScope(){return chat.workspace&&chat.chat?'webAlarm.testTurn.'+chat.workspace+'.'+chat.chat:null}
+function turnPending(){try{return JSON.parse(localStorage.getItem(turnScope())||'null')}catch(_){return null}}
+function turnBase(){return '/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats/'+encodeURIComponent(chat.chat)+'/turns'}
+function renderTurnComposer(){
+  const enabled=chatTurn.available&&!!chat.workspace&&!!chat.chat;
+  $('chatInput').disabled=!enabled||chatTurn.busy;$('chatSend').disabled=!enabled||chatTurn.busy;
+  $('chatTurnControls').hidden=!enabled;
+  $('chatTurnCancel').disabled=!enabled||!turnPending();
+  $('chatModelPick').disabled=chatTurn.available;
+  if(chatTurn.available){text('chatComposerNote','TEST · локальный имитатор. Выбранная модель не вызывается. Enter — отправить, Shift+Enter — новая строка.');$('chatInput').placeholder='Сообщение TEST-имитатору';text('chatModel','TEST · локальный имитатор');text('chatModelPick','TEST · без LLM');text('chatSidebarNote','TEST: ответы создаёт локальный имитатор. История хранится общим ядром Ultra.')}
+  else{text('chatComposerNote','Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.')}
+  $('chatSend').textContent=turnPending()?'Повторить / восстановить':'Отправить';
+}
+function showTurn(result){
+  if(!result||result.mode!=='TEST'||typeof result.turn_id!=='string'||!['ACCEPTING','READY','ATTEMPTING','SUCCEEDED','FAILED','CANCELLED','UNKNOWN'].includes(result.state))throw Error('Некорректный Turn');
+  chatTurn.state=result.state;
+  const labels={ACCEPTING:'Приём не завершён. Для продолжения нужен исходный текст.',READY:'Принято. Ожидает явного продолжения.',ATTEMPTING:'Имитатор выполняет запрос…',SUCCEEDED:'TEST: ответ сохранён.',FAILED:'TEST: выполнение завершилось ошибкой.',CANCELLED:'Отменено до выполнения.',UNKNOWN:'Исход неизвестен. Повтор ключа проверит сохранённые факты; повторного исполнения нет.'};
+  text('chatTurnStatus',labels[result.state]);
+  $('chatTurnNew').hidden=result.state!=='UNKNOWN';
+  $('chatTurnCancel').disabled=!['READY','ATTEMPTING'].includes(result.state);
+  if(['SUCCEEDED','FAILED','CANCELLED'].includes(result.state)){localStorage.removeItem(turnScope());if(result.state==='SUCCEEDED')$('chatInput').value=''}
+  renderTurnComposer();
+}
+async function checkTurn(){
+  renderTurnComposer();const pending=turnPending();if(!chatTurn.available||!pending)return;
+  const epoch=chat.epoch;
+  try{const result=await chatGet(turnBase()+'/by-key/'+encodeURIComponent(pending.key));if(epoch===chat.epoch){showTurn(result);await loadChatHistory(false)}}
+  catch(e){if(epoch===chat.epoch)text('chatTurnStatus',e.httpStatus===404?'Turn ещё не найден. Повторите исходный текст с сохранённым ключом.':'Не удалось проверить Turn. Ключ сохранён, автоматического повтора нет.')}
+}
+async function sendTurn(){
+  if(!chatTurn.available||chatTurn.busy||!chat.workspace||!chat.chat||!$('chatInput').value.trim())return;
+  const epoch=chat.epoch,scope=turnScope(),base=turnBase(),value=$('chatInput').value;
+  chatTurn.busy=true;renderTurnComposer();text('chatTurnStatus','Принимаем TEST-запрос…');
+  try{
+    let pending=JSON.parse(localStorage.getItem(scope)||'null');
+    if(!pending){pending={key:crypto.randomUUID()};localStorage.setItem(scope,JSON.stringify(pending))}
+    else{
+      try{
+        const previous=await chatGet(base+'/by-key/'+encodeURIComponent(pending.key));
+        if(['SUCCEEDED','FAILED','CANCELLED','ATTEMPTING'].includes(previous.state)){
+          if(epoch===chat.epoch){showTurn(previous);await loadChatHistory(false)}return
+        }
+      }catch(e){if(e.code!=='turn_not_found'&&e.code!=='turn_acceptance_incomplete')throw e}
+    }
+    const result=await chatPost(base,{idempotency_key:pending.key,text:value,model_ref:'local-test:v1',context_ref:'empty:v1',config_ref:'test-only:v1'});
+    if(epoch===chat.epoch){showTurn(result);await loadChatHistory(false)}
+  }catch(e){if(epoch===chat.epoch)text('chatTurnStatus',e.code==='idempotency_conflict'?'Конфликт ключа: верните исходный текст. Перезаписи нет.':'Ответ не подтверждён. Ключ сохранён. Проверьте Turn перед повтором.')}
+  finally{chatTurn.busy=false;renderTurnComposer()}
+}
+async function cancelTurn(){
+  const pending=turnPending();if(!pending)return;const epoch=chat.epoch;
+  try{const current=await chatGet(turnBase()+'/by-key/'+encodeURIComponent(pending.key));const result=await chatPost(turnBase()+'/'+current.turn_id+'/cancel',{});if(epoch===chat.epoch)showTurn(result)}
+  catch(_){if(epoch===chat.epoch)text('chatTurnStatus','Отмена не подтверждена. Проверьте Turn.')}
+}
 const CHAT_REASON={missing_history:'В папке нет истории Ultra',missing_path:'Папка недоступна',not_directory:'Путь не является папкой',invalid_metadata:'Данные Ultra повреждены',unsupported_version:'Данные Ultra более новой версии',unsafe_storage_link:'Внутри хранилища Ultra ссылка вместо папки или файла — чтение запрещено',unreadable:'Данные не читаются',unsupported_registration_id:'Эта регистрация не поддерживается Ultra Chat',registry_unavailable:'Реестр Workspace недоступен',too_many_workspaces:'Слишком много Workspace',chats_listing_too_large:'Слишком много диалогов для просмотра',history_too_large:'История слишком большая для просмотра',foreign_identity:'Диалог принадлежит другому Workspace',chat_damaged:'Диалог повреждён',ultra_core_unavailable:'Общее ядро Ultra недоступно'};
 const CHAT_OUTCOME={failed:['Ошибка выполнения (старая запись), не ответ модели','bad'],no_answer:['Ответ не сохранён','warn'],interrupted:['Прервано · исход неизвестен','unknown'],unknown:['Исход неизвестен','unknown']};
 function chatReason(code){return CHAT_REASON[code]||'Недоступно ('+String(code)+')'}
 function chatTime(value){return typeof value==='string'?value.replace('T',' ').slice(0,19):''}
 function chatCount(map){return Object.values(map||{}).reduce((sum,n)=>sum+(Number(n)||0),0)}
 async function loadChatAccess(){
-  const c=(await api('/ui/ultra-chat/capability'))?.ultra_chat;
+  const access=await api('/ui/ultra-chat/capability'),c=access?.ultra_chat;
+  chatTurn.available=access?.turn_test?.available===true&&access.turn_test.mode==='TEST';renderTurnComposer();
   if(!c||typeof c.available!=='boolean'||c.header!==CHAT_TOKEN_HEADER)throw Error('Некорректный ответ сервера о доступе к истории');
   chat.token=c.available&&typeof c.token==='string'&&c.token.length>=32?c.token:null;
   if(!chat.token)throw Object.assign(Error(c.reason==='disabled'?'Чтение истории Ultra Chat выключено при запуске сервера.':
@@ -2015,7 +2072,7 @@ function chatNotices(list){
   $('chatNotice').className='notice'+(list[0]?.[0]==='error'?' error':list[0]?.[0]==='info'?' info':'');
   notice('chatNotice',list.map(item=>item[1]).join('\n'))
 }
-function clearChatHistory(title){text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true}
+function clearChatHistory(title){text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true;text('chatTurnStatus','');renderTurnComposer()}
 function chatMessage(m){
   const li=element('li',null,'msg'),failed=m.outcome==='failed',meta=element('div',null,'msg-meta');
   li.setAttribute('data-role',m.role);li.setAttribute('data-outcome',m.outcome);li.setAttribute('data-message',m.message_id);
@@ -2056,6 +2113,7 @@ async function loadChatModel(){
     $('chatModel').className='tag '+(s.state==='SAVED'?'active':'warn');
     text('chatModelPick',(s.state==='SAVED'&&typeof s.display_name==='string'?s.display_name:'Выбрать модель')+' ▾')
   }catch(_){text('chatModel','Модель: нет данных EVM');$('chatModel').className='tag warn';text('chatModelPick','Выбрать модель ▾')}
+  finally{if(chatTurn.available)renderTurnComposer()}
 }
 // Model preference next to the composer (CLAUDE-WUA-EVM-COMPACT-LAYOUT-001): the same saved choice as before
 // (/ultra/connections/selection, no chat token), no message, Turn or history write. The model list is read only
@@ -2098,7 +2156,7 @@ async function loadChatWorkspaces(){
     const data=await chatGet('/ultra/chat/workspaces');
     if(epoch!==chat.epoch)return;
     if(!validChatWorkspaces(data))throw Error('Некорректный ответ сервера о Workspace');
-    text('chatAccess','Данные проверяет сервер · сообщения не отправляются');chat.workspaces=data.workspaces;
+    text('chatAccess',chatTurn.available?'TEST · локальный имитатор · без LLM':'Данные проверяет сервер · сообщения не отправляются');chat.workspaces=data.workspaces;
     text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.length?'':'Нет зарегистрированных Workspace. Нажмите «+ Создать Workspace».');
     if(chat.workspace&&!chat.workspaces.some(w=>w.wa_workspace_id===chat.workspace)){chat.workspace=null;chat.expanded=null;chat.chat=null;chat.chats=[];renderChatList();clearChatHistory('Выберите диалог')}
     const selected=chat.workspaces.find(w=>w.wa_workspace_id===chat.workspace);
@@ -2140,7 +2198,7 @@ async function loadChatList(){
 function selectChat(id){
   if(chatEdit.mode==='rename'&&chatEdit.chatId!==id)closeChatName();
   chat.epoch++;chat.chat=id;chat.messages=[];chat.page=null;chat.olderBusy=false;
-  renderChatList();clearChatHistory('Загружаем историю…');return loadChatHistory(false)
+  renderChatList();clearChatHistory('Загружаем историю…');renderTurnComposer();return loadChatHistory(false).then(()=>checkTurn())
 }
 async function loadChatHistory(older){
   if(!chat.workspace||!chat.chat||(older&&(chat.olderBusy||!chat.page?.next_before)))return;
@@ -2270,7 +2328,7 @@ async function createChatWorkspace(){
 }
 $('chatRegisterWorkspace').onclick=createChatWorkspace;
 $('viewBlueprint').onclick=()=>showView('blueprint');
-$('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces()};
+$('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces().then(()=>checkTurn())};
 $('chatOlder').onclick=()=>loadChatHistory(true);
 $('chatNew').onclick=()=>openChatName('create');
 $('chatRename').onclick=()=>openChatName('rename');
@@ -2280,7 +2338,12 @@ $('chatWorkspaceNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault(
 $('chatNameForm').onsubmit=e=>{e.preventDefault();return saveChatName()};
 $('chatNameCancel').onclick=()=>closeChatName();
 $('chatNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeChatName()}};
-$('chatComposer').onsubmit=e=>e.preventDefault();
+$('chatComposer').onsubmit=e=>{e.preventDefault();return sendTurn()};
+$('chatSend').onclick=sendTurn;
+$('chatInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();return sendTurn()}};
+$('chatTurnCheck').onclick=checkTurn;
+$('chatTurnCancel').onclick=cancelTurn;
+$('chatTurnNew').onclick=()=>{if(chatTurn.state==='UNKNOWN'){localStorage.removeItem(turnScope());$('chatInput').value='';text('chatTurnStatus','Новый отдельный запрос; прежний исход остаётся неизвестным.');renderTurnComposer()}};
 $('chatModelPick').onclick=()=>openPicker();
 try{
   const saved=JSON.parse(localStorage.getItem('webAlarm.selection')||'{}');
