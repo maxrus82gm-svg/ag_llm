@@ -1,0 +1,21 @@
+{
+  "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+  "publication": "ONE publication by user",
+  "allowed": [
+    "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/**",
+    "Документация/000_Задачи Codex.md",
+    "reports/task_history_sequences.json"
+  ],
+  "reasons": [
+    "own diagnostic package",
+    "native finish only: own card",
+    "native finish only: history counter"
+  ],
+  "exclude": [
+    ".obsidian/**",
+    "context_storage.py",
+    "test_ultra_chat_storage.py",
+    "other unrelated working-tree changes"
+  ],
+  "git_used": false
+}

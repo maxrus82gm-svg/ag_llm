@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "90cde6ce702edf461c8ceeb9dfb7e5a7d50622bbb0b20bb9eae2a713c8212074",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 117,
+    "b11b": 123,
+    "b11e": 273
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+    "problems": [],
+    "title": "",
+    "lines": 68
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+    "copy_sha256": "245d7f8b18cc8e2f10997ca83540eae41ecb0f95e526eb1d5bf43b64a60f3ae8",
+    "history_id": "H-CODEX-000014",
+    "history_record": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "90cde6ce702edf461c8ceeb9dfb7e5a7d50622bbb0b20bb9eae2a713c8212074",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+    "copy_sha256": "245d7f8b18cc8e2f10997ca83540eae41ecb0f95e526eb1d5bf43b64a60f3ae8",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/handoff_task.md",
+    "archive_sha256": "445554a5bd6e811292aee1bf2c8a0f7b95b9ae4e15ba842593f577ebbd27213f"
+   },
+   "history_id": "H-CODEX-000015",
+   "new_card_sha256": "544d12c9c94f1e340979ed5336856156c5fb063294e0ea74069b178670b2d7ab",
+   "copy_sha256_lf": "d63ba49b646369b23576ae1722fdea22bf055d7cf900aa8fbda101a89cc6b0a2",
+   "copy_lines": 68,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "90cde6ce702edf461c8ceeb9dfb7e5a7d50622bbb0b20bb9eae2a713c8212074",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001",
+    "copy_sha256": "245d7f8b18cc8e2f10997ca83540eae41ecb0f95e526eb1d5bf43b64a60f3ae8",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/handoff_task.md",
+    "archive_sha256": "445554a5bd6e811292aee1bf2c8a0f7b95b9ae4e15ba842593f577ebbd27213f"
+   },
+   "history_id": "H-CODEX-000015",
+   "new_card_sha256": "544d12c9c94f1e340979ed5336856156c5fb063294e0ea74069b178670b2d7ab",
+   "copy_sha256_lf": "d63ba49b646369b23576ae1722fdea22bf055d7cf900aa8fbda101a89cc6b0a2",
+   "copy_lines": 68,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+    "history_id": "H-CODEX-000015",
+    "record": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "c24a689c45807e38818cdc18b3d9ddfdc4e1a54c6e0582f6063a42bd7ba942dd",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "544d12c9c94f1e340979ed5336856156c5fb063294e0ea74069b178670b2d7ab",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 127
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+    "copy_sha256": "d63ba49b646369b23576ae1722fdea22bf055d7cf900aa8fbda101a89cc6b0a2",
+    "history_id": "H-CODEX-000015",
+    "history_record": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+ "history": {
+  "id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+  "history_id": "H-CODEX-000015",
+  "record": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

@@ -1,0 +1,23 @@
+{
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "reports\\CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001\\diagnose.py"
+  ],
+  "cwd": "M:\\GitHub\\ag_llm",
+  "exit_code": 0,
+  "env": {
+    "PYTHONPATH": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001\\guard;M:\\GitHub\\ag_llm",
+    "S3_GUARD_OUTPUT": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001\\evidence\\guard_series",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+  },
+  "executed_helper_sha256": "53bac57df1bd04c134d32908d4c66108db5b7315e45d96fa67966aa60d771feb",
+  "source": {
+    "context_storage.py": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64",
+    "test_ultra_chat_storage.py": "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+  },
+  "cli_after_run": "Only non-overwriting --label parameterization added after the 12-case series; executed helper source retained; no additional target run"
+}

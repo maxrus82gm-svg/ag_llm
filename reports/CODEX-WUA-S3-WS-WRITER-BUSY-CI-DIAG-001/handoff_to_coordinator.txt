@@ -1,0 +1,22 @@
+TASK: CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001
+HISTORY ID: H-CODEX-000015
+STATUS: PARTIAL / NOT REPRODUCED. Точная причина исходного CI — UNKNOWN. FOLLOWUP-WUA-S3-WS-WRITER-BUSY-001 OPEN. Independent review NOT VERIFIED.
+
+Адресная серия: 12 запусков прежнего selector за19.281с из лимита20/300с. 6 ordinary и6 с дополнительным реальным writer-lock competitor (20мс hold/2мс pause,17–31 acquisitions на trial). Все12 PASS,0FAIL/ERROR/SKIP. Max entry→acquire0.346821с ordinary/0.473193с controlled; max measured body hold0.036864/0.048250с; fsync max0.009156/0.006747с. Наблюдались EACCES, timeout events не было. Инструментация влияет на расписание; это не benchmark без observers.
+
+Все12 integrity oracles PASS: ровно50RAW/trial, всего600 в12 TEMP Workspace, точные payloads/ID/ownership/order,10unique default titles/trial, без staging/tmp/повреждений. Все children exit0, TEMP cleanup/reap выполнен. Полные stdout/stderr, PID acquisition sequences, native errno/fsync и RAW/inventory сохранены.
+
+Production и test_ultra_chat_storage.py НЕ МЕНЯЛИСЬ. Новые helper/guard/evidence только в своём пакете. Нет fsync delay, изменения timeout/алгоритма, автоматического повторного RAW write, реальных LLM/Workspace/Git/GitHub. 595/595 user-storage files unchanged; внешняя .obsidian/workspace.json delta сохранена отдельно, в publication allowlist не входит. STANDARD unchanged.
+
+После finish дополнительно обнаружена внешняя .obsidian/graph.json delta; файл агентом не записывался/не откатывался, также исключён из публикации. Актуальный conservation receipt приложен, report SHA после регистрации не менялся.
+
+Исторический CI excerpt/timeline H14 сохранены отдельными source files; нынешний12/12 PASS их не отменяет. Гипотеза slow-I/O/repeated-reacquire budget exhaustion остаётся гипотезой применительно к исходному CI. Historical runtime SHA/новый Windows CI/другие suites NOT RUN; причина не установлена, FIXED не заявлять.
+
+finish ROTATED exit0; БЛОК1 WAITING, exact TASK в1.1; H-CODEX-000015/task_record.json, прежний H14 snapshot intact.
+
+REPORT: reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/report.md
+MANIFEST: reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/manifest.json
+EVIDENCE: reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/evidence/validation_summary.json
+PUBLICATION: publication_allowlist.json — один полный пользовательский commit, без .obsidian/посторонних изменений.
+
+NEXT/DOC IMPACT: сохранить FOLLOWUP OPEN и bounded UNKNOWN; после публикации независимый Windows/Python3.12.10 на exact commit, helper --label ci001 с guard, max12/300с. Сохранить full stderr, wait/hold/errno/fsync/integrity и первый FAIL; не расширять production scope/не делать новые бесконечные повторы. Краткий CI план/команда есть в report.md.

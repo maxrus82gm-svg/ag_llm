@@ -1,0 +1,24 @@
+Source: supplied by user in this chat, not downloaded by Codex. This is an EXCERPT, not a full child traceback.
+Run 42040238153, Job 127288825334. Windows, Python 3.12.10.
+Selector: test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything
+Start 14:02:56.580 UTC; FAIL 14:03:13.332 UTC; approximately 16.75 seconds.
+
+FAIL: test_two_processes_write_raw_create_and_rename_without_losing_anything
+File "test_ultra_chat_storage.py", line 572
+    made = [json.loads(self.finish(child)) for child in children]
+File "test_ultra_chat_storage.py", line 101
+    self.assertEqual(child.returncode, 0, err[-800:])
+AssertionError: 1 != 0
+File "context_storage.py", line 2032, in _existing_workspace_writer
+    with _workspace_writer_lock(anchor):
+File "context_storage.py", line 1967, in _workspace_writer_lock
+    raise WorkspaceBusyError()
+context_storage.WorkspaceBusyError:
+Workspace занят другой операцией записи. Повторите позже.
+
+Ran 171 tests in 285.636s
+FAILED (failures=1)
+Process completed with exit code 1
+
+User limitation: CI exposed only the last 800 stderr characters; the full child traceback is unavailable.
+Instruction: continue diagnostics and compare measured wait/hold times; do not increase timeout or weaken locking without an established cause; retain full stderr for new diagnostic tests, leave historical FAIL unchanged.

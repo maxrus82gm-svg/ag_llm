@@ -1,0 +1,48 @@
+{
+  "status": "PARTIAL / NOT REPRODUCED / ORIGINAL CI CAUSE UNKNOWN",
+  "total_runs": 12,
+  "wall_seconds": 19.2809999999954,
+  "budget_expired": false,
+  "groups": [
+    {
+      "condition": "ordinary",
+      "runs": 6,
+      "passed": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "wait_max": 0.346820699996897,
+      "body_hold_max": 0.036864100002276246,
+      "fsync_max": 0.009155899999313988,
+      "fsync_count": 486,
+      "pulse_acquisitions": [],
+      "verified_raw": 300
+    },
+    {
+      "condition": "short_reacquire",
+      "runs": 6,
+      "passed": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "wait_max": 0.4731933000002755,
+      "body_hold_max": 0.048250200001348276,
+      "fsync_max": 0.006747100000211503,
+      "fsync_count": 486,
+      "pulse_acquisitions": [
+        17,
+        29,
+        17,
+        22,
+        31,
+        24
+      ],
+      "verified_raw": 300
+    }
+  ],
+  "all_children_exit0": true,
+  "all_integrity_oracles_pass": true,
+  "total_raw": 600,
+  "controls_executed": true,
+  "production_and_test_sources_unchanged": true
+}
