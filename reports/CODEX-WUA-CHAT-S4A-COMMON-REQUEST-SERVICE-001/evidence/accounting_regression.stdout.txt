@@ -1,0 +1,16 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.6.0 -- M:\GitHub\ag_llm\.venv\Scripts\python.exe
+rootdir: M:\GitHub\ag_llm
+collecting ... collected 9 items
+
+test_provider_accounting.py::test_request_accounting_measures_blocks_hashes_and_no_raw_content PASSED [ 11%]
+test_provider_accounting.py::test_terminal_accounting_preserves_unknown_usage_and_outcome PASSED [ 22%]
+test_provider_accounting.py::test_terminal_omits_non_numeric_http_status PASSED [ 33%]
+test_usage_accounting.py::test_extract_and_aggregate_usage PASSED        [ 44%]
+test_usage_accounting.py::test_provider_attempt_started_without_terminal_is_incomplete PASSED [ 55%]
+test_usage_accounting.py::test_unknown_terminal_usage_stays_unknown_not_zero PASSED [ 66%]
+test_usage_accounting.py::test_recorder_accounts_each_provider_role_and_not_synthetic_dispatch PASSED [ 77%]
+test_usage_accounting.py::test_duplicate_terminal_marks_accounting_incomplete_without_double_count PASSED [ 88%]
+test_usage_accounting.py::test_verifier_result_preserves_provider_usage PASSED [100%]
+
+============================== 9 passed in 2.54s ==============================

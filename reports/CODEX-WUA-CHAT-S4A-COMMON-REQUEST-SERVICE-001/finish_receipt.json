@@ -1,0 +1,156 @@
+{
+  "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+  "history_id": "H-CODEX-000016",
+  "exit_code": 0,
+  "protocol": {
+    "command": "finish",
+    "card": "Документация/000_Задачи Codex.md",
+    "steps": [
+      {
+        "command": "check",
+        "card_sha256": "7127db01df2890d57a5a5918b178238591b544cf9e06f127488cd9266c5a8f1d",
+        "eol": "CRLF",
+        "marker_lines": {
+          "b1b": 48,
+          "b1e": 237,
+          "b11b": 243,
+          "b11e": 314
+        },
+        "block1": {
+          "state": "TASK",
+          "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+          "problems": [],
+          "title": "",
+          "lines": 188
+        },
+        "block1_1": {
+          "state": "FILLED",
+          "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+          "copy_sha256": "d63ba49b646369b23576ae1722fdea22bf055d7cf900aa8fbda101a89cc6b0a2",
+          "history_id": "H-CODEX-000015",
+          "history_record": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/task_record.json",
+          "problems": []
+        },
+        "problems": [],
+        "result": "OK"
+      },
+      {
+        "command": "dry-run",
+        "mode": "dry-run",
+        "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+        "status": "SUBMITTED / REVIEW PENDING",
+        "old_card_sha256": "7127db01df2890d57a5a5918b178238591b544cf9e06f127488cd9266c5a8f1d",
+        "previous_slot": {
+          "state": "FILLED",
+          "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+          "copy_sha256": "d63ba49b646369b23576ae1722fdea22bf055d7cf900aa8fbda101a89cc6b0a2",
+          "publication": "NOT VERIFIED",
+          "archived": "IN_SNAPSHOT",
+          "action": "REUSED",
+          "locator": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/handoff_task.md",
+          "archive_sha256": "c24a689c45807e38818cdc18b3d9ddfdc4e1a54c6e0582f6063a42bd7ba942dd"
+        },
+        "history_id": "H-CODEX-000016",
+        "new_card_sha256": "8d148035f863b0d792d4cac79fd33e581b1aa41421ff2b09857859858bb319e4",
+        "copy_sha256_lf": "76ac9029e9c11fe5aaa4b01759d20f6e31f9a82b75559c231c76e0322251c155",
+        "copy_lines": 188,
+        "copied_exact": true,
+        "outside_slots_unchanged": true,
+        "block1_after": "WAITING",
+        "eol": "CRLF",
+        "snapshot": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/handoff_task.md",
+        "snapshot_state": "NEW",
+        "chat_amendments": 0,
+        "result": "DRY RUN OK",
+        "planned_action": "ROTATED"
+      },
+      {
+        "command": "apply",
+        "mode": "apply",
+        "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+        "status": "SUBMITTED / REVIEW PENDING",
+        "old_card_sha256": "7127db01df2890d57a5a5918b178238591b544cf9e06f127488cd9266c5a8f1d",
+        "previous_slot": {
+          "state": "FILLED",
+          "task_id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+          "copy_sha256": "d63ba49b646369b23576ae1722fdea22bf055d7cf900aa8fbda101a89cc6b0a2",
+          "publication": "NOT VERIFIED",
+          "archived": "IN_SNAPSHOT",
+          "action": "REUSED",
+          "locator": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/handoff_task.md",
+          "archive_sha256": "c24a689c45807e38818cdc18b3d9ddfdc4e1a54c6e0582f6063a42bd7ba942dd"
+        },
+        "history_id": "H-CODEX-000016",
+        "new_card_sha256": "8d148035f863b0d792d4cac79fd33e581b1aa41421ff2b09857859858bb319e4",
+        "copy_sha256_lf": "76ac9029e9c11fe5aaa4b01759d20f6e31f9a82b75559c231c76e0322251c155",
+        "copy_lines": 188,
+        "copied_exact": true,
+        "outside_slots_unchanged": true,
+        "block1_after": "WAITING",
+        "eol": "CRLF",
+        "snapshot": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/handoff_task.md",
+        "snapshot_state": "NEW",
+        "chat_amendments": 0,
+        "history": {
+          "id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+          "history_id": "H-CODEX-000016",
+          "record": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/task_record.json",
+          "status": "SUBMITTED / REVIEW PENDING",
+          "review": "NOT VERIFIED"
+        },
+        "snapshot_sha256": "91856904adcfdcdebc0c9f2b093ff9cb39ea0255dc3ffc07ed6763dcdae951db",
+        "result": "ROTATED",
+        "card_unchanged": false
+      },
+      {
+        "command": "readback",
+        "card_sha256": "8d148035f863b0d792d4cac79fd33e581b1aa41421ff2b09857859858bb319e4",
+        "eol": "CRLF",
+        "marker_lines": {
+          "b1b": 48,
+          "b1e": 50,
+          "b11b": 56,
+          "b11e": 247
+        },
+        "block1": {
+          "state": "WAITING",
+          "problems": [],
+          "lines": 1
+        },
+        "block1_1": {
+          "state": "FILLED",
+          "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+          "copy_sha256": "76ac9029e9c11fe5aaa4b01759d20f6e31f9a82b75559c231c76e0322251c155",
+          "history_id": "H-CODEX-000016",
+          "history_record": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/task_record.json",
+          "problems": []
+        },
+        "problems": [],
+        "result": "OK"
+      }
+    ],
+    "result": "ROTATED",
+    "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+    "history": {
+      "id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+      "history_id": "H-CODEX-000016",
+      "record": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/task_record.json",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED"
+    }
+  },
+  "predecessor_files_verified": 584,
+  "predecessor_changes": [],
+  "blocks_2_4_unchanged": true,
+  "package_tool_note": "First receipt assembler used an incorrect backup path and failed before writing a receipt. Corrected in this package only; native finish was not repeated. Original error: evidence/receipt_first_error.txt.",
+  "card": {
+    "path": "Документация/000_Задачи Codex.md",
+    "size": 31112,
+    "sha256": "8d148035f863b0d792d4cac79fd33e581b1aa41421ff2b09857859858bb319e4"
+  },
+  "task_record": {
+    "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/task_record.json",
+    "size": 760,
+    "sha256": "e61f5010aeec023ed5bdbc696eaf66437c3752606af88fab438bd4171f89320f"
+  }
+}

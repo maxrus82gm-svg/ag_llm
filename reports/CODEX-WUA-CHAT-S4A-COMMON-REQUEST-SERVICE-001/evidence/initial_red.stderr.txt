@@ -1,0 +1,19 @@
+test_ordinary_chat_service (unittest.loader._FailedTest.test_ordinary_chat_service) ... ERROR
+
+======================================================================
+ERROR: test_ordinary_chat_service (unittest.loader._FailedTest.test_ordinary_chat_service)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_ordinary_chat_service
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_ordinary_chat_service.py", line 4, in <module>
+    from ordinary_chat_service import (
+ModuleNotFoundError: No module named 'ordinary_chat_service'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

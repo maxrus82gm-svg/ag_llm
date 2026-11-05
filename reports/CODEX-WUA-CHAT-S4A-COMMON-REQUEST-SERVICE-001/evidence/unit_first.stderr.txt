@@ -1,0 +1,605 @@
+test_adapter_mutation_cannot_change_prepared_request (test_ordinary_chat_service.ExecutionContract.test_adapter_mutation_cannot_change_prepared_request) ... ERROR
+test_bad_cancellation_predicate_fails_closed (test_ordinary_chat_service.ExecutionContract.test_bad_cancellation_predicate_fails_closed) ... C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+ERROR
+test_cancel_after_response_preserves_known_usage_without_answer (test_ordinary_chat_service.ExecutionContract.test_cancel_after_response_preserves_known_usage_without_answer) ... ERROR
+test_cancel_before_start_proves_no_call (test_ordinary_chat_service.ExecutionContract.test_cancel_before_start_proves_no_call) ... ERROR
+test_explicit_task_cancellation_after_entry_is_unknown (test_ordinary_chat_service.ExecutionContract.test_explicit_task_cancellation_after_entry_is_unknown) ... ERROR
+test_forged_payload_binding_is_rejected_without_call (test_ordinary_chat_service.ExecutionContract.test_forged_payload_binding_is_rejected_without_call) ... ERROR
+test_no_sender_default_or_missing_sender (test_ordinary_chat_service.ExecutionContract.test_no_sender_default_or_missing_sender) ... ERROR
+test_one_call_exact_wire_and_explicit_timeout (test_ordinary_chat_service.ExecutionContract.test_one_call_exact_wire_and_explicit_timeout) ... ERROR
+test_revoked_or_changed_model_does_not_dispatch (test_ordinary_chat_service.ExecutionContract.test_revoked_or_changed_model_does_not_dispatch) ... Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+ERROR
+test_swallowed_timeout_cannot_publish_late_success (test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success) ... ERROR
+test_timeout_is_unknown_and_one_attempt (test_ordinary_chat_service.ExecutionContract.test_timeout_is_unknown_and_one_attempt) ... ERROR
+test_transport_error_is_redacted_uncertain_and_not_retried (test_ordinary_chat_service.ExecutionContract.test_transport_error_is_redacted_uncertain_and_not_retried) ... ERROR
+test_early_process_guard_negative_controls (test_ordinary_chat_service.OfflineBoundary.test_early_process_guard_negative_controls) ... ERROR
+test_import_and_execution_do_not_touch_network_oauth_or_credentials (test_ordinary_chat_service.OfflineBoundary.test_import_and_execution_do_not_touch_network_oauth_or_credentials) ... ERROR
+test_complete_context_order_and_exact_text (test_ordinary_chat_service.PreparationContract.test_complete_context_order_and_exact_text) ... ok
+test_corrupt_context_matrix_is_refused (test_ordinary_chat_service.PreparationContract.test_corrupt_context_matrix_is_refused) ... ok
+test_determinism_and_provenance_binding (test_ordinary_chat_service.PreparationContract.test_determinism_and_provenance_binding) ... ok
+test_disabled_and_unsupported_registry_entries_rejected (test_ordinary_chat_service.PreparationContract.test_disabled_and_unsupported_registry_entries_rejected) ... ok
+test_every_registered_model_resolves_from_canonical_registry (test_ordinary_chat_service.PreparationContract.test_every_registered_model_resolves_from_canonical_registry) ... ok
+test_explicit_registered_model_and_wire_payload (test_ordinary_chat_service.PreparationContract.test_explicit_registered_model_and_wire_payload) ... ok
+test_invalid_current_user_or_context_reference (test_ordinary_chat_service.PreparationContract.test_invalid_current_user_or_context_reference) ... ok
+test_invalid_limits_are_explicit_errors (test_ordinary_chat_service.PreparationContract.test_invalid_limits_are_explicit_errors) ... ok
+test_message_count_includes_current_user_and_system (test_ordinary_chat_service.PreparationContract.test_message_count_includes_current_user_and_system) ... ok
+test_message_utf8_boundary (test_ordinary_chat_service.PreparationContract.test_message_utf8_boundary) ... ok
+test_missing_coerced_and_padded_model_ids_rejected (test_ordinary_chat_service.PreparationContract.test_missing_coerced_and_padded_model_ids_rejected) ... ok
+test_snapshot_deep_freeze_and_shell_choice_change (test_ordinary_chat_service.PreparationContract.test_snapshot_deep_freeze_and_shell_choice_change) ... ok
+test_tool_context_rejected (test_ordinary_chat_service.PreparationContract.test_tool_context_rejected) ... ok
+test_unknown_model_has_no_fallback (test_ordinary_chat_service.PreparationContract.test_unknown_model_has_no_fallback) ... ok
+test_wire_byte_boundary_uses_entire_json (test_ordinary_chat_service.PreparationContract.test_wire_byte_boundary_uses_entire_json) ... ok
+test_answer_and_safe_metadata (test_ordinary_chat_service.ResponseContract.test_answer_and_safe_metadata) ... ok
+test_existing_usage_parser_is_reused (test_ordinary_chat_service.ResponseContract.test_existing_usage_parser_is_reused) ... ok
+test_incomplete_choice_or_tool_invocation_not_success (test_ordinary_chat_service.ResponseContract.test_incomplete_choice_or_tool_invocation_not_success) ... Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+ok
+test_invalid_usage_does_not_become_zero_or_known_cost (test_ordinary_chat_service.ResponseContract.test_invalid_usage_does_not_become_zero_or_known_cost) ... ok
+test_malformed_responses_are_typed_and_redacted (test_ordinary_chat_service.ResponseContract.test_malformed_responses_are_typed_and_redacted) ... ok
+test_missing_optional_fields_and_eos_compatibility (test_ordinary_chat_service.ResponseContract.test_missing_optional_fields_and_eos_compatibility) ... ok
+test_response_utf8_limit_and_cycle (test_ordinary_chat_service.ResponseContract.test_response_utf8_limit_and_cycle) ... ok
+test_usage_complete_zero_partial_missing_and_extra_fields (test_ordinary_chat_service.ResponseContract.test_usage_complete_zero_partial_missing_and_extra_fields) ... ok
+
+======================================================================
+ERROR: test_adapter_mutation_cannot_change_prepared_request (test_ordinary_chat_service.ExecutionContract.test_adapter_mutation_cannot_change_prepared_request)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_bad_cancellation_predicate_fails_closed (test_ordinary_chat_service.ExecutionContract.test_bad_cancellation_predicate_fails_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_cancel_after_response_preserves_known_usage_without_answer (test_ordinary_chat_service.ExecutionContract.test_cancel_after_response_preserves_known_usage_without_answer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_cancel_before_start_proves_no_call (test_ordinary_chat_service.ExecutionContract.test_cancel_before_start_proves_no_call)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_explicit_task_cancellation_after_entry_is_unknown (test_ordinary_chat_service.ExecutionContract.test_explicit_task_cancellation_after_entry_is_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_forged_payload_binding_is_rejected_without_call (test_ordinary_chat_service.ExecutionContract.test_forged_payload_binding_is_rejected_without_call)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_no_sender_default_or_missing_sender (test_ordinary_chat_service.ExecutionContract.test_no_sender_default_or_missing_sender)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_one_call_exact_wire_and_explicit_timeout (test_ordinary_chat_service.ExecutionContract.test_one_call_exact_wire_and_explicit_timeout)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_revoked_or_changed_model_does_not_dispatch (test_ordinary_chat_service.ExecutionContract.test_revoked_or_changed_model_does_not_dispatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_swallowed_timeout_cannot_publish_late_success (test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_timeout_is_unknown_and_one_attempt (test_ordinary_chat_service.ExecutionContract.test_timeout_is_unknown_and_one_attempt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_transport_error_is_redacted_uncertain_and_not_retried (test_ordinary_chat_service.ExecutionContract.test_transport_error_is_redacted_uncertain_and_not_retried)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_early_process_guard_negative_controls (test_ordinary_chat_service.OfflineBoundary.test_early_process_guard_negative_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+======================================================================
+ERROR: test_import_and_execution_do_not_touch_network_oauth_or_credentials (test_ordinary_chat_service.OfflineBoundary.test_import_and_execution_do_not_touch_network_oauth_or_credentials)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 83, in get_loop
+    self._lazy_init()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 137, in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 615, in _fallback_socketpair
+    lsock.bind((host, 0))
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 41, in _audit
+    _deny(event, "physical_network")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001\guard\sitecustomize.py", line 18, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: physical_network
+
+----------------------------------------------------------------------
+Ran 37 tests in 0.119s
+
+FAILED (errors=14)
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000001828C96A0C0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+    self.close()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+    self._close_self_pipe()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+    self._ssock.close()
+    ^^^^^^^^^^^
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'

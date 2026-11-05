@@ -1,0 +1,420 @@
+{
+  "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+  "status": "READY FOR INDEPENDENT VERIFICATION",
+  "hash": "SHA-256 exact bytes",
+  "manifest_excludes": [
+    "manifest.json (self)"
+  ],
+  "files": [
+    {
+      "path": "ordinary_chat_service.py",
+      "size": 13739,
+      "sha256": "509d26c16f05f259520733e00bc2675bb91f2c132af784ce7b605e77c78b9a85"
+    },
+    {
+      "path": "test_ordinary_chat_service.py",
+      "size": 24720,
+      "sha256": "a349c6d815fa4a02c7393c0309d3715e1d80cba4c9de91ceea8b83d7dceca866"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/assemble_package.py",
+      "size": 6530,
+      "sha256": "c05bfee2caa4b373ca5826fb82449a4343a263af97fada3bf23e115cc84a42c7"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/context_storage.py.source.txt",
+      "size": 98138,
+      "sha256": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/gigachat_transport.py.source.txt",
+      "size": 1943,
+      "sha256": "ee1db75ed04ea432224324d9ffb8271e211985e2d4f3a25f72dff89db251a879"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/model_registry.py.source.txt",
+      "size": 2519,
+      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/provider_accounting.py.source.txt",
+      "size": 4884,
+      "sha256": "dd83dbf7a22154347ac6f17ca2110e78757338248bd466f86a0d3599db510902"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/run_store.py.source.txt",
+      "size": 38605,
+      "sha256": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/server.py.source.txt",
+      "size": 327746,
+      "sha256": "3f950f0329b7605eb790ce61245a95985146d649d3d5c805660b57374fb6c401"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/Start_WebAlarm.bat.source.txt",
+      "size": 1482,
+      "sha256": "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/tools/task_slot_rotate.py.source.txt",
+      "size": 48188,
+      "sha256": "d87645b20c92cb0c01cc7734765b74b4cf29a0f1b2fa4cf8fbb8afd39cac0d17"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/web_alarm/launch_config.json.source.txt",
+      "size": 1769,
+      "sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/web_alarm/turn_service.py.source.txt",
+      "size": 15370,
+      "sha256": "0b532c0386670f8645d6cfde339dbb0474ffa95bccd5d759b981580da18b6f6a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/before/Документация/000_Задачи Codex.md.source.txt",
+      "size": 36191,
+      "sha256": "7127db01df2890d57a5a5918b178238591b544cf9e06f127488cd9266c5a8f1d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/checks.py",
+      "size": 3682,
+      "sha256": "a8a9609ad2c4502dd9f16714995694083a856786cc3edf8941967b486dc8caf7"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/accounting_regression.result.json",
+      "size": 544,
+      "sha256": "a8e36a3ecb0bbd4f2cd4398a1d3d9fd1285d8a4eeced806c80cbdd520df37baf"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/accounting_regression.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/accounting_regression.stdout.txt",
+      "size": 1223,
+      "sha256": "38ad37086f86c3fe3c016e9eec413e9cea40d8f6712af631b57b18f8bc6dca3a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/after-finish.json",
+      "size": 381,
+      "sha256": "493c65482663e1d432f7fd6eee26a44242d304387e903fdd6ea77b6c92844630"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/baseline.json",
+      "size": 141085,
+      "sha256": "d0078d8f4aea2a74334f2f89e03c71eadf3b3cc417a6b39292605a1189f6b33b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/before-finish.json",
+      "size": 319,
+      "sha256": "8b3bde930645fd5ad639d90431b0b1fa167a553f40828d77a84921b156722b5a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/compile.json",
+      "size": 693,
+      "sha256": "22b69f087548676c63d85625f894356bf4af717e270a4a478121e26b4f7e1c0e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/compile_final.result.json",
+      "size": 1041,
+      "sha256": "096650683db0ded578b5ca37f10a090dafcf34301ee4120101d6681eecc0e33d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/compile_final.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/compile_final.stdout.txt",
+      "size": 695,
+      "sha256": "d48f559287f95077b3d5ef3c13dd29818fd779524765ffa08356001959a90cbe"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/finish.result.json",
+      "size": 1210,
+      "sha256": "1922590675acbd15a3ca488d225a2f1f99ca0d4b18b2d78b75e074b9f2c86447"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/finish.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/finish.stdout.txt",
+      "size": 4903,
+      "sha256": "3f2c58f447d9e24ae36a666098a6f1a0c6770916515e99178fca6f99241a69d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/guard_first.source.txt",
+      "size": 2572,
+      "sha256": "7f26c8e4fca33d0db832cbc727ff81e2e8b3d0ad6748dfb5170070cc6234355f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/guard_stage3_first.source.txt",
+      "size": 3355,
+      "sha256": "c80edb8f09912c5eb6add4d72adb9142492027875dc33c2771d610d348673329"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/initial_contract.source.txt",
+      "size": 1825,
+      "sha256": "2229a13e2b5abdf739843d5302997955a86c8bbb9182e9be1c34178892d34c02"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/initial_red.result.json",
+      "size": 492,
+      "sha256": "e1accc4f13852422e2bb44a731c3c4462e98bb5b7be1db5b71f1a25d94ad69b0"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/initial_red.stderr.txt",
+      "size": 934,
+      "sha256": "c03178afd1cb1e981ecde46cd169033719b69a2b01467dde28b807829f408a01"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/initial_red.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/model_regression.result.json",
+      "size": 605,
+      "sha256": "073797af805ecfd115275557d529d0bac1ce380a776041c6759ff12fd64f2fa2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/model_regression.stderr.txt",
+      "size": 7004,
+      "sha256": "d0fa4b2ee73564b1cb61c061030d7322b334bfc4e8fc8483ef0313b5478201ef"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/model_regression.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/predecessors.before.json",
+      "size": 124036,
+      "sha256": "722e24f44b8db202e7aea07bd1d7f4f7e59cbdd8f3830069903763bf5aa64412"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/receipt_after_path_fix.result.json",
+      "size": 1051,
+      "sha256": "76246805fba581354967612632ece64629234316ddd0cc4b5bd7eaba7f5eff33"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/receipt_after_path_fix.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/receipt_after_path_fix.stdout.txt",
+      "size": 204,
+      "sha256": "a25d995d344b040e01d6b2a4ca0e8d922258d3ad1176c666568ddea017ef6efd"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/receipt_first_error.txt",
+      "size": 1203,
+      "sha256": "0f7a0f44172746d5da8114c17d25acce5e948694de115463aa0ef243e28de639"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/review_usage_before.source.txt",
+      "size": 13450,
+      "sha256": "097b29340432ccf8612a86e78249618d8ef7b81938bf4de25868a36a1f305d25"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/review_usage_red.result.json",
+      "size": 1092,
+      "sha256": "a793b22ddfc131d70e2dd043606c5fb0fb27d6dc37280e961df2e871353e5174"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/review_usage_red.stderr.txt",
+      "size": 979,
+      "sha256": "c6fdf02e8fb505a5751ee702f67a1918587c54fd329d9fcdc28e1ce315908dd5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/review_usage_red.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/stage3_after_guard.result.json",
+      "size": 1124,
+      "sha256": "4a6b71b6108be8b723fd0db0dcec690f9d6a571ace4a116142045e97aa48f642"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/stage3_after_guard.stderr.txt",
+      "size": 4855,
+      "sha256": "2ea855e3f1c0064f1ff5efeea24b11158d706f06c2df8a899365668e3334ebb3"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/stage3_after_guard.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/stage3_regression.guard.jsonl",
+      "size": 617,
+      "sha256": "3cefd379be839b1575f15231f877ddc0db840e6f7f9ed23b3b8c917d2cc52e74"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/stage3_regression.result.json",
+      "size": 578,
+      "sha256": "f4e4d0c3daa686beb20664cda2d6a5ef63b720aceffb78b1a73708afb3fe167b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/stage3_regression.stderr.txt",
+      "size": 15501,
+      "sha256": "776d7503a5688dd5db8efb320ca87643fe68216e7aafd64524cd6192f3da3bf4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/stage3_regression.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/test_summary.before_id_format_fix.json",
+      "size": 52587,
+      "sha256": "61ee123ffc36baf72909f12326ffd803ba4314bd54d349a05ee8dcf9862d15f3"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/test_summary.json",
+      "size": 42122,
+      "sha256": "4dfcea654a2b3e12411415456433022baa80a944992bb8bc70b262a030e9361d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_after_guard.guard.jsonl",
+      "size": 284,
+      "sha256": "56d4e1dc6368f5d5690546ce1f6ad03252d78c9cd5bf00f83463e32480691b0d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_after_guard.result.json",
+      "size": 491,
+      "sha256": "73da52632fa458494281b6a8428288f9b011e5c4cf86d3ceeb0187e81b21ef44"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_after_guard.stderr.txt",
+      "size": 5617,
+      "sha256": "05f6a059ce6f3fad5b37aa778b41fdc92f1f4f4b579f5fd12b82d3777904390e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_after_guard.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_final.guard.jsonl",
+      "size": 284,
+      "sha256": "299ed05c28b89b36799aa9eaa6ad22897e6e3c55a6bf0e57f30d90f3a98f2e4a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_final.result.json",
+      "size": 1026,
+      "sha256": "0698fbdc1cdc3d41063cbf72b8dad8166a15f28fd380e8e9a70d267d6f41280c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_final.stderr.txt",
+      "size": 5928,
+      "sha256": "ef020acf0cfb33a40b72b155310e816af15f963a2a4f100bc43d673ff3760913"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_first.guard.jsonl",
+      "size": 1343,
+      "sha256": "d9cf51a7dd545787eea24c8ceb7dadc3627a9c13ac1581f9b53cc7b24f8e41e9"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_first.result.json",
+      "size": 491,
+      "sha256": "eef54dfead2d439a7272c92072b36bc53ba65865355decbbd241ed965e9a4cb6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_first.stderr.txt",
+      "size": 44359,
+      "sha256": "0d985003dc529f8d154577a9cdad63b7a1a8753c7ad59b5f7ea95be2871de0de"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/evidence/unit_first.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/finish_receipt.json",
+      "size": 6471,
+      "sha256": "e4e6fea5123d1f871a9e54fc3164292c84c10b302c4293caa6d15e66d08924a4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/guard/sitecustomize.py",
+      "size": 3742,
+      "sha256": "63d2f02d1397a856698a60644bc86decb062d37dbf904494503fb4bec58c096c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/handoff_task.md",
+      "size": 13639,
+      "sha256": "91856904adcfdcdebc0c9f2b093ff9cb39ea0255dc3ffc07ed6763dcdae951db"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/interface.md",
+      "size": 12611,
+      "sha256": "7ddf85ea3b4169eebc76f1b4af17b31980881781f37fddc2290ef1a71c7dd2e3"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/report.md",
+      "size": 14482,
+      "sha256": "069bb86241ad10cab07acefa153d6c5a30a2a7d58ccd828071c1521ea4922e06"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/run_check.py",
+      "size": 2547,
+      "sha256": "fa3acdd328b198f6f3b0c4ad613c3fa9c23302d74fb21db349ad7ec586918c61"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/task_record.json",
+      "size": 760,
+      "sha256": "e61f5010aeec023ed5bdbc696eaf66437c3752606af88fab438bd4171f89320f"
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "size": 31112,
+      "sha256": "8d148035f863b0d792d4cac79fd33e581b1aa41421ff2b09857859858bb319e4"
+    },
+    {
+      "path": "reports/task_history_sequences.json",
+      "size": 28,
+      "sha256": "977a8aa35aaa76fd83087a27903421f2fd640a1e24e03c57e5281076e23354f8"
+    }
+  ],
+  "publication_allowlist": [
+    "ordinary_chat_service.py",
+    "test_ordinary_chat_service.py",
+    "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/**",
+    "Документация/000_Задачи Codex.md (native finish only)",
+    "reports/task_history_sequences.json (native finish only)"
+  ],
+  "publication_excludes": [
+    ".obsidian/**",
+    ".ultra/**",
+    "Чат_pro/**",
+    "Чат_Pro_01/**",
+    "unrelated local edits"
+  ],
+  "selected_final_tests": {
+    "pass": 116,
+    "fail": 0,
+    "error": 0,
+    "skip": 0
+  },
+  "historical_failures_preserved": [
+    "initial_red",
+    "unit_first",
+    "stage3_regression",
+    "review_usage_red",
+    "receipt_first_error.txt"
+  ],
+  "independent_review": "PENDING",
+  "stage4_full": "NOT COMPLETE",
+  "live_provider_calls": 0
+}

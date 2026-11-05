@@ -1,0 +1,30 @@
+{
+  "compiled": [
+    {
+      "path": "ordinary_chat_service.py",
+      "size": 13739,
+      "sha256": "509d26c16f05f259520733e00bc2675bb91f2c132af784ce7b605e77c78b9a85"
+    },
+    {
+      "path": "test_ordinary_chat_service.py",
+      "size": 24720,
+      "sha256": "a349c6d815fa4a02c7393c0309d3715e1d80cba4c9de91ceea8b83d7dceca866"
+    }
+  ],
+  "service_imports": [
+    "__future__",
+    "asyncio",
+    "dataclasses",
+    "enum",
+    "gigachat_transport",
+    "hashlib",
+    "json",
+    "math",
+    "model_registry",
+    "provider_accounting",
+    "time",
+    "typing"
+  ],
+  "pyc_written": false,
+  "ui_smoke": "NOT RUN: no existing UI/runtime module changed"
+}

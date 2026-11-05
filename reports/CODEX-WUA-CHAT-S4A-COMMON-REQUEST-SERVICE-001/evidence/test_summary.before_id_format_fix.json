@@ -1,0 +1,1123 @@
+{
+  "selected_final_pass": 116,
+  "selected_final_skip": 0,
+  "counts": {
+    "accounting_regression": 9,
+    "model_regression": 38,
+    "stage3_after_guard": 30,
+    "unit_final": 39
+  },
+  "runs": [
+    {
+      "label": "accounting_regression",
+      "exit_code": 0,
+      "unittest_cases": [],
+      "pytest_cases": [
+        [
+          "test_provider_accounting.py::test_request_accounting_measures_blocks_hashes_and_no_raw_content",
+          "PASSED"
+        ],
+        [
+          "test_provider_accounting.py::test_terminal_accounting_preserves_unknown_usage_and_outcome",
+          "PASSED"
+        ],
+        [
+          "test_provider_accounting.py::test_terminal_omits_non_numeric_http_status",
+          "PASSED"
+        ],
+        [
+          "test_usage_accounting.py::test_extract_and_aggregate_usage",
+          "PASSED"
+        ],
+        [
+          "test_usage_accounting.py::test_provider_attempt_started_without_terminal_is_incomplete",
+          "PASSED"
+        ],
+        [
+          "test_usage_accounting.py::test_unknown_terminal_usage_stays_unknown_not_zero",
+          "PASSED"
+        ],
+        [
+          "test_usage_accounting.py::test_recorder_accounts_each_provider_role_and_not_synthetic_dispatch",
+          "PASSED"
+        ],
+        [
+          "test_usage_accounting.py::test_duplicate_terminal_marks_accounting_incomplete_without_double_count",
+          "PASSED"
+        ],
+        [
+          "test_usage_accounting.py::test_verifier_result_preserves_provider_usage",
+          "PASSED"
+        ]
+      ],
+      "guard_denials": []
+    },
+    {
+      "label": "compile_final",
+      "exit_code": 0,
+      "unittest_cases": [],
+      "pytest_cases": [],
+      "guard_denials": []
+    },
+    {
+      "label": "initial_red",
+      "exit_code": 1,
+      "unittest_cases": [
+        {
+          "id": "unittest.loader._FailedTest.test_ordinary_chat_service.test_ordinary_chat_service",
+          "result": "ERROR"
+        }
+      ],
+      "pytest_cases": [],
+      "guard_denials": []
+    },
+    {
+      "label": "model_regression",
+      "exit_code": 0,
+      "unittest_cases": [
+        {
+          "id": "test_web_alarm_model_cards.ApiStatus.test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere.test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.ApiStatus.test_m08_card_text_and_profile_limits_never_reset_the_status_but_settings_do.test_m08_card_text_and_profile_limits_never_reset_the_status_but_settings_do",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.ApiStatus.test_m09_failures_simulations_and_checker_errors.test_m09_failures_simulations_and_checker_errors",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.ApiStatus.test_m10_unauthorised_default_sends_nothing_and_refusals.test_m10_unauthorised_default_sends_nothing_and_refusals",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.ApiStatus.test_m11_damaged_checks_are_red_kept_for_diagnosis_and_replaced_by_the_next_answer.test_m11_damaged_checks_are_red_kept_for_diagnosis_and_replaced_by_the_next_answer",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.ApiStatus.test_m12_an_ordinary_answer_refreshes_only_with_the_exact_settings.test_m12_an_ordinary_answer_refreshes_only_with_the_exact_settings",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.BoardLayout.test_m22_windows_persist_restart_and_touch_nothing_else.test_m22_windows_persist_restart_and_touch_nothing_else",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.BoardLayout.test_m23_layout_requests_are_checked_before_anything_is_written.test_m23_layout_requests_are_checked_before_anything_is_written",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.BoardLayout.test_m24_two_pages_and_concurrent_writes_lose_no_window.test_m24_two_pages_and_concurrent_writes_lose_no_window",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.BoardLayout.test_m25_damaged_or_absent_windows_never_break_the_board.test_m25_damaged_or_absent_windows_never_break_the_board",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.BoardView.test_m18_order_and_favourites_persist_and_touch_nothing_else.test_m18_order_and_favourites_persist_and_touch_nothing_else",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.BoardView.test_m19_requests_are_checked_before_anything_is_written.test_m19_requests_are_checked_before_anything_is_written",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.BoardView.test_m20_new_and_removed_entries_keep_preferences_and_never_duplicate.test_m20_new_and_removed_entries_keep_preferences_and_never_duplicate",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.BoardView.test_m21_concurrent_saves_and_a_damaged_file.test_m21_concurrent_saves_and_a_damaged_file",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.CatalogAndRoles.test_m01_cards_follow_the_shared_registry_and_reading_writes_nothing.test_m01_cards_follow_the_shared_registry_and_reading_writes_nothing",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.CatalogAndRoles.test_m02_role_marks_are_the_real_assignments_and_nothing_else.test_m02_role_marks_are_the_real_assignments_and_nothing_else",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.CatalogAndRoles.test_m03_tk_reading_mirrors_ui_state_and_the_tk_fallback.test_m03_tk_reading_mirrors_ui_state_and_the_tk_fallback",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.CatalogAndRoles.test_m04_tk_defaults_and_provider_facts_match_their_owners.test_m04_tk_defaults_and_provider_facts_match_their_owners",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.CatalogAndRoles.test_m05_unreadable_missing_or_unconnected_tk_settings_never_give_a_check_mark.test_m05_unreadable_missing_or_unconnected_tk_settings_never_give_a_check_mark",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.CatalogAndRoles.test_m06_an_instance_on_its_own_storage_reads_tk_settings_only_from_a_given_file.test_m06_an_instance_on_its_own_storage_reads_tk_settings_only_from_a_given_file",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.Http.test_m16_http_only_for_the_local_page_and_no_secret_anywhere.test_m16_http_only_for_the_local_page_and_no_secret_anywhere",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.Http.test_m17_the_module_cannot_send_or_read_a_key.test_m17_the_module_cannot_send_or_read_a_key",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.Settings.test_m13_card_data_is_validated_persisted_and_kept_apart_from_status_and_secrets.test_m13_card_data_is_validated_persisted_and_kept_apart_from_status_and_secrets",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.Settings.test_m14_concurrent_saves_lose_nothing_silently.test_m14_concurrent_saves_lose_nothing_silently",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_model_cards.Settings.test_m15_damaged_settings_are_reported_kept_and_replaced_only_on_purpose.test_m15_damaged_settings_are_reported_kept_and_replaced_only_on_purpose",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.CatalogTests.test_an_unavailable_shared_registry_is_reported_and_invents_nothing.test_an_unavailable_shared_registry_is_reported_and_invents_nothing",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.CatalogTests.test_catalog_is_exactly_the_shared_registry_and_the_page_copies_no_model.test_catalog_is_exactly_the_shared_registry_and_the_page_copies_no_model",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.CatalogTests.test_registry_changes_are_seen_without_any_copy_in_web_alarm.test_registry_changes_are_seen_without_any_copy_in_web_alarm",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.CatalogTests.test_status_lists_the_capability_and_wrong_methods_are_refused.test_status_lists_the_capability_and_wrong_methods_are_refused",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.CatalogTests.test_viewing_writes_nothing_and_opens_no_network_or_transport.test_viewing_writes_nothing_and_opens_no_network_or_transport",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.SelectionTests.test_a_saved_model_that_later_disappears_or_is_disabled_is_reported_not_used.test_a_saved_model_that_later_disappears_or_is_disabled_is_reported_not_used",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.SelectionTests.test_concurrent_choices_leave_one_valid_file.test_concurrent_choices_leave_one_valid_file",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.SelectionTests.test_pro_and_ultra_choice_survives_a_restart_and_is_stored_only_as_a_reference.test_pro_and_ultra_choice_survives_a_restart_and_is_stored_only_as_a_reference",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.SelectionTests.test_roles_of_a_newer_version_are_kept_when_chat_is_saved.test_roles_of_a_newer_version_are_kept_when_chat_is_saved",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.SelectionTests.test_the_tkinter_ultra_state_and_the_transport_are_never_touched.test_the_tkinter_ultra_state_and_the_transport_are_never_touched",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_connections.SelectionTests.test_unknown_malformed_and_disabled_connections_are_refused_without_writing.test_unknown_malformed_and_disabled_connections_are_refused_without_writing",
+          "result": "ok"
+        }
+      ],
+      "pytest_cases": [],
+      "guard_denials": []
+    },
+    {
+      "label": "review_usage_red",
+      "exit_code": 1,
+      "unittest_cases": [
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_invalid_answer_retains_valid_supplied_usage.test_invalid_answer_retains_valid_supplied_usage",
+          "result": "FAIL"
+        }
+      ],
+      "pytest_cases": [],
+      "guard_denials": []
+    },
+    {
+      "label": "stage3_after_guard",
+      "exit_code": 0,
+      "unittest_cases": [
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_adapter_failure_is_failed_and_does_not_replay.test_adapter_failure_is_failed_and_does_not_replay",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_conflict_and_distinct_keys.test_conflict_and_distinct_keys",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_corrupt_raw_or_event_is_refused_without_mutation.test_corrupt_raw_or_event_is_refused_without_mutation",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_damaged_ready_raw_prevents_execution.test_damaged_ready_raw_prevents_execution",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_foreign_chat_and_workspace_identity_refused.test_foreign_chat_and_workspace_identity_refused",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_get_never_starts_ready_turn_and_cancel_before_start.test_get_never_starts_ready_turn_and_cancel_before_start",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_invalid_references_schema_and_test_roots_do_not_write.test_invalid_references_schema_and_test_roots_do_not_write",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_invalid_unicode_is_rejected_before_storage.test_invalid_unicode_is_rejected_before_storage",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_late_result_after_cancel_is_not_success.test_late_result_after_cancel_is_not_success",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_preexisting_raw_is_preserved_byte_for_byte.test_preexisting_raw_is_preserved_byte_for_byte",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_process_exit_recovery_and_raw_identity.test_process_exit_recovery_and_raw_identity",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_raw_crash_before_and_after_commit.test_raw_crash_before_and_after_commit",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_result_fsync_lost_ack_recovers_without_second_execution.test_result_fsync_lost_ack_recovers_without_second_execution",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_roundtrip_replay_and_reopen.test_roundtrip_replay_and_reopen",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_stale_ready_projection_cannot_execute_a_started_turn_again.test_stale_ready_projection_cannot_execute_a_started_turn_again",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_started_without_result_is_unknown_after_reopen.test_started_without_result_is_unknown_after_reopen",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_turn_audit_junction_refused_without_external_bytes.test_turn_audit_junction_refused_without_external_bytes",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_two_processes_one_turn.test_two_processes_one_turn",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_two_service_writers_share_one_attempt.test_two_service_writers_share_one_attempt",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_auth_origin_size_schema_and_unknown_references_do_not_write.test_auth_origin_size_schema_and_unknown_references_do_not_write",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_foreign_chat_registered_root_not_allowlisted_and_methods.test_foreign_chat_registered_root_not_allowlisted_and_methods",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_http_cancel_rejects_late_result.test_http_cancel_rejects_late_result",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_lost_physical_http_reply_replays_saved_turn.test_lost_physical_http_reply_replays_saved_turn",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_send_read_tokens_history_and_restart.test_send_read_tokens_history_and_restart",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_standard_has_no_send_and_read_capability_cannot_cancel.test_standard_has_no_send_and_read_capability_cannot_cancel",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_turn_read_requires_read_authority_and_valid_scope.test_turn_read_requires_read_authority_and_valid_scope",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_two_clients_one_key_one_attempt.test_two_clients_one_key_one_attempt",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_audit_junction_must_not_write_outside_workspace.test_audit_junction_must_not_write_outside_workspace",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_normal_run_roundtrip_uses_existing_store.test_normal_run_roundtrip_uses_existing_store",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_same_run_two_processes_have_unique_sequences_or_visible_refusal.test_same_run_two_processes_have_unique_sequences_or_visible_refusal",
+          "result": "ok"
+        }
+      ],
+      "pytest_cases": [],
+      "guard_denials": []
+    },
+    {
+      "label": "stage3_regression",
+      "exit_code": 1,
+      "unittest_cases": [
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_adapter_failure_is_failed_and_does_not_replay.test_adapter_failure_is_failed_and_does_not_replay",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_conflict_and_distinct_keys.test_conflict_and_distinct_keys",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_corrupt_raw_or_event_is_refused_without_mutation.test_corrupt_raw_or_event_is_refused_without_mutation",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_damaged_ready_raw_prevents_execution.test_damaged_ready_raw_prevents_execution",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_foreign_chat_and_workspace_identity_refused.test_foreign_chat_and_workspace_identity_refused",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_get_never_starts_ready_turn_and_cancel_before_start.test_get_never_starts_ready_turn_and_cancel_before_start",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_invalid_references_schema_and_test_roots_do_not_write.test_invalid_references_schema_and_test_roots_do_not_write",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_invalid_unicode_is_rejected_before_storage.test_invalid_unicode_is_rejected_before_storage",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_late_result_after_cancel_is_not_success.test_late_result_after_cancel_is_not_success",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_preexisting_raw_is_preserved_byte_for_byte.test_preexisting_raw_is_preserved_byte_for_byte",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_raw_crash_before_and_after_commit.test_raw_crash_before_and_after_commit",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_result_fsync_lost_ack_recovers_without_second_execution.test_result_fsync_lost_ack_recovers_without_second_execution",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_roundtrip_replay_and_reopen.test_roundtrip_replay_and_reopen",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_stale_ready_projection_cannot_execute_a_started_turn_again.test_stale_ready_projection_cannot_execute_a_started_turn_again",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_started_without_result_is_unknown_after_reopen.test_started_without_result_is_unknown_after_reopen",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_turn_audit_junction_refused_without_external_bytes.test_turn_audit_junction_refused_without_external_bytes",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_two_processes_one_turn.test_two_processes_one_turn",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_service.TurnTests.test_two_service_writers_share_one_attempt.test_two_service_writers_share_one_attempt",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_auth_origin_size_schema_and_unknown_references_do_not_write.test_auth_origin_size_schema_and_unknown_references_do_not_write",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_foreign_chat_registered_root_not_allowlisted_and_methods.test_foreign_chat_registered_root_not_allowlisted_and_methods",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_http_cancel_rejects_late_result.test_http_cancel_rejects_late_result",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_lost_physical_http_reply_replays_saved_turn.test_lost_physical_http_reply_replays_saved_turn",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_send_read_tokens_history_and_restart.test_send_read_tokens_history_and_restart",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_standard_has_no_send_and_read_capability_cannot_cancel.test_standard_has_no_send_and_read_capability_cannot_cancel",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_turn_read_requires_read_authority_and_valid_scope.test_turn_read_requires_read_authority_and_valid_scope",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_two_clients_one_key_one_attempt.test_two_clients_one_key_one_attempt",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_audit_junction_must_not_write_outside_workspace.test_audit_junction_must_not_write_outside_workspace",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_normal_run_roundtrip_uses_existing_store.test_normal_run_roundtrip_uses_existing_store",
+          "result": "ok"
+        },
+        {
+          "id": "test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_same_run_two_processes_have_unique_sequences_or_visible_refusal.test_same_run_two_processes_have_unique_sequences_or_visible_refusal",
+          "result": "ERROR"
+        }
+      ],
+      "pytest_cases": [],
+      "guard_denials": [
+        {
+          "event": "subprocess.Popen",
+          "boundary": "non_python_process",
+          "pid": 37160,
+          "monotonic": 53988.375
+        },
+        {
+          "event": "subprocess.Popen",
+          "boundary": "non_python_process",
+          "pid": 37160,
+          "monotonic": 53988.375
+        },
+        {
+          "event": "subprocess.Popen",
+          "boundary": "non_python_process",
+          "pid": 37160,
+          "monotonic": 53988.375
+        },
+        {
+          "event": "subprocess.Popen",
+          "boundary": "non_python_process",
+          "pid": 37160,
+          "monotonic": 53988.39
+        },
+        {
+          "event": "subprocess.Popen",
+          "boundary": "non_python_process",
+          "pid": 37160,
+          "monotonic": 53992.453
+        },
+        {
+          "event": "subprocess.Popen",
+          "boundary": "non_python_process",
+          "pid": 37160,
+          "monotonic": 54002.359
+        }
+      ]
+    },
+    {
+      "label": "unit_after_guard",
+      "exit_code": 0,
+      "unittest_cases": [
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_adapter_mutation_cannot_change_prepared_request.test_adapter_mutation_cannot_change_prepared_request",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_bad_cancellation_predicate_fails_closed.test_bad_cancellation_predicate_fails_closed",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_cancel_after_response_preserves_known_usage_without_answer.test_cancel_after_response_preserves_known_usage_without_answer",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_cancel_before_start_proves_no_call.test_cancel_before_start_proves_no_call",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_explicit_task_cancellation_after_entry_is_unknown.test_explicit_task_cancellation_after_entry_is_unknown",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_forged_payload_binding_is_rejected_without_call.test_forged_payload_binding_is_rejected_without_call",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_no_sender_default_or_missing_sender.test_no_sender_default_or_missing_sender",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_one_call_exact_wire_and_explicit_timeout.test_one_call_exact_wire_and_explicit_timeout",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_revoked_or_changed_model_does_not_dispatch.test_revoked_or_changed_model_does_not_dispatch",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success.test_swallowed_timeout_cannot_publish_late_success",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_timeout_is_unknown_and_one_attempt.test_timeout_is_unknown_and_one_attempt",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_transport_error_is_redacted_uncertain_and_not_retried.test_transport_error_is_redacted_uncertain_and_not_retried",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.OfflineBoundary.test_early_process_guard_negative_controls.test_early_process_guard_negative_controls",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.OfflineBoundary.test_import_and_execution_do_not_touch_network_oauth_or_credentials.test_import_and_execution_do_not_touch_network_oauth_or_credentials",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_complete_context_order_and_exact_text.test_complete_context_order_and_exact_text",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_corrupt_context_matrix_is_refused.test_corrupt_context_matrix_is_refused",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_determinism_and_provenance_binding.test_determinism_and_provenance_binding",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_disabled_and_unsupported_registry_entries_rejected.test_disabled_and_unsupported_registry_entries_rejected",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_every_registered_model_resolves_from_canonical_registry.test_every_registered_model_resolves_from_canonical_registry",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_explicit_registered_model_and_wire_payload.test_explicit_registered_model_and_wire_payload",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_invalid_current_user_or_context_reference.test_invalid_current_user_or_context_reference",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_invalid_limits_are_explicit_errors.test_invalid_limits_are_explicit_errors",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_message_count_includes_current_user_and_system.test_message_count_includes_current_user_and_system",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_message_utf8_boundary.test_message_utf8_boundary",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_missing_coerced_and_padded_model_ids_rejected.test_missing_coerced_and_padded_model_ids_rejected",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_snapshot_deep_freeze_and_shell_choice_change.test_snapshot_deep_freeze_and_shell_choice_change",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_tool_context_rejected.test_tool_context_rejected",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_unknown_model_has_no_fallback.test_unknown_model_has_no_fallback",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_wire_byte_boundary_uses_entire_json.test_wire_byte_boundary_uses_entire_json",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_answer_and_safe_metadata.test_answer_and_safe_metadata",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_existing_usage_parser_is_reused.test_existing_usage_parser_is_reused",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_incomplete_choice_or_tool_invocation_not_success.test_incomplete_choice_or_tool_invocation_not_success",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_invalid_usage_does_not_become_zero_or_known_cost.test_invalid_usage_does_not_become_zero_or_known_cost",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_malformed_responses_are_typed_and_redacted.test_malformed_responses_are_typed_and_redacted",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_missing_optional_fields_and_eos_compatibility.test_missing_optional_fields_and_eos_compatibility",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_response_utf8_limit_and_cycle.test_response_utf8_limit_and_cycle",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_usage_complete_zero_partial_missing_and_extra_fields.test_usage_complete_zero_partial_missing_and_extra_fields",
+          "result": "ok"
+        }
+      ],
+      "pytest_cases": [],
+      "guard_denials": [
+        {
+          "event": "socket.connect",
+          "boundary": "physical_network",
+          "pid": 25768,
+          "monotonic": 53914.859
+        },
+        {
+          "event": "socket.getaddrinfo",
+          "boundary": "dns",
+          "pid": 25768,
+          "monotonic": 53914.859
+        },
+        {
+          "event": "credential_read",
+          "boundary": "credentials",
+          "pid": 25768,
+          "monotonic": 53914.859
+        }
+      ]
+    },
+    {
+      "label": "unit_final",
+      "exit_code": 0,
+      "unittest_cases": [
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_adapter_mutation_cannot_change_prepared_request.test_adapter_mutation_cannot_change_prepared_request",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_bad_cancellation_predicate_fails_closed.test_bad_cancellation_predicate_fails_closed",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_cancel_after_response_preserves_known_usage_without_answer.test_cancel_after_response_preserves_known_usage_without_answer",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_cancel_before_start_proves_no_call.test_cancel_before_start_proves_no_call",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_explicit_task_cancellation_after_entry_is_unknown.test_explicit_task_cancellation_after_entry_is_unknown",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_forged_payload_binding_is_rejected_without_call.test_forged_payload_binding_is_rejected_without_call",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_no_sender_default_or_missing_sender.test_no_sender_default_or_missing_sender",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_one_call_exact_wire_and_explicit_timeout.test_one_call_exact_wire_and_explicit_timeout",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_preparation_and_fake_execution_open_no_storage.test_preparation_and_fake_execution_open_no_storage",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_revoked_or_changed_model_does_not_dispatch.test_revoked_or_changed_model_does_not_dispatch",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success.test_swallowed_timeout_cannot_publish_late_success",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_timeout_is_unknown_and_one_attempt.test_timeout_is_unknown_and_one_attempt",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_transport_error_is_redacted_uncertain_and_not_retried.test_transport_error_is_redacted_uncertain_and_not_retried",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.OfflineBoundary.test_early_process_guard_negative_controls.test_early_process_guard_negative_controls",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.OfflineBoundary.test_import_and_execution_do_not_touch_network_oauth_or_credentials.test_import_and_execution_do_not_touch_network_oauth_or_credentials",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_complete_context_order_and_exact_text.test_complete_context_order_and_exact_text",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_corrupt_context_matrix_is_refused.test_corrupt_context_matrix_is_refused",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_determinism_and_provenance_binding.test_determinism_and_provenance_binding",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_disabled_and_unsupported_registry_entries_rejected.test_disabled_and_unsupported_registry_entries_rejected",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_every_registered_model_resolves_from_canonical_registry.test_every_registered_model_resolves_from_canonical_registry",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_explicit_registered_model_and_wire_payload.test_explicit_registered_model_and_wire_payload",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_invalid_current_user_or_context_reference.test_invalid_current_user_or_context_reference",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_invalid_limits_are_explicit_errors.test_invalid_limits_are_explicit_errors",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_message_count_includes_current_user_and_system.test_message_count_includes_current_user_and_system",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_message_utf8_boundary.test_message_utf8_boundary",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_missing_coerced_and_padded_model_ids_rejected.test_missing_coerced_and_padded_model_ids_rejected",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_snapshot_deep_freeze_and_shell_choice_change.test_snapshot_deep_freeze_and_shell_choice_change",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_tool_context_rejected.test_tool_context_rejected",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_unknown_model_has_no_fallback.test_unknown_model_has_no_fallback",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_wire_byte_boundary_uses_entire_json.test_wire_byte_boundary_uses_entire_json",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_answer_and_safe_metadata.test_answer_and_safe_metadata",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_existing_usage_parser_is_reused.test_existing_usage_parser_is_reused",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_incomplete_choice_or_tool_invocation_not_success.test_incomplete_choice_or_tool_invocation_not_success",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_invalid_answer_retains_valid_supplied_usage.test_invalid_answer_retains_valid_supplied_usage",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_invalid_usage_does_not_become_zero_or_known_cost.test_invalid_usage_does_not_become_zero_or_known_cost",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_malformed_responses_are_typed_and_redacted.test_malformed_responses_are_typed_and_redacted",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_missing_optional_fields_and_eos_compatibility.test_missing_optional_fields_and_eos_compatibility",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_response_utf8_limit_and_cycle.test_response_utf8_limit_and_cycle",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_usage_complete_zero_partial_missing_and_extra_fields.test_usage_complete_zero_partial_missing_and_extra_fields",
+          "result": "ok"
+        }
+      ],
+      "pytest_cases": [],
+      "guard_denials": [
+        {
+          "event": "socket.connect",
+          "boundary": "physical_network",
+          "pid": 28892,
+          "monotonic": 54086.375
+        },
+        {
+          "event": "socket.getaddrinfo",
+          "boundary": "dns",
+          "pid": 28892,
+          "monotonic": 54086.375
+        },
+        {
+          "event": "credential_read",
+          "boundary": "credentials",
+          "pid": 28892,
+          "monotonic": 54086.375
+        }
+      ]
+    },
+    {
+      "label": "unit_first",
+      "exit_code": 1,
+      "unittest_cases": [
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_adapter_mutation_cannot_change_prepared_request.test_adapter_mutation_cannot_change_prepared_request",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_cancel_after_response_preserves_known_usage_without_answer.test_cancel_after_response_preserves_known_usage_without_answer",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_cancel_before_start_proves_no_call.test_cancel_before_start_proves_no_call",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_explicit_task_cancellation_after_entry_is_unknown.test_explicit_task_cancellation_after_entry_is_unknown",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_forged_payload_binding_is_rejected_without_call.test_forged_payload_binding_is_rejected_without_call",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_no_sender_default_or_missing_sender.test_no_sender_default_or_missing_sender",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_one_call_exact_wire_and_explicit_timeout.test_one_call_exact_wire_and_explicit_timeout",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success.test_swallowed_timeout_cannot_publish_late_success",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_timeout_is_unknown_and_one_attempt.test_timeout_is_unknown_and_one_attempt",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.ExecutionContract.test_transport_error_is_redacted_uncertain_and_not_retried.test_transport_error_is_redacted_uncertain_and_not_retried",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.OfflineBoundary.test_early_process_guard_negative_controls.test_early_process_guard_negative_controls",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.OfflineBoundary.test_import_and_execution_do_not_touch_network_oauth_or_credentials.test_import_and_execution_do_not_touch_network_oauth_or_credentials",
+          "result": "ERROR"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_complete_context_order_and_exact_text.test_complete_context_order_and_exact_text",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_corrupt_context_matrix_is_refused.test_corrupt_context_matrix_is_refused",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_determinism_and_provenance_binding.test_determinism_and_provenance_binding",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_disabled_and_unsupported_registry_entries_rejected.test_disabled_and_unsupported_registry_entries_rejected",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_every_registered_model_resolves_from_canonical_registry.test_every_registered_model_resolves_from_canonical_registry",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_explicit_registered_model_and_wire_payload.test_explicit_registered_model_and_wire_payload",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_invalid_current_user_or_context_reference.test_invalid_current_user_or_context_reference",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_invalid_limits_are_explicit_errors.test_invalid_limits_are_explicit_errors",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_message_count_includes_current_user_and_system.test_message_count_includes_current_user_and_system",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_message_utf8_boundary.test_message_utf8_boundary",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_missing_coerced_and_padded_model_ids_rejected.test_missing_coerced_and_padded_model_ids_rejected",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_snapshot_deep_freeze_and_shell_choice_change.test_snapshot_deep_freeze_and_shell_choice_change",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_tool_context_rejected.test_tool_context_rejected",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_unknown_model_has_no_fallback.test_unknown_model_has_no_fallback",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.PreparationContract.test_wire_byte_boundary_uses_entire_json.test_wire_byte_boundary_uses_entire_json",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_answer_and_safe_metadata.test_answer_and_safe_metadata",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_existing_usage_parser_is_reused.test_existing_usage_parser_is_reused",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_invalid_usage_does_not_become_zero_or_known_cost.test_invalid_usage_does_not_become_zero_or_known_cost",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_malformed_responses_are_typed_and_redacted.test_malformed_responses_are_typed_and_redacted",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_missing_optional_fields_and_eos_compatibility.test_missing_optional_fields_and_eos_compatibility",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_response_utf8_limit_and_cycle.test_response_utf8_limit_and_cycle",
+          "result": "ok"
+        },
+        {
+          "id": "test_ordinary_chat_service.ResponseContract.test_usage_complete_zero_partial_missing_and_extra_fields.test_usage_complete_zero_partial_missing_and_extra_fields",
+          "result": "ok"
+        }
+      ],
+      "pytest_cases": [],
+      "guard_denials": [
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.25
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.328
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.343
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.343
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.343
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.343
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.343
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.343
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.343
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.359
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.359
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.359
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.359
+        },
+        {
+          "event": "socket.bind",
+          "boundary": "physical_network",
+          "pid": 13980,
+          "monotonic": 53896.359
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,327 @@
+"""Text-only common request core. No storage, shell, credentials or default sender.
+
+Callers authorize the context and supply every limit and a trusted async transport.
+S4A uses fake transports only. Results describe one invocation, not durable Turn
+states. A deadline/cancellation after invocation never proves non-execution.
+"""
+from __future__ import annotations
+
+import asyncio
+from dataclasses import dataclass
+from enum import Enum
+import hashlib
+import json
+import math
+import time
+from typing import Callable, Protocol
+
+from gigachat_transport import extract_usage
+from model_registry import ModelSpec, get_model_spec
+from provider_accounting import canonical_json_text
+
+
+class PreparationError(ValueError):
+    """Static safe code only; never includes caller input or provider exceptions."""
+
+    def __init__(self, code: str):
+        self.code = code
+        super().__init__(code)
+
+
+@dataclass(frozen=True)
+class RequestLimits:
+    max_messages: int
+    max_message_bytes: int
+    max_request_bytes: int
+    max_response_bytes: int
+    max_output_tokens: int
+    timeout_seconds: float
+
+    def __post_init__(self):
+        for name in ("max_messages", "max_message_bytes", "max_request_bytes",
+                     "max_response_bytes", "max_output_tokens"):
+            if type(getattr(self, name)) is not int or getattr(self, name) <= 0:
+                raise PreparationError("invalid_limits")
+        timeout = self.timeout_seconds
+        if type(timeout) not in (int, float):
+            raise PreparationError("invalid_limits")
+        try:
+            valid = math.isfinite(timeout) and timeout > 0
+        except OverflowError:
+            valid = False
+        if not valid:
+            raise PreparationError("invalid_limits")
+        object.__setattr__(self, "timeout_seconds", float(timeout))
+
+
+@dataclass(frozen=True)
+class Message:
+    role: str
+    content: str
+
+
+@dataclass(frozen=True)
+class PreparedRequest:
+    model: ModelSpec
+    messages: tuple[Message, ...]
+    context_ref: str
+    limits: RequestLimits
+    request_ref: str
+
+    @property
+    def payload(self) -> dict:
+        """A fresh wire object: adapter mutation cannot change the snapshot."""
+        return {"model": self.model.provider_model_id, "stream": False,
+                "max_tokens": self.limits.max_output_tokens,
+                "messages": [{"role": m.role, "content": m.content} for m in self.messages]}
+
+
+def _text(value: object, maximum: int, code: str) -> str:
+    if type(value) is not str or not value.strip():
+        raise PreparationError(code)
+    try:
+        size = len(value.encode("utf-8"))
+    except UnicodeError:
+        raise PreparationError(code) from None
+    if size > maximum:
+        raise PreparationError("limit_exceeded")
+    return value
+
+
+def _model(model_id: object) -> ModelSpec:
+    if type(model_id) is not str or not model_id or model_id != model_id.strip():
+        raise PreparationError("model_unavailable")
+    try:
+        model = get_model_spec(model_id)
+    except (KeyError, ValueError, RuntimeError):
+        raise PreparationError("model_unavailable") from None
+    if (model.model_id != model_id or model.enabled is not True
+            or model.provider != "gigachat" or model.is_local is not False
+            or type(model.provider_model_id) is not str or not model.provider_model_id.strip()
+            or model.provider_model_id != model.provider_model_id.strip()):
+        raise PreparationError("unsupported_model")
+    return ModelSpec(model.model_id, model.display_name, model.provider,
+                     model.provider_model_id, model.enabled, model.is_local)
+
+
+def prepare_request(*, model_id: str, context: list | tuple, user_text: str,
+                    context_ref: str, limits: RequestLimits) -> PreparedRequest:
+    """Snapshot profile: optional initial system, then complete user/assistant pairs.
+
+    Only exact text role/content objects are accepted. Current user is appended.
+    All byte limits use UTF-8; request limit covers canonical JSON wire payload.
+    context_ref is an opaque caller reference, never a path to read.
+    """
+    if type(limits) is not RequestLimits:
+        raise PreparationError("invalid_limits")
+    model = _model(model_id)
+    context_ref = _text(context_ref, limits.max_message_bytes, "invalid_context_ref")
+    if type(context) not in (list, tuple):
+        raise PreparationError("invalid_context")
+    if len(context) + 1 > limits.max_messages:
+        raise PreparationError("limit_exceeded")
+    messages = []
+    expected = "user"
+    for index, item in enumerate(context):
+        if type(item) is not dict or set(item) != {"role", "content"}:
+            raise PreparationError("invalid_context")
+        role = item["role"]
+        if type(role) is not str:
+            raise PreparationError("invalid_context")
+        if role == "system" and index == 0:
+            pass
+        elif role == expected:
+            expected = "assistant" if expected == "user" else "user"
+        else:
+            raise PreparationError("invalid_context")
+        messages.append(Message(role, _text(item["content"], limits.max_message_bytes, "invalid_context")))
+    if expected != "user":
+        raise PreparationError("invalid_context")
+    messages.append(Message("user", _text(user_text, limits.max_message_bytes, "invalid_user_text")))
+    prepared = PreparedRequest(model, tuple(messages), context_ref, limits, "")
+    payload_text = canonical_json_text(prepared.payload)
+    if len(payload_text.encode("utf-8")) > limits.max_request_bytes:
+        raise PreparationError("limit_exceeded")
+    # Bind provenance and limits too; this is a deterministic content reference,
+    # not a Turn ID, idempotency key, authorization capability or deduplication.
+    binding = {"payload": prepared.payload, "context_ref": context_ref,
+               "model": vars(model), "limits": vars(limits)}
+    ref = "sha256:" + hashlib.sha256(canonical_json_text(binding).encode("utf-8")).hexdigest()
+    return PreparedRequest(model, prepared.messages, context_ref, limits, ref)
+
+
+class Outcome(str, Enum):
+    COMPLETED = "completed"
+    INVALID_RESPONSE = "invalid_response"
+    TRANSPORT_ERROR = "transport_error"
+    CANCELLED_BEFORE_START = "cancelled_before_start"
+    UNKNOWN_AFTER_START = "unknown_after_start"
+    REJECTED = "rejected"
+
+
+class Execution(str, Enum):
+    NOT_STARTED = "not_started"
+    MAY_HAVE_EXECUTED = "may_have_executed"
+    RESPONSE_RECEIVED = "response_received"
+
+
+@dataclass(frozen=True)
+class Usage:
+    status: str = "missing"  # missing / partial / complete / invalid
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    total_tokens: int | None = None
+
+
+@dataclass(frozen=True)
+class ResponseMetadata:
+    model: str | None = None
+    finish_reason: str | None = None
+    created: int | None = None
+
+
+@dataclass(frozen=True)
+class ChatResult:
+    outcome: Outcome
+    execution: Execution
+    model: ModelSpec
+    request_ref: str
+    text: str | None = None
+    usage: Usage = Usage()
+    metadata: ResponseMetadata = ResponseMetadata()
+    error_code: str | None = None
+
+
+def _result(request, outcome, execution, *, code=None, text=None,
+            usage=Usage(), metadata=ResponseMetadata()):
+    return ChatResult(outcome, execution, request.model, request.request_ref,
+                      text, usage, metadata, code)
+
+
+def _usage(response: dict) -> Usage:
+    raw = response.get("usage")
+    if raw is None:
+        return Usage()
+    if type(raw) is not dict:
+        return Usage("invalid")
+    # Reuse the existing pure parser, then enforce nonnegative exact integers.
+    parsed = extract_usage(response)
+    keys = ("prompt_tokens", "completion_tokens", "total_tokens")
+    if any(k in raw and (type(raw[k]) is not int or raw[k] < 0) for k in keys):
+        return Usage("invalid")
+    values = [parsed[k] for k in keys]
+    if all(v is not None for v in values):
+        if values[0] + values[1] != values[2]:
+            return Usage("invalid")
+        status = "complete"
+    else:
+        status = "partial"
+    return Usage(status, *values)
+
+
+def parse_response(request: PreparedRequest, response: object) -> ChatResult:
+    """Accept decoded JSON, exactly one text assistant choice, no tools/streaming.
+
+    Unknown provider fields are discarded. Errors never return raw payloads,
+    headers, request content or exception messages. Valid answer text is content,
+    and must be treated as untrusted by the eventual rendering shell.
+    """
+    def invalid(code):
+        return _result(request, Outcome.INVALID_RESPONSE, Execution.RESPONSE_RECEIVED, code=code)
+
+    try:
+        size = 0
+        for chunk in json.JSONEncoder(ensure_ascii=False, allow_nan=False).iterencode(response):
+            size += len(chunk.encode("utf-8"))
+            if size > request.limits.max_response_bytes:
+                return invalid("response_limit_exceeded")
+    except (TypeError, ValueError, UnicodeError, RecursionError):
+        return invalid("invalid_json_response")
+    if type(response) is not dict or "error" in response:
+        return invalid("invalid_response_structure")
+    choices = response.get("choices")
+    if type(choices) is not list or len(choices) != 1 or type(choices[0]) is not dict:
+        return invalid("invalid_response_structure")
+    choice = choices[0]
+    message = choice.get("message")
+    if (type(message) is not dict or message.get("role") != "assistant"
+            or "tool_calls" in message or "function_call" in message):
+        return invalid("invalid_assistant_message")
+    content = message.get("content")
+    if type(content) is not str or not content.strip():
+        return invalid("invalid_assistant_message")
+    finish = choice.get("finish_reason")
+    if finish not in (None, "stop", "eos"):
+        return invalid("incomplete_or_unsupported_response")
+    model = response.get("model")
+    if model is not None and model != request.model.provider_model_id:
+        return invalid("response_model_mismatch")
+    created = response.get("created")
+    if created is not None and (type(created) is not int or created < 0):
+        return invalid("invalid_response_metadata")
+    return _result(request, Outcome.COMPLETED, Execution.RESPONSE_RECEIVED,
+                   text=content, usage=_usage(response),
+                   metadata=ResponseMetadata(model, finish, created))
+
+
+class ChatTransport(Protocol):
+    async def send(self, payload: dict, *, timeout_seconds: float) -> object:
+        """Return decoded JSON. Adapter owns its I/O; S4A permits fake only."""
+        ...
+
+
+def _cancelled(callback):
+    if callback is None:
+        return False
+    value = callback()
+    if type(value) is not bool:
+        raise ValueError("invalid cancellation predicate")
+    return value
+
+
+async def execute_request(request: PreparedRequest, *, transport: ChatTransport,
+                          cancelled: Callable[[], bool] | None = None) -> ChatResult:
+    """One injected invocation, no retries. Caller owns durable accounting/Turn.
+
+    The predicate is checked before and after the call, not a background watcher.
+    Task cancellation and deadline after invocation are conservative UNKNOWN.
+    Adapters must cooperate with cancellation; wait_for cannot stop hostile I/O.
+    A swallowed cancellation returning after the deadline is never a success.
+    """
+    if type(request) is not PreparedRequest:
+        raise PreparationError("invalid_prepared_request")
+    try:
+        rebuilt = prepare_request(model_id=request.model.model_id,
+                                  context=[{"role": m.role, "content": m.content}
+                                           for m in request.messages[:-1]],
+                                  user_text=request.messages[-1].content,
+                                  context_ref=request.context_ref, limits=request.limits)
+        if rebuilt != request:
+            raise PreparationError("stale_or_invalid_request")
+        if not callable(getattr(transport, "send", None)):
+            raise PreparationError("transport_required")
+        if _cancelled(cancelled):
+            return _result(request, Outcome.CANCELLED_BEFORE_START, Execution.NOT_STARTED,
+                           code="cancelled_before_start")
+    except Exception:
+        return _result(request, Outcome.REJECTED, Execution.NOT_STARTED, code="preflight_rejected")
+    started = time.monotonic()
+    try:
+        response = await asyncio.wait_for(
+            transport.send(request.payload, timeout_seconds=request.limits.timeout_seconds),
+            timeout=request.limits.timeout_seconds)
+    except (TimeoutError, asyncio.CancelledError):
+        return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.MAY_HAVE_EXECUTED,
+                       code="cancelled_or_timed_out_after_start")
+    except Exception:
+        return _result(request, Outcome.TRANSPORT_ERROR, Execution.MAY_HAVE_EXECUTED,
+                       code="transport_failed_after_start")
+    result = parse_response(request, response)
+    try:
+        interrupted = _cancelled(cancelled)
+    except Exception:
+        interrupted = True
+    if time.monotonic() - started >= request.limits.timeout_seconds or interrupted:
+        return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.RESPONSE_RECEIVED,
+                       code="late_or_cancelled_response", usage=result.usage, metadata=result.metadata)
+    return result

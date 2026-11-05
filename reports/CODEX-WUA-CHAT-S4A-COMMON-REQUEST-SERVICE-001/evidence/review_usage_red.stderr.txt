@@ -1,0 +1,21 @@
+test_invalid_answer_retains_valid_supplied_usage (test_ordinary_chat_service.ResponseContract.test_invalid_answer_retains_valid_supplied_usage) ... FAIL
+
+======================================================================
+FAIL: test_invalid_answer_retains_valid_supplied_usage (test_ordinary_chat_service.ResponseContract.test_invalid_answer_retains_valid_supplied_usage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_ordinary_chat_service.py", line 217, in test_invalid_answer_retains_valid_supplied_usage
+    self.assertEqual((result.usage.status, result.usage.total_tokens), ("complete", 7))
+AssertionError: Tuples differ: ('missing', None) != ('complete', 7)
+
+First differing element 0:
+'missing'
+'complete'
+
+- ('missing', None)
++ ('complete', 7)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

@@ -1,0 +1,63 @@
+"""Task-local early guard. No production imports; inherited by Python children."""
+import ipaddress
+import json
+import os
+import sys
+import time
+
+_log = os.environ["ORDINARY_GUARD_LOG"]
+_loopback = os.environ.get("ORDINARY_GUARD_NETWORK") == "loopback"
+_root = os.path.normcase(os.path.abspath(os.environ["ORDINARY_GUARD_ROOT"]))
+_environment_getitem = os._Environ.__getitem__
+
+
+def _deny(event, boundary):
+    with open(_log, "a", encoding="utf-8") as stream:
+        stream.write(json.dumps({"event": event, "boundary": boundary,
+                                 "pid": os.getpid(), "monotonic": time.monotonic()}) + "\n")
+    raise PermissionError("OFFLINE guard: " + boundary)
+
+
+def _env_getitem(self, key):
+    if str(key).upper() in {"GIGACHAT_CREDENTIALS", "GIGACHAT_SCOPE", "GIGACHAT_ACCESS_TOKEN"}:
+        _deny("credential_read", "credentials")
+    return _environment_getitem(self, key)
+
+
+os._Environ.__getitem__ = _env_getitem
+
+
+def _local(host):
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return host == "localhost"
+
+
+def _audit(event, args):
+    if event in {"socket.connect", "socket.connect_ex", "socket.bind"}:
+        address = args[1]
+        if not (_loopback and isinstance(address, tuple) and _local(address[0])):
+            _deny(event, "physical_network")
+    elif event == "socket.getaddrinfo":
+        if not (_loopback and _local(args[0])):
+            _deny(event, "dns")
+    elif event in {"subprocess.Popen", "os.system", "os.exec", "os.posix_spawn"}:
+        executable = os.path.basename(str(args[0])).lower()
+        if executable not in {"python.exe", "python", "python3", "python3.12"}:
+            _deny(event, "non_python_process")
+    elif event in {"open", "os.scandir", "os.listdir"} and args:
+        if isinstance(args[0], (str, bytes, os.PathLike)):
+            path = os.path.normcase(os.path.abspath(os.fsdecode(args[0])))
+            if ".git" in path.split(os.sep):
+                _deny(event, "git_metadata")
+            if event == "open":
+                mode = args[1]
+                flags = args[2] or 0
+                writing = (isinstance(mode, str) and any(c in mode for c in "wax+")) or flags & (os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC)
+                if writing and any(path == os.path.join(_root, folder) or path.startswith(os.path.join(_root, folder) + os.sep)
+                                   for folder in (".ultra", "чат_pro", "чат_pro_01", ".obsidian")):
+                    _deny(event, "live_data_write")
+
+
+sys.addaudithook(_audit)
