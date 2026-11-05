@@ -17,8 +17,20 @@ TASK: `CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001`; HISTORY: `H-CODEX-000013`.
 
 ## Вердикт, область и ограничения
 
-**PARTIAL:** реализация отправки в локальный TEST-имитатор, устойчивый Turn/RAW, retry/idempotency, HTTP gates, cancel/recovery и UI TEST composer подтверждена в независимом автоматизированном scope. В `STANDARD` реальная отправка по-прежнему заблокирована; провайдерного вызова в TEST нет. Авторская браузерная проверка click/Enter/reload подтверждена evidence, но **пользовательская визуальная проверка ещё NOT RUN**.
+**PARTIAL:** реализация отправки в локальный TEST-имитатор, устойчивый Turn/RAW, retry/idempotency, HTTP gates, cancel/recovery и UI TEST composer подтверждена в независимом автоматизированном scope. В `STANDARD` реальная отправка по-прежнему заблокирована; провайдерного вызова в TEST нет. Авторская браузерная проверка click/Enter/reload подтверждена evidence, и **пользовательская визуальная проверка 05.11.2026 — PASS (два сообщения, два TEST-ответа, F5)**.
 
 Интермиттирующий общий writer-lock FAIL не закрыт: `context_storage.py` данной задачей не изменялся; причина под нагрузкой UNKNOWN. FOLLOWUP: `FOLLOWUP-WUA-S3-WS-WRITER-BUSY-001` (новый). Отдельная инженерная диагностика/исправление только после USER GO. Не объявлять полный Windows/product PASS и не маскировать FAIL пятью удачными повторами.
 
-**NEXT:** пользователь запускает `reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/demo_turn_chat.py --seconds 600` на одноразовом TEMP Workspace: отправить click и Enter, дождаться «TEST: сообщение принято.», обновить страницу и убедиться в восстановлении сообщений. Реальные пользовательские Workspace, native Tk, широкие negative GUI, `AuditStorageTests`, portability/power-loss NOT RUN. Colibri/Ollama/GigaChat, реальные LLM, MCP, EVM/Blueprint execution, Stage4+, платные вызовы и STANDARD sending — НЕ РАЗРЕШЕНЫ. Ветка `GPT` предназначена для пользовательского merge, основной продукт не менялся.
+**NEXT:** документально закрыть эту TEST-итерацию, оставив отдельный writer-lock FOLLOWUP открытым; диагностика только по новой USER GO. Реальные пользовательские Workspace, native Tk, широкие negative GUI, `AuditStorageTests`, portability/power-loss NOT RUN. Colibri/Ollama/GigaChat, реальные LLM, MCP, EVM/Blueprint execution, Stage4+, платные вызовы и STANDARD sending — НЕ РАЗРЕШЕНЫ. Ветка `GPT` предназначена для пользовательского merge, основной продукт не менялся.
+
+## Пользовательский визуальный тест — 05.11.2026 (USER-WITNESSED)
+
+**Область:** Windows, отдельный локальный синтетический TEST Workspace и диалог «TEST · Stage 3» через временный браузерный сервер (скриншот в пользовательской беседе). Не обычный STANDARD и не реальная LLM.
+
+**Шаги и результат:**
+1. На странице видны «TEST · Stage 3», синтетический Workspace и метка «TEST · локальный имитатор» — PASS.
+2. Пользователь отправил первое сообщение кнопкой; получил ответ «TEST: сообщение принято.» — PASS.
+3. Пользователь отправил второе сообщение клавишей Enter; получил второй ответ «TEST: сообщение принято.» — PASS.
+4. После F5 оба отправленных сообщения и оба ответа остались видны в истории — PASS. Пользователь прислал скриншот результата в беседе.
+
+**Результат USER GUI: PASS / BOUNDED SYNTHETIC TEST**. Доказательство — непосредственно пользовательское прохождение и изображение в беседе; бинарный скриншот не публиковался в репозитории. Это не независимое доказательство полного Windows/нагрузочного/конкурентного тестирования. **Общий технический verdict остаётся PARTIAL**: повтор общей Python-регрессии ранее дал 1 FAIL `WorkspaceBusyError`, прицельные 5/5 PASS не снимают вопрос. OPEN `FOLLOWUP-WUA-S3-WS-WRITER-BUSY-001`. Прямой STANDARD-send, Colibri, иные реальные LLM и Stage4+ не тестировались и не разрешены. Документальная итерация закрывается без снятия технических ограничений.
