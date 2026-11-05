@@ -46,3 +46,23 @@ jobs:
         run: |
           node --test test_web_alarm_ultra_chat_ui.js
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Install pytest for Run Store regression
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check pytest==9.1.1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Broader independent Run Store regression
+        shell: pwsh
+        run: |
+          python -B -X utf8 -m pytest -q -p no:cacheprovider test_run_store_v2.py test_audit_v2_compatibility.py test_audit_observability.py::AuditStorageTests
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Broader independent Python regression
+        shell: pwsh
+        run: |
+          python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat_storage test_web_alarm_ultra_chat test_web_alarm_ui test_web_alarm_ui_ux test_ultra_chat_storage test_ultra_chat_read test_web_alarm_workspace_registry test_web_alarm_folder_picker
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Broader independent JavaScript regression
+        shell: pwsh
+        run: |
+          node --test test_web_alarm_ultra_chat_ui.js test_web_alarm_operator_ui.js test_web_alarm_evm_ui.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
