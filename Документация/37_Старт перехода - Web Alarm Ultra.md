@@ -175,6 +175,9 @@ Tkinter сохраняется до доказанного соответств�
 
 ### Этап 3. Отправка сообщений и восстановление
 
+**Результат WEB23 / 05.11.2026 — Stage3 TEST:** `CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001` / `H-CODEX-000013` (main@a3b44c6), локальная отправка Turn/HTTP/mock/composer реализована и подтверждена адресным независимым Windows CI. **Вердикт PARTIAL:** одно нестабильное падение общего writer-lock теста `WorkspaceBusyError` (повтор 5/5 PASS, но вопрос не закрыт), пользовательский GUI TEST ещё NOT RUN. См. `FOLLOWUP-WUA-S3-WS-WRITER-BUSY-001` и `reports/CHATGPT-WEB23-CODEX-S3-TURN-REVIEW-20261105/review.md`. Следующий шаг — пользовательская проверка на одноразовом синтетическом TEST Workspace. STANDARD / настоящие LLM / Stage4 не включены.
+
+
 **WEB23 independent Windows gate (04.11.2026):** GitHub Actions run [41885808568](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/41885808568), GPT@e14222fb523acc558e57e31eebd1425829fc8651, source unchanged from main@e3253b4; 53 Run Store/audit + 3 Stage3 prerequisites independently PASS (56 total, no FAIL/SKIP). Full regression/portability NOT RUN; Stage3 Turn/HTTP/mock UI NOT IMPLEMENTED, separate USER GO required. `FOLLOWUP-WUA-P9-INDEPENDENT-RUNTIME-001` PARTIAL/OPEN.
 
 
