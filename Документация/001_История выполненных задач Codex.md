@@ -7,6 +7,7 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 <!-- TASK-HISTORY-INDEX:BEGIN -->
 | Дата | ID | Задача | Статус / проверка | Адрес подробностей |
 | --- | --- | --- | --- | --- |
+| 2026-11-05 | `H-CODEX-000014` / `CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001` | Диагностика WorkspaceBusyError и исправление классификации OS ошибок / child stderr | DOC ITERATION CLOSED / TECHNICAL PARTIAL; PARTIAL / SOURCE+AUTHOR EVIDENCE; original CI cause OPEN; independent runtime NOT RUN | `reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/task_record.json` |
 | 2026-11-05 | `H-CODEX-000013` / `CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001` | Web Alarm Ultra — Stage 3: первая отправка сообщения, устойчивый Turn и восстановление | DOC ITERATION CLOSED / TECHNICAL PARTIAL; PARTIAL / TEST Windows CI; USER GUI PASS (2 sends/2 TEST replies/F5); writer-lock OPEN; real LLM NOT RUN | `reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/task_record.json` |
 | 2026-11-04 | `H-CODEX-000012` / `CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001` | Защита Run Store v2 перед Stage 3 | SUBMITTED / REVIEW PENDING; PASS / INDEPENDENT WINDOWS CI 56/56; full regression NOT RUN | `reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/task_record.json` |
 | 2026-11-04 | `H-CODEX-000011` / `CODEX-TASK-HISTORY-ID-001` | История по ID, автоматическая нумерация и порядок веб-планировщика | SUBMITTED / REVIEW PENDING; NOT VERIFIED | `reports/CODEX-TASK-HISTORY-ID-001/task_record.json` |
@@ -16,7 +17,6 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 | 2026-11-02 | `H-CODEX-000007` / `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` | Исследование локальных серверов Ollama и Colibri | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/task_record.json` |
 | 2026-11-01 | `H-CODEX-000006` / `CODEX-WUA-DOC-WEB19-REPAIR-001` | Согласование документации после проверки WEB19 | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/CODEX-WUA-DOC-WEB19-REPAIR-001/task_record.json` |
 | 2026-11-01 | `H-CODEX-000005` / `ASTRA-DOC-CONTEXT-OPTIMIZATION-001` | Оптимизация контекста документации и закрытие слота | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/task_record.json` |
-| 2026-10-26 | `H-CODEX-000004` / `ASTRA-WUA-37-ROADMAP-REVISION-001` | Переработка программы перехода Web Alarm Ultra | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/ASTRA-WUA-37-ROADMAP-REVISION-001/task_record.json` |
 <!-- TASK-HISTORY-INDEX:END -->
 
 Старый полный текст сохранён побайтово: `reports/CODEX-TASK-HISTORY-ID-001/preservation/001_История выполненных задач Codex.md`. Снимок не читать целиком на старте. Старые статусы относятся к своим датам; перенос не является новым PASS. Старше десяти — вне рабочего окна, но не удалено из архива.
