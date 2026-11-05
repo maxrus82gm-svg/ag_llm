@@ -1,0 +1,48 @@
+name: GPT Stage3 Independent Windows Tests
+on:
+  push:
+    branches:
+      - GPT
+    paths:
+      - .github/workflows/gpt-s3-independent-windows.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  stage3:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            /*.py
+            /web_alarm/
+            /test_web_alarm_ultra_chat_ui.js
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Show source and test environment
+        shell: pwsh
+        run: |
+          python --version
+          node --version
+          git rev-parse HEAD
+          if (Test-Path -LiteralPath 'reports') { throw "Legacy reports unexpectedly checked out" }
+          foreach ($f in @('web_alarm/turn_service.py','web_alarm/ultra_chat.py','web_alarm/server.py','web_alarm/ui.py','test_web_alarm_ultra_chat_turn_service.py','test_web_alarm_ultra_chat_turn_http.py','test_web_alarm_ultra_chat_turn.py','test_web_alarm_ultra_chat_ui.js')) {
+            if (!(Test-Path -LiteralPath $f)) { throw "Missing: $f" }
+            Get-FileHash -Algorithm SHA256 -LiteralPath $f
+          }
+      - name: Stage3 Turn HTTP and original prerequisites on Windows
+        shell: pwsh
+        run: |
+          python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat_turn_service test_web_alarm_ultra_chat_turn_http test_web_alarm_ultra_chat_turn
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Ultra Chat JavaScript UI regression
+        shell: pwsh
+        run: |
+          node --test test_web_alarm_ultra_chat_ui.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
