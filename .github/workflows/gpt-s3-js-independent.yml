@@ -1,0 +1,38 @@
+name: GPT Stage3 Three JS Suites Independent
+on:
+  push:
+    branches:
+      - GPT
+    paths:
+      - .github/workflows/gpt-s3-js-independent.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  js:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            /web_alarm/
+            /test_web_alarm_ultra_chat_ui.js
+            /test_web_alarm_operator_ui.js
+            /test_web_alarm_evm_ui.js
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Verify all three JS suites are present
+        shell: pwsh
+        run: |
+          foreach ($f in @('test_web_alarm_ultra_chat_ui.js','test_web_alarm_operator_ui.js','test_web_alarm_evm_ui.js')) {
+            if (!(Test-Path -LiteralPath $f)) { throw "Missing JS test $f" }
+          }
+          node --version
+          git rev-parse HEAD
+      - name: Independent 161 JS test matrix
+        shell: pwsh
+        run: |
+          node --test test_web_alarm_ultra_chat_ui.js test_web_alarm_operator_ui.js test_web_alarm_evm_ui.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
