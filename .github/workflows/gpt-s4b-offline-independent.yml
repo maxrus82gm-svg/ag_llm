@@ -1,0 +1,104 @@
+name: WEB24 independent Stage4B offline Windows verification
+on:
+  push:
+    branches:
+      - GPT
+    paths:
+      - .github/workflows/gpt-s4b-offline-independent.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*.py
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/guard/
+            /reports/CHATGPT-WEB24-CODEX-S4B-OFFLINE-REVIEW-20261106/test_independent_s4b.py
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated test dependencies
+        shell: pwsh
+        run: python -m pip install "pytest==9.1.1" "httpx==0.28.1"
+      - name: Report pinned source and Python
+        shell: pwsh
+        run: |
+          git rev-parse HEAD
+          python --version
+          python -B -X utf8 -c "import hashlib, pathlib; p=pathlib.Path('web_alarm/turn_service.py'); print('turn_service.sha256',hashlib.sha256(p.read_bytes()).hexdigest())"
+      - name: WEB24 independent reviewer negative probes (strict network guard)
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\review.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: python -B -X utf8 -m unittest discover -s reports/CHATGPT-WEB24-CODEX-S4B-OFFLINE-REVIEW-20261106 -p test_independent_s4b.py -v
+      - name: Independent S4B OFFLINE Turn (strict network guard)
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\s4b.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat_turn_s4b
+      - name: Independent S4A OFFLINE core (strict network guard)
+        id: s4a
+        continue-on-error: true
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\s4a.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: python -B -X utf8 -m unittest -v test_ordinary_chat_service
+      - name: Independent S4A swallowed-deadline diagnostic (20 fixed iterations)
+        id: deadline
+        continue-on-error: true
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\deadline.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: |
+          $failures = 0
+          for ($n = 1; $n -le 20; $n++) {
+            python -B -X utf8 -m unittest -q test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success
+            if ($LASTEXITCODE -ne 0) { $failures++ }
+          }
+          Write-Output "DEADLINE_DIAGNOSTIC attempts=20 failures=$failures"
+          if ($failures -gt 0) { exit 1 }
+      - name: Independent Stage3 legacy Turn and HTTP regression
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\stage3.guard.jsonl
+          ORDINARY_GUARD_NETWORK: loopback
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat_turn_service test_web_alarm_ultra_chat_turn_http test_web_alarm_ultra_chat_turn
+      - name: Independent storage RAW and crash oracles
+        shell: pwsh
+        run: python -B -X utf8 -m unittest -v test_ultra_chat_storage.RawIdempotencyTests test_ultra_chat_storage.CrashTests test_ultra_chat_storage.PathSafetyTests
+      - name: Independent Run Store v2 regression
+        shell: pwsh
+        run: python -B -X utf8 -m pytest -q -p no:cacheprovider test_run_store_v2.py
+      - name: Guard log sizes
+        if: always()
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path "${{ runner.temp }}" -Filter "*.guard.jsonl" -ErrorAction SilentlyContinue | ForEach-Object { Write-Output "$($_.Name): $((Get-Content $_.FullName).Count) lines" }
+
+      - name: Assert prior tests and diagnostic not concealed
+        if: always()
+        shell: pwsh
+        run: |
+          Write-Output "S4A outcome=${{ steps.s4a.outcome }}"
+          Write-Output "Deadline outcome=${{ steps.deadline.outcome }}"
+          if ("${{ steps.s4a.outcome }}" -ne "success" -or "${{ steps.deadline.outcome }}" -ne "success") {
+            throw "Independent S4A regression or deadline diagnostic was not clean"
+          }

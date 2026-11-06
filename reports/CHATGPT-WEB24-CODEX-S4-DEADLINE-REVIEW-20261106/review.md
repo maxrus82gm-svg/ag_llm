@@ -1,0 +1,32 @@
+# WEB24 — H-CODEX-000018: independent Stage4 deadline repair review
+
+**2026-11-06.** TASK `CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001`, HISTORY `H-CODEX-000018`; author single commit `main@a803aff9fc1a377623b6fdf814fce16bc0b40215` (#518), parent `f25ef7e859bb12514d026bab5ddfc9cbdfcb7e94`.
+
+**VERDICT: PASS / BOUNDED DEADLINE REPAIR; STAGE4 OVERALL PARTIAL / HOLD.** The submitted narrow fix for the *scheduled deadline* has independently passed Windows verification. During additional reviewer negative testing, however, a distinct unsafe **explicit external cancellation suppressed by the transport** reproducibly produced `COMPLETED` instead of `UNKNOWN_AFTER_START`. This separate failure means Stage4 safety as a whole is **NOT ACCEPTED**. No Stage5 GO, GigaChat/OAuth/real or paid sender, Colibri, MCP, or Blueprint execution.
+
+## Verified source and preservation
+
+- Actual `main` source inspected: `execute_request` now sets one `loop.time()+timeout` absolute deadline, uses `asyncio.timeout_at(deadline)`, then checks `timer.expired()` as well as `loop.time() >= deadline` after response parse; late answer is discarded with validated available usage, no retry. The `OFFLINE` Turn mapping already handles `unknown_after_start / response_received`. Test suite adds independent-of-realtime clock/timer oracle and a pre-callback deadline oracle. The approach is consistent with conservative late-deadline handling for the tested Python 3.12 environment.
+- **51/51** package `manifest.json` source/report/evidence files independently matched SHA-256 and byte size from published GitHub (22 LF exact; 29 source CRLF restored; 0 mismatch). Final source: `ordinary_chat_service.py` SHA-256 `f74dcd873bb533d36d5c72a6c29b453e4093d0cda0725139ff93762225156e3b`; `test_ordinary_chat_service.py` `af70ac23b0c922c52a7ec0da5515f19a9525adc0bab0daf7800f3927ee54b05c`.
+- Author preserved a **1 FAIL / 1 PASS** deterministic initial RED with traceback of false `COMPLETED` before fix, and reported a clean **150 PASS / 0 FAIL / 0 SKIP** regression after fix (41 S4A, 14 S4B, 30 Stage3, 14 storage, 51 Run Store); compile PASS. These claims were separately checked via independent runner below. Original historical GitHub CI run 42179125624 raw logs are available from the independent WEB24 previous review, but NOT within author local report; author honestly notes this limitation. H18 `finish ROTATED` exit 0, B1 WAITING, B1.1 H18, source snapshot and `task_record.json` verified.
+- Commit #518 changes the two allowed production/test Python files and author report/card; no HTTP, Run Store, Tk or B2 changes. Author claims 595 user storage files unchanged and launcher STANDARD; independent remote personal-disk/GUI audit NOT RUN.
+
+## Independent Windows CI
+
+Windows GitHub Actions `windows-latest`, Python 3.12.10, pinned checkout of H18 product source, disposable test folders and early OFFLINE guard; `httpx==0.28.1`, `pytest==9.1.1`. Own test code `reports/CHATGPT-WEB24-CODEX-S4-DEADLINE-REVIEW-20261106/test_independent_deadline.py`; workflow `.github/workflows/gpt-s4-deadline-independent.yml`. Both runs have an overall **FAIL** due to a deliberately unmasked *independent reviewer negative*; product suite steps independently passed.
+
+| Run | PASS | FAIL / significance |
+| --- | --- | --- |
+| [42185342094](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/42185342094), job 127784232360 | Standard tests **150 PASS** (S4A 41, S4B 14, Stage3 30, storage 14, RunStore 51); own reviewer **4/5 PASS** | **1 reviewer FAIL:** external Task.cancel suppressed, returned `COMPLETED`, expected `UNKNOWN_AFTER_START`; job gates RED |
+| [42185590677](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/42185590677), job 127785025580 | Same standard **150 PASS**; old failure and new deterministic deadline tests replayed 60 rounds = **120/120 PASS**; own reviewer **4/5 PASS** | Same **1 reviewer FAIL**, preserved and gate RED |
+
+**Verified defect:** Reviewer starts `execute_request` with deadline 2 s, waits until injected fake transport has entered send, calls `task.cancel()`, and fake catches `asyncio.CancelledError` and returns a valid assistant response including known usage. `execute_request` incorrectly reports `Outcome.COMPLETED / Execution.RESPONSE_RECEIVED`, not conservative `UNKNOWN_AFTER_START`. On this external cancellation, `asyncio.timeout_at(...).expired()` is false, clock is still before deadline and no `cancelled` callback was supplied. This violates documented `Task cancellation and deadline after invocation are conservative UNKNOWN`. It is **not** evidence that the scheduled deadline fix failed. Both independent runs show same defect. Failing reviewer oracle must remain preserved; never claim reviewer 5/5 PASS or overall workflow success because other steps were green.
+
+Independent early guard blocked expected S4A/S4B network, DNS and credential probes (three guard denials each), no real GigaChat/OAuth/provider requests. Full overall Ultra suite, Tk/browser GUI, porting to clean Windows/other Python versions, real provider, B2 accounting NOT RUN. Historical `WorkspaceBusyError` cause remains OPEN, independent legacy regressions here did not reproduce it.
+
+## Gate resolution and next
+
+- `FOLLOWUP-WUA-S4-DEADLINE-UNKNOWN-001`: **CLOSED, BOUNDED SOURCE+INDEPENDENT WINDOWS 150+120**. Scheduled timeout from H17 is fixed in exact tested scope; no production full-stage acceptance claim.
+- New `FOLLOWUP-WUA-S4-CANCEL-SUPPRESSED-001`: **OPEN / FACT DEFECT / USER ASSIGNMENT REQUIRED**, separate minimal Stage4 task for explicit external cancellation swallowed by injected transport. Preserve the original independent failing test; fix conservative UNKNOWN with valid available usage, without changing valid instant success, Stage3/Stage4B Turn, repeated sends or other production code outside authorized scope. Targeted and full pinned independent Windows regression must pass.
+- `FOLLOWUP-WUA-S4B-STAGE5-UI-001`: OPEN / BLOCKED by cancellation followup; Stage5 TEST UI→fake adapter cannot start yet. Preserve writer-lock historical FOLLOWUP and older UI/portability/B2 gates.
+- **Documentary closeout:** H18 reviewed with bounded deadline PASS and whole Stage4 PARTIAL; GPT→main merge only by user. Strict approved №37 sequence retained: Stage4 cancellation repair and verifier acceptance → Stage5 OFFLINE TEST UI → Stage6 B2 → Stage7 controlled real GigaChat. **Colibri only AFTER all №37 accepted.**
