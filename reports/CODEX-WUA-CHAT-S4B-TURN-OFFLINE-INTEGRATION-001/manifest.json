@@ -1,0 +1,274 @@
+{
+  "task_id": "CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001",
+  "status": "READY FOR INDEPENDENT VERIFICATION",
+  "hash": "SHA-256 exact bytes",
+  "files": [
+    {
+      "path": "web_alarm/turn_service.py",
+      "size": 29426,
+      "sha256": "66dbb1c74983efa2bc38aa8c11ddd834a84f009de9eda7e1c24e0a9689294805"
+    },
+    {
+      "path": "web_alarm/ordinary_chat_test_adapter.py",
+      "size": 2794,
+      "sha256": "fa62abf7268e9e60696d5d6ce85fe2ad4031f4ff884e0ecc83f75650024428f0"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_turn_s4b.py",
+      "size": 19624,
+      "sha256": "c7d3257f24cbd6c6b158b2639abb0137984fd3dcac526e21f9c3d1de6b2e05ed"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/before/web_alarm/turn_service.py.source.txt",
+      "size": 15370,
+      "sha256": "0b532c0386670f8645d6cfde339dbb0474ffa95bccd5d759b981580da18b6f6a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/before/Документация/000_Задачи Codex.md.source.txt",
+      "size": 44048,
+      "sha256": "b43d275800e4e34d8a768824541727881537b18b3b7ce8cbbc9c2e07932e0100"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/check_package.py",
+      "size": 6709,
+      "sha256": "2df17273edbeee930fb47227cd59c3fb413431ccab7ae5f9a485fe9b2960527d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/baseline.json",
+      "size": 122097,
+      "sha256": "9d5ebbcd8674b2e2cdb0ffda0899c4adfcc7691bbf6c0d81d2cb99d8f0cc6904"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/compile_final.result.json",
+      "size": 1572,
+      "sha256": "3e92a8933e8ad52d605631ad0a52d10f3de505dfbf355ef0ba7aae119ebbd48f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/compile_final.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/compile_final.stdout.txt",
+      "size": 402,
+      "sha256": "874a9ced73676757cab12fbcb9806cf15707887354d1a0996c1b9c039c0876e6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/conservation_before_finish.json",
+      "size": 203,
+      "sha256": "ca56b0a7fa4f4be9aba822b94b3569a89a32bf743db4cef6330d0ada422e5659"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/finish.result.json",
+      "size": 1734,
+      "sha256": "d41cc1412ad2f4b9e607f51ee0e3735fc39f9387ec79b78f7d340ea8e9286036"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/finish.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/finish.stdout.txt",
+      "size": 4963,
+      "sha256": "79886122cf4bf123224a0990e192ea59dc403d7cad77aacd778ae78643bf0633"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/initial_red.result.json",
+      "size": 1038,
+      "sha256": "6e3aa7c5d14df200068ff9fdd95107ebd0cde02a03ae153cdaf9477a7bb0cec5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/initial_red.stderr.txt",
+      "size": 1029,
+      "sha256": "03a5f87c75f3facb48aaa025a6664ad17319e339860fb32f13e18f53ed53934f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/initial_red.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/integration_final.guard.jsonl",
+      "size": 281,
+      "sha256": "7f1e49f525d9ed1d9519e1f0741f96f93239531dfafff1a6bae023eb8dbee39b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/integration_final.result.json",
+      "size": 1555,
+      "sha256": "e8f90c62fed47dcab11822c48c03c6b3acc233b172dc8cd2f49d504b44572642"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/integration_final.stderr.txt",
+      "size": 2227,
+      "sha256": "37ff0b661e0ec6d82cc967c10be69d73b090d7ccdb9283d4b7e22321c69b5b19"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/integration_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/integration_first.guard.jsonl",
+      "size": 278,
+      "sha256": "24a013c76556f25c20e14dc96da5d392415b3735e09684f51666bbdd06cdae92"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/integration_first.result.json",
+      "size": 1556,
+      "sha256": "bedd334cf5827692f7757125b547f991ab0ada949293b713fde91f509bcff9f4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/integration_first.stderr.txt",
+      "size": 2037,
+      "sha256": "5efc9945f0927ba4dd4ccde8e4a1d65b0a89fdee1e1257192eb4b858a3851777"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/integration_first.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/runstore_final.result.json",
+      "size": 1575,
+      "sha256": "905538a7f9138d0c66abb02df02a24647e0c59a1ed60cb3cf9c5e184d26dab2b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/runstore_final.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/runstore_final.stdout.txt",
+      "size": 5723,
+      "sha256": "038cd28779bd87db9c259948fd7ac203c464ff7226800ad610ca101da1b787c4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/s4a_final.guard.jsonl",
+      "size": 281,
+      "sha256": "1272453caf3c9ea7783aee96e1704d1ac8f3af3c8fc4ae4897659543de11a021"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/s4a_final.result.json",
+      "size": 1548,
+      "sha256": "2406824d67fb078502798acb19a33eadf9160073a263b51a1f5292f5f86be032"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/s4a_final.stderr.txt",
+      "size": 6108,
+      "sha256": "96dc7a8bb643549fe898a236942dfc003d10c7809eda3c4c10737d66125fdce5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/s4a_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/smoke.result.json",
+      "size": 1556,
+      "sha256": "8636e734525afa89e0d11b818bf56570c2f410c6e89f399675e2c96cb8e4419b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/smoke.stderr.txt",
+      "size": 230,
+      "sha256": "0964201d89f4f05d12caf56bb339d21e82ea5d23c3f3e484858dadc32d7fd49d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/smoke.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/stage3_final.result.json",
+      "size": 1647,
+      "sha256": "f8d275f2739bc03b30829cfffc8947a7f363cea8389d83d29cd05eae88a2dfd0"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/stage3_final.stderr.txt",
+      "size": 4855,
+      "sha256": "79e50fac98ff93771f89ce3d50ebfd8043eaf329b4c4f374c1e8667c0da308d4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/stage3_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/storage_final.result.json",
+      "size": 1654,
+      "sha256": "365099b49a0dd0e378765300122e8a3c7ca718dadce7ffd960ce476b8a18bfbd"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/storage_final.stderr.txt",
+      "size": 2615,
+      "sha256": "d05c0bd8ca6cb6ef713c912d087ec2aad717f5965629f5c8532a13e7f23dc46e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/storage_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/evidence/test_summary.json",
+      "size": 22010,
+      "sha256": "14a3788e20364a36b515605b755f8002efe2fb60a6763884e8334b06a4b7db8a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/finish_receipt.json",
+      "size": 432,
+      "sha256": "3a9df6ca98f9e8bc53778465345e335da1972017dbbe020752985d70d37b6030"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/guard/sitecustomize.py",
+      "size": 3742,
+      "sha256": "63d2f02d1397a856698a60644bc86decb062d37dbf904494503fb4bec58c096c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/handoff_task.md",
+      "size": 14034,
+      "sha256": "9902903c555dd2856e40457d763aa3af1cf43781037d364e0f61dca4f1adf621"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/report.md",
+      "size": 11400,
+      "sha256": "b7a0613f30f0c0292d499a8aa40ecb28105dc8158d50965167386e9a330b6494"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/run_check.py",
+      "size": 2755,
+      "sha256": "dfd7e34a3dc16cb3a74f1e8a1f3de73e2060bff93a27505ae059dd4db396ab0d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/task_record.json",
+      "size": 782,
+      "sha256": "cf7236754f004a826136d6ba491d11d193438f3544ec8358ee50433bbaa8ea82"
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "size": 31496,
+      "sha256": "2333e0ff98d48094421287137383daf32b1a7915fa4c88afa1a3217124f3e4c1"
+    },
+    {
+      "path": "reports/task_history_sequences.json",
+      "size": 28,
+      "sha256": "ab947d5938d911f94dcaf243aeca9289c0bcb3738f7fedbe17021c669c7e1ad4"
+    }
+  ],
+  "publication_allowlist": [
+    "web_alarm/turn_service.py",
+    "web_alarm/ordinary_chat_test_adapter.py",
+    "test_web_alarm_ultra_chat_turn_s4b.py",
+    "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/**",
+    "Документация/000_Задачи Codex.md",
+    "reports/task_history_sequences.json (native finish only)"
+  ],
+  "publication_excludes": [
+    ".obsidian/**",
+    ".ultra/**",
+    "Чат_pro/**",
+    "Чат_Pro_01/**",
+    "unrelated local changes"
+  ],
+  "independent_review": "PENDING",
+  "external_provider_calls": 0
+}

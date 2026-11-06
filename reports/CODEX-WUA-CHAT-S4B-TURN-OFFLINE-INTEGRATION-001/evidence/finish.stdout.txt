@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "b43d275800e4e34d8a768824541727881537b18b3b7ce8cbbc9c2e07932e0100",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 224,
+    "b11b": 230,
+    "b11e": 421
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001",
+    "problems": [],
+    "title": "",
+    "lines": 175
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+    "copy_sha256": "76ac9029e9c11fe5aaa4b01759d20f6e31f9a82b75559c231c76e0322251c155",
+    "history_id": "H-CODEX-000016",
+    "history_record": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "b43d275800e4e34d8a768824541727881537b18b3b7ce8cbbc9c2e07932e0100",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+    "copy_sha256": "76ac9029e9c11fe5aaa4b01759d20f6e31f9a82b75559c231c76e0322251c155",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/handoff_task.md",
+    "archive_sha256": "91856904adcfdcdebc0c9f2b093ff9cb39ea0255dc3ffc07ed6763dcdae951db"
+   },
+   "history_id": "H-CODEX-000017",
+   "new_card_sha256": "2333e0ff98d48094421287137383daf32b1a7915fa4c88afa1a3217124f3e4c1",
+   "copy_sha256_lf": "7bcad5bb37ca2d64392e53ab574d3010afc90a4dae3f0cfd76f69bf90744147c",
+   "copy_lines": 175,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "b43d275800e4e34d8a768824541727881537b18b3b7ce8cbbc9c2e07932e0100",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001",
+    "copy_sha256": "76ac9029e9c11fe5aaa4b01759d20f6e31f9a82b75559c231c76e0322251c155",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/handoff_task.md",
+    "archive_sha256": "91856904adcfdcdebc0c9f2b093ff9cb39ea0255dc3ffc07ed6763dcdae951db"
+   },
+   "history_id": "H-CODEX-000017",
+   "new_card_sha256": "2333e0ff98d48094421287137383daf32b1a7915fa4c88afa1a3217124f3e4c1",
+   "copy_sha256_lf": "7bcad5bb37ca2d64392e53ab574d3010afc90a4dae3f0cfd76f69bf90744147c",
+   "copy_lines": 175,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001",
+    "history_id": "H-CODEX-000017",
+    "record": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "9902903c555dd2856e40457d763aa3af1cf43781037d364e0f61dca4f1adf621",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "2333e0ff98d48094421287137383daf32b1a7915fa4c88afa1a3217124f3e4c1",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 234
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001",
+    "copy_sha256": "7bcad5bb37ca2d64392e53ab574d3010afc90a4dae3f0cfd76f69bf90744147c",
+    "history_id": "H-CODEX-000017",
+    "history_record": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001",
+ "history": {
+  "id": "CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001",
+  "history_id": "H-CODEX-000017",
+  "record": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}
