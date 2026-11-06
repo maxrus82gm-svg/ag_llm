@@ -50,6 +50,20 @@ jobs:
           ORDINARY_GUARD_LOG: ${{ runner.temp }}\\s4a.guard.jsonl
           PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001\\guard;${{ github.workspace }}
         run: python -B -X utf8 -m unittest -v test_ordinary_chat_service
+      - name: Repeated original and deterministic deadline oracles (60 rounds)
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\deadline-stress.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001\\guard;${{ github.workspace }}
+        run: |
+          $failureCount = 0
+          for ($i = 1; $i -le 60; $i++) {
+            python -B -X utf8 -m unittest -q test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success test_ordinary_chat_service.ExecutionContract.test_timeout_fired_inside_one_clock_tick_remains_unknown
+            if ($LASTEXITCODE -ne 0) { $failureCount++ }
+          }
+          Write-Output "S4_DEADLINE_STRESS rounds=60 tests=120 failures=$failureCount"
+          if ($failureCount -ne 0) { throw "Red deadline oracle in independent Windows stress" }
       - name: Independent S4B Turn integration (strict network guard)
         shell: pwsh
         env:
