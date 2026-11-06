@@ -19,6 +19,7 @@ jobs:
             /*.py
             /web_alarm/
             /reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/guard/
+            /reports/CHATGPT-WEB24-CODEX-S4B-OFFLINE-REVIEW-20261106/test_independent_s4b.py
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: actions/setup-python@v5
@@ -33,6 +34,13 @@ jobs:
           git rev-parse HEAD
           python --version
           python -B -X utf8 -c "import hashlib, pathlib; p=pathlib.Path('web_alarm/turn_service.py'); print('turn_service.sha256',hashlib.sha256(p.read_bytes()).hexdigest())"
+      - name: WEB24 independent reviewer negative probes (strict network guard)
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\review.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: python -B -X utf8 -m unittest discover -s reports/CHATGPT-WEB24-CODEX-S4B-OFFLINE-REVIEW-20261106 -p test_independent_s4b.py -v
       - name: Independent S4B OFFLINE Turn (strict network guard)
         shell: pwsh
         env:
