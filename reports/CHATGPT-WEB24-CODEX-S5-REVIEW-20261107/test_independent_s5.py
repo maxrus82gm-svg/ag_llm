@@ -12,7 +12,7 @@ class ReviewerStage5(unittest.TestCase):
     def setUp(self):
         item = tempfile.TemporaryDirectory(prefix="web24_s5_review_")
         self.addCleanup(item.cleanup)
-        self.root = Path(item.name)
+        self.root = Path(item.name).resolve()
         self.registry = WorkspaceRegistry(self.root / "registry")
         self.service = OfflineUltraChatService(self.registry, self.root)
 
