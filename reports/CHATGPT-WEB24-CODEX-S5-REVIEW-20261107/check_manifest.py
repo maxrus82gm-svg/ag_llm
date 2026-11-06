@@ -15,8 +15,8 @@ for e in items:
         errors.append((e["path"],"missing or out of scope"))
         continue
     raw=path.read_bytes()
-    lf=raw.replace(b"\\r\\n",b"\\n")
-    crlf=lf.replace(b"\\n",b"\\r\\n")
+    lf=raw.replace(bytes([13,10]),bytes([10]))
+    crlf=lf.replace(bytes([10]),bytes([13,10]))
     candidates=[("raw",raw),("checkout-LF",lf),("checkout-CRLF",crlf)]
     match=next((mode for mode,data in candidates
                 if len(data)==e["size"] and hashlib.sha256(data).hexdigest()==e["sha256"]),None)
