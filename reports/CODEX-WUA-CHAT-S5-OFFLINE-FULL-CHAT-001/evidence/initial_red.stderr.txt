@@ -1,0 +1,19 @@
+test_web_alarm_ultra_chat_s5 (unittest.loader._FailedTest.test_web_alarm_ultra_chat_s5) ... ERROR
+
+======================================================================
+ERROR: test_web_alarm_ultra_chat_s5 (unittest.loader._FailedTest.test_web_alarm_ultra_chat_s5)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_web_alarm_ultra_chat_s5
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_s5.py", line 7, in <module>
+    from web_alarm.ultra_chat import OfflineUltraChatService
+ImportError: cannot import name 'OfflineUltraChatService' from 'web_alarm.ultra_chat' (M:\GitHub\ag_llm\web_alarm\ultra_chat.py)
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

@@ -15,6 +15,7 @@ from tkinter import (
     simpledialog,
     ttk,
 )
+from uuid import uuid4
 
 from server import get_backup_base_path, run_agent_task
 from model_registry import get_model_spec, list_model_specs
@@ -351,9 +352,261 @@ class _DelayedTooltip:
             self._window = None
 
 
+class _OfflineChatPanel(ttk.Frame):
+    """Tk presentation of the shared Stage 5 shell adapter."""
+
+    def __init__(self, master, service):
+        from web_alarm.server import offline_test_models
+        super().__init__(master, padding=12)
+        self.service = service
+        self.workspace = self.chat = None
+        self.workspaces, self.chats = [], []
+        self.models = offline_test_models()
+        self.pending, self.dismissed = {}, {}
+        self.inflight = set()
+        self.finished = queue.Queue()
+        self.state = None
+        self.status = tk.StringVar(value="Создайте временный Workspace")
+        ttk.Label(self, text="TEST · OFFLINE · локальный имитатор", foreground="#a52020").pack(anchor="w")
+        choices = ttk.Frame(self)
+        choices.pack(fill="x", pady=8)
+        ttk.Label(choices, text="Workspace").grid(row=0, column=0, sticky="w")
+        self.workspace_pick = ttk.Combobox(choices, state="readonly", width=36)
+        self.workspace_pick.grid(row=0, column=1, sticky="ew", padx=6)
+        self.workspace_pick.bind("<<ComboboxSelected>>", lambda _event: self._select_workspace())
+        self.workspace_new = ttk.Button(choices, text="+ Workspace", command=self._create_workspace)
+        self.workspace_new.grid(row=0, column=2, sticky="ew")
+        ttk.Label(choices, text="Диалог").grid(row=1, column=0, sticky="w")
+        self.chat_pick = ttk.Combobox(choices, state="readonly", width=36)
+        self.chat_pick.grid(row=1, column=1, sticky="ew", padx=6)
+        self.chat_pick.bind("<<ComboboxSelected>>", lambda _event: self._select_chat())
+        self.chat_new = ttk.Button(choices, text="+ Диалог", command=self._create_chat)
+        self.chat_new.grid(row=1, column=2, sticky="ew")
+        ttk.Label(choices, text="Модель TEST").grid(row=2, column=0, sticky="w")
+        self.model_pick = ttk.Combobox(choices, state="readonly", width=36,
+                                      values=[item["display_name"] for item in self.models])
+        self.model_pick.grid(row=2, column=1, sticky="ew", padx=6)
+        if self.models:
+            self.model_pick.current(0)
+        self.history = scrolledtext.ScrolledText(self, height=14, state="disabled", wrap="word")
+        self.history.pack(fill="both", expand=True)
+        ttk.Label(self, text="Сообщение TEST").pack(anchor="w", pady=(6, 0))
+        self.input_box = scrolledtext.ScrolledText(self, height=3, wrap="word")
+        self.input_box.pack(fill="x")
+        self.input_box.bind("<Control-Return>", self._send_key)
+        actions = ttk.Frame(self)
+        actions.pack(fill="x", pady=6)
+        self.send_button = ttk.Button(actions, text="Отправить", command=self._send)
+        self.check_button = ttk.Button(actions, text="Проверить / обновить", command=self._check)
+        self.cancel_button = ttk.Button(actions, text="Отменить", command=self._cancel)
+        self.new_button = ttk.Button(actions, text="Новый запрос", command=self._new_turn)
+        for button in (self.send_button, self.check_button, self.cancel_button, self.new_button):
+            button.pack(side="left", padx=(0, 6))
+        ttk.Label(self, textvariable=self.status, wraplength=720).pack(anchor="w")
+        self._load_workspaces()
+        self.after(40, self._drain)
+
+    def _scope(self):
+        return self.workspace, self.chat
+
+    def _safe(self, function, *args):
+        from web_alarm.ultra_chat import UltraChatError
+        try:
+            return function(*args)
+        except (UltraChatError, OSError, ValueError) as error:
+            self.status.set("TEST · операция не подтверждена (" + getattr(error, "code", "storage_unavailable") + ")")
+            return None
+
+    @staticmethod
+    def _select(widget, rows, field, value):
+        if rows:
+            widget.current(next((i for i, row in enumerate(rows) if row[field] == value), 0))
+        else:
+            widget.set("")
+
+    def _load_workspaces(self, selected=None):
+        result = self._safe(self.service.workspaces)
+        self.workspaces = result["workspaces"] if result else []
+        self.workspace_pick.configure(values=[row["display_name"] for row in self.workspaces])
+        self._select(self.workspace_pick, self.workspaces, "wa_workspace_id", selected)
+        self._select_workspace()
+
+    def _select_workspace(self, selected_chat=None):
+        index = self.workspace_pick.current()
+        self.workspace = self.workspaces[index]["wa_workspace_id"] if index >= 0 else None
+        result = self._safe(self.service.chats, self.workspace) if self.workspace else None
+        self.chats = [row for row in result["chats"] if row["status"] == "ok"] if result else []
+        self.chat_pick.configure(values=[row["title"] for row in self.chats])
+        self._select(self.chat_pick, self.chats, "chat_id", selected_chat)
+        self._select_chat()
+
+    def _select_chat(self):
+        index = self.chat_pick.current()
+        self.chat = self.chats[index]["chat_id"] if index >= 0 else None
+        self.state = None
+        self._set_input(self.pending.get(self._scope(), {}).get("text") or "")
+        self.status.set("TEST · готово" if self.chat else "Создайте или выберите TEST-диалог")
+        self._check()
+
+    def _create_workspace(self):
+        title = simpledialog.askstring("TEST Workspace", "Название временного Workspace", parent=self)
+        if title and (result := self._safe(self.service.create_workspace, {"title": title})):
+            self._load_workspaces(result[1]["wa_workspace_id"])
+
+    def _create_chat(self):
+        title = simpledialog.askstring("TEST диалог", "Название диалога", parent=self)
+        if not title or not self.workspace:
+            return
+        chat = "chat_" + uuid4().hex
+        if self._safe(self.service.create_chat, self.workspace,
+                      {"chat_id": chat, "title": title, "initialize_workspace": True}):
+            self._select_workspace(chat)
+
+    def _controls(self):
+        scope = self._scope()
+        ready = bool(self.chat and self.models)
+        pending = self.pending.get(scope)
+        self.chat_new.configure(state="normal" if self.workspace else "disabled")
+        self.send_button.configure(state="normal" if ready and scope not in self.inflight else "disabled",
+                                   text="Повторить / восстановить" if pending else "Отправить")
+        self.input_box.configure(state="normal" if ready and not (pending and pending.get("text")) else "disabled")
+        self.cancel_button.configure(state="normal" if ready and pending and self.state in (None, "READY", "ATTEMPTING") else "disabled")
+        self.new_button.configure(state="normal" if self.state == "UNKNOWN" and scope not in self.inflight else "disabled")
+        self.check_button.configure(state="normal" if self.chat else "disabled")
+
+    def _set_input(self, text):
+        self.input_box.configure(state="normal")
+        self.input_box.delete("1.0", "end")
+        self.input_box.insert("1.0", text)
+
+    def _history(self):
+        result = self._safe(self.service.messages, self.workspace, self.chat, None, 50) if self.chat else None
+        self.history.configure(state="normal")
+        self.history.delete("1.0", "end")
+        if result:
+            for item in result["messages"]:
+                label = "Вы" if item["role"] == "user" else "TEST · имитатор"
+                self.history.insert("end", label + "\n" + item["text"] + "\n\n")
+        self.history.see("end")
+        self.history.configure(state="disabled")
+        return result is not None
+
+    def _show_turn(self, turn, text=None):
+        scope = self._scope()
+        self.state = turn["state"]
+        self.status.set("TEST · " + self.state + " · " + turn["references"]["model_ref"]
+                        + (" · usage " + str(turn["usage"]["total_tokens"])
+                           if turn.get("usage") and turn["usage"]["total_tokens"] is not None else ""))
+        if self.state in {"SUCCEEDED", "FAILED", "CANCELLED"}:
+            if self.pending.pop(scope, None) is not None:
+                self._set_input("")
+        elif scope not in self.pending and self.dismissed.get(scope) != turn["idempotency_key"]:
+            self.pending[scope] = {"idempotency_key": turn["idempotency_key"],
+                                   "model_ref": turn["references"]["model_ref"], "text": text}
+            self._set_input(text or "")
+            if self.state == "ACCEPTING" and text is None:
+                self.status.set("TEST · ACCEPTING · введите исходный текст для восстановления")
+        self._controls()
+
+    def _check(self):
+        readable = self._history()
+        if self.chat and readable:
+            pending = self.pending.get(self._scope())
+            if pending:
+                turn = self._safe(self.service._turn_request, "lookup", self.workspace, self.chat,
+                                  pending["idempotency_key"])
+                if turn:
+                    self._show_turn(turn)
+            else:
+                latest = self._safe(self.service.latest_turn, self.workspace, self.chat)
+                if latest and latest["turn"] and self.dismissed.get(self._scope()) != latest["turn"]["idempotency_key"]:
+                    self._show_turn(latest["turn"], latest["text"])
+        self._controls()
+
+    def _send_key(self, _event):
+        self._send()
+        return "break"
+
+    def _send(self):
+        scope = self._scope()
+        if not self.chat or scope in self.inflight or self.model_pick.current() < 0:
+            return
+        text = self.input_box.get("1.0", "end-1c")
+        if not text.strip():
+            return
+        pending = self.pending.get(scope)
+        if pending is None:
+            pending = {"idempotency_key": uuid4().hex, "model_ref": self.models[self.model_pick.current()]["model_id"],
+                       "text": text}
+            self.pending[scope] = pending
+        body = {**pending, "text": pending.get("text") or text}
+        self.inflight.add(scope)
+        self.state = None
+        self.status.set("TEST · принимаем сообщение…")
+        self._controls()
+
+        def submit():
+            try:
+                self.finished.put((scope, self.service.submit_turn(*scope, body), None))
+            except Exception as error:
+                self.finished.put((scope, None, getattr(error, "code", "turn_storage_unavailable")))
+
+        threading.Thread(target=submit, daemon=True).start()
+
+    def _drain(self):
+        while not self.finished.empty():
+            scope, result, error = self.finished.get_nowait()
+            self.inflight.discard(scope)
+            if scope != self._scope():
+                if result and result["state"] in {"SUCCEEDED", "FAILED", "CANCELLED"}:
+                    self.pending.pop(scope, None)
+                continue
+            if result:
+                self._show_turn(result)
+                self._history()
+            elif error in {"invalid_turn_request", "invalid_offline_request"}:
+                self.pending.pop(scope, None)
+                self.status.set("TEST · исправьте текст или выбор модели (" + error + ")")
+            else:
+                self.status.set("TEST · проверьте Turn. Ключ сохранён (" + error + ")")
+            self._controls()
+        self.after(40, self._drain)
+
+    def _cancel(self):
+        pending = self.pending.get(self._scope())
+        if not pending:
+            return
+        turn = self._safe(self.service._turn_request, "lookup", self.workspace, self.chat, pending["idempotency_key"])
+        if turn:
+            result = self._safe(self.service._turn_request, "cancel", self.workspace, self.chat, turn["turn_id"], {})
+            if result:
+                self._show_turn(result)
+
+    def _new_turn(self):
+        if self.state == "UNKNOWN" and self._scope() not in self.inflight:
+            pending = self.pending.pop(self._scope(), None)
+            if pending:
+                self.dismissed[self._scope()] = pending["idempotency_key"]
+            self.state = None
+            self._set_input("")
+            self.status.set("TEST · новый запрос. Прежний исход остаётся неизвестным")
+            self._controls()
+
+
 class UltraApp(tk.Tk):
-    def __init__(self) -> None:
+    def __init__(self, *, offline_chat=None) -> None:
+        if offline_chat is not None:
+            from web_alarm.ultra_chat import OfflineUltraChatService
+            if type(offline_chat) is not OfflineUltraChatService:
+                raise ValueError("TEST mode requires a disposable offline Chat service")
+            offline_chat._check_scope()
         super().__init__()
+        if offline_chat is not None:
+            self.title("Ultra Chat · TEST OFFLINE")
+            self.minsize(620, 440)
+            self.offline_chat_panel = _OfflineChatPanel(self, offline_chat)
+            self.offline_chat_panel.pack(fill="both", expand=True)
+            return
         self._ui_state = load_ui_state()
 
         self.title(APP_TITLE)

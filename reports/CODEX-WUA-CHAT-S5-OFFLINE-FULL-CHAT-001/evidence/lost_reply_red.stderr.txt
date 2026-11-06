@@ -1,0 +1,23 @@
+test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat (test_web_alarm_ultra_chat_s5.HttpAndTkTests.test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat) ... Web Alarm server internal error: synthetic client disconnect
+ERROR
+
+======================================================================
+ERROR: test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat (test_web_alarm_ultra_chat_s5.HttpAndTkTests.test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_s5.py", line 301, in test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat
+    self.http(server, "POST", base, body, write)
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_s5.py", line 213, in http
+    data = reply.read().decode("utf-8")
+           ^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\http\client.py", line 495, in read
+    s = self._safe_read(self.length)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\http\client.py", line 644, in _safe_read
+    raise IncompleteRead(data, amt-len(data))
+http.client.IncompleteRead: IncompleteRead(89 bytes read, 929 more expected)
+
+----------------------------------------------------------------------
+Ran 1 test in 1.182s
+
+FAILED (errors=1)

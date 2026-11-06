@@ -17,7 +17,10 @@ import re
 import secrets
 import stat
 from pathlib import Path
+import tempfile
+import threading
 from typing import Any, Callable, Mapping
+from uuid import uuid4
 
 from .workspace_registry import WorkspaceRegistry, WorkspaceRegistryError
 
@@ -358,6 +361,267 @@ class UltraChatService:
         return {**base, "chat": history["chat"], "history_state": state, "excluded": history["excluded"],
                 "excluded_ids": history["excluded_ids"], "total_messages": len(messages),
                 "outcome_source": classification, **page}
+
+
+class OfflineUltraChatService(UltraChatService):
+    """Stage 5 shell adapter for a disposable registry and its synthetic projects."""
+
+    def __init__(self, registry: WorkspaceRegistry, root: Path) -> None:
+        super().__init__(registry)
+        self.root = Path(root).absolute()
+        self.projects = self.root / "projects"
+        self._owners = {}
+        self._owner_lock = threading.Lock()
+        if (Path(tempfile.gettempdir()).resolve() not in self.root.parents
+                or registry.storage_root != self.root / "registry"):
+            raise ValueError("Stage 5 requires an explicit disposable root and its own registry")
+        self._plain_dir(self.root)
+        self.projects.mkdir(exist_ok=True)
+        self._check_scope()
+
+    @staticmethod
+    def _plain_dir(path):
+        if (not path.is_dir() or path.is_symlink() or path.is_junction()
+                or path.resolve(strict=True) != path):
+            raise UltraChatError(403, "offline_scope_invalid", "TEST storage is outside the fixture scope")
+
+    def _check_scope(self):
+        self._plain_dir(self.root)
+        self._plain_dir(self.projects)
+        self._plain_dir(self.registry.storage_root)
+        self._plain_dir(self.registry.workspaces_dir)
+        for path in self.registry.workspaces_dir.glob("*.json"):
+            info = path.lstat()
+            if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
+                    or getattr(info, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT):
+                raise UltraChatError(403, "offline_scope_invalid", "TEST registry contains an unsafe entry")
+
+    def _check_record(self, record):
+        expected = self.projects / record.workspace_id
+        if (not re.fullmatch(r"ws_[0-9a-f]{32}", record.workspace_id)
+                or Path(record.workspace_root) != expected):
+            raise UltraChatError(403, "offline_scope_invalid", "Workspace is outside the TEST scope")
+        if expected.exists() or expected.is_symlink() or expected.is_junction():
+            self._plain_dir(expected)
+
+    def _registration(self, wa_workspace_id):
+        self._check_scope()
+        record = super()._registration(wa_workspace_id)
+        self._check_record(record)
+        return record
+
+    def workspaces(self):
+        self._check_scope()
+        try:
+            records = self.registry.list()
+        except WorkspaceRegistryError:
+            raise UltraChatError(503, "registry_unavailable", "TEST registry could not be read") from None
+        if len(records) > MAX_WORKSPACES:
+            return {"state": "too_large", "reason": "too_many_workspaces", "workspaces": []}
+        items = []
+        for record in records:
+            self._check_record(record)
+            items.append({"wa_workspace_id": record.workspace_id, "display_name": record.display_name,
+                          "history": _core().read_workspace_identity_bounded(record.workspace_root)["status"]})
+        return {"state": "ok", "workspaces": items}
+
+    def create_workspace(self, body):
+        if (type(body) is not dict or set(body) != {"title"} or type(body["title"]) is not str
+                or not body["title"].strip() or len(body["title"]) > 120
+                or any(ord(char) < 32 for char in body["title"])):
+            raise UltraChatError(400, "invalid_workspace_title", "Expected a TEST Workspace title")
+        self._check_scope()
+        workspace_id = "ws_" + uuid4().hex
+        try:
+            body["title"].encode("utf-8")
+            root = self.projects / workspace_id
+            root.mkdir()
+            record = self.registry.register(body["title"], root, workspace_id=workspace_id)
+        except (OSError, ValueError, WorkspaceRegistryError):
+            raise UltraChatError(503, "workspace_unavailable", "TEST Workspace could not be created") from None
+        return 201, {"wa_workspace_id": record.workspace_id, "display_name": record.display_name}
+
+    def rename_workspace(self, wa_workspace_id, body):
+        self._registration(wa_workspace_id)
+        return super().rename_workspace(wa_workspace_id, body)
+
+    def messages(self, wa_workspace_id, chat_id, before, limit):
+        page = super().messages(wa_workspace_id, chat_id, before, limit)
+        assistants = [item for item in page["messages"] if item["role"] == "assistant"]
+        if not assistants:
+            return page
+        core = _core()
+        root, workspace_id = self._writable_workspace(core, wa_workspace_id)
+        turns = self._turns_for(root, workspace_id, chat_id)
+        try:
+            for item in assistants:
+                raw = core.read_ultra_json_bounded(root, ("chats", chat_id, "messages", item["message_id"] + ".json"),
+                                                  max_bytes=32768)
+                run_id = raw["producer"]["run_id"]
+                turn = turns.get(root, workspace_id, chat_id, run_id)
+                if (turn["mode"] != "TEST_OFFLINE" or turn["state"] != "SUCCEEDED"
+                        or turn["assistant_message_id"] != item["message_id"] or turn["answer"] != item["text"]):
+                    raise ValueError("TEST assistant RAW has no confirmed result")
+        except (KeyError, TypeError, ValueError, core.StorageReadError, UltraChatError):
+            raise UltraChatError(503, "offline_history_invalid", "TEST answer could not be verified") from None
+        return page
+
+    def capability(self):
+        return {"available": True, "mode": "TEST_OFFLINE", "label": "TEST · локальный имитатор"}
+
+    @staticmethod
+    def is_write_path(path):
+        return path == "/ultra/chat/workspaces" or UltraChatService.is_write_path(path)
+
+    def write_route(self, path, raw_query):
+        if path == "/ultra/chat/workspaces":
+            parse_query(raw_query, frozenset())
+            return self.create_workspace
+        return super().write_route(path, raw_query)
+
+    def route(self, path, raw_query):
+        parts = path.split("/")[1:]
+        if (len(parts) == 8 and parts[:3] == ["ultra", "chat", "workspaces"]
+                and parts[4] == "chats" and parts[6:] == ["turns", "latest"]):
+            parse_query(raw_query, frozenset())
+            workspace, chat = _wa_id(parts[3]), parts[5]
+            if not _CHAT_ID_RE.fullmatch(chat):
+                raise UltraChatError(400, "invalid_ultra_chat_request", "Invalid chat_id")
+            return lambda: self.latest_turn(workspace, chat)
+        return super().route(path, raw_query)
+
+    @staticmethod
+    def _fixture_turns(root, context=(), context_ref="offline-read:v1", response_text="TEST"):
+        from ordinary_chat_service import RequestLimits
+        from .ordinary_chat_test_adapter import OfflineTestAdapter
+        from .turn_service import TurnService
+        fixture = OfflineTestAdapter(
+            context=context, context_ref=context_ref,
+            limits=RequestLimits(4, 2048, 8192, 8192, 128, 8),
+            response={"choices": [{"message": {"role": "assistant", "content": response_text}}]},
+        )
+        return TurnService(test_roots=[root], offline_adapter=fixture)
+
+    def _turns_for(self, root, workspace_id, chat_id):
+        with self._owner_lock:
+            owner = self._owners.get((workspace_id, chat_id))
+        return owner[1] if owner else self._fixture_turns(root)
+
+    def _turn_request(self, action, wa_workspace_id, chat_id, value, body=None):
+        if action == "submit":
+            return self.submit_turn(wa_workspace_id, chat_id, value)
+        root, workspace_id = self._writable_workspace(_core(), wa_workspace_id)
+        turns = self._turns_for(root, workspace_id, chat_id)
+        if action == "cancel":
+            return turns.cancel(root, workspace_id, chat_id, value, body)
+        if action == "lookup":
+            return turns.lookup(root, workspace_id, chat_id, value)
+        return turns.get(root, workspace_id, chat_id, value)
+
+    def _context(self, root, workspace_id, chat_id, turns):
+        """Project one bounded, verified completed pair from this Chat only."""
+        from provider_accounting import canonical_json_text
+        core = _core()
+        try:
+            history = core.read_chat_history_bounded(root, chat_id)
+        except core.StorageReadError as error:
+            raise UltraChatError(503, "offline_history_invalid", "TEST context could not be read") from error
+        if history["excluded"]:
+            raise UltraChatError(503, "offline_history_invalid", "TEST history contains damaged records")
+        context = [{"role": "system", "content": "TEST offline chat " + chat_id}]
+        messages = history["messages"]
+        for assistant in reversed(messages):
+            producer = assistant.get("producer", {})
+            if assistant["role"] != "assistant" or producer.get("kind") != "offline_chat_fixture":
+                continue
+            turn = turns.get(root, workspace_id, chat_id, producer.get("run_id"))
+            user = next((m for m in messages if m["message_id"] == turn["user_message_id"]), None)
+            if (turn["state"] != "SUCCEEDED" or assistant["message_id"] != turn["assistant_message_id"]
+                    or not user or user["role"] != "user"):
+                raise UltraChatError(503, "offline_history_invalid", "TEST pair is not backed by its Turn")
+            if all(len(canonical_json_text(m["text"]).encode("utf-8")) <= 1024 for m in (user, assistant)):
+                context.extend({"role": m["role"], "content": m["text"]} for m in (user, assistant))
+            break
+        return context
+
+    def submit_turn(self, wa_workspace_id, chat_id, body):
+        from .turn_service import KEY, OFFLINE_REF, identities
+        if (type(body) is not dict or set(body) != {"idempotency_key", "model_ref", "text"}
+                or type(body["idempotency_key"]) is not str or not KEY.fullmatch(body["idempotency_key"])
+                or type(body["model_ref"]) is not str or not 0 < len(body["model_ref"]) <= 256
+                or type(body["text"]) is not str or not body["text"].strip()):
+            raise UltraChatError(400, "invalid_turn_request", "Expected an explicit TEST model, text and retry key")
+        try:
+            valid_size = len(body["text"].encode("utf-8")) <= 2048
+        except UnicodeError:
+            valid_size = False
+        if not valid_size:
+            raise UltraChatError(400, "invalid_turn_request", "TEST message must be valid UTF-8 up to 2048 bytes")
+        root, workspace_id = self._writable_workspace(_core(), wa_workspace_id)
+        scope = (workspace_id, chat_id)
+        key = body["idempotency_key"]
+        with self._owner_lock:
+            entry = self._owners.get(scope)
+            if entry:
+                if entry[0] != key:
+                    raise UltraChatError(409, "test_chat_busy", "Wait for the active TEST Turn")
+                _, turns, context_ref = entry
+                owns_entry = False
+            else:
+                reader = self._fixture_turns(root)
+                try:
+                    turn_id = identities(workspace_id, chat_id, key)["turn_id"]
+                    # Read the accepted binding without projecting an interrupted
+                    # stream. The real submit owns explicit Run Store recovery.
+                    with reader._session(root, workspace_id, chat_id):
+                        previous = reader._load(root, workspace_id, chat_id, turn_id)
+                except UltraChatError as error:
+                    if error.code not in {"turn_not_found", "turn_acceptance_incomplete"}:
+                        raise
+                    context = self._context(root, workspace_id, chat_id, reader)
+                    # The reference names this Chat's projection. The actual
+                    # snapshot is bound by the accepted Turn's request_ref.
+                    context_ref = "stage5:" + chat_id
+                else:
+                    context, context_ref = (), previous["references"]["context_ref"]
+                answer = "TEST · локальный имитатор\nОтвет на: " + body["text"][:256]
+                turns = self._fixture_turns(root, context, context_ref, answer)
+                self._owners[scope] = (key, turns, context_ref)
+                owns_entry = True
+        try:
+            return turns.submit(root, workspace_id, chat_id,
+                                {**body, "context_ref": context_ref, "config_ref": OFFLINE_REF})
+        finally:
+            if owns_entry:
+                with self._owner_lock:
+                    self._owners.pop(scope, None)
+
+    def latest_turn(self, wa_workspace_id, chat_id):
+        import run_store
+        from .turn_service import TURN
+        core = _core()
+        root, workspace_id = self._writable_workspace(core, wa_workspace_id)
+        try:
+            index = run_store.load_workspace_run_index(root)
+            entries = [(entry["display_id"], run_id) for run_id, entry in index["runs"].items()
+                       if entry.get("chat_id") == chat_id and TURN.fullmatch(run_id)]
+            if not entries:
+                return {"turn": None, "text": None}
+            _, run_id = max(entries, key=lambda item: int(item[0].split("-")[-1]))
+            turns = self._turns_for(root, workspace_id, chat_id)
+            turn = turns.get(root, workspace_id, chat_id, run_id)
+            text = None
+            if turn["state"] != "ACCEPTING":
+                raw = core.read_ultra_json_bounded(root, ("chats", chat_id, "messages", turn["user_message_id"] + ".json"),
+                                                  max_bytes=32768)
+                text = raw["original_text"]
+            return {"turn": turn, "text": text}
+        except UltraChatError as error:
+            if error.code == "turn_acceptance_incomplete":
+                return {"turn": None, "text": None}
+            raise
+        except (OSError, ValueError, KeyError, core.StorageReadError):
+            raise UltraChatError(503, "turn_storage_unavailable", "TEST Turn could not be read") from None
 
 
 # Safe text for every refusal of the shared writer; the core's own message (which may name a path) is never sent.

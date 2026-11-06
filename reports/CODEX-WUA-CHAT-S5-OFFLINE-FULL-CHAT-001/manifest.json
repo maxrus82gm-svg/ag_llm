@@ -1,0 +1,442 @@
+{
+  "task_id": "CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001",
+  "status": "READY FOR INDEPENDENT VERIFICATION",
+  "hash": "SHA-256 exact bytes",
+  "files": [
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "size": 43019,
+      "sha256": "fdc32436468407412a4116930354a8f9a6220a743a991480c8bb0de2f0bb656f"
+    },
+    {
+      "path": "web_alarm/server.py",
+      "size": 77117,
+      "sha256": "c826936a957cf89b2b2c44628fdda5228a2fac1ed75eb5a404a24ad5db3e34be"
+    },
+    {
+      "path": "web_alarm/ui.py",
+      "size": 198759,
+      "sha256": "07075a2e131fc1ca5548d110c6a291bda1615138b3be0ec5773f4607bd05b8e4"
+    },
+    {
+      "path": "ultra_ui.py",
+      "size": 261248,
+      "sha256": "9b0b7fa52b82e9612f181ce4ec0620c1e6d37376bbe8f9e7ee92728875cb9033"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_ui.js",
+      "size": 71161,
+      "sha256": "b4e317703bd488de79036581d8395ddc1ef61988decb2c49c919a325627a0d5f"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_s5.py",
+      "size": 21433,
+      "sha256": "7750574867f8947e063b1b9ab0edccbe0820e14ddd2dc05ec9d721857a52fa14"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/before/test_web_alarm_ultra_chat_turn_http.py.source.txt",
+      "size": 7201,
+      "sha256": "8483774f80612b180dab8e311f426f2e0cffea89515686d17d337eeb47add9a5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/before/test_web_alarm_ultra_chat_ui.js.source.txt",
+      "size": 64938,
+      "sha256": "dfd7b37a9104ec5c4fa98588c424fafaf4dda9858f2c99bb401ffb57f1fa0fbc"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/before/ultra_ui.py.source.txt",
+      "size": 247833,
+      "sha256": "a076bab7d2aa3ec322cd2dcaf3557f6faf8a99ac009298c7c98faa60b908cd78"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/before/web_alarm/server.py.source.txt",
+      "size": 74952,
+      "sha256": "b2bf2b20635b120e9a273d8691305dea8687c42693e47ed365bd966eec205f27"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/before/web_alarm/ui.py.source.txt",
+      "size": 192434,
+      "sha256": "c9c8c60143a99d7e03a352672c8c9511c150f1ca024803a2921d929c3d293442"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/before/web_alarm/ultra_chat.py.source.txt",
+      "size": 28937,
+      "sha256": "164c2f76fa4d6cdc935a2e4189eabe9d07b1f8206b179df64d27f1d5009c7035"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/before/Документация/000_Задачи Codex.md.source.txt",
+      "size": 31110,
+      "sha256": "6a2c5f9b4eac6fad6f8922ed8f07a14dd242611e14fbda05c5d800462d787c4a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/check_package.py",
+      "size": 8215,
+      "sha256": "51fceb9ca9d11e983f089c2eb677507e30bfc08336d3f2ec3262ee4edf994711"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/baseline.json",
+      "size": 123303,
+      "sha256": "7ec2ae5075852c543b8fd7ea149ed7b75159670cb5307107fec949ec62bcd517"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/browser_smoke.md",
+      "size": 3655,
+      "sha256": "9b707df1d34de554289367058c42ab87a5011df51529f8bc6d3912b43c701819"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/compile_final.result.json",
+      "size": 2128,
+      "sha256": "d4372afa7d7ff7a876d8fafebfd99f246adb1e9a71d1dd2afb6f2256d7b5ebb9"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/compile_final.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/compile_final.stdout.txt",
+      "size": 731,
+      "sha256": "ba8a8a125d86474ead9a5f893e3aacddc1420779fc1235bd06144bb4ede4071b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/conservation_before_finish.json",
+      "size": 313,
+      "sha256": "b05c4ff8a9f8a5480ba87fbc78b5e2bf71bc62f4a7210a94cc16d688b39a41ea"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/core_first.result.json",
+      "size": 1533,
+      "sha256": "1b26c6cc9b57f63af8e487d5c2f4de8d1d3dc4ea552c731046b19b030f50b815"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/core_first.stderr.txt",
+      "size": 230,
+      "sha256": "7ad4a188e932184831cac675684b9e790222b4b9fd2f5450b8b1eb8c417a1868"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/core_first.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/finish.result.json",
+      "size": 2305,
+      "sha256": "d62caa15ad9f3e976fb2edf7d67e265b4402b526a608dc35246b4f6691e9fc5a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/finish.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/finish.stdout.txt",
+      "size": 4948,
+      "sha256": "4e039481b57f2258c41bd0b46d4a1df87c2b3de10dff1789e78bbfda4c7b8eaa"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/initial_red.result.json",
+      "size": 1534,
+      "sha256": "746d429be861e523d0510c55b0b03e49c37b24b6f48b1094ff81bd6f3b4a73c6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/initial_red.stderr.txt",
+      "size": 1035,
+      "sha256": "0bf7b28c1ed3e30ae479e3c26871f1a61cd4b833e1163a24697177f280d1eac4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/initial_red.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/js_final.result.json",
+      "size": 713,
+      "sha256": "bc45cbffbaefeef1305361e615fa6d48de01e5493222f6bf3d4114ca2883ac62"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/js_final.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/js_final.stdout.txt",
+      "size": 40148,
+      "sha256": "1af50a53020542ad47ddaf9ee241c63c9ad5f99f5a5c099239a190df8f6ef533"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/js_first.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/js_first.stdout.txt",
+      "size": 10897,
+      "sha256": "25c3fe0645b479ab8d27c77f875155b2885e67e0a434a2c527269ddedf60428f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/lost_reply_red.result.json",
+      "size": 1610,
+      "sha256": "22349b2d3d64fbc1e655bf06f655c043e98a346559ee98a8ae4ede94d4bb96ce"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/lost_reply_red.stderr.txt",
+      "size": 1503,
+      "sha256": "7724fdf10f1ffa230a9b943dcd06a3edaaf6ac55287a6dd0fcf7e7ea603905c6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/lost_reply_red.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/profile_final.result.json",
+      "size": 2128,
+      "sha256": "f6fb5c3575ecdccb36151f27f4e52cbadefae2acbf4be4763181237eb43a5e67"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/profile_final.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/profile_final.stdout.txt",
+      "size": 1256,
+      "sha256": "63d7081c9b972fa105922101343a2d97e1b39fb8d14d726822c2d5cf1dbcb9ea"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/profile_smoke.result.json",
+      "size": 1534,
+      "sha256": "95e2e5243cd6193efe1c580af62ad427f657ec148f77e4f503c6efbdc5c5f9d5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/profile_smoke.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/profile_smoke.stdout.txt",
+      "size": 1256,
+      "sha256": "5187c9df8cbac58021af9fc8b5465dfcac19cbea16c6cf83f57ee88154ece597"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/runstore_final.result.json",
+      "size": 2154,
+      "sha256": "a922d98ce9baec2ee62a43b4ae14030d533fd11a4ef6257c39bbbb2281ac0a2a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/runstore_final.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/runstore_final.stdout.txt",
+      "size": 5723,
+      "sha256": "5d9043dd0afd12162a8dcda66a1af0c113cd20cd6b0f82e83a89bbd32bc59192"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/s4_final.guard.jsonl",
+      "size": 565,
+      "sha256": "adf43df005c0918df47c44c2bdcfa5ec5155c06d08ebfc405a6b68732c249a5d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/s4_final.result.json",
+      "size": 2157,
+      "sha256": "bc080aa15a1e00198dfecef824da34d600e533f77b87cc82c193d3a8539ebd32"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/s4_final.stderr.txt",
+      "size": 10226,
+      "sha256": "8c6d5758e9d066674bbda86fb470c33f0fe0bdec552e800813aa1d01d108b606"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/s4_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/stage3_final.result.json",
+      "size": 2226,
+      "sha256": "266e24bf74b0b52e92b647e82cac6bb75d8b612e0e63672e5dd6a1d2783f248e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/stage3_final.stderr.txt",
+      "size": 4855,
+      "sha256": "ac1a3405f7da05c17a446b9e385078fd591b505216f456eec2397ceab3cc242c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/stage3_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/storage_final.result.json",
+      "size": 2234,
+      "sha256": "246e49127e87b85b7608f615868a8005674eae1c8751c630e0ea1790ccdbb286"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/storage_final.stderr.txt",
+      "size": 2615,
+      "sha256": "a8733e8efa250a933a0d43a98cfe57d184b987e03d3d1fa8774c1c310f0453cd"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/storage_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/test_summary.json",
+      "size": 31684,
+      "sha256": "452b3d8f36867f9630a9a26f348b5f557dcbf83787ed112de32fde15848ed956"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/web_history_final.result.json",
+      "size": 2171,
+      "sha256": "272348df607e778b9fed69233eb2f21ee3bfa83f3ad832589fa57724eccdc975"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/web_history_final.stderr.txt",
+      "size": 8194,
+      "sha256": "412e90dc4a593e033aed395ada3d6327e0c04f21f356b846a6721700ab010d5e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/web_history_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_final.guard.jsonl",
+      "size": 284,
+      "sha256": "a04266280503664f2a3c7c3f6efbf2fff9a10523855dfef70d9841f5c2dde7d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_final.result.json",
+      "size": 2132,
+      "sha256": "1d5f5929d47fcfbff2bcfaa9f1b3adee76b5031f48dd34ff57d81176afcd6e3a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_final.stderr.txt",
+      "size": 2065,
+      "sha256": "ee30ddba387ec33f8a059195ae728a49d9e81ca21504bb573f6ad0e197532b31"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_first.result.json",
+      "size": 1581,
+      "sha256": "8888bc8f459fa16f76e8b622528a71c859339e06adb0969f2d520f6340aab5c5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_first.stderr.txt",
+      "size": 189,
+      "sha256": "b1eb25bc79469163617fb68c8368d9f9ab4fb2cc880ba5e5f10efab56cfb62d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_first.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_smoke_first.guard.jsonl",
+      "size": 284,
+      "sha256": "1c83ed848c7f8955aee6f6416c5ed3248e133abcb5317d78a5871433f841c282"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_smoke_first.result.json",
+      "size": 1537,
+      "sha256": "795e21b90a9a9505088e39e61f8d92b005ebbad7f644a5e29c443be4ae8f65db"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_smoke_first.stderr.txt",
+      "size": 1404,
+      "sha256": "9d2429369a7696a972c7e6e5b93b1e4379cfb601f9e2b752c254bb315213f597"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/evidence/windows_smoke_first.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/finish_receipt.json",
+      "size": 542,
+      "sha256": "501bae2d91fdc13d271cdc9cce7e5fb72f9e43cbc87d409f3662bb8ebafb37c8"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/guard/sitecustomize.py",
+      "size": 3742,
+      "sha256": "63d2f02d1397a856698a60644bc86decb062d37dbf904494503fb4bec58c096c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/handoff_task.md",
+      "size": 8439,
+      "sha256": "73c0946b836729ddb33b788dd373b9eeae064e0e1a0629ab4ea5fb8d47b6e4b4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/launch_stage5.json",
+      "size": 287,
+      "sha256": "8b910da695a06f94313ebcd7625b2e6bd1a52267977b93dc7e219bb3c92e20b6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/node_check.py",
+      "size": 1444,
+      "sha256": "b3cf2f21cec5378888e77a76343a547ce39558faaef53edc9839641799cb94f3"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/profile_smoke.py",
+      "size": 450,
+      "sha256": "34d59f4162623f0d0e6d8b94319414245da18c1ae12bf3cef1e76045ad46cb8d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/report.md",
+      "size": 9256,
+      "sha256": "bac17d7e3c665bf798cba1b21d3c3bd5a8e7118cba18c1ed241fe3c4cada6ad4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/review_fixture.py",
+      "size": 3465,
+      "sha256": "23420d29e194148f6d173afed3a92c2555f300be2292288d7c9c1c9353582c55"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/run_check.py",
+      "size": 2984,
+      "sha256": "ccbeef4283e901081a83414806c8c01cb9b616a9852aa804ec4e165097e9c325"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/task_record.json",
+      "size": 719,
+      "sha256": "a5015a7a24327d3dedfe5ef325c03ae48d062c9c994fb934597616768d000c64"
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "size": 25814,
+      "sha256": "bac7eccb17bd571a34483492d6119098b805b076a4e05aea213529b6679696ee"
+    },
+    {
+      "path": "reports/task_history_sequences.json",
+      "size": 28,
+      "sha256": "cdd9115f5bb46b9cc78ed775f4b3fef92d71844def13c8fd29830c568f72dfc2"
+    }
+  ],
+  "publication_allowlist": [
+    "web_alarm/ultra_chat.py",
+    "web_alarm/server.py",
+    "web_alarm/ui.py",
+    "ultra_ui.py",
+    "test_web_alarm_ultra_chat_ui.js",
+    "test_web_alarm_ultra_chat_s5.py",
+    "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/**",
+    "Документация/000_Задачи Codex.md",
+    "reports/task_history_sequences.json (native finish only)"
+  ],
+  "publication_excludes": [
+    ".obsidian/**",
+    ".ultra/**",
+    "Чат_pro/**",
+    "Чат_Pro_01/**",
+    "unrelated local changes"
+  ],
+  "independent_review": "PENDING",
+  "external_provider_calls": 0
+}

@@ -304,6 +304,12 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div id="chatWorkspaceResult" class="notice info" role="status" hidden></div>
 <p id="chatWorkspaceState" class="muted" role="status"></p>
 <div id="chatWorkspaceList" class="chat-picks" aria-label="Workspace с вложенными диалогами"></div>
+<form id="chatTestWorkspaceForm" class="chat-name-form" hidden>
+<label for="chatTestWorkspaceTitle">Название временного TEST Workspace</label>
+<input id="chatTestWorkspaceTitle" maxlength="120" autocomplete="off" required>
+<div class="chat-actions"><button type="submit" id="chatTestWorkspaceSave">Создать TEST Workspace</button><button type="button" id="chatTestWorkspaceCancel">Отмена</button></div>
+<p id="chatTestWorkspaceError" role="alert" hidden></p>
+</form>
 <form id="chatWorkspaceNameForm" class="chat-name-form" hidden>
 <label for="chatWorkspaceNameInput">Переименовать Workspace</label><input id="chatWorkspaceNameInput" maxlength="120" autocomplete="off">
 <div class="chat-actions"><button type="submit" id="chatWorkspaceNameSave">Сохранить</button><button type="button" id="chatWorkspaceNameCancel">Отмена</button></div>
@@ -1077,6 +1083,7 @@ function rememberView(name){
   try{if(typeof history!=='undefined'&&typeof location!=='undefined'&&history.replaceState)history.replaceState(null,'','#'+name)}catch(_){}
 }
 function showView(name,initial=false){
+  if(stage5Offline)name='chat';
   if(!VIEWS[name])name='chat';const previous=evm.view;evm.view=name;
   if(name!=='evm'){closePeek();pinCancel()}  // pinned windows stay (hidden with EVM), the preview goes
   for(const [key,[region,button]] of Object.entries(VIEWS)){$(region).hidden=key!==name;$(button).setAttribute('aria-pressed',String(key===name))}
@@ -1899,44 +1906,78 @@ if(typeof window!=='undefined'&&window.addEventListener){
 // Ultra Chat (programme No.37 stage 1): saved dialogues of the shared Ultra core, read-only. The read token
 // lives only in this object and goes only to /ultra/chat/* in its own header; nothing here writes anything.
 const CHAT_TOKEN_HEADER='X-WebAlarm-Ultra-Chat-Token',CHAT_PAGE=50;
+const stage5Offline=document.body?.getAttribute?.('data-stage5-offline')==='true';
 const chat={epoch:0,started:false,token:null,workspaces:[],workspace:null,expanded:null,chats:[],chat:null,messages:[],page:null,olderBusy:false,creatingWorkspace:false,renamingWorkspace:false};
-const chatTurn={available:false,busy:false,state:null};
+const chatTurn={available:false,busy:false,state:null,models:[],model:null,revision:0,dismissed:new Map()};
 function turnScope(){return chat.workspace&&chat.chat?'webAlarm.testTurn.'+chat.workspace+'.'+chat.chat:null}
 function turnPending(){try{return JSON.parse(localStorage.getItem(turnScope())||'null')}catch(_){return null}}
 function turnBase(){return '/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats/'+encodeURIComponent(chat.chat)+'/turns'}
 function renderTurnComposer(){
   const enabled=chatTurn.available&&!!chat.workspace&&!!chat.chat;
+  const pending=turnPending();
   $('chatInput').disabled=!enabled||chatTurn.busy;$('chatSend').disabled=!enabled||chatTurn.busy;
   $('chatTurnControls').hidden=!enabled;
-  $('chatTurnCancel').disabled=!enabled||!turnPending();
-  $('chatModelPick').disabled=chatTurn.available;
-  if(chatTurn.available){text('chatComposerNote','TEST · локальный имитатор. Выбранная модель не вызывается. Enter — отправить, Shift+Enter — новая строка.');$('chatInput').placeholder='Сообщение TEST-имитатору';text('chatModel','TEST · локальный имитатор');text('chatModelPick','TEST · без LLM');text('chatSidebarNote','TEST: ответы создаёт локальный имитатор. История хранится общим ядром Ultra.')}
+  $('chatTurnCancel').disabled=!enabled||!pending||(stage5Offline&&!!chatTurn.state&&!['READY','ATTEMPTING'].includes(chatTurn.state));
+  $('chatModelPick').disabled=stage5Offline?!chatTurn.models.length:chatTurn.available;
+  if(stage5Offline){
+    const selected=chatTurn.models.find(m=>m.model_id===chatTurn.model);
+    $('chatInput').readOnly=typeof pending?.text==='string';
+    $('chatSend').disabled=!enabled||chatTurn.busy||!selected;
+    $('chatInput').placeholder='Сообщение TEST-имитатору';
+    $('chatTurnNew').disabled=chatTurn.busy;
+    text('chatComposerNote',pending?'TEST · повтор использует сохранённый ключ и модель исходного запроса.':'TEST · локальный имитатор. Enter — отправить, Shift+Enter — новая строка.');
+    text('chatModel',selected?'TEST · '+selected.display_name:'TEST · выберите модель');
+    text('chatModelPick',(selected?.display_name||'Выбрать модель')+' ▾');
+    text('chatSidebarNote','TEST · история хранится общим ядром Ultra.');
+  }
+  else if(chatTurn.available){text('chatComposerNote','TEST · локальный имитатор. Выбранная модель не вызывается. Enter — отправить, Shift+Enter — новая строка.');$('chatInput').placeholder='Сообщение TEST-имитатору';text('chatModel','TEST · локальный имитатор');text('chatModelPick','TEST · без LLM');text('chatSidebarNote','TEST: ответы создаёт локальный имитатор. История хранится общим ядром Ultra.')}
   else{text('chatComposerNote','Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.')}
   $('chatSend').textContent=turnPending()?'Повторить / восстановить':'Отправить';
 }
 function showTurn(result){
-  if(!result||result.mode!=='TEST'||typeof result.turn_id!=='string'||!['ACCEPTING','READY','ATTEMPTING','SUCCEEDED','FAILED','CANCELLED','UNKNOWN'].includes(result.state))throw Error('Некорректный Turn');
+  if(!result||result.mode!==(stage5Offline?'TEST_OFFLINE':'TEST')||typeof result.turn_id!=='string'||!['ACCEPTING','READY','ATTEMPTING','SUCCEEDED','FAILED','CANCELLED','UNKNOWN'].includes(result.state))throw Error('Некорректный Turn');
+  chatTurn.revision++;
   chatTurn.state=result.state;
   const labels={ACCEPTING:'Приём не завершён. Для продолжения нужен исходный текст.',READY:'Принято. Ожидает явного продолжения.',ATTEMPTING:'Имитатор выполняет запрос…',SUCCEEDED:'TEST: ответ сохранён.',FAILED:'TEST: выполнение завершилось ошибкой.',CANCELLED:'Отменено до выполнения.',UNKNOWN:'Исход неизвестен. Повтор ключа проверит сохранённые факты; повторного исполнения нет.'};
-  text('chatTurnStatus',labels[result.state]);
+  const detail=stage5Offline?' · '+result.references.model_ref+(result.usage?.total_tokens==null?'':' · usage '+result.usage.total_tokens):'';
+  text('chatTurnStatus',labels[result.state]+detail);
   $('chatTurnNew').hidden=result.state!=='UNKNOWN';
   $('chatTurnCancel').disabled=!['READY','ATTEMPTING'].includes(result.state);
-  if(['SUCCEEDED','FAILED','CANCELLED'].includes(result.state)){localStorage.removeItem(turnScope());if(result.state==='SUCCEEDED')$('chatInput').value=''}
+  if(['SUCCEEDED','FAILED','CANCELLED'].includes(result.state)){
+    const hadPending=!!turnPending();
+    localStorage.removeItem(turnScope());
+    if(stage5Offline?hadPending:result.state==='SUCCEEDED')$('chatInput').value=''
+  }
   renderTurnComposer();
 }
 async function checkTurn(){
-  renderTurnComposer();const pending=turnPending();if(!chatTurn.available||!pending)return;
-  const epoch=chat.epoch;
-  try{const result=await chatGet(turnBase()+'/by-key/'+encodeURIComponent(pending.key));if(epoch===chat.epoch){showTurn(result);await loadChatHistory(false)}}
+  renderTurnComposer();let pending=turnPending();if(!chatTurn.available||!turnScope()||(!pending&&!stage5Offline))return;
+  const epoch=chat.epoch,revision=chatTurn.revision;
+  try{
+    const found=pending?{turn:await chatGet(turnBase()+'/by-key/'+encodeURIComponent(pending.key))}:await chatGet(turnBase()+'/latest');
+    if(epoch!==chat.epoch||revision!==chatTurn.revision||!found.turn)return;
+    const result=found.turn;
+    if(stage5Offline&&!pending&&!['SUCCEEDED','FAILED','CANCELLED'].includes(result.state)){
+      if(chatTurn.dismissed.get(turnScope())===result.idempotency_key)return;
+      pending={key:result.idempotency_key,model:result.references.model_ref,text:found.text};
+      localStorage.setItem(turnScope(),JSON.stringify(pending));
+    }
+    if(stage5Offline&&typeof pending?.text==='string')$('chatInput').value=pending.text;
+    showTurn(result);await loadChatHistory(false)
+  }
   catch(e){if(epoch===chat.epoch)text('chatTurnStatus',e.httpStatus===404?'Turn ещё не найден. Повторите исходный текст с сохранённым ключом.':'Не удалось проверить Turn. Ключ сохранён, автоматического повтора нет.')}
 }
 async function sendTurn(){
-  if(!chatTurn.available||chatTurn.busy||!chat.workspace||!chat.chat||!$('chatInput').value.trim())return;
+  if(!chatTurn.available||chatTurn.busy||!chat.workspace||!chat.chat||!$('chatInput').value.trim()||(stage5Offline&&!chatTurn.model))return;
   const epoch=chat.epoch,scope=turnScope(),base=turnBase(),value=$('chatInput').value;
   chatTurn.busy=true;renderTurnComposer();text('chatTurnStatus','Принимаем TEST-запрос…');
   try{
     let pending=JSON.parse(localStorage.getItem(scope)||'null');
-    if(!pending){pending={key:crypto.randomUUID()};localStorage.setItem(scope,JSON.stringify(pending))}
+    if(!pending){
+      pending=stage5Offline?{key:crypto.randomUUID(),text:value,model:chatTurn.model}:{key:crypto.randomUUID()};
+      localStorage.setItem(scope,JSON.stringify(pending));
+      if(stage5Offline){chatTurn.state=null;$('chatTurnNew').hidden=true;renderTurnComposer()}
+    }
     else{
       try{
         const previous=await chatGet(base+'/by-key/'+encodeURIComponent(pending.key));
@@ -1945,9 +1986,16 @@ async function sendTurn(){
         }
       }catch(e){if(e.code!=='turn_not_found'&&e.code!=='turn_acceptance_incomplete')throw e}
     }
-    const result=await chatPost(base,{idempotency_key:pending.key,text:value,model_ref:'local-test:v1',context_ref:'empty:v1',config_ref:'test-only:v1'});
+    const request=stage5Offline?{idempotency_key:pending.key,text:pending.text??value,model_ref:pending.model}:
+      {idempotency_key:pending.key,text:value,model_ref:'local-test:v1',context_ref:'empty:v1',config_ref:'test-only:v1'};
+    const result=await chatPost(base,request);
     if(epoch===chat.epoch){showTurn(result);await loadChatHistory(false)}
-  }catch(e){if(epoch===chat.epoch)text('chatTurnStatus',e.code==='idempotency_conflict'?'Конфликт ключа: верните исходный текст. Перезаписи нет.':'Ответ не подтверждён. Ключ сохранён. Проверьте Turn перед повтором.')}
+  }catch(e){
+    const invalid=stage5Offline&&['invalid_turn_request','invalid_offline_request','request_too_large'].includes(e.code);
+    if(invalid)localStorage.removeItem(scope);
+    if(epoch===chat.epoch)text('chatTurnStatus',invalid?'TEST · исправьте текст или выбор модели.':
+      e.code==='idempotency_conflict'?'Конфликт ключа: верните исходный текст. Перезаписи нет.':'Ответ не подтверждён. Ключ сохранён. Проверьте Turn перед повтором.')
+  }
   finally{chatTurn.busy=false;renderTurnComposer()}
 }
 async function cancelTurn(){
@@ -1962,7 +2010,12 @@ function chatTime(value){return typeof value==='string'?value.replace('T',' ').s
 function chatCount(map){return Object.values(map||{}).reduce((sum,n)=>sum+(Number(n)||0),0)}
 async function loadChatAccess(){
   const access=await api('/ui/ultra-chat/capability'),c=access?.ultra_chat;
-  chatTurn.available=access?.turn_test?.available===true&&access.turn_test.mode==='TEST';renderTurnComposer();
+  chatTurn.available=access?.turn_test?.available===true&&access.turn_test.mode===(stage5Offline?'TEST_OFFLINE':'TEST');
+  if(stage5Offline){
+    chatTurn.models=chatTurn.available&&Array.isArray(access.turn_test.models)?access.turn_test.models:[];
+    if(!chatTurn.models.some(m=>m.model_id===chatTurn.model))chatTurn.model=chatTurn.models[0]?.model_id??null;
+  }
+  renderTurnComposer();
   if(!c||typeof c.available!=='boolean'||c.header!==CHAT_TOKEN_HEADER)throw Error('Некорректный ответ сервера о доступе к истории');
   chat.token=c.available&&typeof c.token==='string'&&c.token.length>=32?c.token:null;
   if(!chat.token)throw Object.assign(Error(c.reason==='disabled'?'Чтение истории Ultra Chat выключено при запуске сервера.':
@@ -2072,7 +2125,14 @@ function chatNotices(list){
   $('chatNotice').className='notice'+(list[0]?.[0]==='error'?' error':list[0]?.[0]==='info'?' info':'');
   notice('chatNotice',list.map(item=>item[1]).join('\n'))
 }
-function clearChatHistory(title){text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true;text('chatTurnStatus','');renderTurnComposer()}
+function clearChatHistory(title){
+  if(stage5Offline){
+    chatTurn.state=null;
+    $('chatTurnNew').hidden=true;
+    $('chatInput').value=turnPending()?.text??'';
+  }
+  text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true;text('chatTurnStatus','');renderTurnComposer()
+}
 function chatMessage(m){
   const li=element('li',null,'msg'),failed=m.outcome==='failed',meta=element('div',null,'msg-meta');
   li.setAttribute('data-role',m.role);li.setAttribute('data-outcome',m.outcome);li.setAttribute('data-message',m.message_id);
@@ -2104,6 +2164,7 @@ function renderChatHistory(data,older=false){
   box.scrollTop=(box.scrollHeight||0)-fromBottom// a dialogue opens at its newest message; an older page keeps the place
 }
 async function loadChatModel(){
+  if(stage5Offline){renderTurnComposer();return}
   try{
     const s=(await api('/ultra/connections/selection?role=chat'))?.selection;
     if(!s||typeof s.state!=='string')throw Error('selection');
@@ -2125,6 +2186,16 @@ async function openPicker(){
   const epoch=++picker.epoch;picker.open=true;notice('chatModelError','');
   $('chatModelPick').setAttribute('aria-expanded','true');$('chatModelMenu').hidden=false;
   $('chatModelMenu').replaceChildren(element('p','Загружаем модели…','muted'));
+  if(stage5Offline){
+    const options=chatTurn.models.map(m=>{
+      const button=element('button',m.display_name);button.type='button';button.setAttribute('role','option');
+      button.setAttribute('aria-selected',String(m.model_id===chatTurn.model));
+      button.onclick=()=>{chatTurn.model=m.model_id;closePicker(true);renderTurnComposer()};return button
+    });
+    $('chatModelMenu').replaceChildren(...options);
+    (options.find(b=>b.getAttribute('aria-selected')==='true')||options[0])?.focus();
+    return
+  }
   try{
     const data=await api('/ultra/connections');
     if(!picker.open||epoch!==picker.epoch)return;
@@ -2300,8 +2371,28 @@ async function saveChatName(){
   return initialize?loadChatWorkspaces():loadChatList()
 }
 $('viewChat').onclick=()=>showView('chat');
+async function createTestWorkspace(){
+  if(!stage5Offline||!chatTurn.available||chat.creatingWorkspace)return;
+  const title=$('chatTestWorkspaceTitle').value.trim();
+  if(!title)return;
+  chat.creatingWorkspace=true;$('chatTestWorkspaceSave').disabled=true;
+  notice('chatTestWorkspaceError','');
+  try{
+    const result=await chatPost('/ultra/chat/workspaces',{title});
+    $('chatTestWorkspaceForm').hidden=true;
+    closeWorkspaceName();closeChatName();
+    chat.epoch++;chat.workspace=result.wa_workspace_id;chat.expanded=chat.workspace;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;
+    clearChatHistory('Создайте диалог');await loadChatWorkspaces()
+  }catch(e){
+    notice('chatTestWorkspaceError','Не удалось подтвердить создание TEST Workspace. Обновите список перед повтором.')
+  }finally{chat.creatingWorkspace=false;$('chatTestWorkspaceSave').disabled=false}
+}
 async function createChatWorkspace(){
   if(chat.creatingWorkspace||chat.renamingWorkspace?.busy||chatEdit.busy)return;
+  if(stage5Offline){
+    $('chatTestWorkspaceForm').hidden=false;$('chatTestWorkspaceTitle').value='';$('chatTestWorkspaceTitle').focus();
+    return
+  }
   let registrationStarted=false,registered=false;
   chat.creatingWorkspace=true;$('chatRegisterWorkspace').disabled=true;notice('chatError','');notice('chatWorkspaceResult','');
   try{
@@ -2327,6 +2418,8 @@ async function createChatWorkspace(){
   }finally{chat.creatingWorkspace=false;$('chatRegisterWorkspace').disabled=false}
 }
 $('chatRegisterWorkspace').onclick=createChatWorkspace;
+$('chatTestWorkspaceForm').onsubmit=e=>{e.preventDefault();return createTestWorkspace()};
+$('chatTestWorkspaceCancel').onclick=()=>{if(!chat.creatingWorkspace){$('chatTestWorkspaceForm').hidden=true;$('chatRegisterWorkspace').focus()}};
 $('viewBlueprint').onclick=()=>showView('blueprint');
 $('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces().then(()=>checkTurn())};
 $('chatOlder').onclick=()=>loadChatHistory(true);
@@ -2343,7 +2436,10 @@ $('chatSend').onclick=sendTurn;
 $('chatInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();return sendTurn()}};
 $('chatTurnCheck').onclick=checkTurn;
 $('chatTurnCancel').onclick=cancelTurn;
-$('chatTurnNew').onclick=()=>{if(chatTurn.state==='UNKNOWN'){localStorage.removeItem(turnScope());$('chatInput').value='';text('chatTurnStatus','Новый отдельный запрос; прежний исход остаётся неизвестным.');renderTurnComposer()}};
+$('chatTurnNew').onclick=()=>{if(chatTurn.state==='UNKNOWN'&&(!stage5Offline||!chatTurn.busy)){
+  if(stage5Offline){chatTurn.dismissed.set(turnScope(),turnPending()?.key);chatTurn.state=null;$('chatTurnNew').hidden=true}
+  localStorage.removeItem(turnScope());$('chatInput').value='';text('chatTurnStatus','Новый запрос. Прежний исход остаётся неизвестным.');renderTurnComposer()
+}};
 $('chatModelPick').onclick=()=>openPicker();
 try{
   const saved=JSON.parse(localStorage.getItem('webAlarm.selection')||'{}');
@@ -2353,13 +2449,20 @@ try{
 catch(_){
 }
 setInterval(()=>{
-  if($('autoRefresh').checked&&!document.hidden&&!view.creating)refresh();
+  if(!stage5Offline&&$('autoRefresh').checked&&!document.hidden&&!view.creating)refresh();
   if(view.healthAt&&Date.now()-view.healthAt>45000){text('serverStatus','Проверка связи устарела');$('serverStatus').setAttribute('data-state','checking')}
   if(view.loadedAt&&Date.now()-view.loadedAt>45000&&view.fresh)setFresh(false,'Снимок старше 45 секунд. Обновите перед использованием NEXT SAFE ACTION.')
 }
 ,15000);
 showView(initialView(),true);
-refresh();
+if(stage5Offline){
+  for(const id of ['viewOperator','viewBlueprint','viewEvm','refresh'])$(id).hidden=true;
+  $('autoRefresh').parentNode.hidden=true;
+  $('chatRegisterWorkspace').setAttribute('title','Создать временный TEST Workspace');
+  $('chatModel').setAttribute('title','Модель следующего TEST-запроса');
+  $('chatModelPick').setAttribute('title','Выбрать модель следующего TEST-запроса');
+  text('serverStatus','TEST · OFFLINE');$('serverStatus').setAttribute('data-state','checking');
+}else refresh();
 </script>
 </body></html>
 '''

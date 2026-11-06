@@ -39,7 +39,7 @@ const page = (messages, extra = {}) => ({wa_workspace_id: 'ws_a', chat_id: 'chat
   excluded: {}, excluded_ids: [], total_messages: messages.length, outcome_source: 'run_index', messages, page: {limit: 50, returned: messages.length, has_more: false, next_before: null}, ...extra});
 const MESSAGES_A = '/ultra/chat/workspaces/ws_a/chats/chat_a/messages?limit=50';
 
-function harness({routes = {}, hash = null, storage = null} = {}) {
+function harness({routes = {}, hash = null, storage = null, offline = false} = {}) {
   const h = {calls: [], routes: new Map(Object.entries(routes)), stored: [], replaced: []};
   const elements = {};
   const root = new Element('document'), stack = [root];
@@ -55,6 +55,8 @@ function harness({routes = {}, hash = null, storage = null} = {}) {
   }
   const all = () => {const nodes = []; const add = e => {nodes.push(e); e.children.forEach(add);}; add(root); return nodes;};
   const document = {hidden: false, activeElement: null, getElementById: id => all().find(e => e.id === id) || null, createElement: tag => {const e = new Element(tag); e.document = document; return e;}, querySelectorAll: () => []};
+  document.body = all().find(e => e.tag === 'body');
+  if (offline) document.body.setAttribute('data-stage5-offline', 'true');
   all().forEach(e => e.document = document);
   const defaults = url => {
     if (url === '/status') return {service: 'web_alarm_server', mode: 'server', api_version: 1};
@@ -96,6 +98,120 @@ function harness({routes = {}, hash = null, storage = null} = {}) {
   vm.runInContext(script, h.context);
   return h;
 }
+
+const S5_TURN = '/ultra/chat/workspaces/ws_a/chats/chat_a/turns';
+const S5_SCOPE = 'webAlarm.testTurn.ws_a.chat_a';
+const S5_WRITE = 'X-WebAlarm-Ultra-Chat-Write-Token';
+function offlineRoutes(routes = {}) {
+  return {
+    '/ui/ultra-chat/capability': () => ({...cap(), turn_test: {available: true, mode: 'TEST_OFFLINE',
+      models: [{model_id: 'gigachat_2_pro', display_name: 'TEST Pro'}, {model_id: 'gigachat_ultra', display_name: 'TEST Ultra'}]}}),
+    '/ui/ultra-chat/write-capability': () => ({ultra_chat_write: {available: true, header: S5_WRITE, token: 'W'.repeat(43)}}),
+    [S5_TURN + '/latest']: () => ({turn: null, text: null}),
+    ...routes,
+  };
+}
+const offlineTurn = (body, state, extra = {}) => ({turn_id: 'turn_fixture', mode: 'TEST_OFFLINE', state,
+  idempotency_key: body.idempotency_key, references: {model_ref: body.model_ref}, ...extra});
+
+test('Stage 5 model choice applies to new requests and retry keeps the original key, text and model', async () => {
+  const requests = [], routes = offlineRoutes({
+    [S5_TURN]: opts => {
+      const body = JSON.parse(opts.body);requests.push(body);
+      if (requests.length === 1) throw Error('synthetic lost response');
+      return offlineTurn(body, 'SUCCEEDED');
+    },
+  });
+  const storage = new Map(), h = harness({routes, offline: true, storage});
+  await settle();
+  assert.equal(h.el('chatSend').disabled, false);
+  assert.equal(h.el('viewOperator').hidden, true);
+  assert.equal(h.el('viewEvm').hidden, true);
+  h.el('chatInput').value = 'Первое сообщение';
+  await h.el('chatSend').onclick();
+  const pending = JSON.parse(storage.get(S5_SCOPE));
+  assert.equal(pending.model, 'gigachat_2_pro');
+  assert.equal(h.el('chatInput').readOnly, true);
+  h.routes.set(S5_TURN + '/by-key/' + pending.key, () => ({httpError: true, status: 404, data: {error: {code: 'turn_not_found', message: 'not found'}}}));
+  await h.el('chatModelPick').onclick();
+  const options = h.el('chatModelMenu').children;
+  assert.equal(options[1].getAttribute('role'), 'option');
+  options[1].onclick();
+  await h.el('chatSend').onclick();
+  assert.deepEqual(requests[1], requests[0]);
+  assert.equal(storage.has(S5_SCOPE), false);
+  h.el('chatInput').value = 'Второе сообщение';
+  await h.el('chatSend').onclick();
+  assert.equal(requests[2].model_ref, 'gigachat_ultra');
+  assert.notEqual(requests[2].idempotency_key, pending.key);
+  assert.equal(h.calls.filter(c => c.url === S5_TURN).every(c => c.headers[S5_WRITE] === 'W'.repeat(43)), true);
+  assert.equal(h.calls.some(c => c.url.startsWith('/ultra/connections') || c.url === '/workspaces'), false);
+});
+
+test('Stage 5 reopens durable UNKNOWN from the server without a new send', async () => {
+  const body = {idempotency_key: 'fixture_key_00001', model_ref: 'gigachat_2_pro', text: 'Исходный текст'};
+  const turn = offlineTurn(body, 'UNKNOWN', {usage: {total_tokens: 7}});
+  const storage = new Map(), h = harness({offline: true, storage, routes: offlineRoutes({
+    [S5_TURN + '/latest']: () => ({turn, text: body.text}),
+    [S5_TURN + '/by-key/' + body.idempotency_key]: () => turn,
+    [S5_TURN]: opts => {assert.deepEqual(JSON.parse(opts.body), body);return turn},
+  })});
+  await settle();
+  assert.equal(h.calls.filter(c => c.url === S5_TURN).length, 0);
+  assert.equal(h.el('chatInput').value, body.text);
+  assert.equal(h.el('chatTurnCancel').disabled, true);
+  assert.match(h.el('chatTurnStatus').textContent, /Исход неизвестен.*usage 7/);
+  await h.el('chatSend').onclick();
+  assert.equal(h.calls.filter(c => c.url === S5_TURN).length, 1);
+  h.el('chatTurnNew').onclick();
+  assert.equal(storage.has(S5_SCOPE), false);
+  assert.equal(h.el('chatInput').readOnly, false);
+});
+
+test('Stage 5 Workspace creation sends a title to the TEST route without asking for a filesystem path', async () => {
+  let created = false;
+  const h = harness({offline: true, routes: offlineRoutes({
+    '/ultra/chat/workspaces': opts => {
+      if (opts.method === 'POST') {
+        assert.deepEqual(JSON.parse(opts.body), {title: 'Synthetic TEST'});created = true;
+        return {wa_workspace_id: 'ws_test', display_name: 'Synthetic TEST'};
+      }
+      return {state: 'ok', workspaces: created ? [ws('ws_test', 'Synthetic TEST', 'missing_history')] : []};
+    },
+    '/ultra/chat/workspaces/ws_test/chats': () => ({wa_workspace_id: 'ws_test', display_name: 'Synthetic TEST',
+      state: 'unavailable', reason: 'missing_history', chats: [], excluded: {}}),
+  })});
+  await settle();
+  await h.el('chatRegisterWorkspace').onclick();
+  assert.equal(h.el('chatTestWorkspaceForm').hidden, false);
+  h.el('chatTestWorkspaceTitle').value = 'Synthetic TEST';
+  await h.el('chatTestWorkspaceForm').onsubmit({preventDefault: () => {}});
+  assert.equal(created, true);
+  assert.equal(h.el('chatNew').disabled, false);
+  assert.equal(h.calls.some(c => c.url.includes('pick-workspace-folder')), false);
+});
+
+test('Stage 5 cancel stays accessible during send and late UNKNOWN never appears as success', async () => {
+  let release, body, cancelled = false;
+  const h = harness({offline: true, routes: offlineRoutes({
+    [S5_TURN]: opts => {body = JSON.parse(opts.body);return new Promise(resolve => {release = resolve})},
+    [S5_TURN + '/turn_fixture/cancel']: () => {cancelled = true;return offlineTurn(body, 'UNKNOWN')},
+  })});
+  await settle();
+  h.el('chatInput').value = 'Отмена Web';
+  const sending = h.el('chatSend').onclick();
+  await settle();
+  assert.equal(h.el('chatSend').disabled, true);
+  assert.equal(h.el('chatTurnCancel').disabled, false);
+  h.routes.set(S5_TURN + '/by-key/' + body.idempotency_key, () => offlineTurn(body, 'ATTEMPTING'));
+  await h.el('chatTurnCancel').onclick();
+  assert.equal(cancelled, true);
+  assert.equal(h.el('chatTurnNew').disabled, true);
+  release(offlineTurn(body, 'UNKNOWN', {usage: {total_tokens: 7}}));
+  await sending;
+  assert.match(h.el('chatTurnStatus').textContent, /Исход неизвестен.*usage 7/);
+  assert.equal(h.el('chatTurnNew').disabled, false);
+});
 
 test('Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view', async () => {
   const h = harness({routes: {

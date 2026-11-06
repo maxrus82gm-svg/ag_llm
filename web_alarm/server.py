@@ -77,6 +77,7 @@ from .ultra_chat import (
     MAX_WRITE_BODY_BYTES as ULTRA_CHAT_MAX_WRITE_BODY_BYTES,
     ULTRA_CHAT_CAPABILITY_PATH,
     ULTRA_CHAT_WRITE_CAPABILITY_PATH,
+    OfflineUltraChatService,
     UltraChatAccess,
     UltraChatError,
     UltraChatService,
@@ -1183,8 +1184,17 @@ class _JsonHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(raw)))
         self.send_header("Cache-Control", "no-store")
-        self.end_headers()
-        self.wfile.write(raw)
+        try:
+            self.end_headers()
+            self.wfile.write(raw)
+        except OSError as error:
+            if not (getattr(self.server, "web_alarm_offline_chat", None)
+                    and (isinstance(error, (BrokenPipeError, ConnectionAbortedError, ConnectionResetError))
+                         or getattr(error, "winerror", None) in (10053, 10054))):
+                raise
+            # The TEST client may reload during a Turn. A failed delivery has
+            # no authority to change the already committed outcome.
+            self.close_connection = True
 
     def _send_html(self, html: str) -> None:
         raw = html.encode("utf-8")
@@ -1278,7 +1288,10 @@ class _JsonHandler(BaseHTTPRequestHandler):
                 if query:
                     raise ApiError(400, 'invalid_ultra_chat_request', 'Query parameters are not supported')
                 if path == ULTRA_CHAT_CAPABILITY_PATH:
-                    self._send_json(200, {'ultra_chat': access.capability(), 'turn_test': service.turns.capability()})
+                    offline = getattr(self.server, "web_alarm_offline_chat", None)
+                    turn_test = ({**offline.capability(), 'models': offline_test_models()}
+                                 if offline else service.turns.capability())
+                    self._send_json(200, {'ultra_chat': access.capability(), 'turn_test': turn_test})
                 else:
                     self._send_json(200, {'ultra_chat_write': self.server.web_alarm_ultra_chat_write_access.capability()})
                 return
@@ -1349,6 +1362,10 @@ class _JsonHandler(BaseHTTPRequestHandler):
     def _run(self) -> None:
         try:
             path = urlsplit(self.path).path
+            offline = getattr(self.server, "web_alarm_offline_chat", None)
+            if offline and not (path in {'/', '/ui', ULTRA_CHAT_CAPABILITY_PATH, ULTRA_CHAT_WRITE_CAPABILITY_PATH}
+                                or path.startswith('/ultra/chat/')):
+                raise ApiError(404, 'not_found', 'Only TEST Chat routes are available')
             if path == BLUEPRINT_CAPABILITY_PATH or path == '/ultra/blueprints' or path.startswith('/ultra/blueprints/'):
                 self._blueprint_request(path)
                 return
@@ -1360,7 +1377,7 @@ class _JsonHandler(BaseHTTPRequestHandler):
                 self._ultra_chat_request(path)
                 return
             if self.command == "GET" and path in {"/", "/ui"}:
-                self._send_html(INDEX_HTML)
+                self._send_html(INDEX_HTML.replace('<body>', '<body data-stage5-offline="true">', 1) if offline else INDEX_HTML)
                 return
             if path == '/ultra/model-cards' or path.startswith('/ultra/model-cards/'):
                 # EVM model cards answer only the local page of this server; every write carries its Origin.
@@ -1412,6 +1429,12 @@ class _JsonHandler(BaseHTTPRequestHandler):
         return
 
 
+def offline_test_models():
+    from model_registry import list_model_specs
+    return [{"model_id": model.model_id, "display_name": model.display_name}
+            for model in list_model_specs() if model.enabled and model.provider == "gigachat" and not model.is_local]
+
+
 def create_server(
     api: WebAlarmApi,
     *,
@@ -1423,11 +1446,18 @@ def create_server(
     enable_ultra_chat: bool = True,
     enable_ultra_chat_write: bool = True,
     test_turn_roots: Sequence[str | Path] = (),
+    offline_chat: OfflineUltraChatService | None = None,
 ) -> ThreadingHTTPServer:
     if not allow_non_loopback and host not in LOOPBACK_HOSTS:
         raise ValueError(
             "non-loopback bind is disabled by default; use allow_non_loopback=True explicitly"
         )
+    if offline_chat is not None:
+        if (type(offline_chat) is not OfflineUltraChatService or offline_chat.registry is not api.registry
+                or api.storage_root != offline_chat.root / "registry" or host not in LOOPBACK_HOSTS
+                or allow_non_loopback or not enable_ultra_chat or not enable_ultra_chat_write
+                or test_turn_roots or enable_folder_picker):
+            raise ValueError("Stage 5 needs its disposable registry and a local TEST server")
 
     class Handler(_JsonHandler):
         pass
@@ -1443,7 +1473,8 @@ def create_server(
     # Stage 2 Chat create/rename: a second token of its own scope; off with reading or with --disable-ultra-chat-write.
     server.web_alarm_ultra_chat_write_access = UltraChatWriteAccess(  # type: ignore[attr-defined]
         enabled=enable_ultra_chat and enable_ultra_chat_write, loopback=host in LOOPBACK_HOSTS)
-    server.web_alarm_ultra_chat = UltraChatService(api.registry, test_turn_roots=
+    server.web_alarm_offline_chat = offline_chat  # type: ignore[attr-defined]
+    server.web_alarm_ultra_chat = offline_chat or UltraChatService(api.registry, test_turn_roots=
         test_turn_roots if enable_ultra_chat and enable_ultra_chat_write and host in LOOPBACK_HOSTS else ())  # type: ignore[attr-defined]
     return server
 

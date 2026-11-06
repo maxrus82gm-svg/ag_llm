@@ -54,75 +54,103 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 # БЛОК 1.1 — ПОСЛЕДНЯЯ СДАННАЯ ЗАДАЧА
 
 ###### ▼ НАЧАЛО КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:BEGIN
-**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001` · перенесено 2026-11-06 · SHA-256 копии `b0159a94acd82e6c3cd9d45c368961bb34529694e89d8ce320375c83c5827296` · CHAT-ONLY AMENDMENT: нет · снимок `reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/handoff_task.md` · отчёт `reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/report.md` · HISTORY ID `H-CODEX-000019` · запись `reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/task_record.json`
+**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001` · перенесено 2026-11-07 · SHA-256 копии `c7d4a22f41c1ca733cf289db0512d72c121740d6da77e61565df09a6bf050c9a` · CHAT-ONLY AMENDMENT: нет · снимок `reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/handoff_task.md` · отчёт `reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/report.md` · HISTORY ID `H-CODEX-000020` · запись `reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/task_record.json`
 
-**TASK ID:** `CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001`
+**TASK ID:** `CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001`
 
-# Web Alarm Ultra — Stage4: защита от ложного SUCCESS после внешней отмены
+# Web Alarm Ultra — этап 5 №37: полноценный OFFLINE TEST Chat
 
 **Исполнитель:** Codex 007  
-**Координатор и независимый verifier:** ChatGPT WEB24  
+**Координатор / независимый verifier:** ChatGPT WEB24  
 **Приоритет:** HIGH  
-**Программа:** №37, этап 4  
-**ARCH CLASS:** Ultra Chat / Ordinary Chat / Cancellation Safety  
-**FOLLOWUP:** `FOLLOWUP-WUA-S4-CANCEL-SUPPRESSED-001`
+**ARCH CLASS:** Web Alarm Ultra / Ordinary Chat / Stage5  
+**План:** утверждённый №37, этап 5  
+**Исходный результат:** H-CODEX-000019 — Stage4 OFFLINE BOUNDED PASS  
+**FOLLOWUP:** `FOLLOWUP-WUA-S4B-STAGE5-UI-001`  
+**Исторический риск:** `FOLLOWUP-WUA-S3-WS-WRITER-BUSY-001` (OPEN)
 
 ## 1. Цель
 
-Устранить обнаруженный независимым Windows CI дефект `ordinary_chat_service.py::execute_request()`.
+Создать полноценный пользовательский TEST-чат, соединив существующие UI, Storage, Turn и общий сервис S4A/S4B с fake LLM.
 
-**Воспроизведение:** после начала отправки вызывается `task.cancel()`. Тестовый транспорт перехватывает `asyncio.CancelledError` и возвращает валидный ответ с usage. Сервис ошибочно возвращает `Outcome.COMPLETED` вместо `Outcome.UNKNOWN_AFTER_START`.
+Маршрут:
 
-**Доказательства:**
-- GitHub Actions `42185342094`, job `127784232360`.
-- GitHub Actions `42185590677`, job `127785025580`.
-- Независимый отрицательный тест: `reports/CHATGPT-WEB24-CODEX-S4-DEADLINE-REVIEW-20261106/test_independent_deadline.py`.
-- Оба независимых запуска: 1 FAIL этого сценария.
-- При этом исправленный дедлайн H18 успешно выдержал 120 повторных проверок.
+**UI → Workspace/Chat → Turn → S4A → OFFLINE fake provider → RAW/Run Store → UI → восстановление.**
 
-## 2. Разрешённый WRITE-scope
+Использовать только существующее ядро Ultra. Не создавать второй механизм отправки, второе хранилище чатов или альтернативную машину состояний.
 
-- `ordinary_chat_service.py` — минимальное исправление.
-- `test_ordinary_chat_service.py` — новые отрицательные и регрессионные тесты.
-- `reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/` — отчёт, manifest, evidence.
-- БЛОК 1/1.1 — исключительно штатным `finish` при сдаче.
+## 2. Функциональность
 
-Остальные исходники, в том числе `web_alarm/turn_service.py`, `run_store.py`, HTTP, Tkinter, UI, B2 и model registry — READ-ONLY.
+Обе оболочки — Web и Tkinter — должны поддерживать общий OFFLINE TEST-контур:
 
-## 3. Требуемый контракт
+- Создание, выбор и переключение Workspace/Chat.
+- Отправку нескольких последовательных сообщений с ответами имитатора.
+- Выбор зарегистрированной модели, привязку модели к конкретному Turn и сохранение выбранного контекста.
+- Отображение состояний READY, ATTEMPTING, SUCCEEDED, FAILED, CANCELLED и UNKNOWN в рамках действующего контракта.
+- Отмену, ошибку, повторное открытие и восстановление после перезапуска.
+- Повтор исходного ключа без второй физической отправки и без дублей RAW.
 
-После внешней отмены, даже когда адаптер подавил `CancelledError` и вернул ответ:
+**TEST обозначается явно.** Fake-ответ нельзя показывать как настоящий ответ GigaChat. Выбранный `provider_model_id` проверяется, но реальный провайдер не вызывается.
 
-- результат — консервативный `UNKNOWN_AFTER_START`;
-- `Execution.RESPONSE_RECEIVED`, если ответ действительно получен;
-- успешный текст ответа не публикуется;
-- достоверный известный usage сохраняется;
-- неизвестная стоимость не превращается в ноль;
-- повторная физическая отправка не выполняется.
+## 3. Область изменений
 
-Не нарушить исправление H18: сработавший deadline всегда остаётся истёкшим, даже при неизменном тике часов Windows.
+**WRITE при необходимости минимальной интеграции:**
 
-Обычный своевременный ответ без отмены остаётся `COMPLETED`. Отмена до отправки не вызывает транспорт. Исходный request/model binding сохраняется.
+- `web_alarm/ultra_chat.py`
+- `web_alarm/server.py`
+- `web_alarm/ui.py`
+- `ultra_ui.py`
+- Адресные тесты `test_web_alarm_ultra_chat_ui.js`, `test_web_alarm_ultra_chat_turn_http.py` и отдельные новые тесты Stage5.
+- `reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/` — отчёт, manifest, evidence.
 
-## 4. Проверка
+**READ-ONLY, пока не доказана невозможность интеграции:**
 
-Сначала воспроизвести RED на исходной ревизии, затем добиться GREEN на исправлении.
+- `ordinary_chat_service.py`
+- `web_alarm/turn_service.py`
+- `web_alarm/ordinary_chat_test_adapter.py`
+- `context_storage.py`, `run_store.py`
+- `model_registry.py`, `gigachat_transport.py`, `chat_context.py`
+- `Start_WebAlarm.bat`, штатные настройки и существующие B2/WA4-R контракты.
 
-Обязательны адресные проверки внешней отмены с подавлением `CancelledError`, дедлайна с подавленной отменой, своевременного успеха, pre-send cancel, одного transport call, usage, отсутствия повторной отправки и сохранения UNKNOWN в Stage4B.
+Если требуется изменение общего ядра, storage, политики или других файлов вне WRITE-scope, не расширять задачу самостоятельно: зафиксировать конкретную зависимость и остановиться с PARTIAL/BLOCKED.
 
-Выполнить всю релевантную регрессию: S4A, S4B, Stage3, RAW storage, Run Store. Сохранить отрицательные результаты, точные команды, exit codes, версии и SHA.
+## 4. Жёсткие ограничения
 
-Работать только на синтетических Workspace. Реальные GigaChat, OAuth, Colibri, платные API и пользовательская история запрещены. Запускатель после тестов должен оставаться STANDARD.
+- Только одноразовые синтетические Workspace.
+- STANDARD не активирует тестовую отправку или реальный provider.
+- Физический интернет, OAuth, чтение credentials и платные API запрещены.
+- Один пользовательский запрос не порождает несколько fake-вызовов из-за рестарта или повторного нажатия.
+- UNKNOWN не превращается в SUCCESS после отмены или тайм-аута.
+- Stage4A/4B и исправления H18/H19 не ухудшаются.
+- Никакого подключения Colibri, MCP или Blueprint LLM.
 
-## 5. Завершение
+## 5. Приёмочные сценарии
 
-Если исправление выходит за разрешённый scope — остановиться с `PARTIAL / BLOCKED`, не менять чужие файлы.
+Обязательные сквозные проверки:
 
-Если пакет готов — сохранить полный отчёт, manifest, evidence и выполнить штатный `tools/task_slot_rotate.py finish` для данного TASK ID.
+1. Два разных чата, разная история и контекст; перекрёстного смешивания нет.
+2. Два сообщения подряд, отображение корректного fake-ответа.
+3. Выбор и смена модели не меняют уже принятый Turn.
+4. Отмена после начала отправки, восстановление UNKNOWN и сохранение usage.
+5. Повтор ключа после перезапуска без нового fake-вызова.
+6. Ошибка транспорта, повреждённые данные, недоступное хранилище и конфликт idempotency.
+7. Проверки Web HTTP/UI и Tkinter, включая доступность элементов управления.
+8. Негативные контроли сети, OAuth и credentials: реальные provider calls = 0.
+9. Регрессии S4A, S4B, Stage3, RAW и Run Store.
 
-Codex не использует Git/GitHub без отдельного разрешения. После сдачи пользователь публикует результат, WEB24 независимо проверяет GitHub-исходники и Windows CI.
+Обязательно выполнить независимый от пользовательских данных Windows mock-smoke. Переносимость по §2.4 не объявлять подтверждённой без отдельного clean-Windows испытания.
 
-**Критерий приёмки:** внешний cancel не может стать ложным SUCCESS; исправленный дедлайн H18 и все соседние инварианты остаются исправными.
+## 6. Сдача
+
+Отчёт должен содержать все PASS/FAIL/ERROR/SKIP, версии Python/Windows/Node, точные команды, SHA, ограничения, сохранённые RED и NOT RUN.
+
+При завершении запустить штатный `tools/task_slot_rotate.py finish` с точным TASK ID. Проверить `ROTATED`, HISTORY ID, БЛОК 1 WAITING и readback.
+
+**Git/GitHub для Codex запрещены без отдельного разрешения.** Пользователь публикует один полный пакет одним рабочим пронумерованным коммитом. Следующий номер определяется по актуальной истории — ожидаемый №523.
+
+**Критерий результата:** один работающий тестовый чат в обоих интерфейсах, использующий общий S4A/S4B и общее хранилище. Никакого реального GigaChat.
+
+Если интеграция обеих оболочек не завершена, не объявлять Stage5 PASS. Сдать честный PARTIAL с доказанными рабочими частями и адресным следующим шагом.
 ###### ▲ КОНЕЦ КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:END
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
