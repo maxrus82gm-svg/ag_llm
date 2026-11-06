@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Web Alarm Ultra — Stage4: защита от ложного SUCCESS после внешней отмены",
   "date": "2026-11-06",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / VERIFIED Stage4 OFFLINE BOUNDED PASS; Stage5 TEST NEXT",
+  "review": "PASS / INDEPENDENT WINDOWS 154 main + 6 reviewer + 60 stress, 0 FAIL; full UI/production NOT RUN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/handoff_task.md",
@@ -15,7 +15,33 @@
     "report": {
       "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/report.md",
       "sha256": "e5102dd0ef8017f37814561fd2d22b59947d52c1d4d2d6406bbce869cf2caf6f"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB24-CODEX-S4-CANCEL-REVIEW-20261106/review.md",
+      "sha256": "5aee569907407eb760ec8cd41befcf7d4372ac657a4cc44eba7156a6b264dfd4"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001",
+      "history_id": "H-CODEX-000019",
+      "agent": "codex",
+      "title": "Web Alarm Ultra — Stage4: защита от ложного SUCCESS после внешней отмены",
+      "date": "2026-11-06",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/handoff_task.md",
+          "sha256": "82d55fb210eaf36091894633977cfdff72fba7ba7e94c12ac51aec0f70461f0c"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/report.md",
+          "sha256": "e5102dd0ef8017f37814561fd2d22b59947d52c1d4d2d6406bbce869cf2caf6f"
+        }
+      },
+      "previous": []
+    }
+  ]
 }
