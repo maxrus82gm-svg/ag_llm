@@ -57,6 +57,10 @@ jobs:
         run: python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat_turn_s4b
       - name: Durable external-cancel reopen
         shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\turn-probe.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001\\guard;${{ github.workspace }}
         run: python -B -X utf8 reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/probe_turn.py
       - name: Stress suppressed cancellation and late deadline 30 rounds
         shell: pwsh
