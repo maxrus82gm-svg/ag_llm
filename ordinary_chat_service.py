@@ -12,7 +12,6 @@ from enum import Enum
 import hashlib
 import json
 import math
-import time
 from typing import Callable, Protocol
 
 from gigachat_transport import extract_usage
@@ -293,8 +292,8 @@ async def execute_request(request: PreparedRequest, *, transport: ChatTransport,
 
     The predicate is checked before and after the call, not a background watcher.
     Task cancellation and deadline after invocation are conservative UNKNOWN.
-    Adapters must cooperate with cancellation; wait_for cannot stop hostile I/O.
-    A swallowed cancellation returning after the deadline is never a success.
+    Adapters must cooperate with cancellation. A fired deadline remains expired
+    even when the adapter suppresses cancellation and returns a response.
     """
     if type(request) is not PreparedRequest:
         raise PreparationError("invalid_prepared_request")
@@ -313,11 +312,13 @@ async def execute_request(request: PreparedRequest, *, transport: ChatTransport,
                            code="cancelled_before_start")
     except Exception:
         return _result(request, Outcome.REJECTED, Execution.NOT_STARTED, code="preflight_rejected")
-    started = time.monotonic()
+    loop = asyncio.get_running_loop()
+    timeout_seconds = request.limits.timeout_seconds
+    deadline = loop.time() + timeout_seconds
+    timer = asyncio.timeout_at(deadline)
     try:
-        response = await asyncio.wait_for(
-            transport.send(request.payload, timeout_seconds=request.limits.timeout_seconds),
-            timeout=request.limits.timeout_seconds)
+        async with timer:
+            response = await transport.send(request.payload, timeout_seconds=timeout_seconds)
     except (TimeoutError, asyncio.CancelledError):
         return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.MAY_HAVE_EXECUTED,
                        code="cancelled_or_timed_out_after_start")
@@ -329,7 +330,11 @@ async def execute_request(request: PreparedRequest, *, transport: ChatTransport,
         interrupted = _cancelled(cancelled)
     except Exception:
         interrupted = True
-    if time.monotonic() - started >= request.limits.timeout_seconds or interrupted:
+    # A scheduled timer can fire within one clock tick. Its expiry still
+    # applies when the clock reads before the deadline.
+    # The clock check also covers a transport that returns before the loop has
+    # had a chance to run the timer callback.
+    if timer.expired() or loop.time() >= deadline or interrupted:
         return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.RESPONSE_RECEIVED,
                        code="late_or_cancelled_response", usage=result.usage, metadata=result.metadata)
     return result

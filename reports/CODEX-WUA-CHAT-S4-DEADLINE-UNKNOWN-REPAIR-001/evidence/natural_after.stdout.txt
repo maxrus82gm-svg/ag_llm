@@ -1,0 +1,271 @@
+namespace(implementation='GetTickCount64()', monotonic=True, adjustable=False, resolution=0.015625)
+async def wait_for(fut, timeout):
+    """Wait for the single Future or coroutine to complete, with timeout.
+
+    Coroutine will be wrapped in Task.
+
+    Returns result of the Future or coroutine.  When a timeout occurs,
+    it cancels the task and raises TimeoutError.  To avoid the task
+    cancellation, wrap it in shield().
+
+    If the wait is cancelled, the task is also cancelled.
+
+    If the task suppresses the cancellation and returns a value instead,
+    that value is returned.
+
+    This function is a coroutine.
+    """
+    # The special case for timeout <= 0 is for the following case:
+    #
+    # async def test_waitfor():
+    #     func_started = False
+    #
+    #     async def func():
+    #         nonlocal func_started
+    #         func_started = True
+    #
+    #     try:
+    #         await asyncio.wait_for(func(), 0)
+    #     except asyncio.TimeoutError:
+    #         assert not func_started
+    #     else:
+    #         assert False
+    #
+    # asyncio.run(test_waitfor())
+
+
+    if timeout is not None and timeout <= 0:
+        fut = ensure_future(fut)
+
+        if fut.done():
+            return fut.result()
+
+        await _cancel_and_wait(fut)
+        try:
+            return fut.result()
+        except exceptions.CancelledError as exc:
+            raise TimeoutError from exc
+
+    async with timeouts.timeout(timeout):
+        return await fut
+
+    def _on_timeout(self) -> None:
+        assert self._state is _State.ENTERED
+        self._task.cancel()
+        self._state = _State.EXPIRING
+        # drop the reference early
+        self._timeout_handler = None
+
+end_time = self.time() + self._clock_resolution
+        while self._scheduled:
+            handle = self._scheduled[0]
+            if handle._when >= end_time:
+                break
+            handle = heapq.heappop(self._scheduled)
+            handle._scheduled = False
+            self._ready.append(handle)
+
+        
+[
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 16.00000000144064,
+    "cancel_perf_counter_ms": 19.433899999057758,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 14.999999999417923,
+    "cancel_perf_counter_ms": 14.854499999273685,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 14.545699999871431,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 15.391200000522076,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.000000001236913,
+    "cancel_perf_counter_ms": 15.023399999336107,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 14.232600000468665,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 15.01300000018091,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 14.999999999417923,
+    "cancel_perf_counter_ms": 14.363599999342114,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 16.00000000144064,
+    "cancel_perf_counter_ms": 15.26449999983015,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 14.999999999417923,
+    "cancel_perf_counter_ms": 15.12189999994007,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 14.191700000083074,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 14.423000000533648,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.000000001236913,
+    "cancel_perf_counter_ms": 14.701100000820588,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 14.618299999710871,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 15.06850000077975,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 14.999999999417923,
+    "cancel_perf_counter_ms": 14.811400000326103,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 16.00000000144064,
+    "cancel_perf_counter_ms": 14.408900000489666,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 14.999999999417923,
+    "cancel_perf_counter_ms": 15.232200001264573,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 14.376099999935832,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  },
+  {
+    "loop_resolution": 0.015625,
+    "calls": 1,
+    "cancel_monotonic_ms": 15.99999999962165,
+    "cancel_perf_counter_ms": 14.841399999568239,
+    "outcome": "unknown_after_start",
+    "execution": "response_received",
+    "text_returned": false,
+    "usage_total": 7
+  }
+]
+20 PASS / 0 FAIL (planned 20 attempts)

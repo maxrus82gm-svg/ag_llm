@@ -1,0 +1,30 @@
+test_timeout_fired_inside_one_clock_tick_remains_unknown (test_ordinary_chat_service.ExecutionContract.test_timeout_fired_inside_one_clock_tick_remains_unknown) ... Executing <Task finished name='Task-2' coro=<ExecutionContract.test_timeout_fired_inside_one_clock_tick_remains_unknown() done, defined at M:\GitHub\ag_llm\test_ordinary_chat_service.py:410> exception=AssertionError("Tuples differ: (<Outcome.COMPLETED: 'completed'>, <Execution.RESPO[30 chars]ed'>) != (<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start[50 chars]ed'>)\n\nFirst differing element 0:\n<Outcome.COMPLETED: 'completed'>\n<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start'>\n\n- (<Outcome.COMPLETED: 'completed'>,\n+ (<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start'>,\n   <Execution.RESPONSE_RECEIVED: 'response_received'>)") created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:100> took 15074.156 seconds
+FAIL
+test_absolute_deadline_checked_even_before_timer_callback (test_ordinary_chat_service.ExecutionContract.test_absolute_deadline_checked_even_before_timer_callback) ... ok
+
+======================================================================
+FAIL: test_timeout_fired_inside_one_clock_tick_remains_unknown (test_ordinary_chat_service.ExecutionContract.test_timeout_fired_inside_one_clock_tick_remains_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_ordinary_chat_service.py", line 435, in test_timeout_fired_inside_one_clock_tick_remains_unknown
+    self.assertEqual((result.outcome, result.execution), (Outcome.UNKNOWN_AFTER_START, Execution.RESPONSE_RECEIVED))
+AssertionError: Tuples differ: (<Outcome.COMPLETED: 'completed'>, <Execution.RESPO[30 chars]ed'>) != (<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start[50 chars]ed'>)
+
+First differing element 0:
+<Outcome.COMPLETED: 'completed'>
+<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start'>
+
+- (<Outcome.COMPLETED: 'completed'>,
++ (<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start'>,
+   <Execution.RESPONSE_RECEIVED: 'response_received'>)
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.022s
+
+FAILED (failures=1)

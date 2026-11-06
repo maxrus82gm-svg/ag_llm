@@ -6,11 +6,13 @@ import json
 import os
 import socket
 import sys
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
 import gigachat_transport
 import model_registry
+import ordinary_chat_service
 from model_registry import ModelSpec
 
 from ordinary_chat_service import (
@@ -404,6 +406,71 @@ class ExecutionContract(unittest.IsolatedAsyncioTestCase):
         result = await execute_request(request(limits=limits(timeout_seconds=0.01)), transport=SwallowsCancellation())
         self.assertEqual((result.outcome, result.execution), (Outcome.UNKNOWN_AFTER_START, Execution.RESPONSE_RECEIVED))
         self.assertIsNone(result.text)
+
+    async def test_timeout_fired_inside_one_clock_tick_remains_unknown(self):
+        loop = asyncio.get_running_loop()
+        start = loop.time()
+
+        def clock():
+            return start
+
+        prepared = request(limits=limits(timeout_seconds=0.01))
+        calls = []
+        cancellations = []
+
+        class Fake:
+            async def send(self, payload, *, timeout_seconds):
+                calls.append((payload, timeout_seconds))
+                # Keep the next selector poll nonblocking. The real asyncio
+                # timer is due within its lookahead, but clock() stays fixed.
+                # Release the waiter two turns later if lookahead changes.
+                release = asyncio.Event()
+                loop.call_soon(loop.call_soon, release.set)
+                try:
+                    await release.wait()
+                except asyncio.CancelledError:
+                    cancellations.append(loop.time())
+                return reply(usage={"total_tokens": 7})
+
+        with (patch.object(loop, "time", clock),
+              patch.object(loop, "_clock_resolution", 0.015625),
+              patch.object(ordinary_chat_service, "time", SimpleNamespace(monotonic=clock), create=True)):
+            result = await execute_request(prepared, transport=Fake())
+        self.assertEqual(cancellations, [start])
+        self.assertEqual(calls, [(prepared.payload, 0.01)])
+        self.assertEqual((result.outcome, result.execution), (Outcome.UNKNOWN_AFTER_START, Execution.RESPONSE_RECEIVED))
+        self.assertIsNone(result.text)
+        self.assertEqual(result.usage.total_tokens, 7)
+        self.assertEqual((result.model, result.request_ref), (prepared.model, prepared.request_ref))
+
+    async def test_absolute_deadline_checked_even_before_timer_callback(self):
+        loop = asyncio.get_running_loop()
+        for advance, expected in ((0.5, Outcome.COMPLETED), (1.0, Outcome.UNKNOWN_AFTER_START),
+                                  (1.5, Outcome.UNKNOWN_AFTER_START)):
+            with self.subTest(advance=advance):
+                now = loop.time()
+
+                def clock():
+                    return now
+                prepared = request(limits=limits(timeout_seconds=1.0))
+                calls = []
+
+                class Fake:
+                    async def send(self, payload, *, timeout_seconds):
+                        nonlocal now
+                        calls.append(payload)
+                        now += advance
+                        # No yield before return, so the timer callback cannot run.
+                        return reply(usage={"total_tokens": 7})
+
+                with (patch.object(loop, "time", clock),
+                      patch.object(ordinary_chat_service, "time", SimpleNamespace(monotonic=clock), create=True)):
+                    result = await execute_request(prepared, transport=Fake())
+                self.assertEqual(result.outcome, expected)
+                self.assertEqual(result.execution, Execution.RESPONSE_RECEIVED)
+                self.assertEqual(result.text, reply()["choices"][0]["message"]["content"] if expected is Outcome.COMPLETED else None)
+                self.assertEqual(result.usage.total_tokens, 7)
+                self.assertEqual(calls, [prepared.payload])
 
     async def test_bad_cancellation_predicate_fails_closed(self):
         fake = FakeTransport()
