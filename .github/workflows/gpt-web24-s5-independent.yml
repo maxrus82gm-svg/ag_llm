@@ -35,7 +35,7 @@ jobs:
           node-version: '22'
       - name: Dependencies
         shell: pwsh
-        run: python -m pip install "httpx==0.28.1" "pytest==9.1.1"
+        run: python -m pip install "httpx==0.28.1" "pytest==9.1.1" "mcp==2.2.0"
       - name: Source identity and author manifest 83 exact SHA
         shell: pwsh
         run: |
