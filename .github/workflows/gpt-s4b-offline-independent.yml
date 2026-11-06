@@ -1,0 +1,68 @@
+name: WEB24 independent Stage4B offline Windows verification
+on:
+  push:
+    branches:
+      - GPT
+    paths:
+      - .github/workflows/gpt-s4b-offline-independent.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*.py
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/guard/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated test dependencies
+        shell: pwsh
+        run: python -m pip install "pytest==9.1.1" "httpx==0.28.1"
+      - name: Report pinned source and Python
+        shell: pwsh
+        run: |
+          git rev-parse HEAD
+          python --version
+          python -B -X utf8 -c "import hashlib, pathlib; p=pathlib.Path('web_alarm/turn_service.py'); print('turn_service.sha256',hashlib.sha256(p.read_bytes()).hexdigest())"
+      - name: Independent S4B OFFLINE Turn (strict network guard)
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\s4b.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat_turn_s4b
+      - name: Independent S4A OFFLINE core (strict network guard)
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\s4a.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: python -B -X utf8 -m unittest -v test_ordinary_chat_service
+      - name: Independent Stage3 legacy Turn and HTTP regression
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\stage3.guard.jsonl
+          ORDINARY_GUARD_NETWORK: loopback
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat_turn_service test_web_alarm_ultra_chat_turn_http test_web_alarm_ultra_chat_turn
+      - name: Independent storage RAW and crash oracles
+        shell: pwsh
+        run: python -B -X utf8 -m unittest -v test_ultra_chat_storage.RawIdempotencyTests test_ultra_chat_storage.CrashTests test_ultra_chat_storage.PathSafetyTests
+      - name: Independent Run Store v2 regression
+        shell: pwsh
+        run: python -B -X utf8 -m pytest -q -p no:cacheprovider test_run_store_v2.py
+      - name: Guard log sizes
+        if: always()
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path "${{ runner.temp }}" -Filter "*.guard.jsonl" -ErrorAction SilentlyContinue | ForEach-Object { Write-Output "$($_.Name): $((Get-Content $_.FullName).Count) lines" }
