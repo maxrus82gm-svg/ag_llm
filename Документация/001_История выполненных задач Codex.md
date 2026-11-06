@@ -7,6 +7,7 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 <!-- TASK-HISTORY-INDEX:BEGIN -->
 | Дата | ID | Задача | Статус / проверка | Адрес подробностей |
 | --- | --- | --- | --- | --- |
+| 2026-11-06 | `H-CODEX-000017` / `CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001` | Stage4B: S4A↔Turn OFFLINE, устойчивый ответ/восстановление | DOC CLOSED / TECHNICAL PARTIAL; S4B 14+5 independent Windows PASS; S4A deadline 1 FAIL; Stage4 HOLD | `reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/task_record.json` |
 | 2026-11-06 | `H-CODEX-000016` / `CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001` | Единый сервис обычного диалога — Stage4A OFFLINE | DOC CLOSED / S4A BOUNDED PASS; author 116 PASS + compile; new independent runtime NOT RUN; Stage4B/live HOLD | `reports/CODEX-WUA-CHAT-S4A-COMMON-REQUEST-SERVICE-001/task_record.json` |
 | 2026-11-05 | `H-CODEX-000015` / `CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001` | Повторная короткая диагностика блокировки Workspace | DOC CLOSED / DIAGNOSTIC PARTIAL; author 12/12 PASS, 600 RAW; old CI cause UNKNOWN, independent CI NOT RUN | `reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/task_record.json` |
 | 2026-11-05 | `H-CODEX-000014` / `CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001` | Диагностика WorkspaceBusyError и исправление классификации OS ошибок / child stderr | DOC ITERATION CLOSED / TECHNICAL PARTIAL; PARTIAL / SOURCE+AUTHOR EVIDENCE; original CI cause OPEN; independent runtime NOT RUN | `reports/CODEX-WUA-S3-WS-WRITER-BUSY-REPAIR-001/task_record.json` |
@@ -16,7 +17,6 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 | 2026-11-04 | `H-CODEX-000010` / `CODEX-WUA-CHAT-S3-TURN-RECOVERY-001` | Проверка условий восстановления Turn и Run Store | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/task_record.json` |
 | 2026-11-04 | `H-CODEX-000009` / `CODEX-WUA-CHAT-UX-LIVE-FIX-001` | Исправление создания и переименования чатов | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/task_record.json` |
 | 2026-11-04 | `H-CODEX-000008` / `CODEX-WUA-CHAT-UI-INTEGRATION-001` | Подключение регистрации Workspace к Ultra Chat | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/task_record.json` |
-| 2026-11-02 | `H-CODEX-000007` / `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` | Исследование локальных серверов Ollama и Colibri | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/task_record.json` |
 <!-- TASK-HISTORY-INDEX:END -->
 
 Старый полный текст сохранён побайтово: `reports/CODEX-TASK-HISTORY-ID-001/preservation/001_История выполненных задач Codex.md`. Снимок не читать целиком на старте. Старые статусы относятся к своим датам; перенос не является новым PASS. Старше десяти — вне рабочего окна, но не удалено из архива.

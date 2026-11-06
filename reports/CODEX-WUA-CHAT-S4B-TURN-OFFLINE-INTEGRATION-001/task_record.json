@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Web Alarm Ultra — Stage 4B: безопасная интеграция общего сервиса с Turn (OFFLINE)",
   "date": "2026-11-06",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC ITERATION CLOSED / TECHNICAL PARTIAL; STAGE4 S4A DEADLINE RISK OPEN",
+  "review": "PARTIAL / S4B independent targeted Windows 14+5 PASS; intermittent S4A deadline 1 FAIL; full Stage4 NOT ACCEPTED",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/handoff_task.md",
@@ -15,7 +15,33 @@
     "report": {
       "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/report.md",
       "sha256": "b7a0613f30f0c0292d499a8aa40ecb28105dc8158d50965167386e9a330b6494"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB24-CODEX-S4B-OFFLINE-REVIEW-20261106/review.md",
+      "sha256": "6bf51350e9ebfcfea8d0d37aebd121a9418e3e794b98660689ff35c64c64b508"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001",
+      "history_id": "H-CODEX-000017",
+      "agent": "codex",
+      "title": "Web Alarm Ultra — Stage 4B: безопасная интеграция общего сервиса с Turn (OFFLINE)",
+      "date": "2026-11-06",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/handoff_task.md",
+          "sha256": "9902903c555dd2856e40457d763aa3af1cf43781037d364e0f61dca4f1adf621"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/report.md",
+          "sha256": "b7a0613f30f0c0292d499a8aa40ecb28105dc8158d50965167386e9a330b6494"
+        }
+      },
+      "previous": []
+    }
+  ]
 }
