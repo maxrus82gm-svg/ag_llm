@@ -49,12 +49,30 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
         run: python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat_turn_s4b
       - name: Independent S4A OFFLINE core (strict network guard)
+        id: s4a
+        continue-on-error: true
         shell: pwsh
         env:
           ORDINARY_GUARD_ROOT: ${{ github.workspace }}
           ORDINARY_GUARD_LOG: ${{ runner.temp }}\\s4a.guard.jsonl
           PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
         run: python -B -X utf8 -m unittest -v test_ordinary_chat_service
+      - name: Independent S4A swallowed-deadline diagnostic (20 fixed iterations)
+        id: deadline
+        continue-on-error: true
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\\deadline.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\\reports\\CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001\\guard;${{ github.workspace }}
+        run: |
+          $failures = 0
+          for ($n = 1; $n -le 20; $n++) {
+            python -B -X utf8 -m unittest -q test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success
+            if ($LASTEXITCODE -ne 0) { $failures++ }
+          }
+          Write-Output "DEADLINE_DIAGNOSTIC attempts=20 failures=$failures"
+          if ($failures -gt 0) { exit 1 }
       - name: Independent Stage3 legacy Turn and HTTP regression
         shell: pwsh
         env:
@@ -74,3 +92,13 @@ jobs:
         shell: pwsh
         run: |
           Get-ChildItem -Path "${{ runner.temp }}" -Filter "*.guard.jsonl" -ErrorAction SilentlyContinue | ForEach-Object { Write-Output "$($_.Name): $((Get-Content $_.FullName).Count) lines" }
+
+      - name: Assert prior tests and diagnostic not concealed
+        if: always()
+        shell: pwsh
+        run: |
+          Write-Output "S4A outcome=${{ steps.s4a.outcome }}"
+          Write-Output "Deadline outcome=${{ steps.deadline.outcome }}"
+          if ("${{ steps.s4a.outcome }}" -ne "success" -or "${{ steps.deadline.outcome }}" -ne "success") {
+            throw "Independent S4A regression or deadline diagnostic was not clean"
+          }
