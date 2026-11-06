@@ -1,0 +1,52 @@
+test_absolute_deadline_checked_even_before_timer_callback (test_ordinary_chat_service.ExecutionContract.test_absolute_deadline_checked_even_before_timer_callback) ... Executing <Task finished name='Task-3' coro=<execute_request.<locals>.send() done, defined at M:\GitHub\ag_llm\ordinary_chat_service.py:320> result={'choices': [{'finish_reason': 'stop', 'message': {'content': ' Ответ\n', 'role': 'assistant'}}], 'created': 123, 'model': 'GigaChat-2-Pro', 'usage': {'total_tokens': 7}} created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py:420> took 0.500 seconds
+Executing <Task finished name='Task-4' coro=<execute_request.<locals>.send() done, defined at M:\GitHub\ag_llm\ordinary_chat_service.py:320> result={'choices': [{'finish_reason': 'stop', 'message': {'content': ' Ответ\n', 'role': 'assistant'}}], 'created': 123, 'model': 'GigaChat-2-Pro', 'usage': {'total_tokens': 7}} created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py:420> took 1.000 seconds
+Executing <Task finished name='Task-5' coro=<execute_request.<locals>.send() done, defined at M:\GitHub\ag_llm\ordinary_chat_service.py:320> result={'choices': [{'finish_reason': 'stop', 'message': {'content': ' Ответ\n', 'role': 'assistant'}}], 'created': 123, 'model': 'GigaChat-2-Pro', 'usage': {'total_tokens': 7}} created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py:420> took 1.500 seconds
+ok
+test_adapter_mutation_cannot_change_prepared_request (test_ordinary_chat_service.ExecutionContract.test_adapter_mutation_cannot_change_prepared_request) ... ok
+test_bad_cancellation_predicate_fails_closed (test_ordinary_chat_service.ExecutionContract.test_bad_cancellation_predicate_fails_closed) ... ok
+test_cancel_after_response_preserves_known_usage_without_answer (test_ordinary_chat_service.ExecutionContract.test_cancel_after_response_preserves_known_usage_without_answer) ... ok
+test_cancel_before_start_proves_no_call (test_ordinary_chat_service.ExecutionContract.test_cancel_before_start_proves_no_call) ... ok
+test_explicit_task_cancellation_after_entry_is_unknown (test_ordinary_chat_service.ExecutionContract.test_explicit_task_cancellation_after_entry_is_unknown) ... ok
+test_external_cancel_suppressed_by_transport_cannot_publish_success (test_ordinary_chat_service.ExecutionContract.test_external_cancel_suppressed_by_transport_cannot_publish_success) ... ok
+test_forged_payload_binding_is_rejected_without_call (test_ordinary_chat_service.ExecutionContract.test_forged_payload_binding_is_rejected_without_call) ... ok
+test_immediate_reply_within_one_clock_tick_still_succeeds (test_ordinary_chat_service.ExecutionContract.test_immediate_reply_within_one_clock_tick_still_succeeds) ... ok
+test_no_sender_default_or_missing_sender (test_ordinary_chat_service.ExecutionContract.test_no_sender_default_or_missing_sender) ... ok
+test_one_call_exact_wire_and_explicit_timeout (test_ordinary_chat_service.ExecutionContract.test_one_call_exact_wire_and_explicit_timeout) ... ok
+test_preparation_and_fake_execution_open_no_storage (test_ordinary_chat_service.ExecutionContract.test_preparation_and_fake_execution_open_no_storage) ... ok
+test_previous_cancel_count_does_not_reject_timely_success (test_ordinary_chat_service.ExecutionContract.test_previous_cancel_count_does_not_reject_timely_success) ... ok
+test_revoked_or_changed_model_does_not_dispatch (test_ordinary_chat_service.ExecutionContract.test_revoked_or_changed_model_does_not_dispatch) ... ok
+test_swallowed_timeout_cannot_publish_late_success (test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success) ... ok
+test_timeout_fired_inside_one_clock_tick_remains_unknown (test_ordinary_chat_service.ExecutionContract.test_timeout_fired_inside_one_clock_tick_remains_unknown) ... ok
+test_timeout_is_unknown_and_one_attempt (test_ordinary_chat_service.ExecutionContract.test_timeout_is_unknown_and_one_attempt) ... ok
+test_transport_error_is_redacted_uncertain_and_not_retried (test_ordinary_chat_service.ExecutionContract.test_transport_error_is_redacted_uncertain_and_not_retried) ... ok
+test_early_process_guard_negative_controls (test_ordinary_chat_service.OfflineBoundary.test_early_process_guard_negative_controls) ... ok
+test_import_and_execution_do_not_touch_network_oauth_or_credentials (test_ordinary_chat_service.OfflineBoundary.test_import_and_execution_do_not_touch_network_oauth_or_credentials) ... ok
+test_complete_context_order_and_exact_text (test_ordinary_chat_service.PreparationContract.test_complete_context_order_and_exact_text) ... ok
+test_corrupt_context_matrix_is_refused (test_ordinary_chat_service.PreparationContract.test_corrupt_context_matrix_is_refused) ... ok
+test_determinism_and_provenance_binding (test_ordinary_chat_service.PreparationContract.test_determinism_and_provenance_binding) ... ok
+test_disabled_and_unsupported_registry_entries_rejected (test_ordinary_chat_service.PreparationContract.test_disabled_and_unsupported_registry_entries_rejected) ... ok
+test_every_registered_model_resolves_from_canonical_registry (test_ordinary_chat_service.PreparationContract.test_every_registered_model_resolves_from_canonical_registry) ... ok
+test_explicit_registered_model_and_wire_payload (test_ordinary_chat_service.PreparationContract.test_explicit_registered_model_and_wire_payload) ... ok
+test_invalid_current_user_or_context_reference (test_ordinary_chat_service.PreparationContract.test_invalid_current_user_or_context_reference) ... ok
+test_invalid_limits_are_explicit_errors (test_ordinary_chat_service.PreparationContract.test_invalid_limits_are_explicit_errors) ... ok
+test_message_count_includes_current_user_and_system (test_ordinary_chat_service.PreparationContract.test_message_count_includes_current_user_and_system) ... ok
+test_message_utf8_boundary (test_ordinary_chat_service.PreparationContract.test_message_utf8_boundary) ... ok
+test_missing_coerced_and_padded_model_ids_rejected (test_ordinary_chat_service.PreparationContract.test_missing_coerced_and_padded_model_ids_rejected) ... ok
+test_snapshot_deep_freeze_and_shell_choice_change (test_ordinary_chat_service.PreparationContract.test_snapshot_deep_freeze_and_shell_choice_change) ... ok
+test_tool_context_rejected (test_ordinary_chat_service.PreparationContract.test_tool_context_rejected) ... ok
+test_unknown_model_has_no_fallback (test_ordinary_chat_service.PreparationContract.test_unknown_model_has_no_fallback) ... ok
+test_wire_byte_boundary_uses_entire_json (test_ordinary_chat_service.PreparationContract.test_wire_byte_boundary_uses_entire_json) ... ok
+test_answer_and_safe_metadata (test_ordinary_chat_service.ResponseContract.test_answer_and_safe_metadata) ... ok
+test_existing_usage_parser_is_reused (test_ordinary_chat_service.ResponseContract.test_existing_usage_parser_is_reused) ... ok
+test_incomplete_choice_or_tool_invocation_not_success (test_ordinary_chat_service.ResponseContract.test_incomplete_choice_or_tool_invocation_not_success) ... ok
+test_invalid_answer_retains_valid_supplied_usage (test_ordinary_chat_service.ResponseContract.test_invalid_answer_retains_valid_supplied_usage) ... ok
+test_invalid_usage_does_not_become_zero_or_known_cost (test_ordinary_chat_service.ResponseContract.test_invalid_usage_does_not_become_zero_or_known_cost) ... ok
+test_malformed_responses_are_typed_and_redacted (test_ordinary_chat_service.ResponseContract.test_malformed_responses_are_typed_and_redacted) ... ok
+test_missing_optional_fields_and_eos_compatibility (test_ordinary_chat_service.ResponseContract.test_missing_optional_fields_and_eos_compatibility) ... ok
+test_response_utf8_limit_and_cycle (test_ordinary_chat_service.ResponseContract.test_response_utf8_limit_and_cycle) ... ok
+test_usage_complete_zero_partial_missing_and_extra_fields (test_ordinary_chat_service.ResponseContract.test_usage_complete_zero_partial_missing_and_extra_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 0.201s
+
+OK

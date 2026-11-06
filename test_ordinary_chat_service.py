@@ -386,6 +386,55 @@ class ExecutionContract(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.outcome, Outcome.UNKNOWN_AFTER_START)
         self.assertEqual(result.execution, Execution.MAY_HAVE_EXECUTED)
 
+    async def test_external_cancel_suppressed_by_transport_cannot_publish_success(self):
+        for clear_cancellation, total in ((False, 7), (True, None)):
+            with self.subTest(clear_cancellation=clear_cancellation):
+                prepared = request(limits=limits(timeout_seconds=5))
+                entered = asyncio.Event()
+                calls = []
+                cancellations = []
+
+                class Fake:
+                    async def send(self, payload, *, timeout_seconds):
+                        calls.append((payload, timeout_seconds))
+                        entered.set()
+                        try:
+                            await asyncio.Event().wait()
+                        except asyncio.CancelledError:
+                            cancellations.append(True)
+                            if clear_cancellation:
+                                asyncio.current_task().uncancel()
+                            return reply(usage={"total_tokens": total}) if total is not None else reply()
+
+                task = asyncio.create_task(execute_request(prepared, transport=Fake()))
+                await asyncio.wait_for(entered.wait(), timeout=5)
+                self.assertTrue(task.cancel())
+                result = await task
+                self.assertEqual(cancellations, [True])
+                self.assertEqual(calls, [(prepared.payload, 5)])
+                self.assertEqual((result.outcome, result.execution),
+                                 (Outcome.UNKNOWN_AFTER_START, Execution.RESPONSE_RECEIVED))
+                self.assertIsNone(result.text)
+                self.assertEqual(result.usage.total_tokens, total)
+                self.assertEqual((result.model, result.request_ref), (prepared.model, prepared.request_ref))
+
+    async def test_previous_cancel_count_does_not_reject_timely_success(self):
+        fake = FakeTransport()
+
+        async def run_after_handled_cancellation():
+            task = asyncio.current_task()
+            task.cancel()
+            try:
+                await asyncio.sleep(0)
+            except asyncio.CancelledError:
+                pass
+            self.assertEqual(task.cancelling(), 1)
+            return await execute_request(request(), transport=fake)
+
+        result = await asyncio.create_task(run_after_handled_cancellation())
+        self.assertEqual(result.outcome, Outcome.COMPLETED)
+        self.assertEqual(len(fake.calls), 1)
+
     async def test_timeout_is_unknown_and_one_attempt(self):
         class Slow(FakeTransport):
             async def send(self, payload, **kwargs):
@@ -442,6 +491,18 @@ class ExecutionContract(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(result.text)
         self.assertEqual(result.usage.total_tokens, 7)
         self.assertEqual((result.model, result.request_ref), (prepared.model, prepared.request_ref))
+
+    async def test_immediate_reply_within_one_clock_tick_still_succeeds(self):
+        loop = asyncio.get_running_loop()
+        start = loop.time()
+        prepared = request(limits=limits(timeout_seconds=0.01))
+        fake = FakeTransport()
+        with (patch.object(loop, "time", return_value=start),
+              patch.object(loop, "_clock_resolution", 0.015625)):
+            result = await execute_request(prepared, transport=fake)
+        self.assertEqual(result.outcome, Outcome.COMPLETED)
+        self.assertEqual(result.text, reply()["choices"][0]["message"]["content"])
+        self.assertEqual(fake.calls, [(prepared.payload, 0.01)])
 
     async def test_absolute_deadline_checked_even_before_timer_callback(self):
         loop = asyncio.get_running_loop()

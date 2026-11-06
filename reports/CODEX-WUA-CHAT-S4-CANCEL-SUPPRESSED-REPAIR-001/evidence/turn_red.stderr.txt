@@ -1,0 +1,21 @@
+test_cancelled_reply_remains_unknown_after_reopen (__main__.DurableExternalCancellation.test_cancelled_reply_remains_unknown_after_reopen) ... FAIL
+
+======================================================================
+FAIL: test_cancelled_reply_remains_unknown_after_reopen (__main__.DurableExternalCancellation.test_cancelled_reply_remains_unknown_after_reopen)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001\probe_turn.py", line 55, in test_cancelled_reply_remains_unknown_after_reopen
+    self.assertEqual((result["state"], result["answer"]), ("UNKNOWN", None))
+AssertionError: Tuples differ: ('SUCCEEDED', 'Must not publish') != ('UNKNOWN', None)
+
+First differing element 0:
+'SUCCEEDED'
+'UNKNOWN'
+
+- ('SUCCEEDED', 'Must not publish')
++ ('UNKNOWN', None)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.803s
+
+FAILED (failures=1)

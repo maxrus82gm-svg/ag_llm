@@ -316,9 +316,18 @@ async def execute_request(request: PreparedRequest, *, transport: ChatTransport,
     timeout_seconds = request.limits.timeout_seconds
     deadline = loop.time() + timeout_seconds
     timer = asyncio.timeout_at(deadline)
-    try:
+
+    async def send():
+        # Close the timer in the transport task as soon as the reply arrives.
         async with timer:
-            response = await transport.send(request.payload, timeout_seconds=timeout_seconds)
+            return await transport.send(request.payload, timeout_seconds=timeout_seconds)
+
+    owner = asyncio.current_task()
+    cancel_count = owner.cancelling()
+    try:
+        # Direct await forwards cancellation. The child can only uncancel
+        # itself, so the owner's count still records the external request.
+        response = await asyncio.create_task(send())
     except (TimeoutError, asyncio.CancelledError):
         return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.MAY_HAVE_EXECUTED,
                        code="cancelled_or_timed_out_after_start")
@@ -334,7 +343,7 @@ async def execute_request(request: PreparedRequest, *, transport: ChatTransport,
     # applies when the clock reads before the deadline.
     # The clock check also covers a transport that returns before the loop has
     # had a chance to run the timer callback.
-    if timer.expired() or loop.time() >= deadline or interrupted:
+    if timer.expired() or loop.time() >= deadline or owner.cancelling() > cancel_count or interrupted:
         return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.RESPONSE_RECEIVED,
                        code="late_or_cancelled_response", usage=result.usage, metadata=result.metadata)
     return result

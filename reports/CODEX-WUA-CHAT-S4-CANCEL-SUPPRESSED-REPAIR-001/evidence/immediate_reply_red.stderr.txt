@@ -1,0 +1,20 @@
+test_immediate_reply_within_one_clock_tick_still_succeeds (test_ordinary_chat_service.ExecutionContract.test_immediate_reply_within_one_clock_tick_still_succeeds) ... FAIL
+
+======================================================================
+FAIL: test_immediate_reply_within_one_clock_tick_still_succeeds (test_ordinary_chat_service.ExecutionContract.test_immediate_reply_within_one_clock_tick_still_succeeds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_ordinary_chat_service.py", line 503, in test_immediate_reply_within_one_clock_tick_still_succeeds
+    self.assertEqual(result.outcome, Outcome.COMPLETED)
+AssertionError: <Outcome.UNKNOWN_AFTER_START: 'unknown_after_start'> != <Outcome.COMPLETED: 'completed'>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.010s
+
+FAILED (failures=1)

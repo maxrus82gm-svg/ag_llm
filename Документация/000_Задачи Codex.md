@@ -54,93 +54,75 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 # БЛОК 1.1 — ПОСЛЕДНЯЯ СДАННАЯ ЗАДАЧА
 
 ###### ▼ НАЧАЛО КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:BEGIN
-**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001` · перенесено 2026-11-06 · SHA-256 копии `3fbde8c10194ad57df0af989c76995506c4043c67eebf13ab0c65ad89c1df9b1` · CHAT-ONLY AMENDMENT: нет · снимок `reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/handoff_task.md` · отчёт `reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/report.md` · HISTORY ID `H-CODEX-000018` · запись `reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/task_record.json`
+**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001` · перенесено 2026-11-06 · SHA-256 копии `b0159a94acd82e6c3cd9d45c368961bb34529694e89d8ce320375c83c5827296` · CHAT-ONLY AMENDMENT: нет · снимок `reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/handoff_task.md` · отчёт `reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/report.md` · HISTORY ID `H-CODEX-000019` · запись `reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/task_record.json`
 
-**TASK ID:** `CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001`
+**TASK ID:** `CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001`
 
-# Web Alarm Ultra — этап 4: устранение нестабильного позднего SUCCESS после тайм-аута
+# Web Alarm Ultra — Stage4: защита от ложного SUCCESS после внешней отмены
 
 **Исполнитель:** Codex 007  
-**Координатор / independent verifier:** ChatGPT WEB24  
+**Координатор и независимый verifier:** ChatGPT WEB24  
 **Приоритет:** HIGH  
-**ARCH CLASS:** Ultra Chat / Ordinary Chat / Deadline Safety  
-**Программа:** утверждённый №37, этап 4  
-**Связанный риск:** `FOLLOWUP-WUA-S4-DEADLINE-UNKNOWN-001`
+**Программа:** №37, этап 4  
+**ARCH CLASS:** Ultra Chat / Ordinary Chat / Cancellation Safety  
+**FOLLOWUP:** `FOLLOWUP-WUA-S4-CANCEL-SUPPRESSED-001`
 
 ## 1. Цель
 
-Устранить обнаруженную независимым Windows CI нестабильность `ordinary_chat_service.py::execute_request()`.
+Устранить обнаруженный независимым Windows CI дефект `ordinary_chat_service.py::execute_request()`.
 
-**Зафиксированный отрицательный результат:**
+**Воспроизведение:** после начала отправки вызывается `task.cancel()`. Тестовый транспорт перехватывает `asyncio.CancelledError` и возвращает валидный ответ с usage. Сервис ошибочно возвращает `Outcome.COMPLETED` вместо `Outcome.UNKNOWN_AFTER_START`.
 
-- GitHub Actions run `42179125624`, job `127764370552`.
-- Тест `test_ordinary_chat_service.ExecutionContract.test_swallowed_timeout_cannot_publish_late_success`.
-- При deadline 10 ms и транспорте, подавляющем `asyncio.CancelledError`, получен `Outcome.COMPLETED` вместо ожидаемого `Outcome.UNKNOWN_AFTER_START`.
-- Предыдущий run `42178648349` — 148 PASS.
-- Последующий run `42179394007` — 173 PASS, включая 20 повторов проблемного теста.
+**Доказательства:**
+- GitHub Actions `42185342094`, job `127784232360`.
+- GitHub Actions `42185590677`, job `127785025580`.
+- Независимый отрицательный тест: `reports/CHATGPT-WEB24-CODEX-S4-DEADLINE-REVIEW-20261106/test_independent_deadline.py`.
+- Оба независимых запуска: 1 FAIL этого сценария.
+- При этом исправленный дедлайн H18 успешно выдержал 120 повторных проверок.
 
-**Важно:** зелёные повторы не отменяют красный результат. Требуется установить причину и обеспечить безопасное поведение, а не увеличивать тайм-аут теста до исчезновения ошибки.
+## 2. Разрешённый WRITE-scope
 
-## 2. Разрешённые изменения
+- `ordinary_chat_service.py` — минимальное исправление.
+- `test_ordinary_chat_service.py` — новые отрицательные и регрессионные тесты.
+- `reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/` — отчёт, manifest, evidence.
+- БЛОК 1/1.1 — исключительно штатным `finish` при сдаче.
 
-**WRITE:**
-- `ordinary_chat_service.py` — минимальное исправление механизма дедлайна.
-- `test_ordinary_chat_service.py` — детерминированные и регрессионные проверки.
-- `reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/` — отчёт, manifest и evidence.
-- Карточка Codex — только штатным `finish` после завершения.
+Остальные исходники, в том числе `web_alarm/turn_service.py`, `run_store.py`, HTTP, Tkinter, UI, B2 и model registry — READ-ONLY.
 
-**READ-ONLY:**
-- `web_alarm/turn_service.py`
-- `web_alarm/ordinary_chat_test_adapter.py`
-- `test_web_alarm_ultra_chat_turn_s4b.py`
-- `context_storage.py`, `run_store.py`
-- `model_registry.py`, `gigachat_transport.py`
-- №18, №37 и действующие профильные контракты.
+## 3. Требуемый контракт
 
-Не менять HTTP, Tkinter, веб-интерфейс, B2, CI workflows, launcher, пользовательские Workspace и другие файлы без нового разрешения.
+После внешней отмены, даже когда адаптер подавил `CancelledError` и вернул ответ:
 
-## 3. Что сделать
+- результат — консервативный `UNKNOWN_AFTER_START`;
+- `Execution.RESPONSE_RECEIVED`, если ответ действительно получен;
+- успешный текст ответа не публикуется;
+- достоверный известный usage сохраняется;
+- неизвестная стоимость не превращается в ноль;
+- повторная физическая отправка не выполняется.
 
-1. Сохранить исходное доказательство FAIL и выполнить ограниченную воспроизводящую диагностику с заранее заданным числом попыток. Не скрывать отрицательные результаты.
-2. Разобрать взаимодействие дедлайна, `asyncio.wait_for()`, отмены задачи и транспорта, подавляющего отмену. Определить фактическую причину, а не предполагать её.
-3. Обеспечить консервативный контракт:
-   - поздний ответ после наступления deadline не становится `COMPLETED`;
-   - если ответ фактически получен, допустимо сохранить достоверный usage, но не публиковать успешный текст;
-   - неизвестный результат не трактуется как нулевая стоимость;
-   - отправка выполняется не более одного раза;
-   - автоматический повтор запрещён;
-   - действительно своевременный успешный ответ остаётся `COMPLETED`.
-4. Добавить устойчивый отрицательный тест, не зависящий исключительно от удачного планирования потоков или точности 10-миллисекундного sleep.
-5. Проверить совместимость исправления со Stage4B и прежним Stage3.
+Не нарушить исправление H18: сработавший deadline всегда остаётся истёкшим, даже при неизменном тике часов Windows.
 
-## 4. Обязательные тесты
+Обычный своевременный ответ без отмены остаётся `COMPLETED`. Отмена до отправки не вызывает транспорт. Исходный request/model binding сохраняется.
 
-- Подавленная отмена после дедлайна → `UNKNOWN_AFTER_START`, без успешного текста.
-- Обычный timeout → `UNKNOWN`, без автоматического повтора.
-- Ответ строго до дедлайна → корректный SUCCESS.
-- Отмена до отправки → ноль вызовов транспорта.
-- Поздний ответ и известный usage → правильная классификация без ложного SUCCESS.
-- Проверка неизменности request/model binding.
-- Регрессия S4A, S4B, Stage3, RAW и Run Store.
-- Запрет физической сети, OAuth и чтения credentials с отрицательными контролями.
+## 4. Проверка
 
-Использовать только синтетические данные. Реальные GigaChat, Colibri и платные вызовы запрещены.
+Сначала воспроизвести RED на исходной ревизии, затем добиться GREEN на исправлении.
 
-## 5. Условия завершения
+Обязательны адресные проверки внешней отмены с подавлением `CancelledError`, дедлайна с подавленной отменой, своевременного успеха, pre-send cancel, одного transport call, usage, отсутствия повторной отправки и сохранения UNKNOWN в Stage4B.
 
-Сдать `READY FOR INDEPENDENT VERIFICATION` только при доказанном исправлении пограничного случая и успешной адресной регрессии.
+Выполнить всю релевантную регрессию: S4A, S4B, Stage3, RAW storage, Run Store. Сохранить отрицательные результаты, точные команды, exit codes, версии и SHA.
 
-Если безопасное исправление потребует изменения за пределами разрешённого WRITE-scope — остановиться, сохранить анализ и выдать `PARTIAL / BLOCKED`.
+Работать только на синтетических Workspace. Реальные GigaChat, OAuth, Colibri, платные API и пользовательская история запрещены. Запускатель после тестов должен оставаться STANDARD.
 
-В отчёте обязательно указать команды, ОС, Python, source SHA, точные PASS/FAIL/ERROR/SKIP, первую RED, последующие результаты, сохранённые риски и всё `NOT RUN`.
+## 5. Завершение
 
-Выполнить штатный:
+Если исправление выходит за разрешённый scope — остановиться с `PARTIAL / BLOCKED`, не менять чужие файлы.
 
-`python -B -X utf8 tools/task_slot_rotate.py finish --card "Документация/000_Задачи Codex.md" --task-id CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001 --no-chat-amendment --headless --apply`
+Если пакет готов — сохранить полный отчёт, manifest, evidence и выполнить штатный `tools/task_slot_rotate.py finish` для данного TASK ID.
 
-Подтвердить `ROTATED`, сохранение полного задания, HISTORY ID и readback. Git/GitHub исполнителю без отдельного разрешения не использовать.
+Codex не использует Git/GitHub без отдельного разрешения. После сдачи пользователь публикует результат, WEB24 независимо проверяет GitHub-исходники и Windows CI.
 
-**Итог:** узкое исправление Stage4 safety, без изменения утверждённого плана №37 и без перехода к Stage5 до независимой приёмки.
+**Критерий приёмки:** внешний cancel не может стать ложным SUCCESS; исправленный дедлайн H18 и все соседние инварианты остаются исправными.
 ###### ▲ КОНЕЦ КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:END
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)

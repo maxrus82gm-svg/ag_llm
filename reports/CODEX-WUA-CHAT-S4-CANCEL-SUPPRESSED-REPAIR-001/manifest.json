@@ -1,0 +1,443 @@
+{
+  "task_id": "CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001",
+  "status": "READY FOR INDEPENDENT VERIFICATION",
+  "hash": "SHA-256 exact bytes",
+  "files": [
+    {
+      "path": "ordinary_chat_service.py",
+      "size": 14446,
+      "sha256": "0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843"
+    },
+    {
+      "path": "test_ordinary_chat_service.py",
+      "size": 31119,
+      "sha256": "9a3d95470c78a93daff07535320a63b72806ef9186c3adfa7bb945bb5adfde74"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/before/ordinary_chat_service.py.source.txt",
+      "size": 14036,
+      "sha256": "f74dcd873bb533d36d5c72a6c29b453e4093d0cda0725139ff93762225156e3b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/before/test_ordinary_chat_service.py.source.txt",
+      "size": 28047,
+      "sha256": "af70ac23b0c922c52a7ec0da5515f19a9525adc0bab0daf7800f3927ee54b05c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/before/Документация/000_Задачи Codex.md.source.txt",
+      "size": 30705,
+      "sha256": "08f26ff4bc85bba8f162ee9056b2c3f9b96a95124dbb9f19782b5cbb29e0a22b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/check_package.py",
+      "size": 6661,
+      "sha256": "1174a596fea710843f871d34ea342213ef4a466c3d083ef2103d90e2591950e9"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/baseline.json",
+      "size": 122690,
+      "sha256": "443a0149b0911b483745e32740beea0434992b8dc270779aca25b53e13b77a90"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/compile_final.result.json",
+      "size": 1568,
+      "sha256": "5ed8a9a742b3e55c8bd403a14c4cb97a46095a84886348d5184497f5419e69dd"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/compile_final.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/compile_final.stdout.txt",
+      "size": 256,
+      "sha256": "27a372ed93307e4bbf92b2fd5dcc9481eeb521f30038eb4f559c8a6568e6274d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/compile_fixed.result.json",
+      "size": 1569,
+      "sha256": "f4603a4faa2d1e89b247c4825bb13af87fdb236a0e09f96a4b0c328c60c1e781"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/compile_fixed.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/compile_fixed.stdout.txt",
+      "size": 256,
+      "sha256": "614563f612d1a1d3725cd99caeeec0d28e7d4d6eeca97169805a2f239d03d837"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/conservation_before_finish.json",
+      "size": 240,
+      "sha256": "61cbba81f618b5f20657762d7d0c612597257d4561accdba59f2b76496d9af0c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/finish.result.json",
+      "size": 1731,
+      "sha256": "d695293341d674aa781256dcc501d135b52d2e2cda48177ebe4f570f3ff68415"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/finish.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/finish.stdout.txt",
+      "size": 5055,
+      "sha256": "c7a161f9ab0f76b28ecda796223d7c63823471bb736730aad5395fbf8ae9f4ae"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/h18_clock_fixed.result.json",
+      "size": 1552,
+      "sha256": "8c1536813569ff6b677d54074695a8c81d38a0e4ce3c4579b807a5cfd6b6180f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/h18_clock_fixed.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/h18_clock_fixed.stdout.txt",
+      "size": 7902,
+      "sha256": "9c4670629538035fc0def527faa14da725b0a2438cf905e6c18de87150ac2e37"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/h18_clock_regression.result.json",
+      "size": 1552,
+      "sha256": "c6381680b8360f2f8e36d710c0723a6ce222d5297311975a7af7c437841e20fe"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/h18_clock_regression.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/h18_clock_regression.stdout.txt",
+      "size": 7646,
+      "sha256": "4dfd9103e76b20edbbccea6ec0da6e6ba845e4ce2e906bca24a6278bb82acf2f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/immediate_reply_red.result.json",
+      "size": 1622,
+      "sha256": "c5f26f1b22ab006aa9f464e489c7c46b8d73e2403bb2edcacc8921fd9d4f3473"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/immediate_reply_red.stderr.txt",
+      "size": 1315,
+      "sha256": "83ac5ce337c690b54cd1b44091434a38abe80a35b881d27689e5569bcb38e3bf"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/immediate_reply_red.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/integration_final.guard.jsonl",
+      "size": 278,
+      "sha256": "166c5997e094374df3bd789edb8b531e90570211c1bacb4b4cb5b0e7e93b93c3"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/integration_final.result.json",
+      "size": 1541,
+      "sha256": "1b875d22d85ebf93a766b30aa0e73c76dd9822d14a8e7edefa5e4238c0c269f1"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/integration_final.stderr.txt",
+      "size": 2227,
+      "sha256": "bedb3a2d423207fffe49f10f823eb93ac4d931d45504ab50645bc7a1c3b3589e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/integration_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/integration_fixed.guard.jsonl",
+      "size": 281,
+      "sha256": "24c9467a174affbdb52425f301bcffb84a72ac50e0cd178fc31b87988366cc35"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/integration_fixed.result.json",
+      "size": 1552,
+      "sha256": "c1a78541f4e9f7c6e9ca39f036dc6d217868d7e1607a75db5008f7ffc37f22c8"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/integration_fixed.stderr.txt",
+      "size": 2227,
+      "sha256": "e27b016f4b67bbf5320b2b654d66bad1758030bb6693bc323fcfe77584447130"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/integration_fixed.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/intermediate_parent_timer.source.txt",
+      "size": 14377,
+      "sha256": "3c1df1819497b58df5c99088390479031039ac61d5c924caa972229ac2a59d49"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/runstore_final.result.json",
+      "size": 1572,
+      "sha256": "89f71e284d1a8db37bc6eac0336914c9d19103ea0a73b060fa69d2a5a15fe5ed"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/runstore_final.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/runstore_final.stdout.txt",
+      "size": 5723,
+      "sha256": "2baeb7463a7b7b2db3ea917b5cf9cace2f5e979458e4313d4f03cf57c0ccb999"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/runstore_fixed.result.json",
+      "size": 1573,
+      "sha256": "b37cfdbf8da41cbb07ffdf4c7ec2f66e3d57afafc0b3579776e807a4999947fd"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/runstore_fixed.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/runstore_fixed.stdout.txt",
+      "size": 5723,
+      "sha256": "17110fb4f77a9c765baf86f4a3a3525e6851ee2bd9557aff163dda4bf3cd8157"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/s4a_final.guard.jsonl",
+      "size": 284,
+      "sha256": "a5900c0574e2c49675ff3e504f49c2a7483678885e9fd2c4cdf0b65f39c8eb90"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/s4a_final.result.json",
+      "size": 1546,
+      "sha256": "000a36e892d818c304d33d1ef94ef5c08de23a4e71325cd20bcdb0be2c5e620a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/s4a_final.stderr.txt",
+      "size": 8142,
+      "sha256": "479251de7d7ecb31a2c693a780182f78c0617c1fc50f3c59e46209f434879aa3"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/s4a_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/s4a_fixed.guard.jsonl",
+      "size": 278,
+      "sha256": "0cdc6b38bcb3ba57a19d300ad35e2e9103ec019fd9685b127d790d720a502a3b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/s4a_fixed.result.json",
+      "size": 1546,
+      "sha256": "96fa001b068b81a65348a8eb6509d1bcf1a77ba6e9562d5a7dd86643d1395ce7"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/s4a_fixed.stderr.txt",
+      "size": 8103,
+      "sha256": "de7229d5ae3fb44412aaef5254f16f274256129b37e23cbb98d0da3cc0b0b8b2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/s4a_fixed.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/stage3_final.result.json",
+      "size": 1644,
+      "sha256": "2ea8c9ce62a017b8761899447a9b85bf144c9c6862d11bcc96c4897ec517e14a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/stage3_final.stderr.txt",
+      "size": 4855,
+      "sha256": "f82776edef117299fe534a53bd5a41f56b01770eabf980778b569417884fb753"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/stage3_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/stage3_fixed.result.json",
+      "size": 1644,
+      "sha256": "35516b33d086ef7f355c80c9e4991d081b3f320984edd36b94439cb16a5d5cdc"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/stage3_fixed.stderr.txt",
+      "size": 4855,
+      "sha256": "eb6ffcadc7d63314cf12a77ed5ef3b269f73b7bf6de22d8d199235381d8ebe74"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/stage3_fixed.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/storage_final.result.json",
+      "size": 1654,
+      "sha256": "d5c42beb90dc261a212f2ebab4c9bd684208b0698a14a34e8362e8c1631d059c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/storage_final.stderr.txt",
+      "size": 2615,
+      "sha256": "1d1bf0ef19bd3cd39eede30efdd14644baa18e61a17b491659ba05ce1d740b80"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/storage_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/storage_fixed.result.json",
+      "size": 1654,
+      "sha256": "d3a655b46043db253b5f7b413e22d8981aaa7560dfc09fab7fa4b056b0984ac3"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/storage_fixed.stderr.txt",
+      "size": 2615,
+      "sha256": "a06143a6490e50ba780c1f068069d885be1b4c72c6a288976f925684595b7c10"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/storage_fixed.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/test_summary.json",
+      "size": 23089,
+      "sha256": "1cc54947abf8b3f7901b5a34284fe9359146f5c05e9a5ddf41d55bbdad428f66"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/turn_final.result.json",
+      "size": 1549,
+      "sha256": "fa691b83b7245cb11d87af0e043329eacc35a7530eb80a05fe596ccd277f45dd"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/turn_final.stderr.txt",
+      "size": 249,
+      "sha256": "ecb2595ef71b862c504c626f948c7cc6da23c69b6e5d72af270825b5261c221c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/turn_final.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/turn_fixed.result.json",
+      "size": 1549,
+      "sha256": "1e3cec7adc07c67fcc61e6ef1abee4f0563232ed1903b4ff6d9d984361febd34"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/turn_fixed.stderr.txt",
+      "size": 249,
+      "sha256": "36e5834a5db8cb3bdc646a35ce968f42c05d0a8b583d46f463e2c7cd256bdb37"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/turn_fixed.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/turn_red.result.json",
+      "size": 1548,
+      "sha256": "a6834d3c2e35c094f3f21c7f2506d7d5ad1c7a8eb39b06ffa21fd0fb0b8850e2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/turn_red.stderr.txt",
+      "size": 1034,
+      "sha256": "d864a6d5c04ab7b592569157963b09da2610d2ecf2543a6f97425bd6e65196a4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/turn_red.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/unit_red.result.json",
+      "size": 1632,
+      "sha256": "32a2015761a4fa4a0c82c13143bcad13f4cb02f196b810076ef1f245b7e999f7"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/unit_red.stderr.txt",
+      "size": 2824,
+      "sha256": "1a3fe349fb42d347ecc29d96f05de6144c03abb644fa433d3e74c9731d5e2c33"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/unit_red.stdout.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/evidence/windows_ci_assignment_excerpt.md",
+      "size": 1067,
+      "sha256": "2be733aa75aa35e88c7bac9fef802e1c534327cb8409a6b288e65f2fa8dc243d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/finish_receipt.json",
+      "size": 469,
+      "sha256": "8158f9a11cd379ebdfcc87bd062ced51d127929c1d378521a8f0367406bf9d02"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/guard/sitecustomize.py",
+      "size": 3742,
+      "sha256": "63d2f02d1397a856698a60644bc86decb062d37dbf904494503fb4bec58c096c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/handoff_task.md",
+      "size": 6470,
+      "sha256": "82d55fb210eaf36091894633977cfdff72fba7ba7e94c12ac51aec0f70461f0c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/probe_turn.py",
+      "size": 3674,
+      "sha256": "4022917cc601d6f2bc8e9bd94e39e365107d5d8f3d568fb041674bc91f208fea"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/report.md",
+      "size": 8991,
+      "sha256": "e5102dd0ef8017f37814561fd2d22b59947d52c1d4d2d6406bbce869cf2caf6f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/run_check.py",
+      "size": 2755,
+      "sha256": "dfd7e34a3dc16cb3a74f1e8a1f3de73e2060bff93a27505ae059dd4db396ab0d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/task_record.json",
+      "size": 769,
+      "sha256": "c3faf3bc54a5224fdaacf228b229f9526b19c9de201fd82e6c0a42dcadf90629"
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "size": 23824,
+      "sha256": "ab62c54b2409fdcf0c0abd1c965790f6b1167fcb47529690b216b249dd93093c"
+    },
+    {
+      "path": "reports/task_history_sequences.json",
+      "size": 28,
+      "sha256": "48100651330f2e90746bae93400de7cc5dbec84ade9f7135c4aa15c052f7f430"
+    }
+  ],
+  "publication_allowlist": [
+    "ordinary_chat_service.py",
+    "test_ordinary_chat_service.py",
+    "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/**",
+    "Документация/000_Задачи Codex.md",
+    "reports/task_history_sequences.json (native finish only)"
+  ],
+  "publication_excludes": [
+    ".obsidian/**",
+    ".ultra/**",
+    "Чат_pro/**",
+    "Чат_Pro_01/**",
+    "unrelated local changes"
+  ],
+  "independent_review": "PENDING",
+  "external_provider_calls": 0
+}

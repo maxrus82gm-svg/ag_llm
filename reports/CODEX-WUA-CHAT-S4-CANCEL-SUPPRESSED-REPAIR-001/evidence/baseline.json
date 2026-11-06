@@ -1,0 +1,2523 @@
+{
+  "sources": {
+    "ordinary_chat_service.py": [
+      14036,
+      "f74dcd873bb533d36d5c72a6c29b453e4093d0cda0725139ff93762225156e3b"
+    ],
+    "test_ordinary_chat_service.py": [
+      28047,
+      "af70ac23b0c922c52a7ec0da5515f19a9525adc0bab0daf7800f3927ee54b05c"
+    ],
+    "web_alarm/turn_service.py": [
+      29426,
+      "66dbb1c74983efa2bc38aa8c11ddd834a84f009de9eda7e1c24e0a9689294805"
+    ],
+    "web_alarm/ordinary_chat_test_adapter.py": [
+      2794,
+      "fa62abf7268e9e60696d5d6ce85fe2ad4031f4ff884e0ecc83f75650024428f0"
+    ],
+    "test_web_alarm_ultra_chat_turn_s4b.py": [
+      19624,
+      "c7d3257f24cbd6c6b158b2639abb0137984fd3dcac526e21f9c3d1de6b2e05ed"
+    ],
+    "context_storage.py": [
+      98138,
+      "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64"
+    ],
+    "run_store.py": [
+      38605,
+      "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e"
+    ],
+    "model_registry.py": [
+      2519,
+      "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53"
+    ],
+    "gigachat_transport.py": [
+      1943,
+      "ee1db75ed04ea432224324d9ffb8271e211985e2d4f3a25f72dff89db251a879"
+    ],
+    "web_alarm/ultra_chat.py": [
+      28937,
+      "164c2f76fa4d6cdc935a2e4189eabe9d07b1f8206b179df64d27f1d5009c7035"
+    ],
+    "web_alarm/server.py": [
+      74952,
+      "b2bf2b20635b120e9a273d8691305dea8687c42693e47ed365bd966eec205f27"
+    ],
+    "web_alarm/launch_config.json": [
+      1769,
+      "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2"
+    ],
+    "Start_WebAlarm.bat": [
+      1482,
+      "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6"
+    ],
+    "Документация/000_Задачи Codex.md": [
+      30705,
+      "08f26ff4bc85bba8f162ee9056b2c3f9b96a95124dbb9f19782b5cbb29e0a22b"
+    ],
+    "tools/task_slot_rotate.py": [
+      48188,
+      "d87645b20c92cb0c01cc7734765b74b4cf29a0f1b2fa4cf8fbb8afd39cac0d17"
+    ],
+    "test_web_alarm_ultra_chat_turn_service.py": [
+      14580,
+      "f8476c52f53deac77e4bbec9c7637d27a519227079c3806df2f49d20e62f5712"
+    ],
+    "test_web_alarm_ultra_chat_turn_http.py": [
+      7201,
+      "8483774f80612b180dab8e311f426f2e0cffea89515686d17d337eeb47add9a5"
+    ],
+    "test_web_alarm_ultra_chat_turn.py": [
+      7683,
+      "fc1bd907a96b44be011c9b2f1abffd21dc02da597885640074e54193aa3c0320"
+    ],
+    "test_ultra_chat_storage.py": [
+      99585,
+      "345f7c763125628bbfa5450ddd4782650adf2f5a7073f3dd03bc92f8482718ee"
+    ],
+    "test_run_store_v2.py": [
+      38598,
+      "4250c32cc302ccbdc8df4472fc4940699a1db90c04e2f0b19d163f3ad92f17bf"
+    ],
+    "reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/task_record.json": [
+      792,
+      "103bfe5013ea1b207a9db04cdf5c15a9894372c08efc29c08a4ae5813900a9a3"
+    ],
+    "reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/handoff_task.md": [
+      8066,
+      "bd468c15352a0c9a06f7340e18c2ea1ca1e66c2e625b9fea5d1260a87b007847"
+    ],
+    "reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/report.md": [
+      9331,
+      "9a0acc08d7068cdab0ebdae9524a263a02c51cc1c8adc3733ba12a301aab7992"
+    ],
+    "reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/manifest.json": [
+      11901,
+      "2ce3f10d422de0b21d82a60ce6bb1c897831cdde252a6eb0cefbceeb4064d9b8"
+    ]
+  },
+  "protected": {
+    ".ultra/project_context.md": [
+      3583,
+      "407d9d864aaf7208025675f148158cd561ee581e97ad223eb6c1a843ca97b2f2"
+    ],
+    ".ultra/workspace.json": [
+      156,
+      "9c62a8da16d5ef5f95e9f2892d16d62bf814b331199f61b4386a2513f88edf61"
+    ],
+    ".ultra/audit/index.json": [
+      28408,
+      "54db4506b2d44cf351bb93c4efc61b650790ec8ac269afcf56583cf914813740"
+    ],
+    ".ultra/audit/chat_2441bc2969e14008b10b8ad35ad8556f/20260929_003750_158b91/dredd.jsonl": [
+      1467,
+      "9d5b62b9623891302ca4e476590727805d2a9106658d3cdf9d675e36b1c51a11"
+    ],
+    ".ultra/audit/chat_2441bc2969e14008b10b8ad35ad8556f/20260929_003750_158b91/planner.jsonl": [
+      41901,
+      "9875476471ab33994c55c289cd90bb5b310266ae0d362300f0d45485dc0306dd"
+    ],
+    ".ultra/audit/chat_2441bc2969e14008b10b8ad35ad8556f/20260929_003750_158b91/records.idx.jsonl": [
+      6534,
+      "ccf47a63dcae2a2ac2b4b2bd658e1003cecf3cda76718b47c2e4e31bd9666ab3"
+    ],
+    ".ultra/audit/chat_2441bc2969e14008b10b8ad35ad8556f/20260929_003750_158b91/server.jsonl": [
+      2113,
+      "0b231c0bbb99ed421b6c6d59d0f34ab8e172930d83fcb647d520a36cb760ff25"
+    ],
+    ".ultra/audit/chat_2441bc2969e14008b10b8ad35ad8556f/20260929_003750_158b91/summary.json": [
+      1019,
+      "6162ab9be8137c0dd686715dda98ba0b50aeb70931474b6b2f25299cd393198d"
+    ],
+    ".ultra/audit/chat_2441bc2969e14008b10b8ad35ad8556f/20260929_003750_158b91/task.json": [
+      926,
+      "19aea6403c3011da2930e232bf06b9125a6f83e67bc924fd171dc21e67b28689"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260925_235244_983dd2.json": [
+      3161,
+      "9db13d3a206ca492455abb4d83cdff12ac8f5644621d7671a8ab3a37a3c3dcc3"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_002427_30f263.json": [
+      3457,
+      "b0ef6190b57fb6b3aaa3e97b6149bf35e7c273c00a4116b1fdcba9a0bc5cecd7"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_002648_ad279f.json": [
+      4882,
+      "696aa9ac638ce70c34e2e02e5589392e640e12b0a6720c96d4f8998cc9002902"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_004008_b05aef.json": [
+      4952,
+      "75b14746fe36a3d5ae5232ba2d21dfba704f9dcea5d4bd0a82e46da6ce4873a4"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_005054_3e1cb2.json": [
+      2707,
+      "dc34d1c3719f4cea29634463390b9d335560bdcbe7e7322624d2585ff22262bc"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_005652_550730.json": [
+      754,
+      "4cec0405cc09efdc97f380f50d4d9e78c908ad45212a68896c2dda41deeef772"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_010154_fbaaa3.json": [
+      848,
+      "168fb3f24189da038046aacd574b71b138044fc0e1d8e7ed5a56640e7e7f9a5c"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_010229_50c841.json": [
+      839,
+      "671944d02a21a2c0a4d464f5d20f65970deacbfedc99f05b9401473cbc1cf6ee"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_010332_2984de.json": [
+      839,
+      "27231779e94a06c9a4e505639462a8845225decda7e7d3882b9dc231b5d587c5"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_011123_40ea39.json": [
+      838,
+      "be53537e35ca0a5fe9b0e7d64cf5257d967c8c70f8f56b3cef58374454bd2527"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_012005_176fc8.json": [
+      855,
+      "df583b9a67069181a6e46ae2a09e3db4fbb23aa34cc1f876cd1697e28dcfa5e7"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_012812_a26e7b.json": [
+      846,
+      "526ffe78ac1967696dae4ee03126fb8db15e4bdf01c970ad9e93101acefa286f"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_013358_a9347c.json": [
+      869,
+      "58275084f31ed656a9c651f5d6a80fff87687c73af831e09f4856e0a6d430b82"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260926_014056_d13699.json": [
+      5409,
+      "493a8bcd8d2d94de6bf8036ca6119d03daba44470ecdd8b73a0ea967c2ec3275"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260927_134150_3c8ad8.json": [
+      3486,
+      "60435edfcc4a2fca3b10af537f221fdc28a4ea5e49e26122a817d5d38ff91f4b"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260927_140224_9670e6.json": [
+      1686,
+      "5d8b9c725989a261a9db3ea2af3932f30ec7cbace17b0d72826bea43d044e22b"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260927_141152_1f50e2.json": [
+      3665,
+      "f79c30871a07589b0f86ed401d7b689ae3925d4a22901f9c35b14d752f71c105"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260927_141343_31234d.json": [
+      878,
+      "883723343aab15e21df864ec87c039aa062ace25fab76156a68f3ec32731c7e7"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260927_172244_0d5159.json": [
+      870,
+      "28c5201edbc149f877d74b11366872311eadfd29ec81596053b72e83bcbad8ef"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260927_203134_415eeb.json": [
+      44678,
+      "ed451088852e19102497f52d0ffac00d579f7b034153bf8beabe9e7a7f9e4d82"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260927_214021_7db90e.json": [
+      679555,
+      "254765d7ec25b8a2647f0e9f8fb943b92814a52f4fad937ffb104cc9d0529f3e"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260927_214149_5fdd2d.json": [
+      671817,
+      "201b7cf84af42ee93d3a096f373f7b4df9b6b6a36e85b7ed25d7b9e3cd6ebfc8"
+    ],
+    ".ultra/audit/chat_268113db968a4bba91343544c9387612/20260927_214358_2f6f25.json": [
+      26162,
+      "6d224d14053dbe21f4ea01cb37b0533ba7e8f4765376aac847368d4b1b22d7cb"
+    ],
+    ".ultra/audit/chat_51154b3de2e74824b04b717d2f12ee78/20260927_221628_6e2cf9.json": [
+      10814,
+      "ec8a23de213a6c51553eb5bf4ddf0c1dee20ad320266c3be0a01871f1cbdffda"
+    ],
+    ".ultra/audit/chat_51154b3de2e74824b04b717d2f12ee78/20260928_001954_ab6612.json": [
+      102905,
+      "95815c2ed66e75d0bb81b7ace774a562b4b4453b62965fd365f4cfbdf5b6768b"
+    ],
+    ".ultra/audit/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/20260929_003844_e5bc2f/dredd.jsonl": [
+      1197,
+      "3b1c1f6537c14473a17b105bf9a1562ac2811f1aa52f8846fa0341848908f266"
+    ],
+    ".ultra/audit/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/20260929_003844_e5bc2f/executor.jsonl": [
+      21024,
+      "bd59d165c39b449f026fdfe0ade0286149fec976d51de49f063d152837160634"
+    ],
+    ".ultra/audit/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/20260929_003844_e5bc2f/executor_base.json": [
+      35468,
+      "b8e60da52baf79bbb38c48aa06714d60acb4b42c0b04ce6c860ba704c1c9b5c9"
+    ],
+    ".ultra/audit/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/20260929_003844_e5bc2f/planner.jsonl": [
+      49746,
+      "cf0eb04644e7d750eaa70b953947ebc8adb3cfb699f59d213e1a65d41a1c0d54"
+    ],
+    ".ultra/audit/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/20260929_003844_e5bc2f/records.idx.jsonl": [
+      19448,
+      "0106944eccd2a14ad172badc459b2288b51a190b7a741b4a2936070fa523037f"
+    ],
+    ".ultra/audit/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/20260929_003844_e5bc2f/server.jsonl": [
+      18738,
+      "7d43f046427a48754748551c30792ac5e451eb1eb360e8e3dd15f21212998485"
+    ],
+    ".ultra/audit/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/20260929_003844_e5bc2f/summary.json": [
+      1020,
+      "9bb964c035e5917ba8c5e4012066ef90aa9d6e43109dfac462b753b85ed25638"
+    ],
+    ".ultra/audit/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/20260929_003844_e5bc2f/task.json": [
+      926,
+      "6ba2ba1e6528ed4d42b6df0812d20cc5e61373376c3da68c094b19bd1d868cae"
+    ],
+    ".ultra/audit/chat_941182bc80044e95a04b37be277fc922/20260923_234015_4b2586.json": [
+      301,
+      "a3aaff0c62294a7cb76495de02c8b704db7c4484dd88e79687a3706467897313"
+    ],
+    ".ultra/audit/chat_941182bc80044e95a04b37be277fc922/20260924_144228_7525c3.json": [
+      301,
+      "70236ae9c862ff832b3b0380d48acef88d8d6874f6a7e85b0dcd80b1a438e814"
+    ],
+    ".ultra/audit/chat_941182bc80044e95a04b37be277fc922/20260924_210840_5f0d63.json": [
+      15644,
+      "aab7944ec811f02625095097206da7e0ef65aba21dcd48f5f0bfa79130df2448"
+    ],
+    ".ultra/audit/chat_941182bc80044e95a04b37be277fc922/20260924_211010_13f582.json": [
+      1981,
+      "2c163fb03b5e6f8025788597f285cd5d4f525dc7134c9fdcb950c52851d2692a"
+    ],
+    ".ultra/audit/chat_941182bc80044e95a04b37be277fc922/20260925_233222_597394.json": [
+      754,
+      "f1eeb37acab631da6c687bfae8b9cb8cb67d428fc763dd103d19216c5bcb98c4"
+    ],
+    ".ultra/audit/chat_941182bc80044e95a04b37be277fc922/20260925_233412_0b3b80.json": [
+      2024,
+      "12c2e2c766c55751a59832f87a66084b5caef31525d1e038e8bebac9064de601"
+    ],
+    ".ultra/audit/chat_941182bc80044e95a04b37be277fc922/20260925_233750_38c5dc.json": [
+      3231,
+      "34c0b1f2f272ecb8e9e8c926b1cf2a8509adb9769721475fab51e00af559844a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005756_8b5cc7/dredd.jsonl": [
+      371,
+      "db4cf72d5eb0c142b098d1a78fc3073de2c5759556be3e7099421262e99d05a0"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005756_8b5cc7/planner.jsonl": [
+      28139,
+      "b435a6a25837ddb940ce5d373da2b958b0325ee4cee87bcf9171cb2521c44fba"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005756_8b5cc7/records.idx.jsonl": [
+      4747,
+      "03c0c41b403842ca4f5b8e33b1445a85f7d8a3d29c34cf9785ba30a622904ea6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005756_8b5cc7/server.jsonl": [
+      2105,
+      "84f36ccfaa360cc2013231d0f0b2862bed10e60dd8309d7fd6f8ff192a0e0dbd"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005756_8b5cc7/summary.json": [
+      1019,
+      "202aa972ab66fa2b4002e741772eaf4aaacb150a5156f84923fdfefe34888fab"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005756_8b5cc7/task.json": [
+      849,
+      "81f65b590ee15529bf8c7c4cc23a8697b4306f7c4e386fb26ee112b1c2db2299"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005936_68ec61/executor.jsonl": [
+      12383,
+      "fa7b4bca96269feee46259aeae4cec2c52aa415666506b4bdd954301fc8f359d"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005936_68ec61/executor_base.json": [
+      36137,
+      "c4dcacad25556dba422d770c7a96639212d1bfdb9a383565682a10778b2e0c5a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005936_68ec61/planner.jsonl": [
+      28057,
+      "642a9712dc7884387d9988d699b48e19ace233cb6b8be02a1c39b1d8b172358f"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005936_68ec61/records.idx.jsonl": [
+      10362,
+      "fab5f2497cfaf571813c8fe0b60a9163d370344e9090a3a201dbe9f3df273f00"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005936_68ec61/server.jsonl": [
+      11307,
+      "53d02396850f62d2969511c59fa50514a0966a488ea5cd13b02187b257e4b782"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005936_68ec61/summary.json": [
+      1021,
+      "86abaaf24c84133f517b8c61a5f8a8866e3000c452ff88c9059b7d63ff7c698d"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_005936_68ec61/task.json": [
+      849,
+      "4c71d1de9c3f52a97198853155a00810398e0f6a8c67a5c9c95f356c19060781"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010117_69e074/executor.jsonl": [
+      16155,
+      "9e0b09adb23a3dadaa1367f300ef6f2f84bf35653c3a5cf9d505dd1cfb43a693"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010117_69e074/executor_base.json": [
+      36221,
+      "793f48d38f5eef4d227902adc0ad08d7923f2f0e3b1574b6f684830b006977d3"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010117_69e074/planner.jsonl": [
+      23978,
+      "48fae0689be5c83ef1716b43ff2df84e6b15f7b1ad231b7f73f34512d9828122"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010117_69e074/records.idx.jsonl": [
+      11522,
+      "822cc0adca23c8e10402b5cc10dbf39795702bd83978d7f0b3a8ed7e78fe3cef"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010117_69e074/server.jsonl": [
+      12433,
+      "f091e74578e0f7955763647fa971b50e5ced7e59761f6fccbbf75246e37cded1"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010117_69e074/summary.json": [
+      1021,
+      "98c6e28886f3d075852ac57646d59cd08c96a8da3e56e8176a52fb9d0540f829"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010117_69e074/task.json": [
+      355,
+      "f407759b6a7bfeab9b890f86f02bc2ed24c6eed0cd78172bc2e47054e8d96d30"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010246_f4c2a1/dredd.jsonl": [
+      1013,
+      "db83c421c97d7f2397c5f0f0a08ff9b83d2f28ddc63bd62aa6cc3315bd1ad331"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010246_f4c2a1/executor.jsonl": [
+      9891,
+      "1e6fb112f1ac6b71b6db267cd6473fc7aa19f92d31b40ab479b7c68f492ccb55"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010246_f4c2a1/executor_base.json": [
+      34772,
+      "9c8d7a3b667cd8724ec05a3abd70dce94c413cd666de61db04d802f35997cbdf"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010246_f4c2a1/records.idx.jsonl": [
+      5462,
+      "3e407d5d21ea29b3eb05c87a1d7db276da7491c7e7c184d7abb4f4faf91e8531"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010246_f4c2a1/server.jsonl": [
+      7991,
+      "b7b0c812b5968c16ca3cf91a0503a8e517dc9444b9430cb15e955be2f4528731"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010246_f4c2a1/summary.json": [
+      1018,
+      "68cd4620992c850b8ffc062b8fc372e8f4eba8ab449c0d0deceb2ea85ed187d3"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_010246_f4c2a1/task.json": [
+      355,
+      "3688754983ef1612004d1950084524b68976873043b9ee0f8a15c2f5d61c6198"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203654_a55cdd/executor.jsonl": [
+      6602,
+      "df6a645824cf919acfce42c2dd63e6f47813a2b9f6e8e6ce126ad595c60e1d89"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203654_a55cdd/executor_base.json": [
+      38136,
+      "d5adc25eb243cbf9f9dc7b516bd4177ed1a4ead2c41f6c238315f6b343af12be"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203654_a55cdd/planner.jsonl": [
+      32871,
+      "90104315a6c0dc7e7c48de877ee292abdcfe064979c9e56db804eb5aa4321fbd"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203654_a55cdd/records.idx.jsonl": [
+      7837,
+      "e736de17b62efdd8aa9c6499ac7b7c3c5d09e1bb1463c50d10018500e8a0274a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203654_a55cdd/server.jsonl": [
+      7362,
+      "0d4beaea2aa4c03eedceb7f0fc0c1273f8783904b4657b54c39311d3de15d574"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203654_a55cdd/summary.json": [
+      1022,
+      "7bb06e43d8f3716c785590db508f41562248832c4b489355312d4d34898093e4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203654_a55cdd/task.json": [
+      1180,
+      "2b2b1d35311636d6177c03be4fc8b758e98368f1d86399da986b17577b90ca40"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203725_43624a/executor.jsonl": [
+      12527,
+      "0da396738d5cf7878cf68e8cab951e47f54e66ec72c0114e65d1635d09fecea6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203725_43624a/executor_base.json": [
+      39440,
+      "e0fe1cae42212fe35502ae57215e9a1b381754b55f9952618d108105e6385bd0"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203725_43624a/planner.jsonl": [
+      30973,
+      "6ef5b4104dfc412a67abb17cff1d29baaf92a0885a3396abf553315b500fe399"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203725_43624a/records.idx.jsonl": [
+      10363,
+      "ad45ed826b0426d9d962537635b6c0b85aee04c7391842456a3c6c8d8178bc30"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203725_43624a/server.jsonl": [
+      11218,
+      "3e44b0931f93cc19ce54bb68d2cfa2416cc2743ee5b8edf4235b462370652431"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203725_43624a/summary.json": [
+      1021,
+      "07d6357a88f955ba3b7c705a5b1b4be6786ea35e13b9597a8b9431103071cef9"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_203725_43624a/task.json": [
+      1180,
+      "240dead87190b3f15257fb653b85b02d9cc54e3ff11f2af723502f259050e8eb"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_221231_5c0820/dredd.jsonl": [
+      1561,
+      "ab686b01b42e6589a3a5b8828f0fc29d5420c7a09f783725501f828d58b9b5b2"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_221231_5c0820/planner.jsonl": [
+      50249,
+      "e788396a7723e2f425208aa97efb6a3417332f7ab795ef27a261ebd1e0d6e652"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_221231_5c0820/records.idx.jsonl": [
+      6531,
+      "d1fdd329a95c7d7632b2a58dd0444317102df55ae8aab8767a9073d9bd289081"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_221231_5c0820/server.jsonl": [
+      2096,
+      "ba3b0fd01a226fd0f74951f58ee14c5702e205c9ba874e34a83ed4c392d5ef25"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_221231_5c0820/summary.json": [
+      1019,
+      "dcd5ec0b5408ca807a2b246c60853127e30a87d0836d4327d702a6255be570eb"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_221231_5c0820/task.json": [
+      1745,
+      "3943007c57ad20e016cde9d116d956e1d6107b8849506f2628776779be4b85ea"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_222755_d850d7/executor.jsonl": [
+      12459,
+      "52562b469b5ab225e513e18a8fdf2da74fb381ed66d614b5b58cae8e1df700ce"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_222755_d850d7/executor_base.json": [
+      42744,
+      "91149a5125c0610ed35d7dec4ce6aa2d1852b9e77ee1ef02586ffcc8d5b97fee"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_222755_d850d7/planner.jsonl": [
+      32445,
+      "6736166d93cbd319ac9413717a0bec534769c25eba3b4c2d18bc34089b7920ff"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_222755_d850d7/records.idx.jsonl": [
+      10363,
+      "e6fb1532aad35b907c04706b3b73467d99a7a7a10a2e7c6eb3b082239f20aca3"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_222755_d850d7/server.jsonl": [
+      11268,
+      "2ad3fbe044d4d12b8f6cdc9fcdf5e7c4f6d5845b8c63a3b8cab1702686ab911d"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_222755_d850d7/summary.json": [
+      1021,
+      "7d0a98e89d66c127ef5126d6501cc87e04bf7d165c671484184fd1e083bc21d9"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_222755_d850d7/task.json": [
+      1764,
+      "0f6c07b3954ecc8c949299072e0177e59415d1208507ec20817c9a533793f2b9"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_230851_933f3d/dredd.jsonl": [
+      1309,
+      "0c835608f4e30b5717f73035922834b9833cbdc1dce4c04eaffac5cc0c4dbfcc"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_230851_933f3d/executor.jsonl": [
+      35894,
+      "2eea17cbfb9bab7f18b293058ee169981bac731e520ad4ea7a72d546cbd248ac"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_230851_933f3d/executor_base.json": [
+      44535,
+      "9a05e3c1401197d074ceaeca5479f5d65fc9ee415ea4a2bfb8301563b8e85d6a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_230851_933f3d/planner.jsonl": [
+      89638,
+      "2ceb784a642c6f9923701e8915b89f7f4c1e8f07a9f33fdf213efe23155c84f1"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_230851_933f3d/records.idx.jsonl": [
+      27714,
+      "f4de74d0cd3f6b4d3feb707f28e6663a4a6e74173e37b63266bc0050f5a28826"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_230851_933f3d/server.jsonl": [
+      26799,
+      "2a7693e27a0fc1adee24f22a68e2597a6a3941652729184656fa1d3624e8c8cb"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_230851_933f3d/summary.json": [
+      1025,
+      "124cfd0cb4f68b061c70e9713b6b25a03a9f1b06c85bc439873c329c0e7a4771"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_230851_933f3d/task.json": [
+      2021,
+      "e2ea3d73ab1c30c26909cb289d01662bfca19943d104ecd46678df36891e48de"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235127_0b45a7/executor.jsonl": [
+      12653,
+      "38cd9bf6ec3c4a966d607ed7fda8c749fc2f77897cc91956edce281e4745e141"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235127_0b45a7/executor_base.json": [
+      36564,
+      "394575bc24570f9236b6540527adff0f2c4e5e726d1b61a90d973446e3444e14"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235127_0b45a7/planner.jsonl": [
+      34547,
+      "1cce785073fcc22a45982f3914653d80d6fa4cc8870345b889556ce2231c1a76"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235127_0b45a7/records.idx.jsonl": [
+      10238,
+      "2ef88a4859846c3144e4e5b19885efb484e423154fd3e56ca69063991d00a903"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235127_0b45a7/server.jsonl": [
+      11500,
+      "0fd0e3b09a051f102d0369b769853dedb83915a868daef590e609588cfc4f88c"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235127_0b45a7/summary.json": [
+      1022,
+      "7b52e1d2dfc4114a93cb414e5d696e03fd4ffe549d43fabe57dd83e181b029ad"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235127_0b45a7/task.json": [
+      2023,
+      "f44d23f9c20df1e360aa9bd32bd180d25e54e175546a723f43fed695e831fd56"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235205_7fcb67/dredd.jsonl": [
+      2139,
+      "c3981a6eb5d48e03f0b3205554ffd7d5eac48b500c5c1f21dd5c51bd092ce1de"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235205_7fcb67/executor.jsonl": [
+      13479,
+      "792418cdf7580ac1c867e939c47d1d50f4e13f9bf5e7ec8cb6718f67746d5329"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235205_7fcb67/executor_base.json": [
+      36558,
+      "74b4cb9e8d4faf61e9abeaf1b3b45b4fa0f2482b5e350fb0550e3d078a34b50a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235205_7fcb67/planner.jsonl": [
+      75646,
+      "888dc620c779e108c09709a11914eefc0232c6e716256ef7a74ac4ba0c942a52"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235205_7fcb67/records.idx.jsonl": [
+      13961,
+      "7f8c555a0c0b80e8108f59f353bef5ead87af358eefbb59d12c071fd1b0bdaac"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235205_7fcb67/server.jsonl": [
+      10885,
+      "a5ee8de306aafcc28681d52ae775221e17599c3e4ef634ac5cd6c3c421730e07"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235205_7fcb67/summary.json": [
+      1024,
+      "33b996c3483767f5518918770a35fc5699653165a47ccc3b80900d3c394b5056"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235205_7fcb67/task.json": [
+      2021,
+      "6c6a51242a5635b8722365cd5021c340a043a40c639c1e47196e06148799b315"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235350_931f4f/dredd.jsonl": [
+      2085,
+      "8f1714413bf291961f4a2987be173e3a237c11905ebfe4bdc0fc9f3545f94636"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235350_931f4f/executor.jsonl": [
+      13468,
+      "fd6c174239f4e953536f50506eb76d6c634a7c6e6f98a7a2f257fb18af57746e"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235350_931f4f/executor_base.json": [
+      36525,
+      "168c130d6d7735ea2cc8a837d3138c6c204821b658eee9298e6a63b562075e81"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235350_931f4f/planner.jsonl": [
+      75096,
+      "9bc4029a52767600e2d924386fa82c9650dc69880b98e6a9e77f5e0432eacdfe"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235350_931f4f/records.idx.jsonl": [
+      13955,
+      "432c826c1f5cee1810b1837033c065fd245a57ae8b0f0d020b59652fdabc7f33"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235350_931f4f/server.jsonl": [
+      10856,
+      "d2467c362d68f91caac2e23b1b81ab5aaf081762c2b86724b910aac9bec1137b"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235350_931f4f/summary.json": [
+      1024,
+      "dcaf7649c7df17f6deca7dd88fc76780d2cadef13c336e02a0de6928b0717ae2"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260929_235350_931f4f/task.json": [
+      2021,
+      "8861ef348fb673acc2ba22d3c3612017ef04520573770426791e490458fd6dad"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_110450_f13869/dredd.jsonl": [
+      6490,
+      "294dff700b1069cccc244c1936934d3785d014420d57abdcc20cff8d3c9a36aa"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_110450_f13869/executor.jsonl": [
+      73386,
+      "392d4679707ad3b04d21bcb27deb95c4ba19fde0cd96b63c30e8d1dffbfe8401"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_110450_f13869/executor_base.json": [
+      35186,
+      "1c8d96478a00906a6375bece58da748502cf042efaf02030bb9a82e4c24f219c"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_110450_f13869/planner.jsonl": [
+      29750,
+      "7f5f16eb812ebe2a590c691f3df78cb8a27a24f84778a8c3b1592e8bfe8df159"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_110450_f13869/records.idx.jsonl": [
+      38415,
+      "09b454c6e65daa73fed90d591673f1e4ff0c793d2a9289ce89dd873404787663"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_110450_f13869/server.jsonl": [
+      49731,
+      "cb6a35cc531e53892ff2d6385967eb909742c203d2ae32841095a07793ed3208"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_110450_f13869/summary.json": [
+      1030,
+      "f82803a720e51b8e53e71cebef189f5427e8f821b7a0d443b9c87ce87b89474b"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_110450_f13869/task.json": [
+      684,
+      "50c1204fe38860a5f775b3a3656dab820e15b9897e442d8352053a72b0116af0"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133241_bfa31f/executor.jsonl": [
+      6815,
+      "dde0691ec20f5e91bac9859a889990c633ec91424147a63624402798d15a39d8"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133241_bfa31f/executor_base.json": [
+      35592,
+      "3d472f8c57433c8efeec96299a7b80bc05c09dada29cf31c0bbca5b5a5249991"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133241_bfa31f/planner.jsonl": [
+      39808,
+      "cdcc6ad6058852dce5d22f13ac4d0e2545b1acd6adfaaa82877b4b776d6e9e62"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133241_bfa31f/records.idx.jsonl": [
+      7834,
+      "01b98771a2e29931c50dc1dbac2b86210b9db57816d72ad62df0a6b633bacfb2"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133241_bfa31f/server.jsonl": [
+      7438,
+      "987920a07c501dcfd5f5e0c6cca7810335812e571d85666a71b46ab2d2ee0fbf"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133241_bfa31f/summary.json": [
+      1022,
+      "5b8416cec888c4cc0a2e04e0ffb3a12edbf4da3842d9b3870e573ce99ccde8c5"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133241_bfa31f/task.json": [
+      1017,
+      "061102d53377718301c0944edff0593d8fa11e93edd0f63c2e7525512c09a2a6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133316_3e8ca3/dredd.jsonl": [
+      1429,
+      "b2b5836c6f88dc60de6f77509242389cabb7130f312751b39aa16b912327fc17"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133316_3e8ca3/executor.jsonl": [
+      41579,
+      "733f8a76c69fb979eb4c5581a07cfc079a32a6f390e31ea0c36877dbc29a6e5f"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133316_3e8ca3/executor_base.json": [
+      35570,
+      "25df316aff6cf435d88ef5ba7c1c200605ec5986943216d99a69080539c68f70"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133316_3e8ca3/planner.jsonl": [
+      38872,
+      "69114ebc968e890553f28adba3180c78c285e112cffbf90d87f9a05a0d2a652a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133316_3e8ca3/records.idx.jsonl": [
+      20835,
+      "42bc65611417ee5bc2ddff4c01c7aeb105fcad0c81819122dd2c093e9c483cc2"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133316_3e8ca3/server.jsonl": [
+      30878,
+      "6bacf27c956e4d79c06fd780b876063a574fabb0118bf219c26022682fefa75f"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133316_3e8ca3/summary.json": [
+      1024,
+      "3f4d22f465475a3a6398e05259f6b3c883c961d4cb0d592f3445b7c34e4a0cc5"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_133316_3e8ca3/task.json": [
+      1017,
+      "705aaa1365fd308b5a242e82acbdaabd1373a26935f001b7589a42eec537927a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_135352_d815d7/executor.jsonl": [
+      66076,
+      "4510a0e76f0047b207b284bad01cf07ffbc31ac6ebc0cf3493c7d3b869b98140"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_135352_d815d7/executor_base.json": [
+      35471,
+      "e9d06b387c47bde5fe429a4638a84f5d0035ec3ecfcbda563245979689c22ec4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_135352_d815d7/planner.jsonl": [
+      225508,
+      "ad23703b8f2ed0c2aa4cfb472991d4e6ac0bbe31ff3c79b2aa52ff053957a4e4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_135352_d815d7/records.idx.jsonl": [
+      55697,
+      "daf7a34c8084dc6ac2133305dde4937aff8b5551ddaf2eabf9f96345c5b92cb6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_135352_d815d7/server.jsonl": [
+      58813,
+      "997c0e6f0e1d2173904afd0505f1cebfcca2bb6be6a47896c127e3f523a6aa14"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_135352_d815d7/summary.json": [
+      1036,
+      "26ea2a013e69085c8604884906f4efcd384eccf6458e5ee7338929427a2a9850"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_135352_d815d7/task.json": [
+      879,
+      "1dead35fedddd0b106ed2d910031157e5dade1d7936d0b6f7962ec2049132d0f"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_144504_b47080/dredd.jsonl": [
+      1630,
+      "c57e03a791ee5b216d5ead15969c91a787172b22cb29b234e87b7c336b2482ce"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_144504_b47080/executor.jsonl": [
+      13553,
+      "4c879345e14b2cf0053866b9e3e6c78df9a2df5aae026332c6ce77095cc4a82e"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_144504_b47080/executor_base.json": [
+      35463,
+      "b5bf0ca3fba7511e40e6c722bb286659e6cd7df0e2e1a12cebb7b0cbdd3f6e75"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_144504_b47080/planner.jsonl": [
+      57434,
+      "0c61ed327fc6dfc2404ddfa8809c394e8705d9ca0aab3617416684668a61822e"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_144504_b47080/records.idx.jsonl": [
+      17356,
+      "8160877bdad15a6110f46fd17dd03cbd6a8969253fdc7c96efad4bb1da6d0d66"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_144504_b47080/server.jsonl": [
+      17424,
+      "f1bf70b9200f104c797ddfe90b7870644e906c0bf2a9759457307d70f68646cc"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_144504_b47080/summary.json": [
+      1021,
+      "d226936fb081d83a6103cae49e56d467b284269d534937ffddb24bce9f88b3cd"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_144504_b47080/task.json": [
+      879,
+      "8965b061132cde11914db51572315144bd5794f44f80205ed6433f222bf94e78"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_174842_05d8c7/dredd.jsonl": [
+      1510,
+      "d62095ecff87f6f327d0122c4d3822a47953d07baf13140d53a10c8d9ea1ef8e"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_174842_05d8c7/executor.jsonl": [
+      16123,
+      "a519a80773e21f12230124f69169dffa6047661c7d34ef35f87ca93b41e50cb6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_174842_05d8c7/executor_base.json": [
+      35593,
+      "b32fc00b21ecd641c0e7eae7ed9dbf6b4f5e5d79ff092af2a53954e9cb148bc5"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_174842_05d8c7/planner.jsonl": [
+      38256,
+      "f03d1a841da0ceffc4a2b6a7e09f42cf7b62624da57888ba914cbc61d78ce3c4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_174842_05d8c7/records.idx.jsonl": [
+      16894,
+      "4d7e5f09c69f818c5f2613b8ae60b7b73c89876a33b3e405ea2909d7b2f94075"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_174842_05d8c7/server.jsonl": [
+      18750,
+      "f926dd82291408f0b6ef983c1b21ca9f29318a92b541ba3305b466fa2791ded3"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_174842_05d8c7/summary.json": [
+      1021,
+      "bf95b8c2ec3dcf0a7d1ed22c28f8276e7b1aa7266c3bc211a44118a78e742a3f"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_174842_05d8c7/task.json": [
+      1025,
+      "410b26f6b593171d84537b7639bfa66a0e14dea13639e23b6b1c069388e810c9"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231248_8e30c6/records.idx.jsonl": [
+      185,
+      "01bb4eebc701731f8329b142d2ab3362ee1c19392150807b78732cd6d839710e"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231248_8e30c6/server.jsonl": [
+      960,
+      "48e0a4de8cfb6b55751ad6854e35ca3b3fef98b45fadd640821fa5d0c41dfac0"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231248_8e30c6/summary.json": [
+      1971,
+      "556ae5b37c441df921e4a71231c429c55c14eae791724618cc6b9070e46cdc02"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231248_8e30c6/task.json": [
+      1274,
+      "a6f0eb8feb6ee122ee32672056c125ea4a1e5a4e3768508f204d235d21f21f63"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231415_c918aa/dredd.jsonl": [
+      4272,
+      "7bc40ac47d7a64a5156a48c5d30222c5d1cf0ce737cb0575bcc8b28c7a4b0b41"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231415_c918aa/planner.jsonl": [
+      79953,
+      "cd580e1e35b5f6e36ddbdb60dd4c5d33c4328f3a93024515643ad80a89d813c7"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231415_c918aa/records.idx.jsonl": [
+      8340,
+      "10fcdccaabf74ef8056165f0ffcdcc0689f2bdc6da182efc067391fa6bdd24a6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231415_c918aa/server.jsonl": [
+      2075,
+      "176297b85c5668667db821f936ed4034545c62f4b7a9555a7212b68887dad231"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231415_c918aa/summary.json": [
+      2372,
+      "fb9c27668279eaa542dcdfe565ff3d5d5124c40b6ac3414b818d9ada3df894c0"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_231415_c918aa/task.json": [
+      1274,
+      "bae5492917bdeb1e40e553a25322608b070eef57e203ab3d9698463090fa9566"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233622_70cc6c/executor.jsonl": [
+      316982,
+      "567273073add9f43f9ae177f197acf2fe31ac4520a5e0ca5b1da3d0e2e95955e"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233622_70cc6c/executor_base.json": [
+      35774,
+      "e834ba852201a42492eb14325ef3a4db7303dbcdf02af0eb0c335011d1ab97df"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233622_70cc6c/planner.jsonl": [
+      26039,
+      "5710fcd9ee66022bef2d2384f6084aef99209a6afb3e57af5bcf4f260a9ebefe"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233622_70cc6c/records.idx.jsonl": [
+      11094,
+      "4b618e29ecfbd0b2a5d12098e584a41d4fc6687dc7337708ac9cf087489fe96b"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233622_70cc6c/server.jsonl": [
+      277411,
+      "af793c37db1361558adf1593c95c67ec8104bcb3b5f7418e39c6636eaa41c3bb"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233622_70cc6c/summary.json": [
+      2466,
+      "0f656bd0ebce755fe747563a9bd009330603afd5555397d0d082f8fcbcfe077b"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233622_70cc6c/task.json": [
+      1274,
+      "9d8c29740da0106b232841266fd19664a7ff4a5b2848bcbb40132979054e624a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/executor.jsonl": [
+      735033,
+      "2cd207327044f476b87e12a70c206e0c91be2632e34ba7a1ffbb8892cc8b066c"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/executor_base.json": [
+      35753,
+      "141115825bd110fd44561d574529365ed5cc214b151f6e6f11eccc80eacf77dd"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/planner.jsonl": [
+      46911,
+      "4fe56e23303a64b263fa23f8a9777746f18267ca7a10358b532b1812f1588a24"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/records.idx.jsonl": [
+      33376,
+      "19a9efb8f963a41ea0d08d5e18c4e62e1c75ff398f947a06092a5060cedd6b80"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/server.jsonl": [
+      562787,
+      "830ab2a5838349ed907dc9f55ef46404b3e0b9a663f30dbef9e4961fcc11b1f2"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/summary.json": [
+      3551,
+      "210849cd30793c1e01b63c344a7c7a730a98e6076f4b98dab7e37165e6bb1b89"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/task.json": [
+      1274,
+      "44baff0c531aca0ea246212fdb89679ce74c150c190b2ed8ef4d760b00943d4d"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_002149_2d20df/executor.jsonl": [
+      1385153,
+      "3a3dc634afa83828b04c1f7b883e46c6dfc111ec666e53de99082fe75ad3e1bf"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_002149_2d20df/executor_base.json": [
+      35752,
+      "898b6f3864fd64a055653055a4195265101df17870d358794b47ace556c346ff"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_002149_2d20df/planner.jsonl": [
+      111583,
+      "79cbbae43b9630399af36b70522342bd6af9aca389b080126906de4ffca4d7e4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_002149_2d20df/records.idx.jsonl": [
+      49904,
+      "41d54c78c78f4fe3f0365a9b6a485b29e71eb9ad46bf3cf9d84e28941fa38cff"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_002149_2d20df/server.jsonl": [
+      1147036,
+      "31e456ebce193c401f173dc2f658360d67a3b6f9693b49a54c4a6a8e91639f72"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_002149_2d20df/summary.json": [
+      4290,
+      "13c7a2412ea65ec907ec155ee39fee98f2462ec004df6cd20a8fe685e4b7bb08"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_002149_2d20df/task.json": [
+      1274,
+      "bbbfb07d3be055d4e9e732c65c1adb8335d1ce904020fee0f03d819b435f1826"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004126_824e74/dredd.jsonl": [
+      2420,
+      "5ccdcb59a45524df890fc8eb7bfadc8ee587462d85b7f59fc0984dbc56e06f74"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004126_824e74/executor.jsonl": [
+      25675,
+      "d38b09516720969769b327878b87af9487b03541f9d17c331368883613946571"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004126_824e74/executor_base.json": [
+      35538,
+      "cf3c2f34dff46effac0ffa1f3258af0bb3a3d08f5b5cbc5bcfaa17cfa72c1323"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004126_824e74/planner.jsonl": [
+      70127,
+      "f0ecc5e3f89635a4112f3361fb6df08c3dbf9231bf5c49516a0b60b080fb4e82"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004126_824e74/records.idx.jsonl": [
+      14968,
+      "fae0422566dd75c278d375c37c39012273882acf0882947a9b7715814efe5bba"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004126_824e74/server.jsonl": [
+      11434,
+      "564b14026a642061bfad9a209f390ef5930c8923961badf495546f4c8dc399cc"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004126_824e74/summary.json": [
+      2649,
+      "d0fe866f90fdab67d56759e3e1b71e626a4da673ea2f9891f79eedf11edb302c"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004126_824e74/task.json": [
+      947,
+      "b676df5b06013d565d44b9550e56949d3790025ea16b8a31d809dc71542bbcff"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004240_a734f1/dredd.jsonl": [
+      3802,
+      "ade94b3d64bf4442e89fc3d00f29c1c52dbb751dd7d570a97626359a3b61655e"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004240_a734f1/executor.jsonl": [
+      36550,
+      "ae674439e5840aedacdfd203d817d148656c99e70f2d99579f86bc46fdb64c80"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004240_a734f1/executor_base.json": [
+      35490,
+      "2bdde3523f2a9f966101dff520fbf72edab65bbb6a0b00f8c390346938cb1a0a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004240_a734f1/planner.jsonl": [
+      45900,
+      "985bc64238de5e9c0f34c9f7b5c27b0e490cc0b3f226b24816d0a991670c45bf"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004240_a734f1/records.idx.jsonl": [
+      20981,
+      "a2b065ed5fc18af01fc55fd5159f4e3aefb28195429c0d486eec529b08cdfa89"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004240_a734f1/server.jsonl": [
+      18581,
+      "222944bfa3e1bc22751e06bf89ca1332d893971343476e3e3a6d746598bd5f46"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004240_a734f1/summary.json": [
+      2828,
+      "b8138dc4e3c8b75808ecff4e7861bc7e43904416419ea4a4c37a1a2f4fc7a5ec"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004240_a734f1/task.json": [
+      947,
+      "70647c9569c02f7418bd80594dea064947b745bd7a5833c8e532936538b5b5d7"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004705_96dc2e/dredd.jsonl": [
+      3967,
+      "a6e3bce6bcddae109f58b39f018f242a4c2906f937afb2293bb163fe7086220b"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004705_96dc2e/executor.jsonl": [
+      48385,
+      "9a2fb898988a4aebd20613e6e1ce1f4a78099205d284e51d99df916c7d2c8444"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004705_96dc2e/executor_base.json": [
+      35593,
+      "e80395d38e7363572fb390dc8ab158870205022aa68a801d94bfbf6ea79503c0"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004705_96dc2e/planner.jsonl": [
+      97482,
+      "7a923a8bd66e96eb2e61ab2ee712d4cefcdb48dde3a4f8479c901ebc2dc9e6a4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004705_96dc2e/records.idx.jsonl": [
+      23105,
+      "3e97b5d505aa6a79e33fd1cf36bfc86bb9ca5b9d089bb67b962ca7dc82b14f0f"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004705_96dc2e/server.jsonl": [
+      26512,
+      "564fbe116a296bd98aee247ceb5de9b926d7896abc2bcf12f036ed0bad954417"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004705_96dc2e/summary.json": [
+      2927,
+      "20fa269b91dcea282970bf726c0b6c43bde8657b1daddc3222173c68fd318226"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_004705_96dc2e/task.json": [
+      1314,
+      "0fcee343b0263ea95a3da529e7f495a3d808616b3cbdeaae1a4e4447e36507b7"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/executor.jsonl": [
+      723052,
+      "a9f8f6112e54e845790fc441241f92199c63e598cfbfff77b260f49853af8f3b"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/executor_base.json": [
+      35568,
+      "f3b431ff88215f62c2149e5b69b2b73fdf77d17445c432c97ecec693f767af53"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/planner.jsonl": [
+      25397,
+      "e85e09187c19e8d45d12a68362c173509ea18cd7b9d3b910b093498b712afaf3"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/records.idx.jsonl": [
+      30793,
+      "92a1f55c82c62233e877636227c52410185d3e06af669373426a9fd4ac856be1"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/server.jsonl": [
+      563926,
+      "f23146df6a356cca2bce23e76592b81a4bc373b62f57bf56fda636ac8b840f25"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/summary.json": [
+      3468,
+      "de1f26cabcb5051fa5163b947e73077b630f5c545f0c830b1dc8038668c65afa"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/task.json": [
+      1078,
+      "41d21d1519fd3d8107bf0e759227f27d03889f65fc791c93f3d18fd18c599330"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211347_6efe8c/dredd.jsonl": [
+      3496,
+      "cc6a57e1c77d736cbe3cbc3b30aea1a193e065fe82b834d6c6dd8ddb545f46b7"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211347_6efe8c/executor.jsonl": [
+      4587,
+      "23b8df3a03270d68b036721dac3ab2d15b67ca98ed45bed3cbd8f0c84e1f295f"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211347_6efe8c/executor_base.json": [
+      34452,
+      "069506017d9f81da5936261df8f6bb90f6f2f428196b83e13328ee7276c40d41"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211347_6efe8c/planner.jsonl": [
+      38286,
+      "abde4b268e64b2193f7c2b130a32ca47cfc85567346ecc8e379a8828ce8a1a2a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211347_6efe8c/records.idx.jsonl": [
+      8657,
+      "167de13df4c1977195a301451a37e883c079bafbe2ebe491585235f461b3cf00"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211347_6efe8c/server.jsonl": [
+      5282,
+      "251865531e1f91ef82b5e6095963b8e87ca2e9e60cdf8ec00d857e81f443f607"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211347_6efe8c/summary.json": [
+      2362,
+      "c43661e8d44a43e07ea718d7884423b752935c6cc6a6d09b0c4bc23a164f00a6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211347_6efe8c/task.json": [
+      256,
+      "a2717cbe5fe5fa9f4e3cea8b95f30dc3da82369942e7a4f9a1f78d7830d34aa4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211440_30b40f/dredd.jsonl": [
+      3190,
+      "8a70b45564d6121fb869817cdb2c0963db56dfeec1c4fb80a374ecf2a63e533e"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211440_30b40f/executor.jsonl": [
+      19243,
+      "02fad1aab708bd3a3e7611f1d3fe47a2f7695e2087a56b6e38d3311486d500e6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211440_30b40f/executor_base.json": [
+      80725,
+      "4385e43f52b2282535fc0c2882eb3863c5617a1875255986172ac081fa28ebf3"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211440_30b40f/records.idx.jsonl": [
+      2534,
+      "66cf17fce5efe1470251578f19ee6ce8c9bd10e628cbecc132269edfb3dc401d"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211440_30b40f/server.jsonl": [
+      2356,
+      "ea17aa987245691cc7e221e57d76a59150655690470443b217161fced9c2cdb0"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211440_30b40f/summary.json": [
+      2185,
+      "4f39c06a023e1364722ed59d1f8cae61b6161c52890087f597e510105665ac64"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_211440_30b40f/task.json": [
+      255,
+      "f99078268aab8df9c2bc6e327f8d8523d37d06401330aab0d220ea3e452dd0e4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223343_3f4fef/dredd.jsonl": [
+      3167,
+      "d2f22965768a611e37e8ece9df22384c1fd63efc6491fb649a6ee59d15397cc6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223343_3f4fef/executor.jsonl": [
+      19756,
+      "7d6016b2cb851e8ea480035ac134104ff4ffb0e3d2e226764abdcad247a3ccf6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223343_3f4fef/executor_base.json": [
+      80930,
+      "febed6762a074c5561e463c3d23df52aaa6aef775d3c6e9523d1f0f73644b67d"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223343_3f4fef/records.idx.jsonl": [
+      2533,
+      "481d14e763241f30d8733b696487f927edb1660e2b640557e2381476bc70cbae"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223343_3f4fef/server.jsonl": [
+      2356,
+      "5845b1204ee568ccc778e42a96a88e9701e3e9254947c60f8dc522706744301c"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223343_3f4fef/summary.json": [
+      2181,
+      "f6ddec5dca0e87efdb3f221997406879aa821474911bd67e6336e1ccd956fb62"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223343_3f4fef/task.json": [
+      255,
+      "0c268a2b89616b23b1954f5833b465e37e250a3629f1d6b1b61fdb1a4330048f"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223401_874b8d/dredd.jsonl": [
+      3639,
+      "f39aa6d2e61fc9b06b486fa60d0c134a66e7922b12327a48c0180968332c8dee"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223401_874b8d/executor.jsonl": [
+      4611,
+      "7c8b73ba9e4f6cc0a577e17ade8e72ff52d3f138ddbb07c6d277c7283e1890cf"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223401_874b8d/executor_base.json": [
+      34422,
+      "64a68cd2921d9fae253cfcd994dd00ec42b6e43b3768ec6211cd40f29a9af388"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223401_874b8d/planner.jsonl": [
+      38085,
+      "9ed2bcc36671612a9e8f98644b25b1c03d4bb3a9dde0d515d7d2ecb771a57293"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223401_874b8d/records.idx.jsonl": [
+      8654,
+      "5968bb44c9ebf36f1237867f2a8034b4fb03ccb8417c8435243c3d02703f0ead"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223401_874b8d/server.jsonl": [
+      5307,
+      "2379beb84d53e0793a0a99ffb028510a2c8c14fb5ff2df6cce0de229d1491e5d"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223401_874b8d/summary.json": [
+      2364,
+      "9443126ca3fbab372e6601b65a0287b2a2c3bfd90c82e7459890f35074532391"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261009_223401_874b8d/task.json": [
+      255,
+      "67f20d8dcf8191a43dfc004e78f840ebcb43423b5b569aeb7dc9a78951f16c37"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011305_5daea2/executor.jsonl": [
+      28840,
+      "0dcded1bbcf0ffd60cfc123bae06ba039d0c8e60e2c36391220884c411924b93"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011305_5daea2/executor_base.json": [
+      36350,
+      "888b681244ab79aebce8a522f424c77d26fee29d4490526efa2add438d393904"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011305_5daea2/planner.jsonl": [
+      35151,
+      "8be87185183360db01bd4a918095686f80b44111315da60c67c08bad3b1e4022"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011305_5daea2/records.idx.jsonl": [
+      12470,
+      "5f7c75d57bf867fedd3888dd95b32d2e37e75bd71ebda99ceaa29b814afaebdf"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011305_5daea2/server.jsonl": [
+      19083,
+      "5001d879b374576f8d9c6139e03e38cedce33a629daee3f47e3341b193f49e52"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011305_5daea2/summary.json": [
+      2372,
+      "b335b93ce99576dcade7f8e1b8e673792491dabce54029934dbfd5ee4a81a0db"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011305_5daea2/task.json": [
+      1931,
+      "7f8bdca2fbe07cd1fd96e50bb0f9000b21c06d2f05497d48a392b216faa4f15a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011653_d33022/dredd.jsonl": [
+      3648,
+      "b669e2ba1a6ac40450db8e3ac7299dab748607a3063b03d80a5d2205aba5b532"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011653_d33022/executor.jsonl": [
+      29600,
+      "fc39eb201168bb9be6c80275fa72d0dd15b9186f6fdbc74a5317f702316e2fb2"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011653_d33022/executor_base.json": [
+      35600,
+      "e38441de1ff4a82e187d8ede1454b535a3fb2e68492bc8f29e6edc86c10a2dc6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011653_d33022/planner.jsonl": [
+      46313,
+      "e50cafc0499be690d9209fa71668e0a30244197044a570d3e3004c2e498b9d00"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011653_d33022/records.idx.jsonl": [
+      26288,
+      "8594d7132055ec90e14f4031cc513757fd0984c2a9563863523af2dc33752ecf"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011653_d33022/server.jsonl": [
+      21603,
+      "fe661f2c089b1c7e5b61d058f6494a45d2080e8ca428cc8465cfc416a257d678"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011653_d33022/summary.json": [
+      2734,
+      "99a768f89001fbd803b39764b2aad6293384017e825ddc78404273a028fe796a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261011_011653_d33022/task.json": [
+      1095,
+      "fafd30e034041a71668d144229ba5d1b904f0bd92a5b4f4b41c902f89a12b44c"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191315_93220b/dredd.jsonl": [
+      3606,
+      "02e14e7a456a2d86e8967a9d772923c4258de654bab78562cee926d6fb484326"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191315_93220b/executor.jsonl": [
+      4610,
+      "39d1425b68f038682a0d3cf529117025dc24cb819dcbbbb238dbcfe58adfbe63"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191315_93220b/executor_base.json": [
+      34379,
+      "2ef3fe35c2fc558a53aba39a34744f6076d18582612f2ead3b82145bc1acacc4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191315_93220b/planner.jsonl": [
+      37779,
+      "cc2eeea9ab7f9408f49690377543a4471700904e12baa30c9fb56cefb67b9858"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191315_93220b/records.idx.jsonl": [
+      11621,
+      "94e1837b131bec3e06194c7b2fe05fd5320663c60b1ff2e718a08c0ec7ce5717"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191315_93220b/server.jsonl": [
+      5237,
+      "d8cc65a407ec1db9ec43b6394dd1e8c85b740eda5106a89e8f74149767650905"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191315_93220b/summary.json": [
+      2364,
+      "34d5bad655016d9d9838c2256810f4c4ceb39044a4671ee6b673042dadae3c44"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191315_93220b/task.json": [
+      256,
+      "4889eb7474d70f008bd5e49dfa3dda098d8d786b4056d70de393c1b8ecc9feb0"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191530_9715e1/dredd.jsonl": [
+      219,
+      "1bebd85a73e86576e32a8976354acb4a4580d39909136d06a039becc6e02dbfc"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191530_9715e1/executor.jsonl": [
+      22156,
+      "2ec78d4690eb4324e7425bba13242570c66fc89d82bbca6956d6c598105a1320"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191530_9715e1/executor_base.json": [
+      84797,
+      "9485469569fe6a9394b7d33abea56d03f599a7e41228ca72165a3a5c7fbe3d35"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191530_9715e1/records.idx.jsonl": [
+      2592,
+      "e67704bd781c814dc87fea67611ee115bcd51594868ba8bc6d1e81906186a9cd"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191530_9715e1/server.jsonl": [
+      2274,
+      "bfddd2fbfa21a9c049bd9f98f18efc99c4827212ac5b408ed77754f94decaa78"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191530_9715e1/summary.json": [
+      2084,
+      "8c294d16f326815764a59f29349d28dfe409619caacc25dd5cdcf725bfc02ca6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191530_9715e1/task.json": [
+      256,
+      "6aecc67c2033eaab006b06ff5b54ae6977e571b8dea05aba32dc8ef6f2b3b111"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191812_8f11ad/dredd.jsonl": [
+      219,
+      "fc0dfce08d209caa561f8acc3cd01a42edc4c0b6c7ee8ecfd286c613c2fc9056"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191812_8f11ad/executor.jsonl": [
+      24503,
+      "e8ae1c152fc079a722ea24bbe785ec36955467432edc2b7f8c4db49ed0d4eaab"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191812_8f11ad/executor_base.json": [
+      85073,
+      "a1d2c9081ee78ad8bddeec56d526156cb3fdf1e8eb63cf52b65254c377beb43b"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191812_8f11ad/records.idx.jsonl": [
+      2594,
+      "b9865c99ae16a532a42b88278667ed3996732f5775b6505c88c74b930fdc233c"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191812_8f11ad/server.jsonl": [
+      2385,
+      "aff862faf77d024fd45c2460814a62df8f4a9d6b07cdb9c01fa3549094af26be"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191812_8f11ad/summary.json": [
+      2092,
+      "d0efbefe898a34a44d2ea5afec10bc43101fa9a1915459b4c9b0a66d43f5caf5"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_191812_8f11ad/task.json": [
+      363,
+      "cfe1c1b5e7afa7d9ced80d23294dbd6c821311ab1ef0250579f9bffa50cd9908"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_192054_5115b1/executor.jsonl": [
+      5197,
+      "3c011069e81db3bde098d2d0dab016b771becaf1fa0b2961fb956cadb4861e25"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_192054_5115b1/executor_base.json": [
+      34949,
+      "2509672f7aab44ed110d99c87faaa265f6dafcf6af0d598218534eb0433bd6f5"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_192054_5115b1/planner.jsonl": [
+      37862,
+      "4478e67f430cf1a6ce10f2d573d0b4fea1edc4f92484f11b6c2d85d0924fed7a"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_192054_5115b1/records.idx.jsonl": [
+      9783,
+      "326ee4278d7d5fb922d05c33ea593de370a025c756f84a14ff1b193ee80b97a9"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_192054_5115b1/server.jsonl": [
+      4957,
+      "2ec81fdb2425df0cd630d7f10f20f8253500c73fa011fb6c869e946c61137197"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_192054_5115b1/summary.json": [
+      2272,
+      "8e6e0eb60f29c218ef8d1919da3f133ec21183de5c7581bea932f15d191051e4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261014_192054_5115b1/task.json": [
+      363,
+      "ee4ae49b6022e4017835c8fe58fda1385bfb99e6ee650feb131d84db78c3ed7b"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261022_124943_18df17/dredd.jsonl": [
+      4383,
+      "f28cbfc1477779ed49c97a46578d6fdcf5ef15063552b0c5785d9b80b53042f1"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261022_124943_18df17/planner.jsonl": [
+      58869,
+      "104b32ed5fe34985e4d947503c96e92f6f5a8dd4e8dad450cc475e02f6edcdc4"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261022_124943_18df17/records.idx.jsonl": [
+      11217,
+      "10200efa4f8b5ea39aac01552017450595449394dfc55f3a8c07d824c7f660e6"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261022_124943_18df17/server.jsonl": [
+      1831,
+      "1f1dc51a0debf7d74f4eb5e5bc6c516a8d085b1f758a32d9307caaddb7ff8df2"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261022_124943_18df17/summary.json": [
+      2364,
+      "9cf1d854fad85e3dd882231a1ec724e84f9955f6260794819fe1be887603d163"
+    ],
+    ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261022_124943_18df17/task.json": [
+      271,
+      "7c9005b59017697a9db6e24dc508359257ad6a831f2af40430d0ded6a17a2d6f"
+    ],
+    ".ultra/audit/chat_cb96d14280714f45b1461ac19563ea86/20260927_214436_be5d1c.json": [
+      235010,
+      "76311987c79794a9bdafa3fc42f2d4552fd453d486d11773f60b20ec70b0662b"
+    ],
+    ".ultra/audit/chat_d79ff6770a914f3492af173bf8d7e59a/20260930_150108_7ce845/dredd.jsonl": [
+      1239,
+      "0e18846fa05028f6f2406cba914b0b4121807c8227544a4f8281020e64d760df"
+    ],
+    ".ultra/audit/chat_d79ff6770a914f3492af173bf8d7e59a/20260930_150108_7ce845/executor.jsonl": [
+      15986,
+      "9d6f180f80e3b5b1d961ec1cf18290e69443db1586ff0e5394e2cc5be937bd8f"
+    ],
+    ".ultra/audit/chat_d79ff6770a914f3492af173bf8d7e59a/20260930_150108_7ce845/executor_base.json": [
+      35441,
+      "975427e4ddcdc60b210cc9aeb6dad97b594aaad790f82013c798eb9096f8c539"
+    ],
+    ".ultra/audit/chat_d79ff6770a914f3492af173bf8d7e59a/20260930_150108_7ce845/planner.jsonl": [
+      39094,
+      "d06b7aff7a9888a90e060a7c324249844402c48cab57a3035364d3199fdbfb96"
+    ],
+    ".ultra/audit/chat_d79ff6770a914f3492af173bf8d7e59a/20260930_150108_7ce845/records.idx.jsonl": [
+      16899,
+      "e405ab235294d7b818c822c21b776f69362e763602e8934aea48e8056aef6a99"
+    ],
+    ".ultra/audit/chat_d79ff6770a914f3492af173bf8d7e59a/20260930_150108_7ce845/server.jsonl": [
+      18440,
+      "d3040cfdf5cc6fdf61172de9609a34050adecb8ced5d5111a433b5a7fd749399"
+    ],
+    ".ultra/audit/chat_d79ff6770a914f3492af173bf8d7e59a/20260930_150108_7ce845/summary.json": [
+      1020,
+      "147c15129ac45609de53020dc3b04cf8f4aca402d74d97cb8d4d8641d4910d65"
+    ],
+    ".ultra/audit/chat_d79ff6770a914f3492af173bf8d7e59a/20260930_150108_7ce845/task.json": [
+      879,
+      "ca500796d579e0b16654eba333a78ae40951ac43691beee037638afecb0d2e11"
+    ],
+    ".ultra/audit/chat_ed68b2a503d14eb1b3404ee5d17f319a/20260928_002435_7956cb.json": [
+      404067,
+      "cee2da2d2aa4b88c850dde5b0af7f789aa6321d98661a915830d44c647f2120a"
+    ],
+    ".ultra/audit/direct/20260930_132313_f7ea3c/records.idx.jsonl": [
+      184,
+      "20b255ea33cdfd405b7f53909743ff2e6fdbf359eada6c585ff9ffd8cf41d199"
+    ],
+    ".ultra/audit/direct/20260930_132313_f7ea3c/server.jsonl": [
+      827,
+      "4652a23d369c4150c14ca24d99796c6027cf52a4f28f423fc82fb453e79aec48"
+    ],
+    ".ultra/audit/direct/20260930_132313_f7ea3c/summary.json": [
+      986,
+      "930581ace077ef35e4299531570f7c36a36d33b1b8a25457b683cb8b327ff3fb"
+    ],
+    ".ultra/audit/direct/20260930_132313_f7ea3c/task.json": [
+      787,
+      "6598a8817241456e6954c861b11d7271f3066cb5ab1b5547fad748818a717ccb"
+    ],
+    ".ultra/chats/chat_2441bc2969e14008b10b8ad35ad8556f/metadata.json": [
+      212,
+      "42de778e760baf7efd254a5d2f26b6146d4122aafd0ad8fecfc19c05fef460c0"
+    ],
+    ".ultra/chats/chat_2441bc2969e14008b10b8ad35ad8556f/messages/msg_92fecc051c2d413d9277489caad4aba5.json": [
+      1027,
+      "e88cfcc996e135ed6d23446c642a0e71cbf1e5555f067d35f8bf8cb6c699c67f"
+    ],
+    ".ultra/chats/chat_2441bc2969e14008b10b8ad35ad8556f/messages/msg_a1126081df56439fa8b193ccd1f5602b.json": [
+      671,
+      "2e0957d458cee7a005f544c8cfb6bb334664bd387816006377390c48d4afcefe"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/metadata.json": [
+      224,
+      "52a47394d7ed7d5ff096f557da588b9dbe32f59931ebcd351dae84cceb1a0396"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_01383aca20204c7cbf68ad4ced0d8899.json": [
+      671,
+      "6e83932c19dfa263c91f951f0332341b339e442b266ebbc7cd052dd669bbbaa6"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_04133cb60d18474799a68894336cde1e.json": [
+      8908,
+      "ba10af01850b88eab52b02b88d2114508ff5c679e84baf09deaf7ee828cb8933"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_0434c110a3ce4fccae540eb65c3f72fb.json": [
+      12318,
+      "19ab5cbca10dc4e740d191500b9f0d08c17c83fbfbdc0ef8060649bbc4db3fa8"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_0e678d72c80741118afc8a96b4119e20.json": [
+      659,
+      "f90ea2a4598a382b226ca19ee3cad948089ee985d766def1024be32006f2218b"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_1ab88e0abbea4e298c6d9ee5dd0b8e77.json": [
+      671,
+      "5db83c56c7641c8e42253ce3900591891a0f0b34ecb5e04e2baecce641164dbb"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_23493173c4d7407e93af02ac1527ed4a.json": [
+      774,
+      "29641b9044b31c4ce59b19016175b881dd63b9362cb8359c66df83bee37654fd"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_25f9504ebcda4962bed5e1b25c4a0aad.json": [
+      8908,
+      "83e05aa1944a787dd2c73a6312898982c26d4c71bfee306f916ae4a6e94f19dd"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_30753c909012407083ed09dbd67e4178.json": [
+      1257,
+      "24f42e8f118d6f7d665f1cbdfa0ce12e1a8b08dc0eba26ec7e4de7bef2a88837"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_3899fb01254a447fb09ec476be9f21d4.json": [
+      12318,
+      "b7674aa7a64c03e01b2034593a967d29069213d69913e606ed96c5c2596c24fd"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_38edb3568aae4a04bd9391520e5b90e9.json": [
+      8908,
+      "c0047cb7a1131920a3edb8245d0222eb8678e23252f6b38e83c173ec7d932518"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_4939e59b4d7042f7b37c010b6b464eac.json": [
+      580,
+      "b2ab72c583f4262798981f874edc85ace6a2636d7f5ac0792877659840461e71"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_4a0d0096c7e4499d9b5d201988ccf558.json": [
+      726,
+      "e0f0d9db8148fe3ea1578923c698851e6abd46467c6b880f38bbc45f8045c121"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_4f87767ce1044fa4b9d19aa1cccbdf08.json": [
+      708,
+      "67075eaec1fac47c0a3b9bf7d8e7080233c154826b001f2f46409389b2f1ff22"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_4fb3bb49aaaf475ca40871f85a8deb53.json": [
+      8908,
+      "7af5f70e992cc9a99903044078be14fa1330dc6eaeab5a82adc7871229f73c2c"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_6b5a13297df04d979acd0a81f711147d.json": [
+      783,
+      "d05166017e6d1d7de10fc461364ba889c259713742b35d3aba32bde4081a6aa1"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_6be2be3050b24b4e9caae27a291bd259.json": [
+      1395,
+      "055ebca69b1fa12f8a0029e75c3f422ca219b0d4876bd24f70b686c28bc27389"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_6e695934462b4b4b8ef41f3f1ea50503.json": [
+      659,
+      "f20cc5c112e6de1893e5c53e13484fff6b7c407c5a1f2acb3eb228e15a4606a3"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_7066c8a42b37423c93211b9927f2c838.json": [
+      671,
+      "9d4ff1e3806af423849d11f3fbe9655bf44bc6076ce41ca9d7258f1e5b649658"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_72b9b64ca9b845f0a19509fc7d4da393.json": [
+      8908,
+      "f60d8758c80b63d59659a7280f02900382e052e67f67079871629f06d7fe9a1f"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_73e99ea9efbe4c0da04fe39c81f56fae.json": [
+      8908,
+      "3accc615ff34fbee97e40b4faae2d247cb5d19bd3836098a929617693ea4e5f1"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_783ca668840f40359ce98e2d39e5c322.json": [
+      671,
+      "7f02d18ae9cb2876a88294bd87a68c4908eb8bf6172fa0f6b4d7633a6ef7132b"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_79e1cdfb8659425990eb7d3b0518a4ad.json": [
+      12318,
+      "553b33c4a36ba875e9caf66f9daeceebe58be4437677a7aa1e288f8942d70844"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_7d31f35d13284dfaaa06adf51bbb1cc8.json": [
+      12318,
+      "dae7e22b8d445771c4a7b3036348ed6b4c8073b00bddaf20e38d364297a362e8"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_8511108168f34888b189f2f9dd490b93.json": [
+      1423,
+      "7b97b3b13141ca5c0018da9289e7fe48338bec56cddc05f459afd3a0e6302138"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_8641219a11724c82a94237a4fd5683a8.json": [
+      8908,
+      "4c6c46e4035866e7de124cf316e82adffb88e54839502eb172ae97c6c20a887a"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_870a279f344e4d54913927d471544551.json": [
+      726,
+      "e8e56368ccfd6f0a4fe443ad36f09e2f30d4bc874d8dc24468bad873a0d58606"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_89a2ae39c4c24454a221650c5a3c1f63.json": [
+      718,
+      "a2f4b922bb3b46ed4972ae1953abaf44ae80bd3fb2ef70849571557c0c1150b1"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_8b108a89125b40519ef3bf054661750e.json": [
+      726,
+      "36c92386689123ceb2acd0cba5c39889ad5ee47c0ce2b5fa0a9afa055078dff1"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_8c2335f3c8da4671a278c1dfaca874df.json": [
+      1138,
+      "852ff96c65148828ca855e7c812bc1b9a780a4454826572a9454c7512e6dd991"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_906ca63c28ea4357ba4a1121c03eda78.json": [
+      671,
+      "cba1c021a4f5674e6d234e1973f2dc9adb1373a704e6e99d54dca63c93f5c6b1"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_9114c12289064d99a05b1141562b9f77.json": [
+      729,
+      "613931f89958464fb6e1bb94fda0124bc2b501f168d2945491becf9d7e22520b"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_981df7def48a444bb4bbcc3c222e76ed.json": [
+      693,
+      "e794e0c428322a0bb8560af2fa3bfe250192b356d144fab5040b4d869c05851c"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_a6839f4cfdcd43f1854b0ad5f3a0d8e7.json": [
+      8908,
+      "c0f5103eff675e7abf14acc361791052d6b3deb60d4c6da219140c5cc001e175"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_a7a2951f72e048d58ad0b29ffcd4430c.json": [
+      671,
+      "e0c079071bea8a4d67550e951b43bfd94400c7377cf0094d62943a810b066857"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_acee7d67436d4f65bf77ed02fc11b228.json": [
+      659,
+      "2b954fc6f08754f8da020926b5c7f664a6eb56b03dbb1a0de698fd8c803fdad9"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_b2ece200575443d5ad27996c9be10e57.json": [
+      671,
+      "8be4b1f5c95515d2b6e43fbb8fcaa702ce9e66ee56c62bbeb2dc66839aad10d8"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_c11546bc80264ac7b4b0b5e7b5006ffd.json": [
+      671,
+      "04f1cf8279571ab61a51a79267c15215e0908010d272c0f9118ceba8c201fea2"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_cd2707615ea84340ac9d2059c66fb539.json": [
+      1199,
+      "f73673096d35cf0cbbe0c8e2cae3ae74e619dabd9ecded3b5f1a4f34e7990cfb"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_d35ac0083b124dd2852fa912fd85f21d.json": [
+      659,
+      "685de626ff2a5d832515e21fbb1904e5c12baaaa347870c49bcf2ae576a0b53e"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_d915faa8de09453d83e1fd0050f8683f.json": [
+      1261,
+      "ecdc3cdec0a4da480b627f1684e61953eb2426d5a347f58e8a3d54b7628edbed"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_dba2eaef4ebd4e45afee1a8f44364acf.json": [
+      671,
+      "98dd5b7f611ebe16fb4d4dc73160dd23421109874a9b8ed5911494a2c2a1708c"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_e01c832965fc49c08f87ac2857ed904d.json": [
+      12318,
+      "7886366f4dadc443835269d60ed834ad7248563f57feca46acc42ac72951c0ad"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_e52cb2104ee34070bddd357fb548e1da.json": [
+      671,
+      "a594c011e008fec4dd3158ac6ec29986547950958c7153a0c05e9198cdf3c2ae"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_e619bf40d4594f06b7b16e90d3cd1a47.json": [
+      8908,
+      "9a35f8778d566aac9098d3eca64c78fff68e59f8c946cb7882c2c316d8c9c91c"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_eabccaf3891f4af1b6680afec6e1eb53.json": [
+      671,
+      "521e08f60ec39f0c384eeda739033f1c18113dae4fb436bea820c39a6055ef63"
+    ],
+    ".ultra/chats/chat_268113db968a4bba91343544c9387612/messages/msg_f184745fa85647e8a5455c5fdf6a3877.json": [
+      671,
+      "a8ba62d1794fb54d30cc305129da909432fbbb1e977496039ab365b0c01a772d"
+    ],
+    ".ultra/chats/chat_51154b3de2e74824b04b717d2f12ee78/metadata.json": [
+      212,
+      "225ee0a32cb03fe3209a66629b442016db5d211390b26a42d4b408e64e4d439f"
+    ],
+    ".ultra/chats/chat_51154b3de2e74824b04b717d2f12ee78/messages/msg_09e94c26d624460d982531ecdb49b74e.json": [
+      918,
+      "d6d42849b3cd5472469ec910d725cff9f2aac3510725bf206ba4fb451a957d0d"
+    ],
+    ".ultra/chats/chat_51154b3de2e74824b04b717d2f12ee78/messages/msg_85713143733e4c81ab8ff9beef595821.json": [
+      671,
+      "6316204ca73a337888b804ae2333694626e1668c3df25555a46786298b9252d5"
+    ],
+    ".ultra/chats/chat_51154b3de2e74824b04b717d2f12ee78/messages/msg_f6d711db255e4d0e9e6d2b75b28d5dc4.json": [
+      720,
+      "b7b41e248915d5f3f9c7ef524a4ddd4dfed8683b6f626538e366029c56fd30fe"
+    ],
+    ".ultra/chats/chat_51154b3de2e74824b04b717d2f12ee78/messages/msg_f8942052ab90430e9b6e1e5f0304c9d7.json": [
+      918,
+      "158535c0a137290ab40d80e7ae2b35afb2c8e3d79aa1d02639bf061d801cabb7"
+    ],
+    ".ultra/chats/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/metadata.json": [
+      212,
+      "29f5994e5b077f5d2fe019ffb12d688cee011a5c3979bfc96ca37ec2f99a28c6"
+    ],
+    ".ultra/chats/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/messages/msg_29445e16afe14142be9e2e44ab741f54.json": [
+      1373,
+      "9e19685bb35274fa8c3d22e2a37443a9f5b94344ed2d82f628031323ecf958cb"
+    ],
+    ".ultra/chats/chat_64a7f89a1e8a4bb0b595cdf63e85e9a4/messages/msg_5516442d56234c7bb44c42b5b3fcd52c.json": [
+      1027,
+      "69445a95b43871ee9a3decc8c1ba3dbeaf258e553ce2112254de4fd3eba47c2d"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/metadata.json": [
+      224,
+      "87d7636687211d03eca1621c33ac4084e9fe9af94fbad3656890ce7b005d8991"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_1164238903e44e819e82b7326799a0fb.json": [
+      13367,
+      "637d68b3a8f1710fe7fe56fc35703d8560314f4af760cfb82a41ea965361a240"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_1ad918e700cf4a6cab2ced9e03eb8af7.json": [
+      2451,
+      "7eeb6fbca05b96485d6b536500e3fec8d8bd02f46d6b1301741b671682a9624b"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_1e74dd82720940baa9999f55895580d3.json": [
+      10839,
+      "393a8264a5de9b6e4d873ee29ca6c79b984254fedb05aa8cccfd0beeef4c36db"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_2852521ab4d5480492f8abaf10d9fb50.json": [
+      1598,
+      "5b4ea9d028f41d0663525a16facf5744bf57fffe0d8dbe56b0b80ddba975b0bd"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_28e98d237a7a4692ae73a1679dcbf328.json": [
+      3108,
+      "eaa875041b803cb5dfec901dffc5263d1c774eebf403613d60547336da798ca9"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_364cbd32a91d4e48ae85bdb27f76b2d7.json": [
+      6880,
+      "81ade652e14f73dae03be364c5e0af155b4dc2d6458b1dd014b05e06fcdbb441"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_3a32f2bd4e2a441ea4094b02eb57e8e1.json": [
+      1240,
+      "e9e6d8b49a092d574fb0961091da55b4fee6e8363701199a463407ec1354c0ba"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_4434af48bbf44a92be626686901d89aa.json": [
+      2731,
+      "13266736d235c986c867b924a0257a2b878c581983d80612573e53ba6af9293b"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_501dfb41cb594d03a176e696d32d4bcc.json": [
+      6278,
+      "2ae4dd2d5722a7d45968c7a303e6c2dfadacfa3b5f2dc676f4d0f1590e7ecb32"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_51a68f68aac14b77bb096b0c892698ee.json": [
+      810,
+      "c662e3694738cc0db7baa1f645d7b3f9e5b096f8ef0b24b61aec4802d21d680c"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_5a6c527ac6854931a80a9680a88bff74.json": [
+      849,
+      "a66bca5cfeddec22e76b1a79dcc0a908176672bfdfe27734cfc95166f5586add"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_5bafada0651e4dc3b081e2298f36ede8.json": [
+      1598,
+      "e5685d6e67a4515ac31396acc16329c540a80bcc6ccd9ee667d5884931e5158c"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_628c09bfaf1d4cea80042f443aa5ea41.json": [
+      671,
+      "9de3a022786947f8b7008b17f132b2c14ae5912264d897d3860c76523d8cabf4"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_7b9911ad404a4bbe92fe7c46d172ec0d.json": [
+      2913,
+      "f572fd98da8051a323fbb4bff39c1f8596358f4c35ddffd29cf3fd0e94966498"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_807c049a369d489c8fb1f5bd5c7dbe4b.json": [
+      3043,
+      "957ab0310f45c6f5ae84f3e21473a0f0eed43b547ba7601119853c9d677a69cb"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_a859ff03c2ea452a858f6e52701c9495.json": [
+      4054,
+      "7ddc2e1ccfa6550262ed30ddf1b0629cc26d18e4e8d05470845af8398ae9d969"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_bb15752c3f8b49738383c51aa5369b34.json": [
+      2115,
+      "8e8ad80a684b027dcc6ebc40c100a1f1f436b22a2b6999ad94785e6215d25d1d"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_c0a7107ecffd4294b0b789a6abbdae75.json": [
+      1227,
+      "eba384963bd9580a2f7dcfa00db17f25a8de642197f4b5655ca069db0959b0fb"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_cb178d5d06814f3b95a0c3d6bee73577.json": [
+      2451,
+      "a5388f9ba0c76b750936d85c95c439b66b60e1b8a210651c9054fa2d2c145330"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_d493a6048cde443a84cc060b144386a7.json": [
+      5247,
+      "83c7e1542fd2eba64f8be07022680ee53669dcab08f57962cb32db852f753e4a"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/messages/msg_f7cad05f7b274aff9f62cf59dbcce351.json": [
+      1598,
+      "41ded847dde2248d1e0950f1fdb3fdf68217e9ad5d4951c2a83c178466b4c028"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/message_context/msg_1164238903e44e819e82b7326799a0fb/state.json": [
+      347,
+      "96b1513c42b7ece9f87eaf297c19e9b84eb4b41c00fe62f6ea20ba9f34949e9f"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/message_context/msg_1164238903e44e819e82b7326799a0fb/variants/ctxv_d7680b73ec5c42bbbb72323cf985300b.json": [
+      5390,
+      "54e9b4b4180e267c597a8ca59ed7c6bc59d8a20766c62cabbe570cb9624de9d3"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/message_context/msg_1ad918e700cf4a6cab2ced9e03eb8af7/state.json": [
+      347,
+      "95a125e10c48b90051e0bdccf382f47e145f344df6964c5cc8b538c8657ef168"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/message_context/msg_1ad918e700cf4a6cab2ced9e03eb8af7/variants/ctxv_44ab2261f4da43bbb28a0f63d9a14c15.json": [
+      1851,
+      "9be3789da0d3458c7e3d12009e6b0137ba0d30bead3e26c3fa0c47f0be9bd8b7"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/message_context/msg_cb178d5d06814f3b95a0c3d6bee73577/state.json": [
+      347,
+      "9ddddd8c8755dadfe6ad28b3f2a348894947789b1a1b567e288453752e7dc636"
+    ],
+    ".ultra/chats/chat_941182bc80044e95a04b37be277fc922/message_context/msg_cb178d5d06814f3b95a0c3d6bee73577/variants/ctxv_62a70c003f2c4442ba322fdf3c6b9a93.json": [
+      1648,
+      "dc2bdebdb8e5e83edbd9afde1345c7fe327fd3cc9dca200547260c18013404d9"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/metadata.json": [
+      212,
+      "6004d214e36dba8037ec4caaa5876206aeb8afdfd94299773e83b30a09cf5eec"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_03e61913108b43a3834692a670adf081.json": [
+      669,
+      "86942c6711a55044a0338a5abf7c72c6cc71f068bc604f5f1b2fc3c8ca56b9ce"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_09191c992a914de49acc842627dd07c6.json": [
+      671,
+      "33abd77ec68be5fc1e444d110a7235961c435d2272d287519673275b86a5d315"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_0a62a8ad63b74e15a68876577b6cd19f.json": [
+      669,
+      "1b17696efa72511c061d2d42d110d98a9fbcd4ab0189bf8e5a07ff78e7e6c362"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_0b3463f2a7c94acfbf9d18d875c8159b.json": [
+      1119,
+      "70af331fdc40ab55e224f2f46577920495e296c63dc93e3ac2cc64c970e6ca43"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_0c96452c541d4053944337559f23b149.json": [
+      980,
+      "052e3bd34f8983ef3019069623016b40cb0cb6c2d7e5289eb2b36d88ed131606"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_11d0da57c4ac4086b4c9036c74c434ef.json": [
+      2394,
+      "4392d18a30690b8ce7f6d93a9be9143178f6c80560e82e3d21a47739b2ed6a69"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_1663c75649b64952961a6cee715678f0.json": [
+      642,
+      "2e3ee76aab442d0a55fe62e3c4ed7d7764d6f183881b79b5ccfc46c798cdfde1"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_16e70b5ca42d41d293054665df177737.json": [
+      950,
+      "6301dff5c087cc408d7bff778326de92fad3b11bdbef55e45790d18962414c69"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_21c5179fb1a943f0bdd9a74bdae4251d.json": [
+      937,
+      "1578a0a974b136c36edb9465450b1afd9ff86dba52b216d5847e86405dae48e3"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_2286f2f7ed5d40139583062e0d0618d9.json": [
+      659,
+      "967e96965b9a1b57240e80719995b1af29d41f42ece78b86181d8873faaf20a3"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_258fc76f402b49dfb52ddcb02032666d.json": [
+      650,
+      "8b60080458346a7c18692cf76d1a36bad07f177e71d96d2faf170d86be8648a0"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_28ecec9a37ad489f970ce222dbfdf536.json": [
+      1375,
+      "0b4dbb246f5fa580d3dd243aa694c87d558e521a933204b460a35d5383fe7b9f"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_293196fc3b2e42808edc6f0554468414.json": [
+      2394,
+      "57e93b2f17b2834bf0baf60f79d7cc37d2404d0698898f2495da728917cb14c9"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_29a0593d7c34459f8d1a408705ea4cd3.json": [
+      628,
+      "f32048c697ffbe5b7caeb7ed1e5fae2c7264d7246176d50cd752b50462f3a950"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_2db3d21d03f540a181909f7e96abd4b8.json": [
+      456,
+      "e6691ad3ce80a6258bfc6c6846c2d14b12911b838485b9cbfb1c4134edf860fb"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_30ce187a65d44c09aae72636bb5570ac.json": [
+      1865,
+      "675f4b76b3d3fc84e27e75e8565309694999bc3388a6d2d80fc666316f3fa2eb"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_32f0c534a2f54d119f328047f21c453b.json": [
+      809,
+      "2b42337a4c5cf0ab920e9858c25d29601d0dbb688135ba4bdc97c8425a95caac"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_33082e60e03b4e82a1c5c501c2093611.json": [
+      785,
+      "7010fa81cd1f8d71bd0a4cb73397c837f6e6230979ceb0ec89e8b597d59150d0"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_3a1759bdeb7b4db889ff7d861c8d995d.json": [
+      356,
+      "7402e0ef34959b9054a6dfff85992b0ad4eab1b61df3db6355f1f7581d23ec77"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_467e3b144648457b99c9d909cd22b6d7.json": [
+      816,
+      "ed1d672e6246bfb1e27b3052177adc0b87656bed7b578c86929cd9110c92b45e"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_4807c2abfe9a4d33bc6382fe92fcb61a.json": [
+      818,
+      "34186322c25cc6a44ccd5b763243f0b5103e4d3bbd1d525fd7384bcdd2c4d33e"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_485e8d5ded634d06b4f3eb236cb61c41.json": [
+      1691,
+      "2773076d23c461863ef6baf297b9ab2fe3031835b0453f474e719e171b278bde"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_4aa97440157d475bbb95e3e2c5de096a.json": [
+      650,
+      "3b786fc83e9bb5226b94e648ab1268a046fdd7f3ad1e16f996813a498d610134"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_4fbe53fa9fae4914aea929d148ab74ee.json": [
+      1375,
+      "dd06b0023862166a08cb7d0e2cb922b9b2be9376754e1d046715de3e9df0a731"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_52d04eb7178f404fb871071bbba9e41a.json": [
+      788,
+      "6d7ce5f53a1d01212cc47b74c6fdf6304344817cf9baece46a7fd1ac24b785d1"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_53c33e659ba14dc9ba69c15c8896ccb0.json": [
+      2476,
+      "1ed526d5e7cf9ea2ab4165a5d3eea093247b953d0c6aa12ad4a4ade94e70706d"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_5764a3292481474bb3bd1e10443adff1.json": [
+      2689,
+      "51e205450bd2fade1217daead4f1076440574ac2574f54c59fff291e3890067b"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_5cb96b94fed84b1f97fdbe40473632a3.json": [
+      610,
+      "0706dbcdc720f8c1a287052d460a4280aa3f7bd6efaeef33ff0c01a0d447ea87"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_60ff7f20d2764675aabae5ef57391431.json": [
+      671,
+      "8f9806d59250c97949f96793c2ce7c45b367714f063b240e500260daf08a1a4e"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_615cd77f08134486807e6844777ae4b7.json": [
+      671,
+      "06da01393f52860c50890b4b72081e4726a56e876c572d761af016de800ea8ca"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_66dc84a20e1e42e894b425f69db62de2.json": [
+      671,
+      "66a27a3263b11d67b50f67c5536b182b4a1b1f6d9a13e4b24665db60a4a1f438"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_68574d639ea543ac8700bdb9e9c13c85.json": [
+      1415,
+      "70edfe0eccb5303a0cccb213beefbc85566642801caff9c710d9a69cf1c4f703"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_6ab95f2df7e04a6c9aa2b49b230e4a37.json": [
+      1375,
+      "b6675818d0b987f88d8b3f89b09002a1e0de9dcd73e4db52934bed52479c3c0d"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_6cc05b9c455842ca915ca9e94e0efbbd.json": [
+      1048,
+      "fe9d564dca5971838b2048c2e840cffdce802848df703864bd467faa19d40f4c"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_711ce6dfd7034bdeb52883ff74c426c9.json": [
+      687,
+      "065865ac169ecaaaf7291b573cdfc1c08c1f15f0d1beeddbd86a35a14c11a877"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_71b301aad9e949fdabeb5cdb1e6ce052.json": [
+      950,
+      "b4a404c6cb7a8ecb874bd7a83e1d1e5b6dd97bd2cf50b0b6f5c2314883e1e90a"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_7255ae1c36b2470288bda0b84386185f.json": [
+      1375,
+      "ebb60d85c7f44afbf02e83c22a97790cb085131602caf81e4ba0f1ae2272ad55"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_745c2b7449094621a16a41e8095d193d.json": [
+      1267,
+      "f1de1c868b9d41c517f6617013d7d5cbb2aa98dff567a99331382d0c9388cc3f"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_74be135cf6b24da485018d3354498076.json": [
+      1846,
+      "c799062860a9c5402bd487478d94709e229a69662c4a36eae238da8aef55e2ee"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_7603c6406ce8453f9ee7878fd6600669.json": [
+      1118,
+      "7b287a73a645b78d9a92f21077314d72b4aaca7a77a1002c647b2b6e658cde6e"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_81e9aa9c341c454fbab1348394c39287.json": [
+      357,
+      "8707aa9048da8b5a2dddc98c4c52dd70ed3afc3220ab0e01ba7e7e817e44e669"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_85bc016fb5824d18b2df348fc57a5320.json": [
+      1179,
+      "dc4677f14c24991aead46ea85b721701f20885cc9426ec997d30381a62c4beee"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_86089f9c6ed44ff1805443d9d2290e05.json": [
+      806,
+      "416d3d8d0396e5fa906555c714a8a6e2fe27dc8755cda2faa28a7f370e4a7b5d"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_86d255535cda4ad3870ad623c2ddb2fc.json": [
+      357,
+      "cc9b6495d96631c16132b9c738a52b11bb627f1febcb5ac9cfec7f8a2cf9134f"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_87b631744c6e4834a5f953e1515b4c59.json": [
+      464,
+      "b81267d5a568bdc456047daab70c5d004550b5417435be1621c458e6a4e422cb"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_88715b2178314826a57d58bdd2e1e67c.json": [
+      357,
+      "ab97cece99e8c9353f5ac27666f4bdae8a815cbee158dee674565292de258338"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_91036290bfd443808a54f396cb4aad15.json": [
+      2122,
+      "a39d6edecb7c6c583ed9dc3bc142388c4f1377bb3b5201c0c879a83fcc220bca"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_91a5abb533c04437a27901f4c8336f42.json": [
+      1375,
+      "ab88cd8a90c7f492af10b17f3971e41e6fce121a724c51f86368789520acdf50"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_97e6645e58cb48ada81c6565502d71d2.json": [
+      1118,
+      "387b2ba40c6ced46904452217acdb23dc7d12d2970b8bea37d04e6f0fc641c77"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_9a717452eb8443278e53a12ba36e83c3.json": [
+      2122,
+      "5ba5e20f8cd53a21021208a7952e49a0de58b349b733a3ee663fb06dcad381be"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_9c005c39c46b4dd38c3caed47f225b27.json": [
+      801,
+      "967433e359f700511599bea0b291aadeff1019c2639af0ea0edfdf280159444b"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_9d1f418eb3a64daeae724fc2b8555ba4.json": [
+      372,
+      "725bbf462630c7b1751b3e9a3e14a52a30e2f8fd25e92eded7e0555c2130fac7"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_a1ac01ce5e004164a44ebc925c0183ad.json": [
+      833,
+      "ff23cbd7afb8e854a30cd8d5004182b2f5992dd48caf1c92e82ee8742f3cfbb8"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_a217af1288a3483c9dba5912b6c20bc1.json": [
+      3545,
+      "4b69ae0197f4b942cc20d607d7810d1957c14aa5d8dace87592b7ab4965b5a15"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_a2b1c2b7cbe14cd2aef946f0589c78d3.json": [
+      650,
+      "3c82d6da0ff8adc3d7d818473882d245a599d4e7f65ec8935b1ffbec5799e1d3"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_a59be2aa7d5c4dedb3347f370b4bb725.json": [
+      799,
+      "3f9db69631a640455ffe74b2ed7478876f4016a607b819dbdc46ee221dc9a12c"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_a899a38aa2b64f66b1413b3c83cd7162.json": [
+      1048,
+      "e2a177f7d1542f175995c4242cef1259048e4f73198d578af77c82576ba84f5e"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_adbd68a13c234f7c9ab3d22d6ee79abc.json": [
+      1196,
+      "5bfed0a4a8b25e0c973b744708c9365c0ae394bf6be898937c11bf3e5164d164"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_aebf878c92974649a08892fa13f22eb8.json": [
+      456,
+      "deafd33f22be18e4e651d2002daee969247d219bd0ee2997d5fae12f67bc56f2"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_aedef94d91d749208a93139df18d1559.json": [
+      356,
+      "f5af1844ba345566dd5960726a88b4eb1526e3cdb7bb2dffbf1c2599f6aff95f"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_b3327420e9e246d3b54b3ce51d23fe04.json": [
+      1281,
+      "3d2c8744913e79f27a22b5bfe7a6954d23045be062dc6514fb5a1d0e81f88b48"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_b70867f0d00b499c9d8993c495f0519d.json": [
+      687,
+      "f4497552477049634d8d1cdf534cb10906ac802f56cecdd90271d1456c86c082"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_be3e415ebf7c48fca03bde5ae26e5fb0.json": [
+      980,
+      "f957da6d2d517fbc9f3fdcc90f510bfb856577b51723385b9767b7f7ad940626"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_c19bb8f779ad4f93974966b8471558ff.json": [
+      464,
+      "bb5ccc7c0de439791ad976f5610be476b99b732544ddd6ac99e0314a2f72641b"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_cb6fd570961b4dd58776dcf6e49115e6.json": [
+      1281,
+      "41b65f91d0afbea060e3df11846bcef9281bbc8664aca03d483d8496e7a7e685"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_d0b459949384426ba1f861b2908c189e.json": [
+      716,
+      "53faaecf24c0efd750fb87addb8f05b9f295f66b815724a588365b47a44c6b7c"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_d231fdbaa68a4676ad533d80dfcbd9e8.json": [
+      672,
+      "504ac200e42b2725272e5a5b50525cf2c7c99a4eab793f2d2fdad677d80f5abe"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_d5c7c5b63ba74c46888fe8c8a4fe7ffa.json": [
+      3545,
+      "2d70a9de94a954a864ff7bfff5e3857b4c8bbb6b6627f9be235233a5b554ea5f"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_d8ea083aa80d4719963ebb7f5a67ef58.json": [
+      2124,
+      "c260fe7746959362d17c5dabf640bd5f302714b0b8e1b9854c08076f9b4c208e"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_de3a346ccead40779ebdaf30a9ac2de4.json": [
+      1602,
+      "aaba02a744e809e1f9a3da150a32197fddd4451acbb3cbae6bc485d74b2719f0"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_e20eda1d043f4e348806345f06e18b67.json": [
+      1126,
+      "b9492d6f7e56a3c8a524f7513a6140bc7cc6e3581fa47637afef5a7dafdf8f1e"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_e24dcc7c47a848128636f70f858617df.json": [
+      356,
+      "670491ca4a8c5ec589036e8507d57021a9a0d35bacd6b8af6d847f8050a2ec1e"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_e4044af8a5bb46d0916001ac300352ec.json": [
+      2122,
+      "7e8051f37d4b72250698301dd2f9f4471a70f49d89c5de784f7e471efc935bd8"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_f641d54cb47b44c096ac5dd90423242d.json": [
+      2032,
+      "3d8accc8f0f83cb80dccae678dece7527dad35450a30e38c2687e33438ae0689"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_fc0c0f15a3f941299a1f37cb6ee14eaf.json": [
+      902,
+      "2193cf214ce5174bdf4b14dfc4eeaee2bebd5d84a37e56290b05a7051d120d73"
+    ],
+    ".ultra/chats/chat_b36a4eba7fdf47f98b1d71507bc2938d/messages/msg_fe960a0913e84645aeacab64500c2ca2.json": [
+      1237,
+      "79ee3699aaa70d9ed0573909a24fb7c0b23b79aded5e86aec4118536c18b3e6c"
+    ],
+    ".ultra/chats/chat_cb96d14280714f45b1461ac19563ea86/metadata.json": [
+      212,
+      "77e1fafd8abca8f12abb95d4162be37b76951f7bfe5229b2de7a44e8efb2b0bd"
+    ],
+    ".ultra/chats/chat_cb96d14280714f45b1461ac19563ea86/messages/msg_95ec4229acb641aba0cb9fe43385ef70.json": [
+      661,
+      "ea0a5184528814c1f3b69503c93c17468826faae878bb40275bd71a553a2a88f"
+    ],
+    ".ultra/chats/chat_cb96d14280714f45b1461ac19563ea86/messages/msg_9d6a7cd00cfe4f6690dd0082ca764cf7.json": [
+      726,
+      "2f2630dbcc84fd9ecb5eb49d7f30de5c2b5c27bced13e665bfec3144ef78dedd"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/metadata.json": [
+      229,
+      "04d26eaf72c118ffe291707a3d4aaf07ef048244f62dd5813aa64e227a68e1ed"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_2a17de7bb0cd4eadbb5a084a66b06547.json": [
+      747,
+      "d65c3b745ca9f9652c0b4c67588d57f058f4ba0116a66633e0706724b560c6f3"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_517121848fc14584bcfbb15189f1d2d1.json": [
+      747,
+      "25223d2e68112d88544f141de4e4c40fccbda0491e6bbb7bd8f9762f082e2811"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_549d6e2284cf4c48969b2067fad7f9c4.json": [
+      1250,
+      "c3be1f39e22b3791f60f90dac15ac2a819a901cbbac3d8b9af76bc434b22ca19"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_5ddd6a5356f7490cb00cfbc389e72932.json": [
+      441,
+      "bc63df49b307ca7791fee582a45624a25b8d78844579b4b3c184c8b552b518d6"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_6f9402a264d9408795db18543aa68779.json": [
+      441,
+      "e3658e6d28f049d8ad84fdfb5173e955862636239afc30b4507d3d4b734a93b6"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_76f34e86a60f4e59b0b162b9a17607d9.json": [
+      441,
+      "bb20ff8ab89a42d29f510d5eb3415fddbec0c7f882fa66834b9cc2c9c07e4dad"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_7c914d4b3e3b4cb1b73b87937fc13dbf.json": [
+      377,
+      "ac1ca8ebc8e4632e42afbb6ca4305965831bf45091fdf6584392613f283e7a72"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_9214f87629d24b81bf272779772807e9.json": [
+      747,
+      "a23955b79f97d8074d0801420565c700a6d6982e37cf338d070cc0bc743ffac2"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_b11b1c26fcda41778a7673c45a558860.json": [
+      441,
+      "52693c1d9c8c781d3e3890c31638e49d075262891d916aa80f0b734597d1dcea"
+    ],
+    ".ultra/chats/chat_d4807308d6fb4e229a15293866d5f980/messages/msg_b7de8ce1956f4d748fb057259fc5a32a.json": [
+      747,
+      "b930527c04d1eb4c2f3e95110e2adf083271d6a638ac85bff171e1b955324ebd"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/metadata.json": [
+      212,
+      "004454c9f0811e500ee1f8eee2fe7f7b109f44415d026765d9ab582061c2feb8"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_18882b51079745959f4fd4d136d82d40.json": [
+      302,
+      "ef10b8dd787c141fe9462ee022a3f8847b0d61e032cbe30a0377e868a920e46c"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_5c989a8a1cab41b7ae80f79bd516a927.json": [
+      739,
+      "84e7ed4807652bfb16f991542aa1f20cf3012dd77b58e530084d30160145646e"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_7a3f5cf49d324399a4cdf966b808daf3.json": [
+      1777,
+      "399a164248585efa2d4155c10e71126454de704a9dfda001eeeec5895507b03f"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_85e2cbca53b24ec7bb43cc5cd2b56392.json": [
+      383,
+      "d49b7c374e24f3b19b935a64cc5722dfbb55f4c510c990a7602aa416e2a8d07a"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_8dd16de8f0624edcafa96e2a6ecb7a14.json": [
+      389,
+      "87c0e800f24701d7f9f644521aa9090410b4d659875559d6638540bc7b51f6ab"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_8df0ada331d54cbab79d13f94e05157d.json": [
+      301,
+      "fc3204007ececbd67977ef880f6bc8bb6a99f91e4ee31d4d7754ccb6db4e6d55"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_b339b6aa5a9d4f3faa9d843e4166c306.json": [
+      525,
+      "b8a1b7ebc3a020d3cb7bad0a9724bd6336e20475dee4137a03d61455edd97321"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_bba218a4c3394090a522b89fd3c006b0.json": [
+      980,
+      "2bb70e3ae60a3347d14af819a0c08e6c4fc4844c68948ec28f56699e785ee43e"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_c9da3ab5cce043ef97173f425d68726d.json": [
+      292,
+      "405a2df55fae13c808910269465f1d967c7a943a504869c5795ca993403a2451"
+    ],
+    ".ultra/chats/chat_d79ff6770a914f3492af173bf8d7e59a/messages/msg_e1a07652d8454a0fa1852c9ad8c7a6a3.json": [
+      950,
+      "6c76f584da5cf23d52a5f12419d911d8537cc189321923592f5250765bf4cf32"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/metadata.json": [
+      243,
+      "c683b244725338e93f987beed75f269be5ee5a79707f0d32e6f80bf2c6515a9f"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_0999bb83f2d14aed9d998126e1c7a21f.json": [
+      352,
+      "c71e40443a68326e0fdf6e5dcb99477bf187bf26dbd719267dc1d3aa00d1b330"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_13ea33a5a59e49b7b3e7ab460b451102.json": [
+      3166,
+      "4d3050a9380d132ef9f61d13c1b16137cd2ed2a6c87793082928bd5a78474671"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_165c23f9d8c44fd5845b2ba406d9a153.json": [
+      12779,
+      "9a3b4e5a4fd3bcec3e3838b2592f5405be7f194ca7622fa3f1cbd029e737272e"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_1b32b9ec27ee4c54a9eb228fa2614430.json": [
+      8142,
+      "66bb552dd51add6eb25c47788ad93befc4b4905e66d98950eb341271f89c5f89"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_2f444be9034a4520ac49411104600d89.json": [
+      449,
+      "22f0e2826cfe2329bf0a9587db5b922075e2a474517a01c5327384f698cc0eb0"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_2fee5dfd8b5945c79af901df269983ad.json": [
+      915,
+      "cfb7eecb3cb7110361d79977d46eccc097df1588e501fad5f1b42afc09d11082"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_305650f84fea4c41ac67a06860493797.json": [
+      2336,
+      "e316d1dd9bcb593ea217158547fb8e6d78b1de42f26af2ce637061cd43dedb77"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_31488cc5427b44d2a75e408e8531150a.json": [
+      8295,
+      "c43fb69645f3771e4e2368965e935475bff238e9ceff82bcb4f0a4a6f833a8e7"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_33ddbdc66e684fc3bc5c5cebf67b70a7.json": [
+      13367,
+      "03b18743546acdea9257c7471f0c2e0d59c450ee88a8d8f3b194f1aec9e23f8f"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_4643acc35c4d43ee951a49e9ded1ac6b.json": [
+      5871,
+      "c1d223cced2ca541eadb53b23f9cafc7fb7228af46d31d19555917321e4b67e5"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_47c15fb4d4594720abac2c9793941ea9.json": [
+      330,
+      "cf6cc3fcdc473b0700f2835f89314374c44c7cf1ac2419678c109f40674b67a3"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_48f2dd8e7004436b930ee7960c4142eb.json": [
+      3122,
+      "ee2a826d4a4f0c6a375ba8a583db479485a7fa33cd2374c3c83262888c4b4423"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_4926e4a9af62400dad4507a23c69be2c.json": [
+      298,
+      "5c5cce9eb2887355f3cfcabd9b0063f178da0d6bfe832e2a6b2963cb85cd8ea8"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_4c6b2b1d313a415eb93e612d87d70281.json": [
+      2634,
+      "15bbacbbd5f083b310638966d9b4312b714c360b6dbcb5e86269a33796ef5987"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_4dd0c486ded1455ba57272b4be817ef3.json": [
+      11746,
+      "b79f4b6a87e09778cdd9b75ece6ec80165a51eb8d9a4d29ec369e6fd69ff766f"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_4f1e8608d77e4abd9ce6d59e406dd08f.json": [
+      7384,
+      "9966b3e59ce532c2dab0bb8016d819407e5c7f3a8edd8d7bbb13b918aab1f157"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_524b2b85bcb14fb0ac929328b795cf83.json": [
+      5776,
+      "fa5361572c06740ce278ed1baa9bd15df57aac07533b277c4d888cf0e69d5b0f"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_59d90d913e0448f6999c2fb051082086.json": [
+      2687,
+      "8969f2297884450bcdebf3d0f0b4005790d0c472035d09e6ffad75214e7f9392"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_6fa69c1eba3649b881074aaa583b4376.json": [
+      3030,
+      "8cbf21bebf828f6ca7a9d2ab9c6d639b1c6f9a5c228980d90afc46a37c118ed4"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_7439ac1c239b4702816313ee3c15321d.json": [
+      26298,
+      "cc31500c05807d71684827a4716f948e2cd50e837d08bc9005f4be79f0973ad7"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_78848cdba0394aa4813e393904d4ed53.json": [
+      295,
+      "77e9bbfd10e206de68897605a99671e9b69ac73fa1c87d9a8b48aab60d5ec122"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_83ae6639942b4e0382a9e291f2337d52.json": [
+      3763,
+      "ecae2f43bc6a4fdf726b60358d945b52716696b9b353b2cac351309e28c0f84f"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_8eddaa9004394099b6dace5f464d5d2b.json": [
+      2242,
+      "b4e363ec80f22b2816452040fbb89ef971a762fb25b6b1d1ea0175b8af41de1a"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_94263222134741f49aa4fa8f46f146df.json": [
+      3597,
+      "5f87ae43dd30ed1a95d0a8c5ae541ea6207f0b5dc0c4b6b9c79116965081dc67"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_9b38e0db1e704f29a7d471189386b4fa.json": [
+      1667,
+      "f5e45c574ccb92f256e8f94658d92e029d0a6f5bd51d7bdd263a4b090a1b9819"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_ac6ef35aa5d84ecbb4930b584ab9f3e0.json": [
+      12251,
+      "975db34692d508a518b20a41c571f9d51166c2a65dd3336ad987e18395bf888d"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_baf3c3d5677c44c49ac9864151b0d40f.json": [
+      332,
+      "853bf712e60cb2f99bfb828ffbde94859a83fe9821d7fb38d801d053e1bf44d1"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_c2f286753187412ba21463aaa77a70a6.json": [
+      4822,
+      "7977e169df9ebb95c475743d6b4a0d1484e78afd5b39fd165f8af798e7ae5883"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_c392471f9cc54707a4acfced21f0b87e.json": [
+      9023,
+      "9d6b4cc823ccf7842be07cc2f76e5025711f0f128272d2bf39b65db5048b3978"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_c400a0e8f90547bf81eff93afb32524a.json": [
+      10078,
+      "84bd5217245c2047a9944899373225ec66262d6255113342b6c5b04892a462cd"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_c65881b681a34e07807f1b0a9f4daf8c.json": [
+      305,
+      "47533211ec3ace3ad1308d2c24499bd7ffb68e586db5346485b6d5df4cc4f856"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_dfae03e454104aebab2a29006b0b4071.json": [
+      4235,
+      "43f05c59533b973d851b61e9f5538ed5ab46880fd750b05100f528dc27dfa47d"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_f32fbb52a8b84e21a33b0fb113e63424.json": [
+      2333,
+      "eec138d17cbc45f279b677a33b5719287143297b4876d5b77c124005aef9166e"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_fcac58eb474948fcb4a3b5583c250daf.json": [
+      4357,
+      "19feafb5a8370cc1282395fcd97e900dd8a734a014d19fa71301218253453f09"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/messages/msg_fe61a202285d44f4869b21d98eba1dde.json": [
+      3687,
+      "b6943451c9ab87376bd61ecd565c45001037c9caf7583559bd760eb6934b5367"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_165c23f9d8c44fd5845b2ba406d9a153/state.json": [
+      347,
+      "4c837da1f6757af38b9a92d079bfaf204ccfd6a42ecddcc49d1391ab101c67c9"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_165c23f9d8c44fd5845b2ba406d9a153/variants/ctxv_d5c6cf2c80234038a89259c14238a830.json": [
+      3838,
+      "9280a424b1ae05d74e6bd786e0f1cf8e39d4b7ebcb726f61da405455575bd0e4"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_4643acc35c4d43ee951a49e9ded1ac6b/state.json": [
+      347,
+      "d76f052bdd9ad7f837584d1fa814ab4992783cc9907ae4783ccf1bc953a2015d"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_4643acc35c4d43ee951a49e9ded1ac6b/variants/ctxv_4cb3d6aea11c4476a5c86f383699a029.json": [
+      4045,
+      "1ec02a333937893a787d6064aea67ea9c27db53b7988756c07eac25b906007a3"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_48f2dd8e7004436b930ee7960c4142eb/state.json": [
+      347,
+      "c3b5420bb813a76a9bb94ab1b9951920b4c47625d2b55514935169be1d08acad"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_48f2dd8e7004436b930ee7960c4142eb/variants/ctxv_2d63c4ee94f645e5870e209176b78055.json": [
+      1971,
+      "7c6b36814b77d09e7661dfb7ded2d07bff2888c4177f6ccfc1d0784255843b37"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_4dd0c486ded1455ba57272b4be817ef3/state.json": [
+      347,
+      "de8dcc35ffdfc8a4e5657eaaf11ffd1a685edee4caca240b1c95c3b1cacfbda9"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_4dd0c486ded1455ba57272b4be817ef3/variants/ctxv_fe8082457fcc44f3acca3ad0e51caa26.json": [
+      4787,
+      "05b4d2b5506e7e8cb7f3c0c2eda8c6f129e9ebe98c581e7adf50c0a1ec94a46b"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_4f1e8608d77e4abd9ce6d59e406dd08f/state.json": [
+      347,
+      "64f8abc0010d8363f9f42224a619e1e17dd036f501c1e34d27dfa2bee93f1130"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_4f1e8608d77e4abd9ce6d59e406dd08f/variants/ctxv_9576e9994b214f65928812f1e05323ed.json": [
+      1879,
+      "e9ad5fc6d7846f9a9db2f7719001703ddd3ec75a2e6c01075b5552fe5421346b"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_83ae6639942b4e0382a9e291f2337d52/state.json": [
+      347,
+      "52c15cb06e4394623b43e571d7340db3e25d3a61e20b502c2b35b0c2cb8bbe32"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_83ae6639942b4e0382a9e291f2337d52/variants/ctxv_178fe88ea3594f1590697a161eda7b8a.json": [
+      1934,
+      "e52a43729625b3aca03b5fe964ba72d9d397ae1c276412333567efad71bf2651"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_94263222134741f49aa4fa8f46f146df/state.json": [
+      347,
+      "1ff80df8cb1f2dda84417c19c375b0c7e55c0027a6b304f23be9faacedcd25aa"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_94263222134741f49aa4fa8f46f146df/variants/ctxv_821e294d69ea4a0c8c05e4b526b73865.json": [
+      1597,
+      "240c823001d5dbfdb91f9dd2ad1d4e4cdbc2cf03de2e7541f425ec262a2d14cd"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_c2f286753187412ba21463aaa77a70a6/state.json": [
+      347,
+      "14a469b3de6da9e26fa0df78389425bd155cb0afd31524797d4ae4d3477513a5"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_c2f286753187412ba21463aaa77a70a6/variants/ctxv_6c563f88e026436699ea0591a5e783f6.json": [
+      2370,
+      "ef9f29d4a58d7dc57839b01312617d065b078badeefb1c7028b91b046dfa36f0"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_c400a0e8f90547bf81eff93afb32524a/state.json": [
+      347,
+      "437508e815ad50e3ba49cff4bf1910b2174eb355cb7c0bdb991722555e12b647"
+    ],
+    ".ultra/chats/chat_e2e2f97c282e4394b16e78dd54f9ed3e/message_context/msg_c400a0e8f90547bf81eff93afb32524a/variants/ctxv_78266b3acd49437b94e6d69e2429a831.json": [
+      2720,
+      "11b78aba60e5c4ec6c7b84cc5517c4f770a117290593e3aa139b509f0a53f1a2"
+    ],
+    ".ultra/chats/chat_ed68b2a503d14eb1b3404ee5d17f319a/metadata.json": [
+      212,
+      "35361a1f74cfc2ac16ae02ef8702a67242b93f8381a3e771df622f30747af6ec"
+    ],
+    ".ultra/chats/chat_ed68b2a503d14eb1b3404ee5d17f319a/messages/msg_28f4a6ba40784f29922eb687fe5f91e9.json": [
+      1069,
+      "e1d10c1f67862418d3e08952b5a975760fd548d4504fac96c55afb08feed31a2"
+    ],
+    ".ultra/chats/chat_ed68b2a503d14eb1b3404ee5d17f319a/messages/msg_6c7097cdc5e4404a96fbeba8951b07b6.json": [
+      918,
+      "c545dd87e8465f7b845bccf14f3b6067df5e98103afb34294752fc369efd0254"
+    ],
+    ".ultra/project_context_history/project_context_20260919T143111_376500Z_bfb57f2e.md": [
+      563,
+      "028ddcdbf74c615166f53a12888cbc6c4b18dc881a95aa53a915b5cafc62b7ef"
+    ],
+    ".ultra/project_context_history/project_context_20260919T144157_893857Z_227b6ea8.md": [
+      2017,
+      "de036ab962374cc3de52db8145fd903000e5da7b1741eb6e52f3614e82c98ab1"
+    ],
+    ".ultra/project_context_history/project_context_20260919T151249_834571Z_6d657311.md": [
+      24816,
+      "a4d549e69653d7e5f504acbf6a5b6c4513ce0227848044c29858720ddb0ce7ee"
+    ],
+    ".ultra/project_context_history/project_context_20260924T190046_443474Z_aeb839fb.md": [
+      31137,
+      "8ee1334e13999ff93441173d9a103073e6e3dfbc94d5ce4b036493bb21429091"
+    ],
+    ".ultra/project_context_history/project_context_20260927T171352_217746Z_d2665254.md": [
+      30933,
+      "29d27068a50ddf3add0f689d22c644ef5aac27a83830143f0a668594dacb5dcf"
+    ],
+    "Чат_pro/S0_test_02.txt": [
+      46,
+      "aa290547f0116e09aaa1739fb85c4cbfdaf34f8593120e5b23332a36cc64f538"
+    ],
+    "Чат_pro/.ultra/project_context.md": [
+      564,
+      "73042e0391430ea9f8eed18f5789efbcc7146e11bfbbc7b0b67dc322948ee8d3"
+    ],
+    "Чат_pro/.ultra/workspace.json": [
+      167,
+      "a3b529e350fb1b4956842a4ac46a9b45aee71f9da59400fb8a25c1332512d30a"
+    ],
+    "Чат_pro/.ultra/chats/chat_0802e40904654d40baa55881b132ff19/metadata.json": [
+      223,
+      "7ae5b9e7fc4297b42ef25375ec0953af48af56e997bea82ef739947ca6e6a6e1"
+    ],
+    "Чат_pro/.ultra/chats/chat_0802e40904654d40baa55881b132ff19/messages/msg_4b4bc83af6824a4288cdf21581762545.json": [
+      11753,
+      "aed56d4469e9328dcd8ac096b5c6016ae0b8c5aa35e5cbd8f390d4ee65962af9"
+    ],
+    "Чат_pro/.ultra/chats/chat_0802e40904654d40baa55881b132ff19/messages/msg_c9c258b6aae74078b56898e99cf99fc4.json": [
+      2544,
+      "c5827f3fb0c1b86ed9737165e426760df00fde1614a8ba3aa864b7be7c709d76"
+    ],
+    "Чат_pro/.ultra/chats/chat_2a30403e4e35ec5fe5c4fa18e78dd4ea/metadata.json": [
+      229,
+      "aaeb68db691741238e242c948f2ea9bd22d47bea1dcfbcae6f7aa68dc8de54a8"
+    ],
+    "Чат_pro/.ultra/chats/chat_7b4ded52afda9ef6f0f829800cfdc151/metadata.json": [
+      216,
+      "f2606659bba1f3de3960a5da65453459acff22f17141797b8e39dae40678580e"
+    ],
+    "Чат_pro/.ultra/locks/writer.lock": [
+      0,
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    ],
+    ".obsidian/app.json": [
+      2,
+      "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    ],
+    ".obsidian/appearance.json": [
+      2,
+      "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    ],
+    ".obsidian/community-plugins.json": [
+      18,
+      "e3a58e274aa0d86a28ed9c4ee9d986b4a6381f9a1b6e2140cb70ca4bfbc786b3"
+    ],
+    ".obsidian/core-plugins.json": [
+      696,
+      "763cf20a921fd9955735b278006820b90b207b2fc04d9e79ca648279c7c14276"
+    ],
+    ".obsidian/graph.json": [
+      4012,
+      "bcb5e4363f090185ede78b5884b4f9647fbdde23f0f634444da5b4105d151e86"
+    ],
+    ".obsidian/graph.json.pre_web02_branch.bak": [
+      3170,
+      "1d87ad1c1b00848f6001560c77772d45e6c39d0d0cabc57f4ce21c2e8e949e62"
+    ],
+    ".obsidian/workspace.json": [
+      9250,
+      "f2a9b213434ef1ea4f5d6363344e88277fceaf29d1a23e92d9511f10aa1ad19b"
+    ],
+    ".obsidian/plugins/base-graph/main.js": [
+      105243,
+      "05aaeb2af921a86badac08f996a162dda3551821e9aa8f20a3c65d5ecaf0213b"
+    ],
+    ".obsidian/plugins/base-graph/manifest.json": [
+      296,
+      "38e30be794a8747cccbeced7cbe781544b04610760a099ef109a013933da3643"
+    ],
+    ".obsidian/plugins/base-graph/styles.css": [
+      3848,
+      "68a6be925d76b0e121200ae501b9aaf91b625de96e42a5a72358e328df3b96f5"
+    ]
+  },
+  "launcher": "standard"
+}

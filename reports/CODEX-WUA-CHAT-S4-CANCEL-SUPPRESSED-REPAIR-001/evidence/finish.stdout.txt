@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "08f26ff4bc85bba8f162ee9056b2c3f9b96a95124dbb9f19782b5cbb29e0a22b",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 116,
+    "b11b": 122,
+    "b11e": 210
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001",
+    "problems": [],
+    "title": "Web Alarm Ultra — Stage4: защита от ложного SUCCESS после внешней отмены",
+    "lines": 67
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001",
+    "copy_sha256": "3fbde8c10194ad57df0af989c76995506c4043c67eebf13ab0c65ad89c1df9b1",
+    "history_id": "H-CODEX-000018",
+    "history_record": "reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "08f26ff4bc85bba8f162ee9056b2c3f9b96a95124dbb9f19782b5cbb29e0a22b",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001",
+    "copy_sha256": "3fbde8c10194ad57df0af989c76995506c4043c67eebf13ab0c65ad89c1df9b1",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/handoff_task.md",
+    "archive_sha256": "bd468c15352a0c9a06f7340e18c2ea1ca1e66c2e625b9fea5d1260a87b007847"
+   },
+   "history_id": "H-CODEX-000019",
+   "new_card_sha256": "ab62c54b2409fdcf0c0abd1c965790f6b1167fcb47529690b216b249dd93093c",
+   "copy_sha256_lf": "b0159a94acd82e6c3cd9d45c368961bb34529694e89d8ce320375c83c5827296",
+   "copy_lines": 67,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "08f26ff4bc85bba8f162ee9056b2c3f9b96a95124dbb9f19782b5cbb29e0a22b",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001",
+    "copy_sha256": "3fbde8c10194ad57df0af989c76995506c4043c67eebf13ab0c65ad89c1df9b1",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/handoff_task.md",
+    "archive_sha256": "bd468c15352a0c9a06f7340e18c2ea1ca1e66c2e625b9fea5d1260a87b007847"
+   },
+   "history_id": "H-CODEX-000019",
+   "new_card_sha256": "ab62c54b2409fdcf0c0abd1c965790f6b1167fcb47529690b216b249dd93093c",
+   "copy_sha256_lf": "b0159a94acd82e6c3cd9d45c368961bb34529694e89d8ce320375c83c5827296",
+   "copy_lines": 67,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001",
+    "history_id": "H-CODEX-000019",
+    "record": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "82d55fb210eaf36091894633977cfdff72fba7ba7e94c12ac51aec0f70461f0c",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "ab62c54b2409fdcf0c0abd1c965790f6b1167fcb47529690b216b249dd93093c",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 126
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001",
+    "copy_sha256": "b0159a94acd82e6c3cd9d45c368961bb34529694e89d8ce320375c83c5827296",
+    "history_id": "H-CODEX-000019",
+    "history_record": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001",
+ "history": {
+  "id": "CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001",
+  "history_id": "H-CODEX-000019",
+  "record": "reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

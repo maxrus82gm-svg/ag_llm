@@ -1,0 +1,40 @@
+test_external_cancel_suppressed_by_transport_cannot_publish_success (test_ordinary_chat_service.ExecutionContract.test_external_cancel_suppressed_by_transport_cannot_publish_success) ... 
+  test_external_cancel_suppressed_by_transport_cannot_publish_success (test_ordinary_chat_service.ExecutionContract.test_external_cancel_suppressed_by_transport_cannot_publish_success) (clear_cancellation=False) ... FAIL
+  test_external_cancel_suppressed_by_transport_cannot_publish_success (test_ordinary_chat_service.ExecutionContract.test_external_cancel_suppressed_by_transport_cannot_publish_success) (clear_cancellation=True) ... FAIL
+
+======================================================================
+FAIL: test_external_cancel_suppressed_by_transport_cannot_publish_success (test_ordinary_chat_service.ExecutionContract.test_external_cancel_suppressed_by_transport_cannot_publish_success) (clear_cancellation=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_ordinary_chat_service.py", line 415, in test_external_cancel_suppressed_by_transport_cannot_publish_success
+    self.assertEqual((result.outcome, result.execution),
+AssertionError: Tuples differ: (<Outcome.COMPLETED: 'completed'>, <Execution.RESPO[30 chars]ed'>) != (<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start[50 chars]ed'>)
+
+First differing element 0:
+<Outcome.COMPLETED: 'completed'>
+<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start'>
+
+- (<Outcome.COMPLETED: 'completed'>,
++ (<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start'>,
+   <Execution.RESPONSE_RECEIVED: 'response_received'>)
+
+======================================================================
+FAIL: test_external_cancel_suppressed_by_transport_cannot_publish_success (test_ordinary_chat_service.ExecutionContract.test_external_cancel_suppressed_by_transport_cannot_publish_success) (clear_cancellation=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_ordinary_chat_service.py", line 415, in test_external_cancel_suppressed_by_transport_cannot_publish_success
+    self.assertEqual((result.outcome, result.execution),
+AssertionError: Tuples differ: (<Outcome.COMPLETED: 'completed'>, <Execution.RESPO[30 chars]ed'>) != (<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start[50 chars]ed'>)
+
+First differing element 0:
+<Outcome.COMPLETED: 'completed'>
+<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start'>
+
+- (<Outcome.COMPLETED: 'completed'>,
++ (<Outcome.UNKNOWN_AFTER_START: 'unknown_after_start'>,
+   <Execution.RESPONSE_RECEIVED: 'response_received'>)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.019s
+
+FAILED (failures=2)
