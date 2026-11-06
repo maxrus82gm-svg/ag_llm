@@ -7,6 +7,7 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 <!-- TASK-HISTORY-INDEX:BEGIN -->
 | Дата | ID | Задача | Статус / проверка | Адрес подробностей |
 | --- | --- | --- | --- | --- |
+| 2026-11-07 | `H-CODEX-000020` / `CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001` | Stage5: полноценный Web/Tk OFFLINE TEST Chat | DOC CLOSED / BOUNDED PASS; 209 Python + 165 JS + 3 reviewer + 10 HTTP PASS independent Windows; final browser GUI and clean Windows portability NOT RUN; Stage6 NEXT | `reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/task_record.json` |
 | 2026-11-06 | `H-CODEX-000019` / `CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001` | Stage4: исправление внешней отмены после начала запроса | DOC CLOSED / BOUNDED PASS; independent Windows 154 main + 6 reviewer + 60 stress PASS; Stage4 OFFLINE Stage5 READY, full GUI/real NOT RUN | `reports/CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001/task_record.json` |
 | 2026-11-06 | `H-CODEX-000018` / `CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001` | Исправление ложного SUCCESS после дедлайна | DOC CLOSED / DEADLINE BOUNDED PASS: independent 150 + 120 deadline PASS; external Task.cancel suppressed reviewer 1 FAIL x2; Stage4 HOLD | `reports/CODEX-WUA-CHAT-S4-DEADLINE-UNKNOWN-REPAIR-001/task_record.json` |
 | 2026-11-06 | `H-CODEX-000017` / `CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001` | Stage4B: S4A↔Turn OFFLINE, устойчивый ответ/восстановление | DOC CLOSED / TECHNICAL PARTIAL; S4B 14+5 independent Windows PASS; S4A deadline 1 FAIL; Stage4 HOLD | `reports/CODEX-WUA-CHAT-S4B-TURN-OFFLINE-INTEGRATION-001/task_record.json` |
@@ -16,7 +17,6 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 | 2026-11-05 | `H-CODEX-000013` / `CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001` | Web Alarm Ultra — Stage 3: первая отправка сообщения, устойчивый Turn и восстановление | DOC ITERATION CLOSED / TECHNICAL PARTIAL; PARTIAL / TEST Windows CI; USER GUI PASS (2 sends/2 TEST replies/F5); writer-lock OPEN; real LLM NOT RUN | `reports/CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001/task_record.json` |
 | 2026-11-04 | `H-CODEX-000012` / `CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001` | Защита Run Store v2 перед Stage 3 | SUBMITTED / REVIEW PENDING; PASS / INDEPENDENT WINDOWS CI 56/56; full regression NOT RUN | `reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/task_record.json` |
 | 2026-11-04 | `H-CODEX-000011` / `CODEX-TASK-HISTORY-ID-001` | История по ID, автоматическая нумерация и порядок веб-планировщика | SUBMITTED / REVIEW PENDING; NOT VERIFIED | `reports/CODEX-TASK-HISTORY-ID-001/task_record.json` |
-| 2026-11-04 | `H-CODEX-000010` / `CODEX-WUA-CHAT-S3-TURN-RECOVERY-001` | Проверка условий восстановления Turn и Run Store | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/task_record.json` |
 <!-- TASK-HISTORY-INDEX:END -->
 
 Старый полный текст сохранён побайтово: `reports/CODEX-TASK-HISTORY-ID-001/preservation/001_История выполненных задач Codex.md`. Снимок не читать целиком на старте. Старые статусы относятся к своим датам; перенос не является новым PASS. Старше десяти — вне рабочего окна, но не удалено из архива.
