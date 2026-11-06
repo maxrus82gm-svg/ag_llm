@@ -4,6 +4,8 @@ on:
     branches: [GPT]
     paths:
       - .github/workflows/gpt-web24-s5-independent.yml
+      - reports/CHATGPT-WEB24-CODEX-S5-REVIEW-20261107/check_manifest.py
+      - reports/CHATGPT-WEB24-CODEX-S5-REVIEW-20261107/test_independent_s5.py
   workflow_dispatch:
 permissions:
   contents: read
