@@ -1,0 +1,7 @@
+{
+  "command": "python -B -X utf8 reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/verify_diagnostic.py",
+  "exit_code": 0,
+  "capture_note": "Repeated once solely to retain original stdout/stderr in final package; four distinct diagnostic cases total, not eight. No browser replay.",
+  "stdout": "diagnostic_checks.json",
+  "stderr": "diagnostic_checks_stderr.txt"
+}

@@ -1,0 +1,21 @@
+{
+  "task_id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+  "provenance": "Sanitized reconstruction of the successful read-only HTTP tool output earlier in this chat; not rerun at closeout",
+  "original_command_exit_code": 0,
+  "fixture_origin_at_observation": "http://127.0.0.1:53505",
+  "workspace": "S5_SMOKE_01",
+  "chat": "S5_CHAT_03",
+  "test_text": "S5_TURN_DIAG_01",
+  "mode": "TEST_OFFLINE",
+  "state": "SUCCEEDED",
+  "same_turn_by_latest_and_key": true,
+  "turn_id": "turn_25b0d56bd6b2405392f3f18bcdb036ff8d43f67f126913830a0a7dc8045d92e2",
+  "attempt_id": "attempt_25b0d56bd6b2405392f3f18bcdb036ff8d43f67f126913830a0a7dc8045d92e2",
+  "history_state": "complete",
+  "test_user_message_count": 1,
+  "matching_messages": [
+    {"role": "user", "outcome": "request", "text": "S5_TURN_DIAG_01"},
+    {"role": "assistant", "outcome": "completed", "text_omitted": "Russian terminal encoding loss in the original console output; readable response independently seen in browser"}
+  ],
+  "request_scope": "GET capability; GET workspace listing; GET selected workspace chats; GET latest; GET same key; GET selected chat messages. Only named synthetic chat was reported; token omitted."
+}

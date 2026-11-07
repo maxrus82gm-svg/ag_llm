@@ -1,0 +1,51 @@
+{
+  "status": "BOUNDED_DIAGNOSTIC_CHECKS_COMPLETE",
+  "python": "3.13.8 (tags/v3.13.8:a15ae61, Oct  7 2025, 12:34:25) [MSC v.1944 64 bit (AMD64)]",
+  "node": "v22.20.0",
+  "diagnostic_cases": [
+    {
+      "id": "D1",
+      "result": "PASS",
+      "observed": "RUNNING + no assistant is classified interrupted",
+      "scope": "real classifier, synthetic in-memory data"
+    },
+    {
+      "id": "D2",
+      "result": "PASS",
+      "observed": "UNKNOWN unanswered user is retained as no_answer",
+      "scope": "classifier only; no assertion of real cancellation persistence"
+    },
+    {
+      "id": "D3",
+      "result": "PASS",
+      "observed": "completed pair included; later unanswered user omitted from next context; input history unchanged",
+      "scope": "real context selector; core/turn reads replaced by in-memory stubs"
+    },
+    {
+      "id": "D4",
+      "result": "PASS",
+      "observed": "only unanswered RAW yields system-only context without modifying input history",
+      "scope": "context projection only; no disk persistence tested"
+    }
+  ],
+  "counts": {
+    "diagnostic_cases": 4,
+    "passed": 4,
+    "failed": 0
+  },
+  "syntax": {
+    "python_ast": "PASS",
+    "inline_js_node_check": "PASS",
+    "scripts": 1
+  },
+  "prior_wording_present": true,
+  "not_run": [
+    "browser replay",
+    "real cancel/F5",
+    "raw persistence test",
+    "race proof",
+    "full regression",
+    "real providers"
+  ],
+  "product_verdict": "PARTIAL; successful probes do not imply product PASS"
+}

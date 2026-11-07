@@ -46,6 +46,16 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
 ###### ▼ НАЧАЛО ЗАДАЧИ — строку-маркер не удалять · TASK-SLOT:BLOCK-1:BEGIN
+**ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.**
+###### ▲ КОНЕЦ ЗАДАЧИ — строку-маркер не удалять · TASK-SLOT:BLOCK-1:END
+
+---
+
+# БЛОК 1.1 — ПОСЛЕДНЯЯ СДАННАЯ ЗАДАЧА
+
+###### ▼ НАЧАЛО КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:BEGIN
+**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-WUA-S5-TURN-CHECK-DIAG-001` · перенесено 2026-11-07 · SHA-256 копии `d29e04c16144efe150314cfa5eed207cf400cb036a4c12a37371ef22f610dc83` · CHAT-ONLY AMENDMENT: 2 в снимке · снимок `reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/handoff_task.md` · отчёт `reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/report.md` · HISTORY ID `H-CODEX-000021` · запись `reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/task_record.json`
+
 **TASK ID:** `CODEX-WUA-S5-TURN-CHECK-DIAG-001`
 
 **Проект:** Web Alarm Ultra — Stage 5 OFFLINE  
@@ -87,110 +97,6 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 Кратко предоставить: **ожидаемое поведение → наблюдаемое поведение → подтверждённая причина или UNKNOWN → минимальное предлагаемое исправление**, если оно требуется.
 
 Никаких исправлений без отдельного согласования.
-###### ▲ КОНЕЦ ЗАДАЧИ — строку-маркер не удалять · TASK-SLOT:BLOCK-1:END
-
----
-
-# БЛОК 1.1 — ПОСЛЕДНЯЯ СДАННАЯ ЗАДАЧА
-
-###### ▼ НАЧАЛО КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:BEGIN
-**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001` · перенесено 2026-11-07 · SHA-256 копии `c7d4a22f41c1ca733cf289db0512d72c121740d6da77e61565df09a6bf050c9a` · CHAT-ONLY AMENDMENT: нет · снимок `reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/handoff_task.md` · отчёт `reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/report.md` · HISTORY ID `H-CODEX-000020` · запись `reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/task_record.json`
-
-**TASK ID:** `CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001`
-
-# Web Alarm Ultra — этап 5 №37: полноценный OFFLINE TEST Chat
-
-**Исполнитель:** Codex 007  
-**Координатор / независимый verifier:** ChatGPT WEB24  
-**Приоритет:** HIGH  
-**ARCH CLASS:** Web Alarm Ultra / Ordinary Chat / Stage5  
-**План:** утверждённый №37, этап 5  
-**Исходный результат:** H-CODEX-000019 — Stage4 OFFLINE BOUNDED PASS  
-**FOLLOWUP:** `FOLLOWUP-WUA-S4B-STAGE5-UI-001`  
-**Исторический риск:** `FOLLOWUP-WUA-S3-WS-WRITER-BUSY-001` (OPEN)
-
-## 1. Цель
-
-Создать полноценный пользовательский TEST-чат, соединив существующие UI, Storage, Turn и общий сервис S4A/S4B с fake LLM.
-
-Маршрут:
-
-**UI → Workspace/Chat → Turn → S4A → OFFLINE fake provider → RAW/Run Store → UI → восстановление.**
-
-Использовать только существующее ядро Ultra. Не создавать второй механизм отправки, второе хранилище чатов или альтернативную машину состояний.
-
-## 2. Функциональность
-
-Обе оболочки — Web и Tkinter — должны поддерживать общий OFFLINE TEST-контур:
-
-- Создание, выбор и переключение Workspace/Chat.
-- Отправку нескольких последовательных сообщений с ответами имитатора.
-- Выбор зарегистрированной модели, привязку модели к конкретному Turn и сохранение выбранного контекста.
-- Отображение состояний READY, ATTEMPTING, SUCCEEDED, FAILED, CANCELLED и UNKNOWN в рамках действующего контракта.
-- Отмену, ошибку, повторное открытие и восстановление после перезапуска.
-- Повтор исходного ключа без второй физической отправки и без дублей RAW.
-
-**TEST обозначается явно.** Fake-ответ нельзя показывать как настоящий ответ GigaChat. Выбранный `provider_model_id` проверяется, но реальный провайдер не вызывается.
-
-## 3. Область изменений
-
-**WRITE при необходимости минимальной интеграции:**
-
-- `web_alarm/ultra_chat.py`
-- `web_alarm/server.py`
-- `web_alarm/ui.py`
-- `ultra_ui.py`
-- Адресные тесты `test_web_alarm_ultra_chat_ui.js`, `test_web_alarm_ultra_chat_turn_http.py` и отдельные новые тесты Stage5.
-- `reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/` — отчёт, manifest, evidence.
-
-**READ-ONLY, пока не доказана невозможность интеграции:**
-
-- `ordinary_chat_service.py`
-- `web_alarm/turn_service.py`
-- `web_alarm/ordinary_chat_test_adapter.py`
-- `context_storage.py`, `run_store.py`
-- `model_registry.py`, `gigachat_transport.py`, `chat_context.py`
-- `Start_WebAlarm.bat`, штатные настройки и существующие B2/WA4-R контракты.
-
-Если требуется изменение общего ядра, storage, политики или других файлов вне WRITE-scope, не расширять задачу самостоятельно: зафиксировать конкретную зависимость и остановиться с PARTIAL/BLOCKED.
-
-## 4. Жёсткие ограничения
-
-- Только одноразовые синтетические Workspace.
-- STANDARD не активирует тестовую отправку или реальный provider.
-- Физический интернет, OAuth, чтение credentials и платные API запрещены.
-- Один пользовательский запрос не порождает несколько fake-вызовов из-за рестарта или повторного нажатия.
-- UNKNOWN не превращается в SUCCESS после отмены или тайм-аута.
-- Stage4A/4B и исправления H18/H19 не ухудшаются.
-- Никакого подключения Colibri, MCP или Blueprint LLM.
-
-## 5. Приёмочные сценарии
-
-Обязательные сквозные проверки:
-
-1. Два разных чата, разная история и контекст; перекрёстного смешивания нет.
-2. Два сообщения подряд, отображение корректного fake-ответа.
-3. Выбор и смена модели не меняют уже принятый Turn.
-4. Отмена после начала отправки, восстановление UNKNOWN и сохранение usage.
-5. Повтор ключа после перезапуска без нового fake-вызова.
-6. Ошибка транспорта, повреждённые данные, недоступное хранилище и конфликт idempotency.
-7. Проверки Web HTTP/UI и Tkinter, включая доступность элементов управления.
-8. Негативные контроли сети, OAuth и credentials: реальные provider calls = 0.
-9. Регрессии S4A, S4B, Stage3, RAW и Run Store.
-
-Обязательно выполнить независимый от пользовательских данных Windows mock-smoke. Переносимость по §2.4 не объявлять подтверждённой без отдельного clean-Windows испытания.
-
-## 6. Сдача
-
-Отчёт должен содержать все PASS/FAIL/ERROR/SKIP, версии Python/Windows/Node, точные команды, SHA, ограничения, сохранённые RED и NOT RUN.
-
-При завершении запустить штатный `tools/task_slot_rotate.py finish` с точным TASK ID. Проверить `ROTATED`, HISTORY ID, БЛОК 1 WAITING и readback.
-
-**Git/GitHub для Codex запрещены без отдельного разрешения.** Пользователь публикует один полный пакет одним рабочим пронумерованным коммитом. Следующий номер определяется по актуальной истории — ожидаемый №523.
-
-**Критерий результата:** один работающий тестовый чат в обоих интерфейсах, использующий общий S4A/S4B и общее хранилище. Никакого реального GigaChat.
-
-Если интеграция обеих оболочек не завершена, не объявлять Stage5 PASS. Сдать честный PARTIAL с доказанными рабочими частями и адресным следующим шагом.
 ###### ▲ КОНЕЦ КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:END
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)

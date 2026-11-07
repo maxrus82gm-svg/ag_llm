@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "762785b9785d4eafa686f8cc290e1bf9694961cc5a88dc6b66391d846324a287",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 90,
+    "b11b": 96,
+    "b11e": 194
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+    "problems": [],
+    "title": "",
+    "lines": 41
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001",
+    "copy_sha256": "c7d4a22f41c1ca733cf289db0512d72c121740d6da77e61565df09a6bf050c9a",
+    "history_id": "H-CODEX-000020",
+    "history_record": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "762785b9785d4eafa686f8cc290e1bf9694961cc5a88dc6b66391d846324a287",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001",
+    "copy_sha256": "c7d4a22f41c1ca733cf289db0512d72c121740d6da77e61565df09a6bf050c9a",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/handoff_task.md",
+    "archive_sha256": "73c0946b836729ddb33b788dd373b9eeae064e0e1a0629ab4ea5fb8d47b6e4b4"
+   },
+   "history_id": "H-CODEX-000021",
+   "new_card_sha256": "8b9688377a463ef0652ba63214e6b2600dbfcfd114ab4c899ea855f8c13f1ca4",
+   "copy_sha256_lf": "d29e04c16144efe150314cfa5eed207cf400cb036a4c12a37371ef22f610dc83",
+   "copy_lines": 41,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 2,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "762785b9785d4eafa686f8cc290e1bf9694961cc5a88dc6b66391d846324a287",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001",
+    "copy_sha256": "c7d4a22f41c1ca733cf289db0512d72c121740d6da77e61565df09a6bf050c9a",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/handoff_task.md",
+    "archive_sha256": "73c0946b836729ddb33b788dd373b9eeae064e0e1a0629ab4ea5fb8d47b6e4b4"
+   },
+   "history_id": "H-CODEX-000021",
+   "new_card_sha256": "8b9688377a463ef0652ba63214e6b2600dbfcfd114ab4c899ea855f8c13f1ca4",
+   "copy_sha256_lf": "d29e04c16144efe150314cfa5eed207cf400cb036a4c12a37371ef22f610dc83",
+   "copy_lines": 41,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 2,
+   "history": {
+    "id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+    "history_id": "H-CODEX-000021",
+    "record": "reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "44bec738992ab061dc320cd3c21d81af52590f8d67949fac3a9656d9d6a5d5ee",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "8b9688377a463ef0652ba63214e6b2600dbfcfd114ab4c899ea855f8c13f1ca4",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 100
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+    "copy_sha256": "d29e04c16144efe150314cfa5eed207cf400cb036a4c12a37371ef22f610dc83",
+    "history_id": "H-CODEX-000021",
+    "history_record": "reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+ "history": {
+  "id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+  "history_id": "H-CODEX-000021",
+  "record": "reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

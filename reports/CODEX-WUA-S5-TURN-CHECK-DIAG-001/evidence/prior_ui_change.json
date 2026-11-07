@@ -1,0 +1,18 @@
+{
+  "status": "PRESENT_LOCAL_ONLY_NOT_REVERTED_NOT_PUBLISHED",
+  "source_path": "web_alarm/ui.py",
+  "current_sha256": "5c7e2acff67b04daafadcd90808cd652d91727c5404ac5406b49ad7969dddbdb",
+  "reconstructed_pre_rename_sha256": "07075a2e131fc1ca5548d110c6a291bda1615138b3be0ec5773f4607bd05b8e4",
+  "baseline_manifest": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/manifest.json",
+  "baseline_exact_bytes_match": true,
+  "changed_source_lines": 4,
+  "replacement_fragments": 5,
+  "changes": [
+    "button label and title tooltip",
+    "404/check failure wording",
+    "send failure guidance",
+    "cancel failure guidance"
+  ],
+  "logic_changed_by_this_delta": false,
+  "new_wording_browser_verification": "NOT RUN; earlier browser test predates wording edit"
+}
