@@ -447,18 +447,30 @@ class OfflineUltraChatService(UltraChatService):
 
     def messages(self, wa_workspace_id, chat_id, before, limit):
         page = super().messages(wa_workspace_id, chat_id, before, limit)
-        assistants = [item for item in page["messages"] if item["role"] == "assistant"]
-        if not assistants:
+        tracked = [item for item in page["messages"] if item["role"] in {"user", "assistant"}]
+        if not tracked:
             return page
         core = _core()
         root, workspace_id = self._writable_workspace(core, wa_workspace_id)
         turns = self._turns_for(root, workspace_id, chat_id)
         try:
-            for item in assistants:
+            for item in tracked:
                 raw = core.read_ultra_json_bounded(root, ("chats", chat_id, "messages", item["message_id"] + ".json"),
                                                   max_bytes=32768)
+                if item["role"] == "user" and raw.get("producer", {}).get("kind") != "offline_chat_fixture":
+                    continue
                 run_id = raw["producer"]["run_id"]
                 turn = turns.get(root, workspace_id, chat_id, run_id)
+                if item["role"] == "user":
+                    if turn["mode"] != "TEST_OFFLINE" or turn["user_message_id"] != item["message_id"]:
+                        raise ValueError("TEST user RAW has no matching Turn")
+                    # RUNNING in the durable index alone cannot prove that an owner is alive.
+                    # The same TurnService used for execution distinguishes active from lost-owner UNKNOWN.
+                    item["turn_state"] = turn["state"]
+                    item["outcome"] = {"ACCEPTING": "pending", "READY": "pending", "ATTEMPTING": "running",
+                                       "SUCCEEDED": "request", "FAILED": "request_failed",
+                                       "CANCELLED": "cancelled", "UNKNOWN": "unknown"}[turn["state"]]
+                    continue
                 if (turn["mode"] != "TEST_OFFLINE" or turn["state"] != "SUCCEEDED"
                         or turn["assistant_message_id"] != item["message_id"] or turn["answer"] != item["text"]):
                     raise ValueError("TEST assistant RAW has no confirmed result")

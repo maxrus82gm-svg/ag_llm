@@ -1,0 +1,26 @@
+test_web_alarm_ultra_chat_s5_recovery (unittest.loader._FailedTest.test_web_alarm_ultra_chat_s5_recovery) ... ERROR
+
+======================================================================
+ERROR: test_web_alarm_ultra_chat_s5_recovery (unittest.loader._FailedTest.test_web_alarm_ultra_chat_s5_recovery)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_web_alarm_ultra_chat_s5_recovery
+Traceback (most recent call last):
+  File "C:\Python313\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_s5_recovery.py", line 11, in <module>
+    import test_web_alarm_ultra_chat_s5 as fixtures
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_s5.py", line 19, in <module>
+    from web_alarm.ordinary_chat_test_adapter import _FixtureTransport
+  File "M:\GitHub\ag_llm\web_alarm\ordinary_chat_test_adapter.py", line 6, in <module>
+    import ordinary_chat_service as chat
+  File "M:\GitHub\ag_llm\ordinary_chat_service.py", line 17, in <module>
+    from gigachat_transport import extract_usage
+  File "M:\GitHub\ag_llm\gigachat_transport.py", line 7, in <module>
+    import httpx
+ModuleNotFoundError: No module named 'httpx'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

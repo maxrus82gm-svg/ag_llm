@@ -1,0 +1,121 @@
+{
+  "workspace_id": "ws_6b1fee1cda354859babc5387bac83a34",
+  "chat_id": "chat_ee76ad1e5a2f407b94c501d86aa3672f",
+  "turn_id": "turn_c68162875195258c09addbe52c3963ffa0c26590c8a802232103fcbe5138e49b",
+  "message_id": "msg_05f30cb3d8dc78c332d2000566b28aea",
+  "raw_sha256_before": "a3ff2da349895fe304ceb43cb64163ae358359d2cf7583d706f8a94596898ae6",
+  "raw_sha256_after": "a3ff2da349895fe304ceb43cb64163ae358359d2cf7583d706f8a94596898ae6",
+  "raw_utf8": "{\n  \"schema_version\": 1,\n  \"workspace_id\": \"ws_6fe9bed447f9448d9fb9f307edf23dc0\",\n  \"chat_id\": \"chat_ee76ad1e5a2f407b94c501d86aa3672f\",\n  \"message_id\": \"msg_05f30cb3d8dc78c332d2000566b28aea\",\n  \"role\": \"user\",\n  \"created_at\": \"2026-11-07T18:42:03.785641+00:00\",\n  \"original_text\": \"S5_CANCEL_BEFORE\",\n  \"producer\": {\n    \"kind\": \"offline_chat_fixture\",\n    \"run_id\": \"turn_c68162875195258c09addbe52c3963ffa0c26590c8a802232103fcbe5138e49b\",\n    \"turn_id\": \"turn_c68162875195258c09addbe52c3963ffa0c26590c8a802232103fcbe5138e49b\",\n    \"model_id\": \"gigachat_2_pro\",\n    \"model_display_name\": \"TEST · S4A offline\",\n    \"request_ref\": \"sha256:61ecf1ba796fb009e917d1eb1637210fc300dfe2930e0094b520c2d2360f929e\",\n    \"binding_sha256\": \"f172a8d67fcc12c0b21bea75ea6196ff560bbf595a1a966308d508ce2757463c\"\n  },\n  \"task_block_id\": \"tb_c68162875195258c09addbe52c3963ff\"\n}\n",
+  "before_history": {
+    "wa_workspace_id": "ws_6b1fee1cda354859babc5387bac83a34",
+    "chat_id": "chat_ee76ad1e5a2f407b94c501d86aa3672f",
+    "chat": {
+      "chat_id": "chat_ee76ad1e5a2f407b94c501d86aa3672f",
+      "title": "Чат 1",
+      "created_at": "2026-11-07T18:42:03.577770+00:00"
+    },
+    "history_state": "complete",
+    "excluded": {},
+    "excluded_ids": [],
+    "total_messages": 1,
+    "outcome_source": "run_index",
+    "messages": [
+      {
+        "message_id": "msg_05f30cb3d8dc78c332d2000566b28aea",
+        "role": "user",
+        "created_at": "2026-11-07T18:42:03.785641+00:00",
+        "text": "S5_CANCEL_BEFORE",
+        "outcome": "pending",
+        "turn_state": "READY"
+      }
+    ],
+    "page": {
+      "limit": 50,
+      "returned": 1,
+      "has_more": false,
+      "next_before": null
+    }
+  },
+  "after_reopen_history": {
+    "wa_workspace_id": "ws_6b1fee1cda354859babc5387bac83a34",
+    "chat_id": "chat_ee76ad1e5a2f407b94c501d86aa3672f",
+    "chat": {
+      "chat_id": "chat_ee76ad1e5a2f407b94c501d86aa3672f",
+      "title": "Чат 1",
+      "created_at": "2026-11-07T18:42:03.577770+00:00"
+    },
+    "history_state": "complete",
+    "excluded": {},
+    "excluded_ids": [],
+    "total_messages": 1,
+    "outcome_source": "run_index",
+    "messages": [
+      {
+        "message_id": "msg_05f30cb3d8dc78c332d2000566b28aea",
+        "role": "user",
+        "created_at": "2026-11-07T18:42:03.785641+00:00",
+        "text": "S5_CANCEL_BEFORE",
+        "outcome": "cancelled",
+        "turn_state": "CANCELLED"
+      }
+    ],
+    "page": {
+      "limit": 50,
+      "returned": 1,
+      "has_more": false,
+      "next_before": null
+    }
+  },
+  "cancel_state": "CANCELLED",
+  "replay_started_no_new_transport": true,
+  "physical_fake_sends_for_cancelled_turn": 0,
+  "next_context": [
+    {
+      "role": "system",
+      "content": "TEST offline chat chat_ee76ad1e5a2f407b94c501d86aa3672f"
+    },
+    {
+      "role": "user",
+      "content": "S5_NEXT_ONLY"
+    }
+  ],
+  "paginated_older_history": {
+    "wa_workspace_id": "ws_6b1fee1cda354859babc5387bac83a34",
+    "chat_id": "chat_ee76ad1e5a2f407b94c501d86aa3672f",
+    "chat": {
+      "chat_id": "chat_ee76ad1e5a2f407b94c501d86aa3672f",
+      "title": "Чат 1",
+      "created_at": "2026-11-07T18:42:03.577770+00:00"
+    },
+    "history_state": "complete",
+    "excluded": {},
+    "excluded_ids": [],
+    "total_messages": 3,
+    "outcome_source": "run_index",
+    "messages": [
+      {
+        "message_id": "msg_05f30cb3d8dc78c332d2000566b28aea",
+        "role": "user",
+        "created_at": "2026-11-07T18:42:03.785641+00:00",
+        "text": "S5_CANCEL_BEFORE",
+        "outcome": "cancelled",
+        "turn_state": "CANCELLED"
+      },
+      {
+        "message_id": "msg_65e5499fcf391b0de3b478aed0b85947",
+        "role": "user",
+        "created_at": "2026-11-07T18:42:04.583216+00:00",
+        "text": "S5_NEXT_ONLY",
+        "outcome": "request",
+        "turn_state": "SUCCEEDED"
+      }
+    ],
+    "page": {
+      "limit": 50,
+      "returned": 2,
+      "has_more": false,
+      "next_before": null
+    }
+  },
+  "historical_user_raw_loss": "NOT REPRODUCED in this controlled same-Chat scenario"
+}

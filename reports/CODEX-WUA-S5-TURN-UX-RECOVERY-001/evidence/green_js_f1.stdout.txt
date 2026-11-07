@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: S5 UX manual check acknowledges pending and repeated unchanged status without POST
+ok 1 - S5 UX manual check acknowledges pending and repeated unchanged status without POST
+  ---
+  duration_ms: 19.0516
+  type: 'test'
+  ...
+# Subtest: S5 UX manual check reports no request and a check error explicitly
+ok 2 - S5 UX manual check reports no request and a check error explicitly
+  ---
+  duration_ms: 6.3845
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 83.1689

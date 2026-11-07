@@ -1,0 +1,15 @@
+{
+  "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+  "independent_status": "AWAITING WEB25; no automatic global closure",
+  "items": [
+    {"key":"F1","risk_id":"FOLLOWUP-WUA-S5-CHECK-FEEDBACK-001","author_result":"FIXED / VERIFIED BOUNDED","review":"PENDING","evidence":["evidence/final_js_52.stdout.txt","evidence/browser/success_check_twice.jpg","evidence/browser_final/check_error.jpg"],"next":"Independent review of clear acknowledgement, empty/error/repeated check and no duplicate send."},
+    {"key":"F2","risk_id":"FOLLOWUP-WUA-S5-ACTIVE-LABEL-001","author_result":"FIXED / VERIFIED BOUNDED","review":"PENDING","evidence":["evidence/red_py_f2_venv.stderr.txt","evidence/controlled/active.json","evidence/browser/active_running.jpg"],"next":"Review authoritative owner state, durable result/RAW validation and conservative lost-owner UNKNOWN."},
+    {"key":"F3","risk_id":"FOLLOWUP-WUA-S5-CANCEL-F5-VISIBILITY-001","author_result":"FIXED selected-Chat recovery and immediate cancel badge; RAW LOSS NOT REPRODUCED; historical cause STILL OPEN","review":"PENDING","evidence":["evidence/controlled/cancel_before.json","evidence/controlled/cancel_after.json","evidence/red_js_recovery.stdout.txt","evidence/red_cancel_badge.stdout.txt","evidence/browser_final/reload_dom.txt"],"next":"Do not assert historical RAW deletion/fix without its original identity/trace. Independently verify same-Chat hash/history/context and selected Chat after F5."},
+    {"key":"F4","risk_id":"FOLLOWUP-WUA-S5-RAW-CONTEXT-POLICY-001","author_result":"VERIFIED; policy unchanged","review":"PENDING","evidence":["evidence/controlled/cancel_before.json","evidence/controlled/cancel_after.json"],"next":"Confirm distinction: retained RAW/history versus next-request projection. No silent inclusion of cancelled/UNKNOWN text."},
+    {"key":"F5","risk_id":"FOLLOWUP-WUA-S5-CHECK-HISTORY-RACE-001","author_result":"FIXED / VERIFIED DETERMINISTIC","review":"PENDING","evidence":["evidence/red_js_recovery.stdout.txt","evidence/final_js_52.stdout.txt"],"next":"Review reversed GET/POST completion, stale errors and older pagination oracle; preserve no-resend behavior."},
+    {"key":"F6","risk_id":"FOLLOWUP-WUA-S5-WORDING-VISUAL-001","author_result":"VERIFIED normal/720px/keyboard/error; 480px STILL OPEN","review":"PENDING","evidence":["evidence/browser/narrow_480.jpg","evidence/browser_final/narrow_720.jpg","evidence/browser_final/check_error_dom.txt"],"next":"Manual or repaired-browser check at 480px; distinguish rendering defect from full-page capture/evaluation failure. No 480px PASS."}
+  ],
+  "additional_open": [{"risk_id":"OPEN-S5-TK-COMBINED-PROCESS","status":"OPEN","type":"TEST_ENVIRONMENT_REPRODUCIBILITY_GAP","evidence":"evidence/python_regression.stderr.txt","detail":"Combined Tk/HTTP Python process aborted with Tcl_AsyncDelete; 63 web cases and two separate Tk cases pass. No root-cause claim or Tk code repair."}],
+  "successor_task_id": null,
+  "owner":"WEB25 for independent review/queue decisions; new development requires separate assignment"
+}

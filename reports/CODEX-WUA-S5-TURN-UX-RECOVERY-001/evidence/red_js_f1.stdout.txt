@@ -1,0 +1,54 @@
+TAP version 13
+# Subtest: S5 UX manual check acknowledges pending and repeated unchanged status without POST
+not ok 1 - S5 UX manual check acknowledges pending and repeated unchanged status without POST
+  ---
+  duration_ms: 41.8884
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:117:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /Проверяем состояние/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:125:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: S5 UX manual check reports no request and a check error explicitly
+not ok 2 - S5 UX manual check reports no request and a check error explicitly
+  ---
+  duration_ms: 9.8535
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:139:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /нет отправленных запросов/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:143:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 127.6791

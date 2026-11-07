@@ -1,0 +1,40 @@
+[
+  {
+    "model": "GigaChat-2",
+    "stream": false,
+    "max_tokens": 128,
+    "messages": [
+      {
+        "role": "system",
+        "content": "TEST offline chat chat_3133b8107950401ea04b0d747b076f79"
+      },
+      {
+        "role": "user",
+        "content": "S5_BROWSER_SUCCESS"
+      }
+    ]
+  },
+  {
+    "model": "GigaChat-2",
+    "stream": false,
+    "max_tokens": 128,
+    "messages": [
+      {
+        "role": "system",
+        "content": "TEST offline chat chat_3133b8107950401ea04b0d747b076f79"
+      },
+      {
+        "role": "user",
+        "content": "S5_BROWSER_SUCCESS"
+      },
+      {
+        "role": "assistant",
+        "content": "TEST · локальный имитатор\nОтвет на: S5_BROWSER_SUCCESS"
+      },
+      {
+        "role": "user",
+        "content": "S5_BROWSER_CANCEL_AFTER_START"
+      }
+    ]
+  }
+]

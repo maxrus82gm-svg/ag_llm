@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: S5 recovery late check history cannot replace a newer send history
+not ok 1 - S5 recovery late check history cannot replace a newer send history
+  ---
+  duration_ms: 22.615
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:151:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /NEW ANSWER/. Input:
+    
+    'Вы2026-10-01 10:00:01Ответ не сохранёнOLD SNAPSHOT'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Вы2026-10-01 10:00:01Ответ не сохранёнOLD SNAPSHOT'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:169:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: S5 recovery stale Turn GET cannot overwrite a newer POST result or restore its old key
+ok 2 - S5 recovery stale Turn GET cannot overwrite a newer POST result or restore its old key
+  ---
+  duration_ms: 8.5866
+  type: 'test'
+  ...
+# Subtest: S5 recovery reload retains the selected cancelled Chat instead of silently opening the newest Chat
+not ok 3 - S5 recovery reload retains the selected cancelled Chat instead of silently opening the newest Chat
+  ---
+  duration_ms: 13.0141
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:191:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'chat_b' !== 'chat_a'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'chat_a'
+  actual: 'chat_b'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:208:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 1
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 104.1022

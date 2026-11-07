@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "ca0ef90891f68d4ac55785150da318581841dca183698863ad4dcb64261e99b2",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 170,
+    "b11b": 176,
+    "b11e": 220
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+    "problems": [],
+    "title": "",
+    "lines": 121
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+    "copy_sha256": "d29e04c16144efe150314cfa5eed207cf400cb036a4c12a37371ef22f610dc83",
+    "history_id": "H-CODEX-000021",
+    "history_record": "reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "ca0ef90891f68d4ac55785150da318581841dca183698863ad4dcb64261e99b2",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+    "copy_sha256": "d29e04c16144efe150314cfa5eed207cf400cb036a4c12a37371ef22f610dc83",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/handoff_task.md",
+    "archive_sha256": "44bec738992ab061dc320cd3c21d81af52590f8d67949fac3a9656d9d6a5d5ee"
+   },
+   "history_id": "H-CODEX-000022",
+   "new_card_sha256": "6cd53f4b665d4b3478af0ede7c53485d25b334554b52035be00334e7e3421440",
+   "copy_sha256_lf": "097c4fcc2774665f7b7d4458647ad155392a486080359a13c19e1a0e58be23f6",
+   "copy_lines": 121,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "ca0ef90891f68d4ac55785150da318581841dca183698863ad4dcb64261e99b2",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S5-TURN-CHECK-DIAG-001",
+    "copy_sha256": "d29e04c16144efe150314cfa5eed207cf400cb036a4c12a37371ef22f610dc83",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-S5-TURN-CHECK-DIAG-001/handoff_task.md",
+    "archive_sha256": "44bec738992ab061dc320cd3c21d81af52590f8d67949fac3a9656d9d6a5d5ee"
+   },
+   "history_id": "H-CODEX-000022",
+   "new_card_sha256": "6cd53f4b665d4b3478af0ede7c53485d25b334554b52035be00334e7e3421440",
+   "copy_sha256_lf": "097c4fcc2774665f7b7d4458647ad155392a486080359a13c19e1a0e58be23f6",
+   "copy_lines": 121,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+    "history_id": "H-CODEX-000022",
+    "record": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "4ed0f540f8a0717bbfe2442f3c23203327c958a0577d72ea4912d9b77c87295b",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "6cd53f4b665d4b3478af0ede7c53485d25b334554b52035be00334e7e3421440",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 180
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+    "copy_sha256": "097c4fcc2774665f7b7d4458647ad155392a486080359a13c19e1a0e58be23f6",
+    "history_id": "H-CODEX-000022",
+    "history_record": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+ "history": {
+  "id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+  "history_id": "H-CODEX-000022",
+  "record": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

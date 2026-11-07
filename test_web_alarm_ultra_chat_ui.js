@@ -114,6 +114,167 @@ function offlineRoutes(routes = {}) {
 const offlineTurn = (body, state, extra = {}) => ({turn_id: 'turn_fixture', mode: 'TEST_OFFLINE', state,
   idempotency_key: body.idempotency_key, references: {model_ref: body.model_ref}, ...extra});
 
+test('S5 UX manual check acknowledges pending and repeated unchanged status without POST', async () => {
+  const h = harness({offline: true, routes: offlineRoutes()});
+  await settle();
+  const body = {idempotency_key: 'fixture_key_check', model_ref: 'gigachat_2_pro'};
+  let release;
+  h.routes.set(S5_TURN + '/latest', () => new Promise(resolve => {release = resolve}));
+  const checking = h.el('chatTurnCheck').onclick();
+  await settle();
+  assert.match(h.el('chatTurnCheckResult')?.textContent ?? '', /Проверяем состояние/);
+  assert.equal(h.el('chatTurnCheck').disabled, true);
+  release({turn: offlineTurn(body, 'SUCCEEDED'), text: 'Проверка'});
+  await checking;
+  const first = h.el('chatTurnCheckResult').textContent;
+  assert.match(first, /Проверка №1 завершена/);
+  h.routes.set(S5_TURN + '/latest', () => ({turn: offlineTurn(body, 'SUCCEEDED'), text: 'Проверка'}));
+  await h.el('chatTurnCheck').onclick();
+  assert.match(h.el('chatTurnCheckResult').textContent, /Проверка №2 завершена/);
+  assert.notEqual(first, h.el('chatTurnCheckResult').textContent);
+  assert.equal(h.el('chatTurnCheck').disabled, false);
+  assert.equal(h.calls.filter(c => c.method === 'POST').length, 0);
+});
+
+test('S5 UX manual check reports no request and a check error explicitly', async () => {
+  const h = harness({offline: true, routes: offlineRoutes()});
+  await settle();
+  await h.el('chatTurnCheck').onclick();
+  assert.match(h.el('chatTurnCheckResult')?.textContent ?? '', /нет отправленных запросов/);
+  h.routes.set(S5_TURN + '/latest', () => {throw Error('synthetic lost GET')});
+  await h.el('chatTurnCheck').onclick();
+  assert.match(h.el('chatTurnCheckResult').textContent, /Не удалось проверить состояние запроса/);
+  assert.equal(h.el('chatTurnCheck').disabled, false);
+  assert.equal(h.calls.filter(c => c.method === 'POST').length, 0);
+});
+
+test('S5 recovery late check history cannot replace a newer send history', async () => {
+  const body = {idempotency_key: 'fixture_prior_key', model_ref: 'gigachat_2_pro'};
+  const h = harness({offline: true, routes: offlineRoutes({
+    [S5_TURN + '/latest']: () => ({turn: offlineTurn(body, 'SUCCEEDED'), text: 'old'}),
+    [S5_TURN]: opts => offlineTurn(JSON.parse(opts.body), 'SUCCEEDED'),
+  })});
+  await settle();
+  let release, calls = 0;
+  const newer = [msg(3, 'user', 'NEW QUESTION', 'request'), msg(4, 'assistant', 'NEW ANSWER', 'completed')];
+  h.routes.set(MESSAGES_A, () => ++calls === 1 ? new Promise(resolve => {release = resolve}) : page(newer));
+  const checking = h.el('chatTurnCheck').onclick();
+  await settle();
+  assert.equal(typeof release, 'function', 'the old GET history is held at a deterministic barrier');
+  h.el('chatInput').value = 'NEW QUESTION';
+  await h.el('chatSend').onclick();
+  assert.match(h.el('chatHistory').textContent, /NEW ANSWER/);
+  release(page([msg(1, 'user', 'OLD SNAPSHOT', 'no_answer')]));
+  await checking;
+  assert.match(h.el('chatHistory').textContent, /NEW ANSWER/);
+  assert.doesNotMatch(h.el('chatHistory').textContent, /OLD SNAPSHOT/);
+  assert.equal(h.calls.filter(c => c.method === 'POST').length, 1);
+});
+
+test('S5 recovery stale Turn GET cannot overwrite a newer POST result or restore its old key', async () => {
+  const h = harness({offline: true, routes: offlineRoutes({[S5_TURN]: opts => offlineTurn(JSON.parse(opts.body), 'SUCCEEDED')})});
+  await settle();
+  let release;
+  h.routes.set(S5_TURN + '/latest', () => new Promise(resolve => {release = resolve}));
+  const checking = h.el('chatTurnCheck').onclick();
+  await settle();
+  h.el('chatInput').value = 'CURRENT';
+  await h.el('chatSend').onclick();
+  release({turn: offlineTurn({idempotency_key: 'obsolete_key_0001', model_ref: 'gigachat_2_pro'}, 'ATTEMPTING'), text: 'OBSOLETE'});
+  await checking;
+  assert.match(h.el('chatTurnStatus').textContent, /ответ сохранён/);
+  assert.equal(h.el('chatInput').value, '');
+  assert.equal(h.run('turnPending()'), null);
+  assert.match(h.el('chatTurnCheckResult').textContent, /Проверка №1 завершена/);
+});
+
+test('S5 recovery reload retains the selected cancelled Chat instead of silently opening the newest Chat', async () => {
+  const storage = new Map();
+  const body = {idempotency_key: 'fixture_cancelled_key', model_ref: 'gigachat_2_pro', text: 'CANCELLED A'};
+  const chatB = '/ultra/chat/workspaces/ws_a/chats/chat_b';
+  const routes = offlineRoutes({
+    '/ultra/chat/workspaces/ws_a/chats': () => ({state: 'ok', chats: [chatItem('chat_a', 'A'), chatItem('chat_b', 'B newest')], excluded: {}}),
+    [chatB + '/messages?limit=50']: () => page([], {chat: {chat_id: 'chat_b', title: 'B newest'}}),
+    [chatB + '/turns/latest']: () => ({turn: null, text: null}),
+    [S5_TURN + '/latest']: () => ({turn: offlineTurn(body, 'UNKNOWN'), text: body.text}),
+    [MESSAGES_A]: () => page([msg(1, 'user', body.text, 'unknown')]),
+  });
+  const first = harness({offline: true, storage, routes});
+  await settle();
+  await first.run('selectChat("chat_a")');
+  assert.match(first.el('chatHistory').textContent, /CANCELLED A/);
+  const reloaded = harness({offline: true, storage, routes});
+  await settle();
+  assert.equal(reloaded.run('chat.chat'), 'chat_a');
+  assert.match(reloaded.el('chatHistory').textContent, /CANCELLED A/);
+  await reloaded.run('selectChat("chat_b")');
+  assert.doesNotMatch(reloaded.el('chatHistory').textContent, /CANCELLED A/);
+  await reloaded.run('selectChat("chat_a")');
+  assert.match(reloaded.el('chatHistory').textContent, /CANCELLED A/);
+  assert.equal(reloaded.calls.filter(c => c.method === 'POST').length, 0);
+});
+
+test('S5 recovery obsolete history errors and older pages cannot damage a fresh same-chat snapshot', async () => {
+  const h = harness({offline: true, routes: offlineRoutes()});
+  await settle();
+  let release;
+  h.routes.set(MESSAGES_A, () => new Promise(resolve => {release = resolve}));
+  const old = h.run('loadChatHistory(false)');
+  await settle();
+  h.routes.set(MESSAGES_A, () => page([msg(5, 'assistant', 'FRESH', 'completed')], {page: {has_more: true, next_before: 'msg_cursor'}}));
+  await h.run('loadChatHistory(false)');
+  release({httpError: true, status: 503, data: {error: {code: 'synthetic_old', message: 'OBSOLETE ERROR'}}});
+  await old;
+  assert.match(h.el('chatHistory').textContent, /FRESH/);
+  assert.doesNotMatch(h.el('chatError').textContent, /OBSOLETE/);
+  h.routes.set(MESSAGES_A + '&before=msg_cursor', () => new Promise(resolve => {release = resolve}));
+  const older = h.run('loadChatHistory(true)');
+  await settle();
+  await h.run('loadChatHistory(false)');
+  release(page([msg(1, 'user', 'OBSOLETE PAGE', 'request')]));
+  await older;
+  assert.doesNotMatch(h.el('chatHistory').textContent, /OBSOLETE PAGE/);
+  assert.equal(h.run('chat.olderBusy'), false);
+  assert.equal(h.el('chatOlder').disabled, false);
+});
+
+test('S5 recovery invalid stored selection is ignored and late check error preserves successful send', async () => {
+  const storage = new Map([['webAlarm.testChatSelection', JSON.stringify({workspace: 'foreign', chat: 'foreign'})]]);
+  const h = harness({offline: true, storage, routes: offlineRoutes({[S5_TURN]: opts => offlineTurn(JSON.parse(opts.body), 'SUCCEEDED')})});
+  await settle();
+  assert.equal(h.calls.some(c => c.url.includes('foreign')), false);
+  let release;
+  h.routes.set(S5_TURN + '/latest', () => new Promise(resolve => {release = resolve}));
+  const checking = h.el('chatTurnCheck').onclick();
+  await settle();
+  h.el('chatInput').value = 'SUCCESS';
+  await h.el('chatSend').onclick();
+  release({httpError: true, status: 503, data: {error: {code: 'late_get', message: 'OLD ERROR'}}});
+  await checking;
+  assert.match(h.el('chatTurnStatus').textContent, /ответ сохранён/);
+  assert.match(h.el('chatTurnCheckResult').textContent, /Проверка №1 завершена/);
+  assert.doesNotMatch(h.el('chatTurnCheckResult').textContent, /Не удалось/);
+});
+
+test('S5 recovery cancellation refreshes the message badge before the delayed POST returns', async () => {
+  let body, release, cancelled = false;
+  const h = harness({offline: true, routes: offlineRoutes({
+    [S5_TURN]: opts => {body = JSON.parse(opts.body);return new Promise(resolve => {release = resolve})},
+    [S5_TURN + '/turn_fixture/cancel']: () => {cancelled = true;return offlineTurn(body, 'UNKNOWN')},
+    [MESSAGES_A]: () => page([msg(1, 'user', 'DELAYED', cancelled ? 'unknown' : 'running')]),
+  })});
+  await settle();
+  h.el('chatInput').value = 'DELAYED';
+  const sending = h.el('chatSend').onclick();
+  await settle();
+  h.routes.set(S5_TURN + '/by-key/' + body.idempotency_key, () => offlineTurn(body, 'ATTEMPTING'));
+  try {
+    await h.el('chatTurnCancel').onclick();
+    assert.match(h.el('chatHistory').textContent, /Исход неизвестен/);
+    assert.doesNotMatch(h.el('chatHistory').textContent, /Выполняется/);
+  } finally {release(offlineTurn(body, 'UNKNOWN'));await sending}
+});
+
 test('Stage 5 model choice applies to new requests and retry keeps the original key, text and model', async () => {
   const requests = [], routes = offlineRoutes({
     [S5_TURN]: opts => {

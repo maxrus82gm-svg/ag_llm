@@ -1,0 +1,27 @@
+{
+  "turn": {
+    "turn_id": "turn_e7bb43fbb50a03f726f11b76316c116cfdee4584c696fe0573731c4942e98610",
+    "run_id": "turn_e7bb43fbb50a03f726f11b76316c116cfdee4584c696fe0573731c4942e98610",
+    "attempt_id": "attempt_e7bb43fbb50a03f726f11b76316c116cfdee4584c696fe0573731c4942e98610",
+    "user_message_id": "msg_c6b6cd114202120668a1688e8177eab6",
+    "assistant_message_id": "msg_7d7b3b09bb22a47f72f0d181491c8709",
+    "idempotency_key": "5cdfb097-f7f1-431e-9d68-b0248768929a",
+    "state": "UNKNOWN",
+    "cancel_requested": true,
+    "references": {
+      "model_ref": "gigachat_2",
+      "context_ref": "stage5:chat_85743ca236cd430e855d783bd0c09209",
+      "config_ref": "s4b-offline:v1"
+    },
+    "answer": null,
+    "mode": "TEST_OFFLINE",
+    "request_ref": "sha256:d010bead19d33de02875da465a384b3d97a90d825f64aa780baae807e833e80c",
+    "usage": {
+      "status": "missing",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "total_tokens": null
+    }
+  },
+  "text": "S5_BROWSER_CANCEL_FINAL"
+}

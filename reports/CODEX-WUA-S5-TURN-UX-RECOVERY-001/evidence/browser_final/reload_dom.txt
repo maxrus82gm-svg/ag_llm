@@ -1,0 +1,59 @@
+- link "К истории диалога":
+  - /url: "#chatMain"
+- banner:
+  - generic: WA
+  - heading "Web Alarm Workspace" [level=1]
+  - generic: Постановки · этапы · восстановление
+  - navigation "Разделы Web Alarm":
+    - button "Ultra Chat" [pressed]
+  - status: TEST · OFFLINE
+- region "Диалоги Ultra":
+  - navigation "Workspace и диалоги Ultra":
+    - paragraph: ULTRA CHAT
+    - heading "Диалоги Ultra" [level=2]
+    - button "↻"
+    - status: TEST · локальный имитатор · без LLM
+    - generic: WORKSPACE
+    - button "+ Создать Workspace"
+    - status
+    - generic "Workspace с вложенными диалогами":
+      - button "▾ S5_UX_RECOVERY_SYNTHETIC История Ultra найдена" [expanded]:
+        - text: ▾
+        - strong: S5_UX_RECOVERY_SYNTHETIC
+        - generic: История Ultra найдена
+      - button "Переименовать Workspace «S5_UX_RECOVERY_SYNTHETIC»": ✎
+      - button "Новый диалог в Workspace «S5_UX_RECOVERY_SYNTHETIC»": +
+      - status: "Диалогов: 2"
+      - generic "Сохранённые диалоги":
+        - button "S5_UX_A Создан 2026-11-07 18:38:50":
+          - strong: S5_UX_A
+          - generic: Создан 2026-11-07 18:38:50
+        - button "Переименовать диалог «S5_UX_A»": ✎
+        - button "S5_UX_B_NEWEST Создан 2026-11-07 18:38:50":
+          - strong: S5_UX_B_NEWEST
+          - generic: Создан 2026-11-07 18:38:50
+        - button "Переименовать диалог «S5_UX_B_NEWEST»": ✎
+    - paragraph: TEST · история хранится общим ядром Ultra.
+  - region "S5_UX_A":
+    - text: S5_UX_RECOVERY_SYNTHETIC
+    - heading "S5_UX_A" [level=2]
+    - generic "Модель следующего TEST-запроса": TEST · GigaChat 2
+    - list "История диалога":
+      - strong: Вы
+      - generic: 2026-11-07 18:39:14
+      - generic: Исход неизвестен
+      - generic: S5_BROWSER_CANCEL_FINAL
+    - status: Исход неизвестен. Повтор ключа проверит сохранённые факты; повторного исполнения нет. · gigachat_2
+    - button "Проверить состояние запроса"
+    - button "Отменить" [disabled]
+    - button "Новый отдельный запрос"
+    - status: Проверка №1 завершена. Показано актуальное состояние запроса.
+    - form "Новое сообщение":
+      - generic: Сообщение
+      - textbox "Сообщение":
+        - /placeholder: Сообщение TEST-имитатору
+        - text: S5_BROWSER_CANCEL_FINAL
+      - paragraph: TEST · повтор использует сохранённый ключ и модель исходного запроса.
+      - button "GigaChat 2 ▾"
+      - button "Голосовой ввод — появится позже" [disabled]: 🎤
+      - button "Повторить / восстановить"

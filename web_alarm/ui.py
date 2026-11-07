@@ -263,6 +263,9 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .chat-composer{border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px}
 .chat-composer label{margin:0}
 .chat-composer textarea{min-height:60px;resize:none}
+.chat-request-status{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.chat-request-status p{margin:0;flex-basis:100%;overflow-wrap:anywhere}
+.chat-request-status button{font-size:12px;padding:6px 9px;white-space:normal}
 .chat-composer .row{justify-content:space-between;flex-wrap:nowrap}
 @media(max-width:1200px){.layout{grid-template-columns:190px minmax(0,1fr) 240px}.columns{grid-template-columns:1fr}main{padding:22px 18px}.overview h2{font-size:24px}}
 @media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}.top-nav{order:3;width:100%;justify-content:flex-start}.evm{height:auto;padding:18px 12px;overflow:visible}.evm-columns{grid-template-columns:1fr}}
@@ -334,10 +337,10 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div id="chatNotice" class="notice" role="status" hidden></div>
 <button type="button" id="chatOlder" hidden>Показать ранее</button>
 <ol id="chatHistory" class="chat-history" aria-label="История диалога"></ol>
+<div id="chatTurnControls" class="chat-request-status" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button><p id="chatTurnCheckResult" class="muted" role="status" aria-live="polite"></p></div>
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
 <label for="chatInput">Сообщение</label>
 <textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea>
-<div id="chatTurnControls" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button></div>
 <div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
 </form>
 </div>
@@ -1907,16 +1910,18 @@ if(typeof window!=='undefined'&&window.addEventListener){
 // lives only in this object and goes only to /ultra/chat/* in its own header; nothing here writes anything.
 const CHAT_TOKEN_HEADER='X-WebAlarm-Ultra-Chat-Token',CHAT_PAGE=50;
 const stage5Offline=document.body?.getAttribute?.('data-stage5-offline')==='true';
-const chat={epoch:0,started:false,token:null,workspaces:[],workspace:null,expanded:null,chats:[],chat:null,messages:[],page:null,olderBusy:false,creatingWorkspace:false,renamingWorkspace:false};
-const chatTurn={available:false,busy:false,state:null,models:[],model:null,revision:0,dismissed:new Map()};
+const chat={epoch:0,historyRevision:0,started:false,token:null,workspaces:[],workspace:null,expanded:null,chats:[],chat:null,messages:[],page:null,olderBusy:false,creatingWorkspace:false,renamingWorkspace:false};
+const chatTurn={available:false,busy:false,state:null,models:[],model:null,revision:0,checkRevision:0,checking:0,checkCount:0,dismissed:new Map()};
 function turnScope(){return chat.workspace&&chat.chat?'webAlarm.testTurn.'+chat.workspace+'.'+chat.chat:null}
 function turnPending(){try{return JSON.parse(localStorage.getItem(turnScope())||'null')}catch(_){return null}}
+function testChatSelection(){try{return JSON.parse(localStorage.getItem('webAlarm.testChatSelection')||'null')}catch(_){return null}}
 function turnBase(){return '/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats/'+encodeURIComponent(chat.chat)+'/turns'}
 function renderTurnComposer(){
   const enabled=chatTurn.available&&!!chat.workspace&&!!chat.chat;
   const pending=turnPending();
   $('chatInput').disabled=!enabled||chatTurn.busy;$('chatSend').disabled=!enabled||chatTurn.busy;
   $('chatTurnControls').hidden=!enabled;
+  $('chatTurnCheck').disabled=!enabled||!!chatTurn.checking;
   $('chatTurnCancel').disabled=!enabled||!pending||(stage5Offline&&!!chatTurn.state&&!['READY','ATTEMPTING'].includes(chatTurn.state));
   $('chatModelPick').disabled=stage5Offline?!chatTurn.models.length:chatTurn.available;
   if(stage5Offline){
@@ -1938,7 +1943,7 @@ function showTurn(result){
   if(!result||result.mode!==(stage5Offline?'TEST_OFFLINE':'TEST')||typeof result.turn_id!=='string'||!['ACCEPTING','READY','ATTEMPTING','SUCCEEDED','FAILED','CANCELLED','UNKNOWN'].includes(result.state))throw Error('Некорректный Turn');
   chatTurn.revision++;
   chatTurn.state=result.state;
-  const labels={ACCEPTING:'Приём не завершён. Для продолжения нужен исходный текст.',READY:'Принято. Ожидает явного продолжения.',ATTEMPTING:'Имитатор выполняет запрос…',SUCCEEDED:'TEST: ответ сохранён.',FAILED:'TEST: выполнение завершилось ошибкой.',CANCELLED:'Отменено до выполнения.',UNKNOWN:'Исход неизвестен. Повтор ключа проверит сохранённые факты; повторного исполнения нет.'};
+  const labels={ACCEPTING:'Приём не завершён. Для продолжения нужен исходный текст.',READY:'Принято. Ожидает явного продолжения.',ATTEMPTING:'Выполняется: TEST-имитатор обрабатывает запрос…',SUCCEEDED:'TEST: ответ сохранён.',FAILED:'TEST: выполнение завершилось ошибкой.',CANCELLED:'Отменено до выполнения.',UNKNOWN:'Исход неизвестен. Повтор ключа проверит сохранённые факты; повторного исполнения нет.'};
   const detail=stage5Offline?' · '+result.references.model_ref+(result.usage?.total_tokens==null?'':' · usage '+result.usage.total_tokens):'';
   text('chatTurnStatus',labels[result.state]+detail);
   $('chatTurnNew').hidden=result.state!=='UNKNOWN';
@@ -1950,22 +1955,34 @@ function showTurn(result){
   }
   renderTurnComposer();
 }
-async function checkTurn(){
+async function checkTurn(manual=false){
   renderTurnComposer();let pending=turnPending();if(!chatTurn.available||!turnScope()||(!pending&&!stage5Offline))return;
-  const epoch=chat.epoch,revision=chatTurn.revision;
+  const epoch=chat.epoch,revision=chatTurn.revision,ticket=++chatTurn.checkRevision;
+  const count=manual?++chatTurn.checkCount:0;
+  chatTurn.checking=ticket;
+  if(manual)text('chatTurnCheckResult','Проверяем состояние запроса…');
+  renderTurnComposer();
+  const current=()=>epoch===chat.epoch&&ticket===chatTurn.checkRevision;
+  const checked=()=>{if(manual&&current())text('chatTurnCheckResult','Проверка №'+count+' завершена. '+(revision===chatTurn.revision?'':'Показано актуальное состояние запроса.'))};
   try{
     const found=pending?{turn:await chatGet(turnBase()+'/by-key/'+encodeURIComponent(pending.key))}:await chatGet(turnBase()+'/latest');
-    if(epoch!==chat.epoch||revision!==chatTurn.revision||!found.turn)return;
+    if(!current())return;
+    if(revision!==chatTurn.revision){checked();return}
+    if(!found.turn){if(manual)text('chatTurnCheckResult','В этом чате ещё нет отправленных запросов.');return}
     const result=found.turn;
     if(stage5Offline&&!pending&&!['SUCCEEDED','FAILED','CANCELLED'].includes(result.state)){
-      if(chatTurn.dismissed.get(turnScope())===result.idempotency_key)return;
+      if(chatTurn.dismissed.get(turnScope())===result.idempotency_key){checked();return}
       pending={key:result.idempotency_key,model:result.references.model_ref,text:found.text};
       localStorage.setItem(turnScope(),JSON.stringify(pending));
     }
     if(stage5Offline&&typeof pending?.text==='string')$('chatInput').value=pending.text;
-    showTurn(result);await loadChatHistory(false)
+    showTurn(result);await loadChatHistory(false);checked()
   }
-  catch(e){if(epoch===chat.epoch)text('chatTurnStatus',e.httpStatus===404?'Запрос ещё не найден. Повторите исходный текст с сохранённым ключом.':'Не удалось проверить состояние запроса. Ключ сохранён, автоматического повтора нет.')}
+  catch(e){if(current()){
+    if(revision!==chatTurn.revision){checked();return}
+    text('chatTurnCheckResult',e.httpStatus===404?'Запрос ещё не найден. Исходный ключ сохранён; проверьте состояние перед повтором.':'Не удалось проверить состояние запроса. Автоматического повтора отправки нет.')
+  }}
+  finally{if(current()){chatTurn.checking=0;renderTurnComposer()}}
 }
 async function sendTurn(){
   if(!chatTurn.available||chatTurn.busy||!chat.workspace||!chat.chat||!$('chatInput').value.trim()||(stage5Offline&&!chatTurn.model))return;
@@ -2000,11 +2017,11 @@ async function sendTurn(){
 }
 async function cancelTurn(){
   const pending=turnPending();if(!pending)return;const epoch=chat.epoch;
-  try{const current=await chatGet(turnBase()+'/by-key/'+encodeURIComponent(pending.key));const result=await chatPost(turnBase()+'/'+current.turn_id+'/cancel',{});if(epoch===chat.epoch)showTurn(result)}
+  try{const current=await chatGet(turnBase()+'/by-key/'+encodeURIComponent(pending.key));const result=await chatPost(turnBase()+'/'+current.turn_id+'/cancel',{});if(epoch===chat.epoch){showTurn(result);await loadChatHistory(false)}}
   catch(_){if(epoch===chat.epoch)text('chatTurnStatus','Отмена не подтверждена. Проверьте состояние запроса.')}
 }
 const CHAT_REASON={missing_history:'В папке нет истории Ultra',missing_path:'Папка недоступна',not_directory:'Путь не является папкой',invalid_metadata:'Данные Ultra повреждены',unsupported_version:'Данные Ultra более новой версии',unsafe_storage_link:'Внутри хранилища Ultra ссылка вместо папки или файла — чтение запрещено',unreadable:'Данные не читаются',unsupported_registration_id:'Эта регистрация не поддерживается Ultra Chat',registry_unavailable:'Реестр Workspace недоступен',too_many_workspaces:'Слишком много Workspace',chats_listing_too_large:'Слишком много диалогов для просмотра',history_too_large:'История слишком большая для просмотра',foreign_identity:'Диалог принадлежит другому Workspace',chat_damaged:'Диалог повреждён',ultra_core_unavailable:'Общее ядро Ultra недоступно'};
-const CHAT_OUTCOME={failed:['Ошибка выполнения (старая запись), не ответ модели','bad'],no_answer:['Ответ не сохранён','warn'],interrupted:['Прервано · исход неизвестен','unknown'],unknown:['Исход неизвестен','unknown']};
+const CHAT_OUTCOME={failed:['Ошибка выполнения (старая запись), не ответ модели','bad'],no_answer:['Ответ не сохранён','warn'],interrupted:['Прервано · исход неизвестен','unknown'],unknown:['Исход неизвестен','unknown'],pending:['Ожидает выполнения','warn'],running:['Выполняется','active'],cancelled:['Отменено до выполнения','warn'],request_failed:['Выполнение завершилось ошибкой','bad']};
 function chatReason(code){return CHAT_REASON[code]||'Недоступно ('+String(code)+')'}
 function chatTime(value){return typeof value==='string'?value.replace('T',' ').slice(0,19):''}
 function chatCount(map){return Object.values(map||{}).reduce((sum,n)=>sum+(Number(n)||0),0)}
@@ -2126,6 +2143,8 @@ function chatNotices(list){
   notice('chatNotice',list.map(item=>item[1]).join('\n'))
 }
 function clearChatHistory(title){
+  chat.historyRevision++;
+  chatTurn.checkRevision++;chatTurn.checking=0;chatTurn.checkCount=0;text('chatTurnCheckResult','');
   if(stage5Offline){
     chatTurn.state=null;
     $('chatTurnNew').hidden=true;
@@ -2234,7 +2253,8 @@ async function loadChatWorkspaces(){
     text('chatWorkspaceName',selected?selected.display_name:'Ultra Chat');
     renderChatWorkspaces();
     if(chat.workspace){await loadChatList();return true}
-    const first=chat.workspaces.find(w=>w.history==='ok');
+    const saved=stage5Offline?testChatSelection():null;
+    const first=chat.workspaces.find(w=>w.history==='ok'&&w.wa_workspace_id===saved?.workspace)||chat.workspaces.find(w=>w.history==='ok');
     if(first)await selectChatWorkspace(first.wa_workspace_id);
     return true
   }catch(e){if(epoch===chat.epoch){text('chatWorkspaceState','Список Workspace не загружен');chatFailure(e)}return false}
@@ -2262,28 +2282,31 @@ async function loadChatList(){
     if(chat.chat&&!chat.chats.some(c=>c.chat_id===chat.chat&&c.status==='ok')){chat.chat=null;clearChatHistory('Выберите диалог')}
     renderChatList();
     if(chat.chat)return loadChatHistory(false);
-    const newest=chat.chats.filter(c=>c.status==='ok').at(-1);// the list is in creation order: open the newest dialogue
+    const saved=stage5Offline?testChatSelection():null;
+    const newest=chat.chats.find(c=>c.status==='ok'&&saved?.workspace===chat.workspace&&c.chat_id===saved?.chat)||chat.chats.filter(c=>c.status==='ok').at(-1);
     if(newest)return selectChat(newest.chat_id)
   }catch(e){if(epoch===chat.epoch){text('chatListState','Список диалогов не загружен');chatFailure(e)}}
 }
 function selectChat(id){
   if(chatEdit.mode==='rename'&&chatEdit.chatId!==id)closeChatName();
   chat.epoch++;chat.chat=id;chat.messages=[];chat.page=null;chat.olderBusy=false;
+  if(stage5Offline){try{localStorage.setItem('webAlarm.testChatSelection',JSON.stringify({workspace:chat.workspace,chat:id}))}catch(_){/* selection is a preference; blocked storage must not block history */}}
   renderChatList();clearChatHistory('Загружаем историю…');renderTurnComposer();return loadChatHistory(false).then(()=>checkTurn())
 }
 async function loadChatHistory(older){
   if(!chat.workspace||!chat.chat||(older&&(chat.olderBusy||!chat.page?.next_before)))return;
-  const epoch=chat.epoch;
+  const epoch=chat.epoch,request=++chat.historyRevision;
   let path='/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats/'+encodeURIComponent(chat.chat)+'/messages?limit='+CHAT_PAGE;
+  if(!older){chat.olderBusy=false;$('chatOlder').disabled=false}
   if(older){path+='&before='+encodeURIComponent(chat.page.next_before);chat.olderBusy=true;$('chatOlder').disabled=true}
   try{
     const data=await chatGet(path);
-    if(epoch!==chat.epoch)return;
+    if(epoch!==chat.epoch||request!==chat.historyRevision)return;
     if(!validChatHistory(data))throw Error('Некорректный ответ сервера об истории диалога');
     notice('chatError','');chat.messages=older?[...data.messages,...chat.messages]:data.messages;chat.page=data.page;
     renderChatHistory(data,older)
-  }catch(e){if(epoch===chat.epoch)chatFailure(e)}
-  finally{if(older&&epoch===chat.epoch){chat.olderBusy=false;$('chatOlder').disabled=false}}
+  }catch(e){if(epoch===chat.epoch&&request===chat.historyRevision)chatFailure(e)}
+  finally{if(older&&epoch===chat.epoch&&request===chat.historyRevision){chat.olderBusy=false;$('chatOlder').disabled=false}}
 }
 function startChat(){if(chat.started)return;chat.started=true;loadChatModel();return loadChatWorkspaces()}
 // Ultra Chat stage 2: create and rename a dialogue in the shared Ultra core. The write token is a second capability
@@ -2434,7 +2457,7 @@ $('chatNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeCh
 $('chatComposer').onsubmit=e=>{e.preventDefault();return sendTurn()};
 $('chatSend').onclick=sendTurn;
 $('chatInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();return sendTurn()}};
-$('chatTurnCheck').onclick=checkTurn;
+$('chatTurnCheck').onclick=()=>checkTurn(true);
 $('chatTurnCancel').onclick=cancelTurn;
 $('chatTurnNew').onclick=()=>{if(chatTurn.state==='UNKNOWN'&&(!stage5Offline||!chatTurn.busy)){
   if(stage5Offline){chatTurn.dismissed.set(turnScope(),turnPending()?.key);chatTurn.state=null;$('chatTurnNew').hidden=true}

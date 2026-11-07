@@ -1,0 +1,45 @@
+{
+  "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+  "js": {
+    "cases": 52,
+    "pass": 52,
+    "fail": 0,
+    "skip": 0
+  },
+  "web_python": {
+    "cases": 63,
+    "pass": 63,
+    "fail": 0,
+    "skip": 0
+  },
+  "separate_tk": {
+    "cases": 2,
+    "pass": 2,
+    "fail": 0
+  },
+  "final_recovery_subset": {
+    "cases": 3,
+    "pass": 3,
+    "included_in_web_63": true
+  },
+  "red": {
+    "f1_js_failures": 2,
+    "f2_python_failure": 1,
+    "history_selection_js_failures": 2,
+    "cancel_badge_js_failure": 1
+  },
+  "initial_errors": [
+    "system Python missing httpx",
+    "combined Tk/HTTP process Tcl abort exit 2147483651"
+  ],
+  "guard_deny_events": 6,
+  "guard_events_explanation": "Intentional existing Stage5 negative controls in combined and web-only runs; no successful external transport or credential read",
+  "not_run": [
+    "full repository suite",
+    "CI",
+    "real providers/OAuth",
+    "verified 480px",
+    "historical user RAW-loss episode"
+  ],
+  "author_verdict": "PARTIAL / RESULT READY; no independent PASS"
+}
