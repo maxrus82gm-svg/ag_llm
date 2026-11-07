@@ -1,0 +1,13 @@
+{
+  "_comment": "Постоянная конфигурация Start_WebAlarm_Test.cmd. Stage 5 запускается только в браузере через --web; Tkinter не развивается. При смене тестового этапа обновляется профиль здесь; имена файлов запуска сохраняются. Штатный запуск эту конфигурацию не читает.",
+  "schema_version": 1,
+  "active": "stage5-offline",
+  "test_profiles": {
+    "stage5-offline": {
+      "title": "Stage 5 · OFFLINE TEST",
+      "kind": "python_script",
+      "script": "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/review_fixture.py",
+      "args": ["--web"]
+    }
+  }
+}

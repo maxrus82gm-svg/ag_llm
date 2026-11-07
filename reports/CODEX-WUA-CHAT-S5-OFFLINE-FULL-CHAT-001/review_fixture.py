@@ -14,10 +14,17 @@ ROOT = PACKAGE.parent.parent
 sys.path.insert(0, str(ROOT))
 
 
+def open_web(url):
+    import webbrowser
+    if not webbrowser.open(url):
+        print(f"TEST: браузер не открылся автоматически. Откройте {url}", flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--web-smoke", action="store_true")
+    parser.add_argument("--web", action="store_true", help="browser only; Enter stops the TEST server")
     args = parser.parse_args()
     with tempfile.TemporaryDirectory(prefix="stage5_тест_") as directory:
         root = Path(directory).resolve()
@@ -35,7 +42,8 @@ def main():
         server.daemon_threads = False
         worker = threading.Thread(target=server.serve_forever)
         worker.start()
-        print(f"TEST OFFLINE · http://127.0.0.1:{server.server_address[1]}/", flush=True)
+        url = f"http://127.0.0.1:{server.server_address[1]}/"
+        print(f"TEST OFFLINE · {url}", flush=True)
         original = _FixtureTransport.send
 
         async def visible_attempt(fake, payload, **kwargs):
@@ -43,9 +51,12 @@ def main():
             return await original(fake, payload, **kwargs)
 
         try:
-            if args.web_smoke:
+            if args.web_smoke or args.web:
                 # A test driver controls the fixture lifetime through stdin.
                 with patch.object(_FixtureTransport, "send", visible_attempt):
+                    if args.web:
+                        print("TEST · только Web. Для остановки нажмите Enter в этом окне запуска.", flush=True)
+                        open_web(url)
                     sys.stdin.readline()
                 return
             from ultra_ui import UltraApp

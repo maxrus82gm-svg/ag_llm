@@ -311,6 +311,42 @@ class RunTests(Base):
         self.assertIn('"active": "standard"', out.getvalue())
 
 
+class StableEntryTests(Base):
+    def test_explicit_standard_ignores_the_selected_test_configuration(self):
+        with patch.object(launcher, "load_launch", side_effect=AssertionError("must not read active config")), \
+                patch.object(launcher, "run_web_alarm", return_value=0) as run:
+            self.assertEqual(launcher.main(["--standard"], out=io.StringIO()), 0)
+        self.assertTrue(run.call_args.args[0].standard)
+        self.assertEqual(run.call_args.args[0].storage, "default")
+
+    def test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting(self):
+        standard = config(self.base, "standard")
+        broken = self.base / "broken.json"
+        broken.write_text("{", encoding="utf-8")
+        for path in (self.base / "missing.json", standard, broken):
+            with self.subTest(path=path.name), \
+                    patch.object(launcher, "run_web_alarm", side_effect=AssertionError("must not start")), \
+                    patch.object(launcher, "run_script", side_effect=AssertionError("must not start")):
+                out = io.StringIO()
+                self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+                self.assertIn("ЗАПУСК ОСТАНОВЛЕН", out.getvalue())
+
+    def test_test_entry_uses_the_existing_stage5_script_dispatch(self):
+        path = REPO / "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/launch_stage5.json"
+        expected = launcher.load_launch(path)
+        with patch.object(launcher, "run_script", return_value=7) as run, \
+                patch.object(launcher, "run_web_alarm", side_effect=AssertionError("must not start standard")):
+            self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=io.StringIO()), 7)
+        self.assertEqual(run.call_args.args[0], expected)
+        self.assertFalse(expected.standard)
+
+    def test_explicit_standard_and_config_cannot_be_combined(self):
+        with patch.object(launcher, "run_web_alarm", side_effect=AssertionError("must not start")), \
+                patch.object(sys, "stderr", io.StringIO()), self.assertRaises(SystemExit) as error:
+            launcher.main(["--standard", "--config", str(self.base / "missing.json")])
+        self.assertEqual(error.exception.code, 2)
+
+
 class BatTests(unittest.TestCase):
     def test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher(self):
         raw = BAT.read_bytes()

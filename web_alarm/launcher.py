@@ -416,14 +416,20 @@ def run_script(launch: Launch, *, out: TextIO, colors: bool, sleep: Callable[[fl
 
 def main(argv: list[str] | None = None, out: TextIO | None = None) -> int:
     parser = argparse.ArgumentParser(prog="Start_WebAlarm.bat", description="Web Alarm Ultra launcher")
-    parser.add_argument("--config", type=Path, default=CONFIG_PATH, help="other launch_config.json (tests)")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--config", type=Path, default=CONFIG_PATH, help="other launch_config.json (tests)")
+    selection.add_argument("--standard", action="store_true", help="built-in standard launch, ignoring active config")
+    parser.add_argument("--require-test", action="store_true", help="refuse any fallback to the standard launch")
     parser.add_argument("--self-test", type=Path, help="start, check over HTTP, stop and write a JSON result")
     parser.add_argument("--no-browser", action="store_true")
     args = parser.parse_args(argv)
     out = out or sys.stdout
     colors = enable_colors(out)
     try:
-        launch = load_launch(args.config)
+        launch = standard_launch() if args.standard else load_launch(args.config)
+        if args.require_test and launch.standard:
+            raise LaunchConfigError("Тестовый запуск требует явно выбранного TEST-профиля. "
+                                    "Файл отсутствует или выбран standard; запуск штатных данных запрещён.")
     except LaunchConfigError as exc:
         out.write("\n" + paint("ЗАПУСК ОСТАНОВЛЕН: конфигурация запуска не принята", 41, colors) + "\n" + str(exc) + "\n")
         return 2

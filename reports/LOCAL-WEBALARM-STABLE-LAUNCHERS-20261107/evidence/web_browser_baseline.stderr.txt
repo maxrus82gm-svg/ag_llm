@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\LOCAL-WEBALARM-STABLE-LAUNCHERS-20261107\web_lifecycle_check.py", line 47, in <module>
+    assert len(opened) == 1, "TEST must open its Web page automatically; browser opens=" + str(len(opened))
+           ^^^^^^^^^^^^^^^^
+AssertionError: TEST must open its Web page automatically; browser opens=0

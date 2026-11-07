@@ -1,0 +1,33 @@
+test_b1_standard_banner_is_green_and_test_banner_is_red_with_the_profile_name (test_web_alarm_launcher.BannerAndPageTests.test_b1_standard_banner_is_green_and_test_banner_is_red_with_the_profile_name) ... ok
+test_b2_standard_page_is_unchanged_and_test_page_is_marked (test_web_alarm_launcher.BannerAndPageTests.test_b2_standard_page_is_unchanged_and_test_page_is_marked) ... ok
+test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher (test_web_alarm_launcher.BatTests.test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher) ... FAIL
+test_l1_the_shipped_configuration_is_the_standard_launch (test_web_alarm_launcher.ConfigTests.test_l1_the_shipped_configuration_is_the_standard_launch) ... ok
+test_l2_missing_file_is_standard_and_every_shipped_profile_is_valid_and_non_standard (test_web_alarm_launcher.ConfigTests.test_l2_missing_file_is_standard_and_every_shipped_profile_is_valid_and_non_standard) ... ok
+test_l3_unsafe_or_broken_configurations_are_refused (test_web_alarm_launcher.ConfigTests.test_l3_unsafe_or_broken_configurations_are_refused) ... ok
+test_l4_machine_port_binding_moves_the_standard_port_and_stays_visible (test_web_alarm_launcher.ConfigTests.test_l4_machine_port_binding_moves_the_standard_port_and_stays_visible) ... ok
+test_r1_standard_self_test_serves_the_unchanged_page_from_the_standard_storage (test_web_alarm_launcher.RunTests.test_r1_standard_self_test_serves_the_unchanged_page_from_the_standard_storage) ... ok
+test_r2_test_profile_uses_its_own_temp_storage_and_marks_the_page (test_web_alarm_launcher.RunTests.test_r2_test_profile_uses_its_own_temp_storage_and_marks_the_page) ... ok
+test_r3_test_warning_stays_five_seconds_before_the_browser_and_standard_opens_at_once (test_web_alarm_launcher.RunTests.test_r3_test_warning_stays_five_seconds_before_the_browser_and_standard_opens_at_once) ... ok
+test_r4_a_busy_port_is_reported_and_an_identical_running_launch_is_reused (test_web_alarm_launcher.RunTests.test_r4_a_busy_port_is_reported_and_an_identical_running_launch_is_reused) ... ok
+test_r5_break_and_close_signals_end_the_server_through_the_same_stop_path (test_web_alarm_launcher.RunTests.test_r5_break_and_close_signals_end_the_server_through_the_same_stop_path) ... ok
+test_r6_ctrl_break_stops_a_real_launcher_process_cleanly (test_web_alarm_launcher.RunTests.test_r6_ctrl_break_stops_a_real_launcher_process_cleanly) ... ok
+test_r7_script_profile_warns_then_runs_the_script_and_cannot_self_test (test_web_alarm_launcher.RunTests.test_r7_script_profile_warns_then_runs_the_script_and_cannot_self_test) ... ok
+test_r8_a_refused_configuration_stops_with_a_red_message_and_nothing_starts (test_web_alarm_launcher.RunTests.test_r8_a_refused_configuration_stops_with_a_red_message_and_nothing_starts) ... ok
+test_r9_a_second_launcher_on_the_same_port_is_refused_even_before_it_listens (test_web_alarm_launcher.RunTests.test_r9_a_second_launcher_on_the_same_port_is_refused_even_before_it_listens) ... ok
+test_explicit_standard_and_config_cannot_be_combined (test_web_alarm_launcher.StableEntryTests.test_explicit_standard_and_config_cannot_be_combined) ... ok
+test_explicit_standard_ignores_the_selected_test_configuration (test_web_alarm_launcher.StableEntryTests.test_explicit_standard_ignores_the_selected_test_configuration) ... ok
+test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting (test_web_alarm_launcher.StableEntryTests.test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting) ... ok
+test_test_entry_uses_the_existing_stage5_script_dispatch (test_web_alarm_launcher.StableEntryTests.test_test_entry_uses_the_existing_stage5_script_dispatch) ... ok
+
+======================================================================
+FAIL: test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher (test_web_alarm_launcher.BatTests.test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 356, in test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher
+    self.assertIn('pushd "%~dp0"', text)
+AssertionError: 'pushd "%~dp0"' not found in ''
+
+----------------------------------------------------------------------
+Ran 20 tests in 16.629s
+
+FAILED (failures=1)

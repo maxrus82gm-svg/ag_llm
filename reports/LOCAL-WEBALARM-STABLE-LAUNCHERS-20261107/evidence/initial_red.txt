@@ -1,0 +1,126 @@
+test_explicit_standard_and_config_cannot_be_combined (test_web_alarm_launcher.StableEntryTests.test_explicit_standard_and_config_cannot_be_combined) ... ok
+test_explicit_standard_ignores_the_selected_test_configuration (test_web_alarm_launcher.StableEntryTests.test_explicit_standard_ignores_the_selected_test_configuration) ... usage: Start_WebAlarm.bat [-h] [--config CONFIG] [--self-test SELF_TEST]
+                          [--no-browser]
+Start_WebAlarm.bat: error: unrecognized arguments: --standard
+ERROR
+test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting (test_web_alarm_launcher.StableEntryTests.test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting) ... usage: Start_WebAlarm.bat [-h] [--config CONFIG] [--self-test SELF_TEST]
+                          [--no-browser]
+Start_WebAlarm.bat: error: unrecognized arguments: --require-test
+
+  test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting (test_web_alarm_launcher.StableEntryTests.test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting) (path='missing.json') ... ERROR
+usage: Start_WebAlarm.bat [-h] [--config CONFIG] [--self-test SELF_TEST]
+                          [--no-browser]
+Start_WebAlarm.bat: error: unrecognized arguments: --require-test
+  test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting (test_web_alarm_launcher.StableEntryTests.test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting) (path='launch_config.json') ... ERROR
+usage: Start_WebAlarm.bat [-h] [--config CONFIG] [--self-test SELF_TEST]
+                          [--no-browser]
+Start_WebAlarm.bat: error: unrecognized arguments: --require-test
+  test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting (test_web_alarm_launcher.StableEntryTests.test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting) (path='broken.json') ... ERROR
+test_test_entry_uses_the_existing_stage5_script_dispatch (test_web_alarm_launcher.StableEntryTests.test_test_entry_uses_the_existing_stage5_script_dispatch) ... usage: Start_WebAlarm.bat [-h] [--config CONFIG] [--self-test SELF_TEST]
+                          [--no-browser]
+Start_WebAlarm.bat: error: unrecognized arguments: --require-test
+ERROR
+test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher (test_web_alarm_launcher.BatTests.test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher) ... FAIL
+
+======================================================================
+ERROR: test_explicit_standard_ignores_the_selected_test_configuration (test_web_alarm_launcher.StableEntryTests.test_explicit_standard_ignores_the_selected_test_configuration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 318, in test_explicit_standard_ignores_the_selected_test_configuration
+    self.assertEqual(launcher.main(["--standard"], out=io.StringIO()), 0)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\launcher.py", line 422, in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 1908, in parse_args
+    self.error(msg)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2650, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2637, in exit
+    _sys.exit(status)
+SystemExit: 2
+
+======================================================================
+ERROR: test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting (test_web_alarm_launcher.StableEntryTests.test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting) (path='missing.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 331, in test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\launcher.py", line 422, in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 1908, in parse_args
+    self.error(msg)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2650, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2637, in exit
+    _sys.exit(status)
+SystemExit: 2
+
+======================================================================
+ERROR: test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting (test_web_alarm_launcher.StableEntryTests.test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting) (path='launch_config.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 331, in test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\launcher.py", line 422, in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 1908, in parse_args
+    self.error(msg)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2650, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2637, in exit
+    _sys.exit(status)
+SystemExit: 2
+
+======================================================================
+ERROR: test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting (test_web_alarm_launcher.StableEntryTests.test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting) (path='broken.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 331, in test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\launcher.py", line 422, in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 1908, in parse_args
+    self.error(msg)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2650, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2637, in exit
+    _sys.exit(status)
+SystemExit: 2
+
+======================================================================
+ERROR: test_test_entry_uses_the_existing_stage5_script_dispatch (test_web_alarm_launcher.StableEntryTests.test_test_entry_uses_the_existing_stage5_script_dispatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 339, in test_test_entry_uses_the_existing_stage5_script_dispatch
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=io.StringIO()), 7)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\launcher.py", line 422, in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 1908, in parse_args
+    self.error(msg)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2650, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\argparse.py", line 2637, in exit
+    _sys.exit(status)
+SystemExit: 2
+
+======================================================================
+FAIL: test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher (test_web_alarm_launcher.BatTests.test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 356, in test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher
+    self.assertIn('pushd "%~dp0"', text)
+AssertionError: 'pushd "%~dp0"' not found in ''
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.023s
+
+FAILED (failures=1, errors=5)
