@@ -337,7 +337,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
 <label for="chatInput">Сообщение</label>
 <textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea>
-<div id="chatTurnControls" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><button type="button" id="chatTurnCheck">Проверить Turn</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button></div>
+<div id="chatTurnControls" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button></div>
 <div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
 </form>
 </div>
@@ -1965,7 +1965,7 @@ async function checkTurn(){
     if(stage5Offline&&typeof pending?.text==='string')$('chatInput').value=pending.text;
     showTurn(result);await loadChatHistory(false)
   }
-  catch(e){if(epoch===chat.epoch)text('chatTurnStatus',e.httpStatus===404?'Turn ещё не найден. Повторите исходный текст с сохранённым ключом.':'Не удалось проверить Turn. Ключ сохранён, автоматического повтора нет.')}
+  catch(e){if(epoch===chat.epoch)text('chatTurnStatus',e.httpStatus===404?'Запрос ещё не найден. Повторите исходный текст с сохранённым ключом.':'Не удалось проверить состояние запроса. Ключ сохранён, автоматического повтора нет.')}
 }
 async function sendTurn(){
   if(!chatTurn.available||chatTurn.busy||!chat.workspace||!chat.chat||!$('chatInput').value.trim()||(stage5Offline&&!chatTurn.model))return;
@@ -1994,14 +1994,14 @@ async function sendTurn(){
     const invalid=stage5Offline&&['invalid_turn_request','invalid_offline_request','request_too_large'].includes(e.code);
     if(invalid)localStorage.removeItem(scope);
     if(epoch===chat.epoch)text('chatTurnStatus',invalid?'TEST · исправьте текст или выбор модели.':
-      e.code==='idempotency_conflict'?'Конфликт ключа: верните исходный текст. Перезаписи нет.':'Ответ не подтверждён. Ключ сохранён. Проверьте Turn перед повтором.')
+      e.code==='idempotency_conflict'?'Конфликт ключа: верните исходный текст. Перезаписи нет.':'Ответ не подтверждён. Ключ сохранён. Проверьте состояние запроса перед повтором.')
   }
   finally{chatTurn.busy=false;renderTurnComposer()}
 }
 async function cancelTurn(){
   const pending=turnPending();if(!pending)return;const epoch=chat.epoch;
   try{const current=await chatGet(turnBase()+'/by-key/'+encodeURIComponent(pending.key));const result=await chatPost(turnBase()+'/'+current.turn_id+'/cancel',{});if(epoch===chat.epoch)showTurn(result)}
-  catch(_){if(epoch===chat.epoch)text('chatTurnStatus','Отмена не подтверждена. Проверьте Turn.')}
+  catch(_){if(epoch===chat.epoch)text('chatTurnStatus','Отмена не подтверждена. Проверьте состояние запроса.')}
 }
 const CHAT_REASON={missing_history:'В папке нет истории Ultra',missing_path:'Папка недоступна',not_directory:'Путь не является папкой',invalid_metadata:'Данные Ultra повреждены',unsupported_version:'Данные Ultra более новой версии',unsafe_storage_link:'Внутри хранилища Ultra ссылка вместо папки или файла — чтение запрещено',unreadable:'Данные не читаются',unsupported_registration_id:'Эта регистрация не поддерживается Ultra Chat',registry_unavailable:'Реестр Workspace недоступен',too_many_workspaces:'Слишком много Workspace',chats_listing_too_large:'Слишком много диалогов для просмотра',history_too_large:'История слишком большая для просмотра',foreign_identity:'Диалог принадлежит другому Workspace',chat_damaged:'Диалог повреждён',ultra_core_unavailable:'Общее ядро Ultra недоступно'};
 const CHAT_OUTCOME={failed:['Ошибка выполнения (старая запись), не ответ модели','bad'],no_answer:['Ответ не сохранён','warn'],interrupted:['Прервано · исход неизвестен','unknown'],unknown:['Исход неизвестен','unknown']};
