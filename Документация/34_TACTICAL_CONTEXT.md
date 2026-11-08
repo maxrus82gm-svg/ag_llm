@@ -1,6 +1,12 @@
 # Оперативная память проекта — №34
 
-## CURRENT WEB25 / 08.11.2026 — H23 S3a OFFLINE PARTIAL, Stage6 S3b HOLD
+## CURRENT WEB25 / 08.11.2026 — H24 S1 INDEPENDENT OFFLINE PASS, S2 1 FAIL, S3b HOLD
+
+**CURRENT WEB25 / 08.11.2026 / H-CODEX-000024 S1:** main №542 `a455d97f`. Independent Windows guarded S1 **69/69 PASS** and extra reconciliation **23/23 PASS** (18 mutations), exit0/guard0; author 3 weakening RED (reviewer did not rerun). Independent guarded S2 **72/73 FAIL** on isolation oracle treating standalone S3a ledger importing pure policy as production import; separate narrow scope required. S3a independent runtime 35 NOT RUN (author 35 PASS). **S1 bounded accepted; H24 overall PARTIAL; Stage6 S3b/Stage7/paid/live HOLD**. Review `reports/CHATGPT-WEB25-CODEX-RT002-S1-REVIEW-20261108/review.md`; OPEN S2-OFFLINE-LEDGER-ISOLATION-ORACLE, S3A-INDEPENDENT-EXECUTION, Ordinary Chat policy/adoption/privacy, dynamic S3b coverage.
+
+ **Execution proof:** authorized Windows Desktop Commander, Python 3.12.10, source SHA `35426388`, exact S1 guard 69 PASS exit0, extra 23 PASS exit0, exact S2 guard 72 PASS/1 FAIL exit1. Independent runs JSON `reports/CHATGPT-WEB25-CODEX-RT002-S1-REVIEW-20261108/independent_runs.json`; no live provider or paid calls. **Codex:** H-CODEX-000024 `CODEX-RT002-B2-S1-INVENTORY-RECON-001`, finish ROTATED, B1 WAITING, B1.1 H24; task documentally partial closeout. User #542 `.obsidian/workspace.json` incidental and not touched. **NEXT (needs separate USER GO):** narrow S2 isolation-oracle test repair with positive/negative proof; independent S3a 35-test runtime; Ordinary Chat route/profile decisions before S3b. Older H23 snapshot below is historical. Stage5 remaining browser risks unchanged.
+
+## HISTORICAL WEB25 / 08.11.2026 — H23 S3a OFFLINE PARTIAL (superseded by H24)
 
 **CURRENT / WEB25 / 08.11.2026 / S3a H-CODEX-000023:** №539 `53d7ce91` опубликовал отдельный OFFLINE durable ledger (`ultra_budget_ledger.py`) и 35 tests. Author S3a 35 PASS, Run Store 51 PASS, S2 73 PASS, mutation negative 3/3 expected red; S1 **67 PASS / 2 FAIL** (source inventory for Web Alarm launcher, ordinary transport, model cards). WEB25 `PARTIAL / BOUNDED SOURCE+AUTHOR EVIDENCE`, exact 16 focused SHA checks, independent Python/CI **NOT RUN**. Это не обязательная `independently ACCEPTED S3a` для S3b и не Stage6 DONE. S1 reconcile, user Ordinary Chat policy decision, historical ledger adoption, RAW wire retention, durability/fencing и full runtime OPEN. Подробнее №21/№05, review `reports/CHATGPT-WEB25-CODEX-RT002-S3A-REVIEW-20261108/review.md`. S3b/paid/live запрещены до отдельных gates.
 

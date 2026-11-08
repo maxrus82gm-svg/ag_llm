@@ -1,0 +1,67 @@
+{
+  "task": "CODEX-RT002-B2-S1-INVENTORY-RECON-001",
+  "history_id": "H-CODEX-000024",
+  "commit_sha": "a455d97f5379b56933fb08655c8542617afbf9d3",
+  "platform": "Windows DESKTOP-SC96D3U",
+  "source_sha256": "35426388b49eb4a8154f5dfe8717ff4f3796b315ce3b391a71db6834e4a09696",
+  "runtime": "Python 3.12.10",
+  "execution_scope": "read-only working sources, synthetic/temporary storage, OFFLINE guard; no paid/provider connections; tests may create temp files",
+  "runs": [
+    {
+      "suite": "S1 exact guarded",
+      "command": ".venv/Scripts/python.exe -B -X utf8 reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/run_guarded.py s1",
+      "pid": 35952,
+      "exit": 0,
+      "tests": 69,
+      "pass": 69,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "gate": "PASS",
+      "isolation_violations": 0,
+      "evidence_problems": 0,
+      "selected": null,
+      "elapsed_seconds": 42.608,
+      "log_sha256": "2e7dc4b18b5a2a3b1d666133db7a4372622a65484dd192cde8b92bf139200c3a"
+    },
+    {
+      "suite": "Extra reconciliation mutations and fake checks",
+      "command": ".venv/Scripts/python.exe -B -X utf8 reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/run_guarded.py checks",
+      "pid": 2992,
+      "exit": 0,
+      "tests": 23,
+      "pass": 23,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "isolation_violations": 0,
+      "source_mutations": "18 in-memory mutation oracles included in 23 methods; independently re-executed",
+      "elapsed_seconds": 10.229
+    },
+    {
+      "suite": "S2 guarded exact core",
+      "command": ".venv/Scripts/python.exe -B -X utf8 test_rt002_s2_budget_policy.py",
+      "pid": 34644,
+      "exit": 1,
+      "tests": 73,
+      "pass": 72,
+      "fail": 1,
+      "error": 0,
+      "skip": 0,
+      "isolation_violations": 0,
+      "gate": "FAIL",
+      "elapsed_seconds": 1.511,
+      "log_sha256": "68a02fd45238230d4247699413830eccbc8c40b3f50d287f4d1d40e443c42f17",
+      "failure": "IsolationTests.test_no_production_module_imports_the_policy_yet",
+      "details": "test sees ultra_budget_ledger.py importing ultra_budget_policy; first appeared with S3a H23"
+    }
+  ],
+  "not_run": [
+    "three author oracle-weakening controls independently",
+    "S3a 35-test independent Windows runtime",
+    "S2 provenance optional",
+    "full repo CI or real UI",
+    "live GigaChat/OAuth/provider/paid; hardware power-loss / portability"
+  ],
+  "proof_limits": "Independent console summary was observed via authorized remote tool; full separate raw independent test logs stay in temporary test roots and are not copied to GitHub. Raw stdout is not claimed to be archived here."
+}

@@ -280,26 +280,30 @@ ChatGPT после публикации самостоятельно прове�
 
 Постоянный архив — №001 Codex и адресные `reports/<TASK-ID>/task_record.json`.
 
-- **08.11 / H-CODEX-000023 / `CODEX-RT002-B2-S3A-DURABLE-LEDGER-001`:** S3a OFFLINE ledger, 35/35 author PASS, Run Store 51, S2 73; S1 67/69 (2 FAIL). WEB25 PARTIAL/BOUNDED source-review, independent runtime NOT RUN; S3b HOLD.
-- **07.11 / H-CODEX-000022 / `CODEX-WUA-S5-TURN-UX-RECOVERY-001`:** Turn UX recovery, bounded USER GUI smoke PASS; cancellation/RAW, Tcl and 480px residual OPEN.
-- **07.11 / H-CODEX-000021 / `CODEX-WUA-S5-TURN-CHECK-DIAG-001`:** Turn diagnostic PARTIAL, historical RAW/F5 loss root-cause OPEN.
-- **07.11 / H-CODEX-000020 / `CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001`:** Stage5 fake Web/Tk accepted bounded; independent Windows CI 387 PASS, live NOT RUN.
-- **06.11 / H-CODEX-000019 / `CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001`:** Stage4 offline cancellation bounded PASS, no production/live GO.
+- **08.11 / H-CODEX-000024 / `CODEX-RT002-B2-S1-INVENTORY-RECON-001`:** independent Windows S1 69 PASS + 23 extra PASS/18 mutations; separate S2 72 PASS/1 FAIL; task PARTIAL, S1 bounded PASS, S3b HOLD.
+- **08.11 / H-CODEX-000023 / `CODEX-RT002-B2-S3A-DURABLE-LEDGER-001`:** S3a ledger 35/35 author PASS, Run Store 51; independent S3a runtime NOT RUN, privacy/fencing OPEN.
+- **07.11 / H-CODEX-000022 / `CODEX-WUA-S5-TURN-UX-RECOVERY-001`:** bounded Windows GUI smoke PASS; RAW cancel, Tcl, 480px residual OPEN.
+- **07.11 / H-CODEX-000021 / `CODEX-WUA-S5-TURN-CHECK-DIAG-001`:** Turn diagnostic PARTIAL, historical cancellation RAW cause OPEN.
+- **07.11 / H-CODEX-000020 / `CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001`:** Stage5 fake UI+Turn, independent Windows 387 PASS, live NOT RUN.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **H23 S3a:** `ultra_budget_ledger.py`/35 new tests; shared Run Store index lock; documented ledger readback/replay, UNKNOWN/late, synthetic race/crash. WEB25 checked published source/hashes, independent runtime NOT RUN. S1 2 FAIL; historical adoption, policy, RAW retention, fencing OPEN; S3b blocked.
-- **H22 Stage5:** WEB25 USER Windows TEST confirmed fake reply, Turn check, independent Chat 01/02 and F5; bounded only.
-- **H21 Stage5:** diagnostic PARTIAL, source/author evidence; historical canceled RAW disappearance not conclusively recovered.
-- **H20 Stage5:** author OFFLINE E2E implementation + independent Windows 387 PASS; no real paid provider or clean-Windows portability.
-- **H19 Stage4:** guarded cancellation/deadline bounded repair; no blanket live authorization.
+- **H24 S1:** changed only `test_rt002_s1_routes.py`; initial 67/69 RED, author+independent 69/69 PASS, 23/23 guarded negative/fake checks PASS, full 18 source mutations detected. Independent S2 exact 72/73 FAIL: old isolation test includes OFFLINE S3a ledger. No real provider / full repo CI.
+- **H23 S3a:** Offline durable ledger and 35 authored PASS; independent runtime gate still OPEN; historical adoption, privacy/RAW, durability/fencing require separate actions.
+- **H22 Stage5:** Windows user F5, Turn check and two independent Chat histories bounded PASS, residual OPEN.
+- **H21 Stage5:** Turn check diagnosis PARTIAL; original canceled RAW issue unproven.
+- **H20 Stage5:** independent Windows fake UI 387 PASS, no real GigaChat or clean portability proof.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
+
+## WEB25 / 08.11.2026 — H-CODEX-000024 — S1 inventory OFFLINE independent PASS / product PARTIAL
+
+Source main@`a455d97f` №542, Codex H24/finish ROTATED exit0, B1 WAITING and B1.1 H24 untouched. Independent Remote Desktop Windows SHA matched exact `test_rt002_s1_routes.py`; guarded **S1 69/69 PASS** (exit0 guard0) and **23/23 extra PASS**, 18 in-memory mutation cases. Independent **S2 72/73 (1 FAIL)** due old `test_no_production_module_imports_the_policy_yet` discovering intentionally standalone `ultra_budget_ledger.py`; source-level mismatch, not evidence of live HTTP dispatch. S3a independent test NOT RUN; three author weakening controls not independently replayed. **Verdict S1 TARGETED INDEPENDENT OFFLINE PASS; H24 OVERALL PARTIAL**, S2 remedy separately authorized; S3b/Stage6/Stage7 live HOLD. Report `reports/CHATGPT-WEB25-CODEX-RT002-S1-REVIEW-20261108/review.md`.
 
 ## WEB25 / 08.11.2026 — H-CODEX-000023 — RT-002/B2 S3a OFFLINE PARTIAL
 
