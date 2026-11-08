@@ -1,0 +1,67 @@
+{
+  "run_id": 42498405794,
+  "run_url": "https://github.com/maxrus82gm-svg/ag_llm/actions/runs/42498405794",
+  "head_sha": "3635c79a13785c2a96463cc78e0e85ddb541f77e",
+  "platform": "windows-latest",
+  "python": "3.12.10",
+  "conclusion": "success",
+  "artifact_id": 13623893337,
+  "artifact_sha256": "9ac5f63a2023f1fb97270b905059309bfb4565d3fb6e3204453b0b6faaf23d41",
+  "artifact_expires": "2026-11-22",
+  "positive": [
+    {
+      "suite": "S3a",
+      "tests": 35,
+      "pass": 35,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "exit": 0
+    },
+    {
+      "suite": "Run Store V2",
+      "tests": 51,
+      "pass": 51,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "exit": 0
+    }
+  ],
+  "expected_red": [
+    {
+      "mutation": "policy DENY bypass",
+      "fail": 2,
+      "exit": 1
+    },
+    {
+      "mutation": "UNKNOWN liability zero",
+      "fail": 1,
+      "exit": 1
+    },
+    {
+      "mutation": "checksum bypass",
+      "fail": 9,
+      "exit": 1
+    }
+  ],
+  "offline_guard": {
+    "probes": 6,
+    "blocked": 6,
+    "unexpected": 0
+  },
+  "source_unchanged": true,
+  "scope": "synthetic OFFLINE only",
+  "previous_ci_failures": [
+    42497969424,
+    42498071184,
+    42498294997
+  ],
+  "not_run": [
+    "real HTTP/paid/live",
+    "hardware power loss",
+    "historical audit adoption",
+    "active-active cross-host fencing",
+    "whole repository regression"
+  ]
+}
