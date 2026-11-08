@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Web Alarm Ultra — RT-002/B2 S2: исправление isolation oracle для OFFLINE ledger",
   "date": "2026-11-08",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / S2 ORACLE BOUNDED INDEPENDENT PASS; S3a independent OPEN; Stage6 HOLD",
+  "review": "PASS / TARGETED WINDOWS OFFLINE S2 73/73 + quality47 + 3 weakening expected RED; S1 69; S3a independent NOT RUN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/handoff_task.md",
@@ -15,7 +15,32 @@
     "report": {
       "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/report.md",
       "sha256": "1cc7929df5ab41cf0735313ec201ae223dbf46634afda97016060bdba1b92c3b"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB26-CODEX-RT002-S2-REVIEW-20261108/review.md",
+      "sha256": "db3d2bba1e0248911e253df6fa560fa43e8be05a3cb6f6cb1d2b369e40447328"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+      "history_id": "H-CODEX-000025",
+      "agent": "codex",
+      "title": "Web Alarm Ultra — RT-002/B2 S2: исправление isolation oracle для OFFLINE ledger",
+      "date": "2026-11-08",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/handoff_task.md",
+          "sha256": "e4ca0dbc40a21e6666e57a595059afdee25339fcb28c6be7ee663ce1b8930bc9"
+        },
+        "report": {
+          "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/report.md",
+          "sha256": "1cc7929df5ab41cf0735313ec201ae223dbf46634afda97016060bdba1b92c3b"
+        }
+      }
+    }
+  ]
 }

@@ -1,0 +1,79 @@
+{
+  "task_id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+  "history_id": "H-CODEX-000025",
+  "publication": "f52363a1bd1507d9cc62f9ce5b7ca5d08375000e",
+  "source_sha256": {
+    "s2": "a7fa9b5d2bcf56dc8f037dd726679a8439c4b1f3135de969b9084bf8d3870d2c",
+    "s1": "35426388b49eb4a8154f5dfe8717ff4f3796b315ce3b391a71db6834e4a09696"
+  },
+  "environment": "DESKTOP-SC96D3U Windows Python 3.12.10",
+  "independent_runs": [
+    {
+      "name": "S2 full guarded",
+      "command": ".venv/Scripts/python.exe -B -X utf8 test_rt002_s2_budget_policy.py",
+      "tests": 73,
+      "pass": 73,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "exit": 0,
+      "gate": "PASS",
+      "isolation": 0,
+      "log_sha256": "c52d2912cacd3e75696666c42d318bad2033a88f744e2b3043df193ca96a6d4e"
+    },
+    {
+      "name": "S2 import quality",
+      "command": ".venv/Scripts/python.exe -B -X utf8 reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/run_guarded.py quality",
+      "tests": 47,
+      "pass": 47,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "exit": 0,
+      "isolation": 0
+    },
+    {
+      "name": "oracle weaken_disable",
+      "tests": 47,
+      "fail": 43,
+      "exit": 1,
+      "expected": "RED"
+    },
+    {
+      "name": "oracle weaken_transitive",
+      "tests": 47,
+      "fail": 1,
+      "exit": 1,
+      "expected": "RED"
+    },
+    {
+      "name": "oracle weaken_capsule_hash",
+      "tests": 47,
+      "fail": 1,
+      "exit": 1,
+      "expected": "RED"
+    },
+    {
+      "name": "S1 full guarded",
+      "command": ".venv/Scripts/python.exe -B -X utf8 test_rt002_s1_routes.py",
+      "tests": 69,
+      "pass": 69,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "exit": 0,
+      "gate": "PASS",
+      "isolation": 0,
+      "log_sha256": "082194f8d71d8cb86752352bb3c9b6079f729f3a56f80139740117cf6c04be0e"
+    }
+  ],
+  "not_run": [
+    "S1 extra23 new reviewer rerun",
+    "S3a 35 independent execution",
+    "whole-repo CI",
+    "S2 provenance optional",
+    "UI/production and real provider/OAuth/paid calls"
+  ],
+  "log_availability": "Windows temporary paths, full independent stdout not uploaded to GitHub",
+  "author_evidence": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/"
+}

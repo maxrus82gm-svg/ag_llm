@@ -1,6 +1,10 @@
 # Оперативная память проекта — №34
 
-## CURRENT WEB25 / 08.11.2026 — H24 S1 INDEPENDENT OFFLINE PASS, S2 1 FAIL, S3b HOLD
+## CURRENT WEB26 / 08.11.2026 — H25 S2 bounded independent PASS, S3a OPEN, S3b HOLD
+
+H25 user main №544 `f52363a1bd15`, Codex `CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001` / `H-CODEX-000025` finished ROTATED, БЛОК 1 WAITING, 1.1 H25. WEB26 независимо на Windows Python 3.12.10 проверил S2 **73/73 PASS**, quality **47/47 PASS**, weakening expected RED **43/1/1 FAIL**, S1 **69/69 PASS**, 0 isolation; source SHA matched publication. **H25 S2 BOUNDED INDEPENDENT OFFLINE PASS; DOC ITERATION CLOSED.** Авторские S1-extra23 и S3a35 не повторялись; independent S3a NOT RUN; full CI/live NOT RUN. **OPEN:** S3a independent, Ordinary Chat policy/numeric user decisions, ledger adoption/fencing/RAW and S3b dynamic physical sends. **Stage6/7/paid/live HOLD**. Review `reports/CHATGPT-WEB26-CODEX-RT002-S2-REVIEW-20261108/review.md`; runs `reports/CHATGPT-WEB26-CODEX-RT002-S2-REVIEW-20261108/independent_runs.json`. Codex 007 WAITING, №001/05/06/20/21/37/40 updated only after review; STANDARD/TEST, Blueprint, Ultra LLM and external MCP rights unchanged. Future S3a acceptance and new S3b implementation require separate USER GO; no paid/live.
+
+## HISTORICAL WEB25 / 08.11.2026 — H24 S1 INDEPENDENT OFFLINE PASS, S2 1 FAIL, S3b HOLD
 
 **CURRENT WEB25 / 08.11.2026 / H-CODEX-000024 S1:** main №542 `a455d97f`. Independent Windows guarded S1 **69/69 PASS** and extra reconciliation **23/23 PASS** (18 mutations), exit0/guard0; author 3 weakening RED (reviewer did not rerun). Independent guarded S2 **72/73 FAIL** on isolation oracle treating standalone S3a ledger importing pure policy as production import; separate narrow scope required. S3a independent runtime 35 NOT RUN (author 35 PASS). **S1 bounded accepted; H24 overall PARTIAL; Stage6 S3b/Stage7/paid/live HOLD**. Review `reports/CHATGPT-WEB25-CODEX-RT002-S1-REVIEW-20261108/review.md`; OPEN S2-OFFLINE-LEDGER-ISOLATION-ORACLE, S3A-INDEPENDENT-EXECUTION, Ordinary Chat policy/adoption/privacy, dynamic S3b coverage.
 
