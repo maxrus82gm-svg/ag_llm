@@ -73,6 +73,16 @@ EXPECTED_SEND_SITES = {
     ("compressor_runtime.py", "_request_gigachat", "client.post", "LLM"): 1,
     ("gigachat_transport.py", "get_access_token", "client.post", "OAUTH"): 1,
 }
+# Keep the eight approved physical routes above stable: S2 imports that exact contract.
+# The FULL S1 comparison below includes every additional construction as well.
+RECONCILED_ADDITIONAL_SITES = {
+    # Exact reconciled constructions; LOCAL describes the initial URL, not redirect/proxy enforcement.
+    ("launcher.py", "<import>", "import:urllib.request", "LOCAL_HTTP_ORIGIN"): 1,
+    ("launcher.py", "_get", "urlopen", "LOCAL_HTTP_ORIGIN"): 1,
+    ("ordinary_chat_service.py", "execute_request", "getattr.send", "CAPABILITY_CHECK"): 1,
+    ("ordinary_chat_service.py", "execute_request", "dynamic.send", "POTENTIAL_LLM"): 1,
+}
+EXPECTED_PRODUCTION_SITES = {**EXPECTED_SEND_SITES, **RECONCILED_ADDITIONAL_SITES}
 # Modules outside the Ultra production send set; production modules must not import them.
 NON_PRODUCTION_MODULES = {
     "apply_context_step1.py", "apply_ultra_ui_visual_patch.py", "fix_chat_raw_display.py",
@@ -976,6 +986,113 @@ def _owners(tree: ast.Module):
 
 ENDPOINT_HOST_MARKERS = ("api.giga.chat", "ngw.devices.sberbank.ru")
 
+# Semantic AST pins authorize only these reviewed nodes and their complete reference census.
+# All modules are still scanned. Any changed caller, host, metadata consumer or extra send fails.
+# Whitespace/line changes are immaterial; changing a pinned AST requires explicit reconciliation.
+RECON_PINS = {'launcher.py': {'HOST': '7c633fca520e5ff51d812e2327fc4e006fd6cb51bb28e8de234233776753232d',
+                 '_get': '48d737ff08dd910be212cd58a8ba3bb85018cee9e3a1ffde48d11cc6b8b810fe',
+                 '_already_running': '0e409f3fe68e0a737208f9d7071562b52594310e20fb707c40fd6e89ca22a377',
+                 '_self_test': 'c2fdd3d4d38ad7a6be892dae5bf5b0451d26ed095a5dacd441c93f0b78d5e32c',
+                 'run_web_alarm': '3f0c240876a28a946f140dea10a45452bdb655306038faed6f264cd61c4d94b8',
+                 'STANDARD_PORT': '4ff5048ea55254af33c7c30166acfc1439634fd5a926c3ff23ceb702293c7be7',
+                 'Launch': 'ad7f0565682342ad13e5538f4f4c5d6baca4cdd2a43ab1c1dd07bac0dfb73044',
+                 'standard_port': '4878843d8ec09d64c7b4bfd8531795c935022d99faa6a9735da0b374dc28931c',
+                 'standard_launch': '94cc4fa1a6ff996c2169b49eed3d0a773e773f03f808abcafdfbf5783e5ac0cf',
+                 '_profile': '211c49182f6b11fc35bb45a5f24159b3a8524330a564790099402135ffad8b51',
+                 'load_launch': '028ef20016c91faa3650c84fc36241a2e5454a5e90c3dbe02abc9835e77b5c7b',
+                 'main': 'cddb27458e20f1c6b3f5f6ddcf0f4f25135200a4ce05ca72d292167f8f897238'},
+ 'ordinary_chat_service.py': {'ChatTransport': '187a6a36bb86916f4dfa3da4bea9ad33ac9d666c638278eed25ec69673737162',
+                              'execute_request': '556454958b12f6bc6dd209e123409bbb52ba06ca581e30075b599d46d7455129'},
+ 'model_cards.py': {'Provider': '3d0e1706696a0a6fa9f834c7cbaee18a750e16c0ef4bf7fa55e31accb3ed6fbb',
+                    'BUILTIN_PROVIDERS': '68c85f1d931b3ec76b9dbbed0b86a420f1c742ce9def6b1f99f42cee117d6a9b',
+                    'LiveCheckNotAuthorized': '461979486038caa49c60b9332555312754bc3a1adab15ad94a9f8c3d1f3e33c9',
+                    'ModelCards.__init__': '23e909e739d4bab26e9f8009b586a0c50b837e235f8ba4e88ba8b0094de7e7c1',
+                    'ModelCards.run_check': 'ec82680003a2fd037a62c9fe901040bdbd2de4769b3f5e8069c73232a8303a4f',
+                    'ModelCards._settings_version': '3e86553b206a99f7db28f74f580f7ff7815cb2833c8d28eede7155b98e140b83',
+                    'ModelCards.catalog': '3879cc458697eefce244ffa1bbe58d6c191ab2306a13fe4408cb68f9d45b0497'},
+ 'ordinary_chat_test_adapter.py': {'_FixtureTransport': 'e092e4b473c6967868f80adc8bb53d9b55d69f23c1334f6ca6b2317145b98700',
+                                   'OfflineTestAdapter.__init__': '42a521d669cf25f5b9b5a40b6c5ff1f291a2bb4aa9fff8f1c70b61e79f233c8d',
+                                   'OfflineTestAdapter.execute': 'cb457ecae9f740e72e24fccf6a155d3167a77188b2d15a55e3b4a90507391c81'}}
+RECON_REFERENCES = {'launcher.py': '4f4f60619368656989a3c750c60da2168ec18d776d5303daa36d3ec06a1cd0ae',
+ 'ordinary_chat_service.py': '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945',
+ 'model_cards.py': '84bd9a33d00a64020534df64f250eb1461cd122e5562da91d3747da9b1758243',
+ 'ordinary_chat_test_adapter.py': '1d5ff808d35be09490e20b71681faf7b4b949b94bfe3d5e7edc9bd71865a6c04'}
+RECON_SYMBOLS = frozenset({"_get", "_already_running", "_self_test", "run_web_alarm", "execute_request"})
+METADATA_FIELDS = frozenset({"api_url", "oauth_url"})
+
+
+def _ast_hash(node) -> str:
+    return _sha256(ast.dump(node, include_attributes=False).encode("utf-8"))
+
+
+def _recon_reference_nodes(tree, module_name):
+    """References include alias sources/imports and reflected names, not only direct calls."""
+    parents = {id(child): parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
+    symbols = set(RECON_SYMBOLS)
+    if module_name == "launcher.py":
+        symbols |= {"HOST", "urllib"}
+    if module_name == "model_cards.py":
+        symbols |= {"Provider", "BUILTIN_PROVIDERS"}
+    for node in ast.walk(tree):
+        if module_name != "launcher.py" and isinstance(node, ast.Name) and node.id == "_get":
+            scope = parents.get(id(node))
+            while scope is not None and not isinstance(scope, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                scope = parents.get(id(scope))
+            if scope is not None and any(isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+                                         and n.name == "_get" for n in scope.body):
+                continue  # a lexically defined helper, not the imported launcher function
+        if ((isinstance(node, ast.Name) and node.id in symbols)
+                or (isinstance(node, ast.Attribute) and node.attr in symbols | METADATA_FIELDS)
+                or (isinstance(node, ast.Constant) and node.value in RECON_SYMBOLS)
+                or (isinstance(node, ast.ImportFrom) and any(a.name in symbols for a in node.names))):
+            yield node
+
+
+def _recon_reference_digest(tree, module_name):
+    parents = {id(child): parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
+    rows = []
+    for node in _recon_reference_nodes(tree, module_name):
+        statement = node
+        while not isinstance(statement, ast.stmt):
+            statement = parents[id(statement)]
+        scopes = []
+        parent = parents.get(id(node))
+        while parent is not None:
+            if isinstance(parent, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                scopes.append(parent.name)
+            parent = parents.get(id(parent))
+        rows.append((tuple(reversed(scopes)), ast.dump(node, include_attributes=False),
+                     ast.dump(statement, include_attributes=False)))
+    return _sha256(json.dumps(sorted(rows), ensure_ascii=False).encode("utf-8"))
+
+
+def _reconciliation(module_name, tree):
+    nodes = dict(_owners(tree))
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef):
+            nodes[node.name] = node
+        if isinstance(node, (ast.Assign, ast.AnnAssign)):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            for target in targets:
+                if isinstance(target, ast.Name):
+                    # Multiple bindings may not replace a previously reviewed definition silently.
+                    nodes[target.id] = node if target.id not in nodes else None
+    issues = []
+    pins = RECON_PINS.get(module_name, {})
+    for symbol, digest in pins.items():
+        if nodes.get(symbol) is None or _ast_hash(nodes[symbol]) != digest:
+            issues.append((module_name, "changed reconciliation AST", symbol))
+    refs = list(_recon_reference_nodes(tree, module_name))
+    if refs and _recon_reference_digest(tree, module_name) != RECON_REFERENCES.get(module_name):
+        issues.append((module_name, "unreviewed reconciliation reference/caller"))
+    trusted = bool(pins) and not issues
+    metadata = set()
+    if module_name == "model_cards.py" and trusted:
+        # Exactly the two keyword literals of the reviewed immutable Provider construction.
+        provider = nodes["BUILTIN_PROVIDERS"].value.values[0]
+        metadata = {id(k.value) for k in provider.keywords if k.arg in METADATA_FIELDS}
+    return trusted, metadata, issues
+
 
 def _scope_aliases(scope_node, inherited: dict, ref_class, params=frozenset(), *, module_scope=False,
                    canonical=frozenset()):
@@ -1053,6 +1170,7 @@ def analyze_module(module_name: str, source: str) -> dict:
     is by AST node identity, so several uses on one line are judged independently.
     """
     tree = ast.parse(source)
+    reconciled, metadata_values, reconciliation_issues = _reconciliation(module_name, tree)
     httpx_names, factory_names = set(), set()
     module_names: dict[str, str] = dict(URL_CLASSES)  # distinctive names; also covers `from x import *`
     canonical_values: set[int] = set()
@@ -1151,7 +1269,8 @@ def analyze_module(module_name: str, source: str) -> dict:
                             clients.add(target.id)
                             changed = True
                         elif (isinstance(value, ast.Attribute) and value.attr in HTTP_VERBS
-                              and is_client(value.value) and target.id not in method_aliases):
+                              and (is_client(value.value) or value.attr == "send")
+                              and target.id not in method_aliases):
                             method_aliases[target.id] = value.attr
                             alias_value_nodes.add(id(value))
                             changed = True
@@ -1167,6 +1286,8 @@ def analyze_module(module_name: str, source: str) -> dict:
                 func = sub.func
                 if isinstance(func, ast.Attribute) and func.attr in HTTP_VERBS and is_client(func.value):
                     kind, url = "client." + func.attr, url_argument(sub, func.attr)
+                elif isinstance(func, ast.Attribute) and func.attr == "send":
+                    kind = "dynamic.send"  # injected adapter is potentially physical, never assumed fake
                 elif isinstance(func, ast.Name) and func.id in method_aliases:
                     verb = method_aliases[func.id]
                     kind, url = "alias." + verb, url_argument(sub, verb)
@@ -1180,11 +1301,19 @@ def analyze_module(module_name: str, source: str) -> dict:
                     kind = "getattr." + sub.args[1].value
                 elif callee_name(func) in OTHER_NETWORK_CALLS:
                     kind, url = callee_name(func), (sub.args[0] if sub.args else None)
-            elif (isinstance(sub, ast.Attribute) and sub.attr in HTTP_VERBS and is_client(sub.value)
+            elif (isinstance(sub, ast.Attribute) and sub.attr in HTTP_VERBS
+                  and (is_client(sub.value) or sub.attr == "send")
                   and id(sub) not in call_funcs and id(sub) not in alias_value_nodes):
                 kind = "method-ref." + sub.attr  # e.g. functools.partial(client.post, ...)
             if kind is not None:
                 traffic = classify(url)
+                if reconciled and module_name == "launcher.py" and owner == "_get" and kind == "urlopen":
+                    traffic = "LOCAL_HTTP_ORIGIN"
+                if reconciled and module_name == "ordinary_chat_service.py" and owner == "execute_request":
+                    if kind == "getattr.send":
+                        traffic = "CAPABILITY_CHECK"
+                    elif kind == "dynamic.send":
+                        traffic = "POTENTIAL_LLM"
                 sites.append({"module": module_name, "owner": owner, "kind": kind, "traffic": traffic,
                               "line": getattr(sub, "lineno", 0)})
                 if traffic in {"LLM", "OAUTH"}:
@@ -1201,7 +1330,8 @@ def analyze_module(module_name: str, source: str) -> dict:
             if name in OTHER_NETWORK_MODULES or name.split(".")[0] in {"requests", "aiohttp", "urllib3",
                                                                           "websockets", "pycurl", "grpc"}:
                 sites.append({"module": module_name, "owner": "<import>", "kind": "import:" + name,
-                              "traffic": "UNKNOWN", "line": node.lineno})
+                              "traffic": ("LOCAL_HTTP_ORIGIN" if reconciled and module_name == "launcher.py"
+                                          and name == "urllib.request" else "UNKNOWN"), "line": node.lineno})
     unexplained = []
     seen = set()
     for ref, owner in references:
@@ -1210,12 +1340,17 @@ def analyze_module(module_name: str, source: str) -> dict:
         seen.add(id(ref))
         unexplained.append((module_name, ref.lineno, ref.col_offset, "endpoint reference " + ast.unparse(ref)))
     for node in ast.walk(tree):
-        if isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in canonical_values:
+        if isinstance(node, ast.Attribute) and node.attr in METADATA_FIELDS and not (
+                reconciled and module_name == "model_cards.py"):
+            unexplained.append((module_name, node.lineno, node.col_offset, "unreviewed metadata endpoint access"))
+        if (isinstance(node, ast.Constant) and isinstance(node.value, str)
+                and id(node) not in canonical_values | metadata_values):
             if node.value in URL_CLASSES:
                 unexplained.append((module_name, node.lineno, node.col_offset, "endpoint name string " + node.value))
             elif any(marker in node.value for marker in ENDPOINT_HOST_MARKERS):
                 unexplained.append((module_name, node.lineno, node.col_offset, "endpoint host literal"))
-    return {"sites": sites, "unexplained": sorted(unexplained)}
+    return {"sites": sites, "unexplained": sorted(unexplained),
+            "reconciliation_issues": reconciliation_issues}
 
 
 def scan_send_sites(module_name: str, source: str) -> list[dict]:
@@ -1239,7 +1374,10 @@ def site_multiset(sites: list[dict]) -> dict[tuple, int]:
 def _module_sites(modules) -> list[dict]:
     sites = []
     for module in modules:
-        sites += scan_send_sites(module.name, module.read_text(encoding="utf-8"))
+        analysis = analyze_module(module.name, module.read_text(encoding="utf-8"))
+        if analysis["reconciliation_issues"]:
+            raise AssertionError(analysis["reconciliation_issues"])
+        sites += analysis["sites"]
     return sites
 
 
@@ -1249,7 +1387,7 @@ class StaticRouteInventoryTests(unittest.TestCase):
         sites = _module_sites(production)
         _OBSERVATIONS["static_send_sites"] = sorted(
             [s["module"], s["owner"], s["kind"], s["traffic"], s["line"]] for s in sites)
-        self.assertEqual(site_multiset(sites), EXPECTED_SEND_SITES)
+        self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)
         self.assertEqual(sum(1 for s in sites if s["traffic"] == "LLM"), 7)
         self.assertEqual(sum(1 for s in sites if s["traffic"] == "OAUTH"), 1)
 
@@ -1395,12 +1533,12 @@ class StaticRouteInventoryTests(unittest.TestCase):
                 self.assertNotEqual(observed, baseline)
 
     def test_negative_control_inventory_comparison_fails_on_any_drift(self):
-        drifted = dict(EXPECTED_SEND_SITES)
+        drifted = dict(EXPECTED_PRODUCTION_SITES)
         drifted[("server.py", "ask_gigachat", "client.post", "LLM")] = 2
-        self.assertNotEqual(drifted, EXPECTED_SEND_SITES)
-        extra = dict(EXPECTED_SEND_SITES)
+        self.assertNotEqual(drifted, EXPECTED_PRODUCTION_SITES)
+        extra = dict(EXPECTED_PRODUCTION_SITES)
         extra[("server.py", "ask_gigachat", "alias.post", "LLM")] = 1
-        self.assertNotEqual(extra, EXPECTED_SEND_SITES)
+        self.assertNotEqual(extra, EXPECTED_PRODUCTION_SITES)
 
     def test_direct_run_planner_has_no_production_caller(self):
         references = []

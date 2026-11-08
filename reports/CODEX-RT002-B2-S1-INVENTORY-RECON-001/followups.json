@@ -1,0 +1,13 @@
+{
+  "task_id": "CODEX-RT002-B2-S1-INVENTORY-RECON-001",
+  "new_task_assigned": false,
+  "items": [
+    {"id": "S1-INVENTORY-DRIFT", "status": "AUTHOR REPAIRED / INDEPENDENT REVIEW PENDING", "owner": "WEB25 after user publication", "evidence": "evidence/s1.result.json", "next": "Independent source/guarded execution review of this exact package; no self VERIFIED"},
+    {"id": "S2-OFFLINE-LEDGER-ISOLATION-ORACLE", "status": "OPEN / AMENDMENT REQUESTED / S2 CHANGES STOP", "owner": "USER + S2 test owner", "evidence": "amendment_request_s2.md", "next": "Approve a separate bounded oracle scope; retain production-policy enforcement prohibition and negative controls"},
+    {"id": "S3A-INDEPENDENT-EXECUTION", "status": "OPEN / UNCHANGED", "owner": "Independent verifier", "evidence": "evidence/s3a.xml", "next": "Author 35 PASS does not replace independent executable predecessor acceptance"},
+    {"id": "ORDINARY-CHAT-POLICY-S3B", "status": "OPEN / NO IMPLEMENTATION GO", "owner": "USER + RT-002 owner", "evidence": "route_reconciliation.md", "next": "Approve route/role/scope/limits separately, then mandatory S3b guard for all physical boundaries"},
+    {"id": "LOCAL-HTTP-ORIGIN-CONFINEMENT", "status": "OPEN / BOUNDED CLASSIFICATION", "owner": "Launcher/security owner under separate scope", "evidence": "route_reconciliation.md", "next": "Decide whether enforce redirects/proxies and direct API inputs; LOCAL_HTTP_ORIGIN only proves current initial URL construction"},
+    {"id": "STATIC-DYNAMIC-COVERAGE", "status": "KNOWN LIMIT / S3B GATE REMAINS", "owner": "S1/S3b verifier", "evidence": "route_reconciliation.md", "next": "Review future adapters/checkers/plugins/config destinations; do not infer total dynamic Python network coverage"},
+    {"id": "H23-STORAGE-PRIVACY-DURABILITY", "status": "OPEN / UNCHANGED", "owner": "S3a/S3b + USER", "evidence": "../CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/followups.json", "next": "Preserve H23 adoption/upgrade/capacity/fencing and reviewer RAW-wire retention/NOT_SENT proof concerns; not addressed by S1 repair"}
+  ]
+}

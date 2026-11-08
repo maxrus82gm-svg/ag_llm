@@ -1,0 +1,308 @@
+{
+  "task": "CLAUDE-RT002-S1-REPAIR-001",
+  "sandbox": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s1-recon-kgxes64t\\temp\\claude-rt002-s1-i7z0z_uo",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "FAILURES:2",
+      "ERRORS:1"
+    ]
+  },
+  "counts": {
+    "run": 69,
+    "failures": 2,
+    "errors": 1,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 69,
+  "failures": [
+    "__main__.StaticRouteInventoryTests.test_every_endpoint_constant_read_is_an_inventoried_send_url",
+    "__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity"
+  ],
+  "errors": [
+    "__main__.RouteTransportTests.test_oauth_token_traffic_is_distinct_from_llm_traffic"
+  ],
+  "skipped": [],
+  "isolation_violations": [],
+  "evidence_root": "M:\\GitHub\\ag_llm",
+  "evidence_problems": [],
+  "selected": null,
+  "elapsed_seconds": 32.075,
+  "observations": {
+    "r026_duplicate_attempt_suffix": "0e8611",
+    "r031_matrix": [
+      {
+        "call": 1,
+        "stage_id": "stage_1",
+        "message_count": 3,
+        "request_utf8_bytes": 40352,
+        "function_messages": 0,
+        "large_blocks": [],
+        "prompt_tokens": 5409,
+        "precached_prompt_tokens": 0,
+        "completion_tokens": 63
+      },
+      {
+        "call": 2,
+        "stage_id": "stage_1",
+        "message_count": 5,
+        "request_utf8_bytes": 42743,
+        "function_messages": 1,
+        "large_blocks": [],
+        "prompt_tokens": 5949,
+        "precached_prompt_tokens": 0,
+        "completion_tokens": 38
+      },
+      {
+        "call": 3,
+        "stage_id": "stage_1",
+        "message_count": 7,
+        "request_utf8_bytes": 48325,
+        "function_messages": 2,
+        "large_blocks": [],
+        "prompt_tokens": 7361,
+        "precached_prompt_tokens": 0,
+        "completion_tokens": 54
+      },
+      {
+        "call": 4,
+        "stage_id": "stage_1",
+        "message_count": 9,
+        "request_utf8_bytes": 49622,
+        "function_messages": 3,
+        "large_blocks": [],
+        "prompt_tokens": 7686,
+        "precached_prompt_tokens": 0,
+        "completion_tokens": 79
+      },
+      {
+        "call": 5,
+        "stage_id": "stage_1",
+        "message_count": 11,
+        "request_utf8_bytes": 50830,
+        "function_messages": 4,
+        "large_blocks": [],
+        "prompt_tokens": 8040,
+        "precached_prompt_tokens": 0,
+        "completion_tokens": 78
+      },
+      {
+        "call": 6,
+        "stage_id": "stage_1",
+        "message_count": 13,
+        "request_utf8_bytes": 52158,
+        "function_messages": 5,
+        "large_blocks": [],
+        "prompt_tokens": 8431,
+        "precached_prompt_tokens": 0,
+        "completion_tokens": 59
+      },
+      {
+        "call": 7,
+        "stage_id": "stage_1",
+        "message_count": 15,
+        "request_utf8_bytes": 53580,
+        "function_messages": 6,
+        "large_blocks": [],
+        "prompt_tokens": 822,
+        "precached_prompt_tokens": 8000,
+        "completion_tokens": 42
+      },
+      {
+        "call": 8,
+        "stage_id": "stage_1",
+        "message_count": 17,
+        "request_utf8_bytes": 341415,
+        "function_messages": 7,
+        "large_blocks": [
+          [
+            "message_16_function",
+            "a473a0bf2680"
+          ]
+        ],
+        "prompt_tokens": 68199,
+        "precached_prompt_tokens": 5376,
+        "completion_tokens": 78
+      },
+      {
+        "call": 9,
+        "stage_id": "stage_1",
+        "message_count": 19,
+        "request_utf8_bytes": 342743,
+        "function_messages": 8,
+        "large_blocks": [
+          [
+            "message_16_function",
+            "a473a0bf2680"
+          ]
+        ],
+        "prompt_tokens": 73966,
+        "precached_prompt_tokens": 0,
+        "completion_tokens": 79
+      },
+      {
+        "call": 10,
+        "stage_id": "stage_1",
+        "message_count": 21,
+        "request_utf8_bytes": 343951,
+        "function_messages": 9,
+        "large_blocks": [
+          [
+            "message_16_function",
+            "a473a0bf2680"
+          ]
+        ],
+        "prompt_tokens": 400,
+        "precached_prompt_tokens": 73920,
+        "completion_tokens": 58
+      },
+      {
+        "call": 11,
+        "stage_id": "stage_1",
+        "message_count": 23,
+        "request_utf8_bytes": 345224,
+        "function_messages": 10,
+        "large_blocks": [
+          [
+            "message_16_function",
+            "a473a0bf2680"
+          ]
+        ],
+        "prompt_tokens": 74679,
+        "precached_prompt_tokens": 0,
+        "completion_tokens": 59
+      },
+      {
+        "call": 12,
+        "stage_id": "stage_1",
+        "message_count": 25,
+        "request_utf8_bytes": 346646,
+        "function_messages": 11,
+        "large_blocks": [
+          [
+            "message_16_function",
+            "a473a0bf2680"
+          ]
+        ],
+        "prompt_tokens": 75070,
+        "precached_prompt_tokens": 0,
+        "completion_tokens": 42
+      },
+      {
+        "call": 13,
+        "stage_id": "stage_1",
+        "message_count": 27,
+        "request_utf8_bytes": 634481,
+        "function_messages": 12,
+        "large_blocks": [
+          [
+            "message_16_function",
+            "a473a0bf2680"
+          ],
+          [
+            "message_26_function",
+            "099e8ae6d64a"
+          ]
+        ],
+        "prompt_tokens": 64815,
+        "precached_prompt_tokens": 75008,
+        "completion_tokens": 78
+      },
+      {
+        "call": 14,
+        "stage_id": "stage_1",
+        "message_count": 29,
+        "request_utf8_bytes": 635809,
+        "function_messages": 13,
+        "large_blocks": [
+          [
+            "message_16_function",
+            "a473a0bf2680"
+          ],
+          [
+            "message_26_function",
+            "099e8ae6d64a"
+          ]
+        ],
+        "prompt_tokens": 131830,
+        "precached_prompt_tokens": 8384,
+        "completion_tokens": 79
+      },
+      {
+        "call": 15,
+        "stage_id": "stage_1",
+        "message_count": 31,
+        "request_utf8_bytes": 635066,
+        "function_messages": 14,
+        "large_blocks": [
+          [
+            "message_16_function",
+            "a473a0bf2680"
+          ],
+          [
+            "message_26_function",
+            "099e8ae6d64a"
+          ]
+        ],
+        "prompt_tokens": 131782,
+        "precached_prompt_tokens": 8768,
+        "completion_tokens": 180
+      }
+    ],
+    "r031_large_block_calls": {
+      "a473a0bf2680": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "099e8ae6d64a": [
+        13,
+        14,
+        15
+      ]
+    },
+    "r031_executor_raw_tokens": {
+      "prompt": 664439,
+      "completion": 1066,
+      "precached": 179456
+    },
+    "route1_unaccounted_wire_bytes": 135,
+    "route3_direct_request_bytes": [
+      12083,
+      221048,
+      222016
+    ],
+    "route4_planner_on_request_bytes": [
+      12480,
+      8965,
+      111932,
+      14007,
+      7048,
+      14941
+    ],
+    "run_planner_references": [
+      [
+        "server.py",
+        4418,
+        true,
+        "planner_session"
+      ]
+    ],
+    "wire_vs_canonical": {
+      "wire_bytes": 398,
+      "wire_sha256": "9748c9db002b2f99dd58eb2736728404e9aaf2e330a305b598bb121c298768ec",
+      "snapshot_sha256": "894ebb1d516ef7348683d2bc3a2f49ab69c6f7b6927a9e4f89bbc209d220fb89"
+    }
+  },
+  "log": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s1-recon-kgxes64t\\temp\\claude-rt002-s1-i7z0z_uo\\unittest.log",
+  "log_sha256": "ed6a458e025e7a4f05d3369f1ab1de2a8ce79699ff8c179f838f2ea7179eee08"
+}

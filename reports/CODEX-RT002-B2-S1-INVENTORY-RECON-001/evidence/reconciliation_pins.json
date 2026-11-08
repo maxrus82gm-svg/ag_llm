@@ -1,0 +1,180 @@
+{
+  "python_ast": "3.12",
+  "nodes": [
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "HOST",
+      "line": 44,
+      "ast_sha256": "7c633fca520e5ff51d812e2327fc4e006fd6cb51bb28e8de234233776753232d",
+      "reviewed_source": "HOST = '127.0.0.1'"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "_get",
+      "line": 246,
+      "ast_sha256": "48d737ff08dd910be212cd58a8ba3bb85018cee9e3a1ffde48d11cc6b8b810fe",
+      "reviewed_source": "def _get(url: str, timeout: float=3) -> tuple[int, bytes]:\n    request = urllib.request.Request(url, headers={'Cache-Control': 'no-store'})\n    with urllib.request.urlopen(request, timeout=timeout) as response:\n        return (response.status, response.read())"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "_already_running",
+      "line": 252,
+      "ast_sha256": "0e409f3fe68e0a737208f9d7071562b52594310e20fb707c40fd6e89ca22a377",
+      "reviewed_source": "def _already_running(url: str, expected_page: str, expected_storage: Path | None) -> str:\n    \"\"\"\"same\" only when a Web Alarm with the very same page AND the very same storage serves the port.\"\"\"\n    if expected_storage is None:\n        return 'other'\n    try:\n        status, body = _get(url + 'status')\n        page_status, page = _get(url)\n        storage = json.loads(body).get('storage_root')\n    except (OSError, ValueError, AttributeError):\n        return 'other'\n    same_storage = isinstance(storage, str) and os.path.normcase(str(Path(storage).resolve())) == os.path.normcase(str(expected_storage.resolve()))\n    if status == 200 and page_status == 200 and same_storage and (page.decode('utf-8', 'replace') == expected_page):\n        return 'same'\n    return 'other'"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "_self_test",
+      "line": 369,
+      "ast_sha256": "c2fdd3d4d38ad7a6be892dae5bf5b0451d26ed095a5dacd441c93f0b78d5e32c",
+      "reviewed_source": "def _self_test(server, launch: Launch, url: str, expected_page: str, storage: str, target: Path, out: TextIO, colors: bool=False) -> int:\n    thread = threading.Thread(target=server.serve_forever, daemon=True)\n    thread.start()\n    result: dict[str, Any] = {'profile': launch.name, 'standard': launch.standard, 'kind': launch.kind, 'port': server.server_port, 'storage_is_default': storage == str(default_storage_root()), 'console_colors': colors}\n    try:\n        status, body = _get(url + 'status')\n        result['status'] = status\n        result['service'] = json.loads(body).get('service')\n        page_status, page = _get(url)\n        page_text = page.decode('utf-8')\n        result['page_status'] = page_status\n        result['page_is_current'] = page_text == expected_page\n        result['page_marked_as_test'] = TEST_TEXT in page_text\n        result['page_unchanged_from_ui'] = page_text == wa_server.INDEX_HTML\n        result['page_version'] = page_version(page_text)\n        cap_status, cap = _get(url + 'ui/ultra-chat/capability')\n        result['ultra_chat_available'] = json.loads(cap)['ultra_chat']['available']\n    except (OSError, ValueError, KeyError) as exc:\n        result['error'] = type(exc).__name__\n    finally:\n        server.shutdown()\n        server.server_close()\n        thread.join(5)\n    result['stopped'] = not thread.is_alive()\n    target.write_text(json.dumps(result, ensure_ascii=False, indent=1) + '\\n', encoding='utf-8', newline='\\n')\n    out.write('Самопроверка завершена, сервер остановлен.\\n')\n    ok = result.get('status') == 200 and result.get('page_is_current') and result['stopped'] and (result.get('page_marked_as_test') == (not launch.standard))\n    return 0 if ok else 4"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "run_web_alarm",
+      "line": 303,
+      "ast_sha256": "3f0c240876a28a946f140dea10a45452bdb655306038faed6f264cd61c4d94b8",
+      "reviewed_source": "def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bool=True, self_test: Path | None=None, port: int | None=None, sleep: Callable[[float], None]=time.sleep, opener: Callable[[str], Any]=webbrowser.open) -> int:\n    storage_root = None if launch.standard else Path(tempfile.mkdtemp(prefix=f'wa-test-launch-{launch.name}-'))\n    storage_text = str(default_storage_root() if launch.standard else storage_root)\n    bind_port = launch.port if port is None else port\n    expected_page = mark_page(wa_server.INDEX_HTML, launch)\n    claim = _claim_port(bind_port) if bind_port else None\n    try:\n        if bind_port and (claim is None or _port_in_use(bind_port)):\n            raise OSError('port busy')\n        server = create_server(WebAlarmApi(storage_root), host=HOST, port=bind_port, enable_folder_picker=launch.folder_picker, enable_ultra_chat=launch.ultra_chat)\n    except OSError:\n        if claim is not None:\n            claim.release()\n        _remove_temp_storage(storage_root)\n        url = f'http://{HOST}:{bind_port}/'\n        out.write(banner(launch, url, storage_text, colors))\n        reuse_storage = default_storage_root() if launch.standard else None\n        if self_test is None and _already_running(url, expected_page, reuse_storage) == 'same':\n            out.write('Этот запуск уже работает (та же версия интерфейса и то же хранилище). Открываю браузер.\\n')\n            if open_browser:\n                opener(url)\n            return 0\n        out.write('\\n' + paint(f'Порт {bind_port} занят другой программой, другой версией или другим режимом Web Alarm. Закройте прежнее окно Web Alarm и запустите снова.', 41, colors) + '\\n')\n        return 3\n    server.RequestHandlerClass = _MarkedHandler\n    server.web_alarm_launch = launch\n    url = f'http://{HOST}:{server.server_port}/'\n    set_console_title('Web Alarm Ultra — ' + STANDARD_TEXT if launch.standard else f'[ТЕСТ] {launch.name} — ' + TEST_TEXT)\n    out.write(banner(launch, url, storage_text, colors))\n    out.write(f'Версия интерфейса: {page_version(expected_page)}\\n')\n    out.flush()\n    if self_test is not None:\n        try:\n            return _self_test(server, launch, url, expected_page, storage_text, self_test, out, colors)\n        finally:\n            if claim is not None:\n                claim.release()\n            _remove_temp_storage(storage_root)\n    _stop_on_break()\n    try:\n        if not launch.standard:\n            for left in range(TEST_WARNING_SECONDS, 0, -1):\n                out.write(f'Браузер откроется через {left} с — проверьте, что тестовый режим вам нужен.\\n')\n                out.flush()\n                sleep(1)\n        if open_browser:\n            opener(url)\n        out.write('Сервер работает.\\n')\n        out.flush()\n        server.serve_forever()\n    except KeyboardInterrupt:\n        pass\n    finally:\n        server.server_close()\n        if claim is not None:\n            claim.release()\n        _remove_temp_storage(storage_root)\n        out.write('Сервер остановлен.\\n')\n        out.flush()\n    return 0"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "STANDARD_PORT",
+      "line": 43,
+      "ast_sha256": "4ff5048ea55254af33c7c30166acfc1439634fd5a926c3ff23ceb702293c7be7",
+      "reviewed_source": "STANDARD_PORT = 8765"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "Launch",
+      "line": 60,
+      "ast_sha256": "ad7f0565682342ad13e5538f4f4c5d6baca4cdd2a43ab1c1dd07bac0dfb73044",
+      "reviewed_source": "@dataclass(frozen=True)\nclass Launch:\n    name: str\n    title: str\n    standard: bool\n    kind: str = 'web_alarm'\n    storage: str = 'default'\n    port: int = STANDARD_PORT\n    folder_picker: bool = True\n    ultra_chat: bool = True\n    script: str | None = None\n    args: tuple[str, ...] = field(default_factory=tuple)"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "standard_port",
+      "line": 73,
+      "ast_sha256": "4878843d8ec09d64c7b4bfd8531795c935022d99faa6a9735da0b374dc28931c",
+      "reviewed_source": "def standard_port() -> int:\n    \"\"\"8765, or this computer's own binding from WEB_ALARM_PORT.\"\"\"\n    raw = os.environ.get('WEB_ALARM_PORT', '').strip()\n    if not raw:\n        return STANDARD_PORT\n    if not raw.isdigit() or not 1024 <= int(raw) <= 65535:\n        raise LaunchConfigError(f'WEB_ALARM_PORT={raw!r}: нужен номер порта 1024–65535.')\n    return int(raw)"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "standard_launch",
+      "line": 83,
+      "ast_sha256": "94cc4fa1a6ff996c2169b49eed3d0a773e773f03f808abcafdfbf5783e5ac0cf",
+      "reviewed_source": "def standard_launch() -> Launch:\n    return Launch(name=STANDARD, title='Web Alarm Ultra', standard=True, port=standard_port())"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "_profile",
+      "line": 96,
+      "ast_sha256": "211c49182f6b11fc35bb45a5f24159b3a8524330a564790099402135ffad8b51",
+      "reviewed_source": "def _profile(name: str, raw: Any) -> Launch:\n    if not isinstance(raw, dict):\n        raise LaunchConfigError(f'Профиль {name!r}: ожидается объект.')\n    kind = raw.get('kind')\n    allowed = _WEB_KEYS if kind == 'web_alarm' else _SCRIPT_KEYS if kind == 'python_script' else None\n    if allowed is None:\n        raise LaunchConfigError(f'Профиль {name!r}: kind должен быть \"web_alarm\" или \"python_script\".')\n    unknown = sorted(set(raw) - allowed)\n    if unknown:\n        raise LaunchConfigError(f'Профиль {name!r}: неизвестные поля {unknown}.')\n    title = raw.get('title')\n    if not isinstance(title, str) or not title.strip() or len(title) > 120:\n        raise LaunchConfigError(f'Профиль {name!r}: нужно понятное название title (до 120 символов).')\n    if kind == 'python_script':\n        script = raw.get('script')\n        args = raw.get('args', [])\n        if not isinstance(script, str) or not script.endswith('.py') or '\\\\' in script or script.startswith('/'):\n            raise LaunchConfigError(f'Профиль {name!r}: script — путь .py внутри проекта через \"/\".')\n        target = (REPO / script).resolve()\n        if REPO not in target.parents or not target.is_file():\n            raise LaunchConfigError(f'Профиль {name!r}: скрипт {script!r} не найден внутри проекта.')\n        if not isinstance(args, list) or not all((isinstance(item, str) for item in args)):\n            raise LaunchConfigError(f'Профиль {name!r}: args — список строк.')\n        return Launch(name=name, title=title.strip(), standard=False, kind=kind, storage='script', port=0, script=script, args=tuple(args))\n    if raw.get('storage') != 'temp':\n        raise LaunchConfigError(f'Профиль {name!r}: тестовый запуск основного приложения использует только storage \"temp\" — штатное хранилище пользователя ему недоступно.')\n    port = raw.get('port')\n    if not isinstance(port, int) or isinstance(port, bool) or (not 1024 <= port <= 65535):\n        raise LaunchConfigError(f'Профиль {name!r}: port — число 1024–65535.')\n    if port == standard_port():\n        raise LaunchConfigError(f'Профиль {name!r}: порт {port} занят стандартным запуском; нужен другой.')\n    flags = {key: raw.get(key, True) for key in ('folder_picker', 'ultra_chat')}\n    if not all((isinstance(value, bool) for value in flags.values())):\n        raise LaunchConfigError(f'Профиль {name!r}: folder_picker и ultra_chat — true или false.')\n    return Launch(name=name, title=title.strip(), standard=False, kind=kind, storage='temp', port=port, **flags)"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "load_launch",
+      "line": 135,
+      "ast_sha256": "028ef20016c91faa3650c84fc36241a2e5454a5e90c3dbe02abc9835e77b5c7b",
+      "reviewed_source": "def load_launch(config_path: Path=CONFIG_PATH) -> Launch:\n    \"\"\"The launch chosen by the configuration; a missing file means the standard launch.\"\"\"\n    if not config_path.exists():\n        return standard_launch()\n    try:\n        data = json.loads(config_path.read_text(encoding='utf-8'), object_pairs_hook=_strict_object)\n    except (OSError, UnicodeDecodeError, ValueError) as exc:\n        if isinstance(exc, LaunchConfigError):\n            raise\n        raise LaunchConfigError('launch_config.json не читается как JSON. ' + RETURN_HINT) from None\n    if not isinstance(data, dict) or data.get('schema_version') != 1 or set(data) - _CONFIG_KEYS:\n        raise LaunchConfigError('launch_config.json: ожидается объект schema_version 1 с полями active и test_profiles.')\n    active = data.get('active', STANDARD)\n    profiles = data.get('test_profiles', {})\n    if not isinstance(profiles, dict):\n        raise LaunchConfigError('launch_config.json: test_profiles — объект.')\n    if STANDARD in profiles:\n        raise LaunchConfigError('launch_config.json: стандартный запуск встроен и не переопределяется профилем.')\n    if active == STANDARD:\n        return standard_launch()\n    if not isinstance(active, str) or active not in profiles:\n        raise LaunchConfigError(f'launch_config.json: профиль {active!r} не найден. ' + RETURN_HINT)\n    return _profile(active, profiles[active])"
+    },
+    {
+      "module": "web_alarm/launcher.py",
+      "symbol": "main",
+      "line": 417,
+      "ast_sha256": "cddb27458e20f1c6b3f5f6ddcf0f4f25135200a4ce05ca72d292167f8f897238",
+      "reviewed_source": "def main(argv: list[str] | None=None, out: TextIO | None=None) -> int:\n    parser = argparse.ArgumentParser(prog='Start_WebAlarm.bat', description='Web Alarm Ultra launcher')\n    selection = parser.add_mutually_exclusive_group()\n    selection.add_argument('--config', type=Path, default=CONFIG_PATH, help='other launch_config.json (tests)')\n    selection.add_argument('--standard', action='store_true', help='built-in standard launch, ignoring active config')\n    parser.add_argument('--require-test', action='store_true', help='refuse any fallback to the standard launch')\n    parser.add_argument('--self-test', type=Path, help='start, check over HTTP, stop and write a JSON result')\n    parser.add_argument('--no-browser', action='store_true')\n    args = parser.parse_args(argv)\n    out = out or sys.stdout\n    colors = enable_colors(out)\n    try:\n        launch = standard_launch() if args.standard else load_launch(args.config)\n        if args.require_test and launch.standard:\n            raise LaunchConfigError('Тестовый запуск требует явно выбранного TEST-профиля. Файл отсутствует или выбран standard; запуск штатных данных запрещён.')\n    except LaunchConfigError as exc:\n        out.write('\\n' + paint('ЗАПУСК ОСТАНОВЛЕН: конфигурация запуска не принята', 41, colors) + '\\n' + str(exc) + '\\n')\n        return 2\n    if launch.kind == 'python_script':\n        if args.self_test is not None:\n            out.write('Самопроверка для тестового скрипта не поддерживается.\\n')\n            return 2\n        return run_script(launch, out=out, colors=colors)\n    return run_web_alarm(launch, out=out, colors=colors, open_browser=not args.no_browser, self_test=args.self_test)"
+    },
+    {
+      "module": "ordinary_chat_service.py",
+      "symbol": "ChatTransport",
+      "line": 274,
+      "ast_sha256": "187a6a36bb86916f4dfa3da4bea9ad33ac9d666c638278eed25ec69673737162",
+      "reviewed_source": "class ChatTransport(Protocol):\n\n    async def send(self, payload: dict, *, timeout_seconds: float) -> object:\n        \"\"\"Return decoded JSON. Adapter owns its I/O; S4A permits fake only.\"\"\"\n        ..."
+    },
+    {
+      "module": "ordinary_chat_service.py",
+      "symbol": "execute_request",
+      "line": 289,
+      "ast_sha256": "556454958b12f6bc6dd209e123409bbb52ba06ca581e30075b599d46d7455129",
+      "reviewed_source": "async def execute_request(request: PreparedRequest, *, transport: ChatTransport, cancelled: Callable[[], bool] | None=None) -> ChatResult:\n    \"\"\"One injected invocation, no retries. Caller owns durable accounting/Turn.\n\n    The predicate is checked before and after the call, not a background watcher.\n    Task cancellation and deadline after invocation are conservative UNKNOWN.\n    Adapters must cooperate with cancellation. A fired deadline remains expired\n    even when the adapter suppresses cancellation and returns a response.\n    \"\"\"\n    if type(request) is not PreparedRequest:\n        raise PreparationError('invalid_prepared_request')\n    try:\n        rebuilt = prepare_request(model_id=request.model.model_id, context=[{'role': m.role, 'content': m.content} for m in request.messages[:-1]], user_text=request.messages[-1].content, context_ref=request.context_ref, limits=request.limits)\n        if rebuilt != request:\n            raise PreparationError('stale_or_invalid_request')\n        if not callable(getattr(transport, 'send', None)):\n            raise PreparationError('transport_required')\n        if _cancelled(cancelled):\n            return _result(request, Outcome.CANCELLED_BEFORE_START, Execution.NOT_STARTED, code='cancelled_before_start')\n    except Exception:\n        return _result(request, Outcome.REJECTED, Execution.NOT_STARTED, code='preflight_rejected')\n    loop = asyncio.get_running_loop()\n    timeout_seconds = request.limits.timeout_seconds\n    deadline = loop.time() + timeout_seconds\n    timer = asyncio.timeout_at(deadline)\n\n    async def send():\n        async with timer:\n            return await transport.send(request.payload, timeout_seconds=timeout_seconds)\n    owner = asyncio.current_task()\n    cancel_count = owner.cancelling()\n    try:\n        response = await asyncio.create_task(send())\n    except (TimeoutError, asyncio.CancelledError):\n        return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.MAY_HAVE_EXECUTED, code='cancelled_or_timed_out_after_start')\n    except Exception:\n        return _result(request, Outcome.TRANSPORT_ERROR, Execution.MAY_HAVE_EXECUTED, code='transport_failed_after_start')\n    result = parse_response(request, response)\n    try:\n        interrupted = _cancelled(cancelled)\n    except Exception:\n        interrupted = True\n    if timer.expired() or loop.time() >= deadline or owner.cancelling() > cancel_count or interrupted:\n        return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.RESPONSE_RECEIVED, code='late_or_cancelled_response', usage=result.usage, metadata=result.metadata)\n    return result"
+    },
+    {
+      "module": "web_alarm/model_cards.py",
+      "symbol": "Provider",
+      "line": 102,
+      "ast_sha256": "3d0e1706696a0a6fa9f834c7cbaee18a750e16c0ef4bf7fa55e31accb3ed6fbb",
+      "reviewed_source": "@dataclass(frozen=True)\nclass Provider:\n    provider_id: str\n    display_name: str\n    country: str\n    adapter: str | None\n    auth: str\n    credential_env: str | None = None\n    scope_env: str | None = None\n    default_scope: str | None = None\n    oauth_url: str | None = None\n    api_url: str | None = None\n    source: str = 'builtin'"
+    },
+    {
+      "module": "web_alarm/model_cards.py",
+      "symbol": "BUILTIN_PROVIDERS",
+      "line": 118,
+      "ast_sha256": "68c85f1d931b3ec76b9dbbed0b86a420f1c742ce9def6b1f99f42cee117d6a9b",
+      "reviewed_source": "BUILTIN_PROVIDERS = {'gigachat': Provider(provider_id='gigachat', display_name='GigaChat', country='Россия', adapter='gigachat_transport', auth='OAuth: ключ авторизации (Basic) из переменной среды → токен доступа на 25 минут', credential_env='GIGACHAT_CREDENTIALS', scope_env='GIGACHAT_SCOPE', default_scope='GIGACHAT_API_PERS', oauth_url='https://ngw.devices.sberbank.ru:9443/api/v2/oauth', api_url='https://api.giga.chat/v1/chat/completions')}"
+    },
+    {
+      "module": "web_alarm/model_cards.py",
+      "symbol": "LiveCheckNotAuthorized",
+      "line": 306,
+      "ast_sha256": "461979486038caa49c60b9332555312754bc3a1adab15ad94a9f8c3d1f3e33c9",
+      "reviewed_source": "class LiveCheckNotAuthorized:\n    \"\"\"The shipped checker: a real request to a paid API needs a separate user decision.\"\"\"\n    authorized = False\n    reason = 'Настоящий запрос к API в этой версии не разрешён: нужен отдельный USER GO (ключи, тарифицируемые запросы).'\n\n    def check(self, request: CheckRequest) -> CheckResult:\n        raise CheckRefusedError(self.reason)"
+    },
+    {
+      "module": "web_alarm/model_cards.py",
+      "symbol": "ModelCards.__init__",
+      "line": 407,
+      "ast_sha256": "23e909e739d4bab26e9f8009b586a0c50b837e235f8ba4e88ba8b0094de7e7c1",
+      "reviewed_source": "def __init__(self, storage_root: str | os.PathLike[str], connections: UltraConnections, *, tk_state_path: Path | None, checker: ApiChecker | None=None, environ: Mapping[str, str] | None=None, now: Callable[[], datetime]=_utc_now, lock_timeout: float=DEFAULT_LOCK_TIMEOUT_SECONDS) -> None:\n    root = Path(storage_root)\n    self.settings_path = root / 'ultra' / 'model_settings.json'\n    self.checks_path = root / 'ultra' / 'api_checks.json'\n    self.view_path = root / 'ultra' / 'evm_view.json'\n    self.lock_path = root / 'locks' / 'ultra' / 'model_cards.lock'\n    self.connections = connections\n    self.tk_state_path = tk_state_path\n    self.checker: ApiChecker = checker or LiveCheckNotAuthorized()\n    self.environ = os.environ if environ is None else environ\n    self.now = now\n    self.lock_timeout = lock_timeout"
+    },
+    {
+      "module": "web_alarm/model_cards.py",
+      "symbol": "ModelCards.run_check",
+      "line": 927,
+      "ast_sha256": "ec82680003a2fd037a62c9fe901040bdbd2de4769b3f5e8069c73232a8303a4f",
+      "reviewed_source": "def run_check(self, model_id: Any) -> dict[str, Any]:\n    \"\"\"One fixed short test message through the configured checker; nothing is sent while the live\n        check is not authorised, and a simulated answer never confirms the model.\"\"\"\n    ctx = self._context()\n    spec = self._spec(ctx['registry'], model_id)\n    card = self._card(ctx, spec)\n    if not spec.enabled:\n        raise CheckRefusedError(f'model {spec.model_id!r} is disabled in the shared registry')\n    if card['api']['reason'] == 'ADAPTER_MISSING':\n        raise CheckRefusedError(f'provider {spec.provider!r} has no adapter')\n    if not self.checker.authorized:\n        return {'outcome': 'LIVE_CHECK_NOT_AUTHORIZED', 'message': self.checker.reason, 'network_calls': 0, 'test_message': TEST_MESSAGE, 'card': card}\n    provider = ctx['settings']['providers'][spec.provider]\n    profile = self._profile_for(ctx['settings'], spec)\n    version = card['settings_version']\n    request = CheckRequest(card['connection_id'], spec.model_id, spec.provider, spec.provider_model_id, provider.api_url, profile['timeout_seconds'], TEST_MESSAGE)\n    try:\n        result = self.checker.check(request)\n    except CheckRefusedError:\n        raise\n    except Exception as exc:\n        result = CheckResult(ok=False, live=True, error_code='checker_error', error_message=type(exc).__name__)\n    limit = profile['diagnostic_limit_chars']\n    if not result.live:\n        outcome = 'SIMULATED'\n        text = safe_text(result.reply or result.error_message or '', limit)\n    elif result.ok:\n        outcome = 'CONFIRMED'\n        self.record_success(card['connection_id'], version, source='diagnostic', reply=result.reply or '', limit=limit)\n        text = safe_text(result.reply or '', limit)\n    else:\n        outcome = 'FAILED'\n        self.record_failure(card['connection_id'], version, code=result.error_code or 'check_failed', message=result.error_message or '', limit=limit)\n        text = safe_text(f\"{result.error_code or 'check_failed'}: {result.error_message or ''}\", limit)\n    return {'outcome': outcome, 'text': text, 'test_message': TEST_MESSAGE, 'card': self.card(spec.model_id)}"
+    },
+    {
+      "module": "web_alarm/model_cards.py",
+      "symbol": "ModelCards._settings_version",
+      "line": 565,
+      "ast_sha256": "3e86553b206a99f7db28f74f580f7ff7815cb2833c8d28eede7155b98e140b83",
+      "reviewed_source": "def _settings_version(self, spec: Any, provider: Provider | None, profile: dict[str, Any], facts: dict[str, Any]) -> str:\n    \"\"\"Changes when the key, the API profile, an endpoint or the called model changes; card text,\n        parameter count, timeouts and the freshness period are deliberately outside.\"\"\"\n    material = {'provider': spec.provider, 'adapter': provider.adapter if provider else None, 'profile_id': profile['profile_id'], 'credential_env': provider.credential_env if provider else None, 'credential_present': facts['credential']['present'], 'credential_revision': profile['credential_revision'], 'scope': facts['scope']['value'], 'oauth_url': provider.oauth_url if provider else None, 'api_url': provider.api_url if provider else None, 'provider_model_id': spec.provider_model_id}\n    canonical = json.dumps(material, ensure_ascii=True, sort_keys=True, separators=(',', ':'))\n    return hashlib.sha256(canonical.encode('ascii')).hexdigest()[:16]"
+    },
+    {
+      "module": "web_alarm/model_cards.py",
+      "symbol": "ModelCards.catalog",
+      "line": 795,
+      "ast_sha256": "3879cc458697eefce244ffa1bbe58d6c191ab2306a13fe4408cb68f9d45b0497",
+      "reviewed_source": "def catalog(self) -> dict[str, Any]:\n    \"\"\"Everything the EVM cards show; reads only, creates nothing, sends nothing.\"\"\"\n    ctx = self._context()\n    settings, tk = (ctx['settings'], ctx['tk'])\n    providers = []\n    for provider in settings['providers'].values():\n        facts = self._connection_facts(provider)\n        providers.append({'provider_id': provider.provider_id, 'display_name': provider.display_name, 'country': provider.country, 'source': provider.source, 'adapter': provider.adapter, 'adapter_state': _adapter_state(provider), 'auth': provider.auth, 'oauth_url': provider.oauth_url, 'api_url': provider.api_url, **facts})\n    return {'network_calls': 0, 'settings': {'state': settings['state'], 'revision': settings['revision'], 'ignored': settings['ignored'], **({'reason': settings['reason']} if 'reason' in settings else {})}, 'checks': {'state': ctx['checks']['state']}, 'roles_source': {'state': tk['state'], 'fallbacks': tk['fallbacks'], 'chat_state': ctx['chat'].get('state'), **({'reason': tk['reason']} if 'reason' in tk else {})}, 'role_definitions': [{'role': r.role, 'label': r.label, 'hint': r.hint, 'exists': r.exists, 'runs': r.runs, 'linked_to': r.linked_to} for r in ROLES], 'providers': providers, 'profiles': list(settings['profiles'].values()), 'limits': {'description': MAX_DESCRIPTION, 'params_billion': MAX_PARAMS_BILLION, **{name: list(bounds) for name, bounds in LIMITS.items()}}, 'test_message': TEST_MESSAGE, 'live_check': {'authorized': bool(self.checker.authorized), 'reason': None if self.checker.authorized else self.checker.reason}, 'cards': [self._card(ctx, spec) for spec in ctx['registry'].list_model_specs()], 'view': self.view()}"
+    },
+    {
+      "module": "web_alarm/ordinary_chat_test_adapter.py",
+      "symbol": "_FixtureTransport",
+      "line": 9,
+      "ast_sha256": "e092e4b473c6967868f80adc8bb53d9b55d69f23c1334f6ca6b2317145b98700",
+      "reviewed_source": "class _FixtureTransport:\n\n    def __init__(self, response):\n        self.response = response\n\n    async def send(self, payload, *, timeout_seconds):\n        return deepcopy(self.response)"
+    },
+    {
+      "module": "web_alarm/ordinary_chat_test_adapter.py",
+      "symbol": "OfflineTestAdapter.__init__",
+      "line": 18,
+      "ast_sha256": "42a521d669cf25f5b9b5a40b6c5ff1f291a2bb4aa9fff8f1c70b61e79f233c8d",
+      "reviewed_source": "def __init__(self, *, context, context_ref, limits, response, refuse=False):\n    if type(limits) is not chat.RequestLimits or limits.max_request_bytes > 8192 or limits.max_response_bytes > 8192 or (limits.max_messages > 32) or (limits.max_message_bytes > 2048) or (limits.timeout_seconds > 10) or (type(refuse) is not bool):\n        raise ValueError('Expected bounded offline fixture limits')\n    self._context = deepcopy(context)\n    self._context_ref = context_ref\n    self._limits = limits\n    self._transport = _FixtureTransport(deepcopy(response))\n    self._refuse = refuse"
+    },
+    {
+      "module": "web_alarm/ordinary_chat_test_adapter.py",
+      "symbol": "OfflineTestAdapter.execute",
+      "line": 56,
+      "ast_sha256": "cb457ecae9f740e72e24fccf6a155d3167a77188b2d15a55e3b4a90507391c81",
+      "reviewed_source": "def execute(self, prepared):\n    if self._refuse:\n        return chat.ChatResult(chat.Outcome.REJECTED, chat.Execution.NOT_STARTED, prepared.model, prepared.request_ref, error_code='fixture_refused')\n    return asyncio.run(chat.execute_request(prepared, transport=self._transport))"
+    }
+  ],
+  "reference_census_sha256": {
+    "launcher.py": "4f4f60619368656989a3c750c60da2168ec18d776d5303daa36d3ec06a1cd0ae",
+    "ordinary_chat_service.py": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "model_cards.py": "84bd9a33d00a64020534df64f250eb1461cd122e5562da91d3747da9b1758243",
+    "ordinary_chat_test_adapter.py": "1d5ff808d35be09490e20b71681faf7b4b949b94bfe3d5e7edc9bd71865a6c04"
+  },
+  "runtime_pin_refresh": false
+}

@@ -1,0 +1,748 @@
+{
+  "task_id": "CODEX-RT002-B2-S1-INVENTORY-RECON-001",
+  "status": "LOCAL ONLY / PARTIAL / INDEPENDENT REVIEW PENDING",
+  "hash": "SHA-256 exact bytes",
+  "self_excluded": true,
+  "files": [
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/amendment_request_s2.md",
+      "size": 2686,
+      "sha256": "f2c99c420a21d70aa670e918d56002a85a37d2a70c5becc4ad42f98ad7312c88"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/before/card.md",
+      "size": 48694,
+      "sha256": "2d772a5c9790520bc91090ec079691c74d8452aff3d93c3ecca553ac283bb7e4"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/before/ordinary_chat_service.py",
+      "size": 14446,
+      "sha256": "0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/before/s1_before_final_review.py.txt",
+      "size": 124547,
+      "sha256": "36f25fecccc0e4c644464a87774c5d4918faa5cb6f0a5f667c4f07f6d7443cde"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/before/s1_first_implementation.py.txt",
+      "size": 123511,
+      "sha256": "3729d554f200e6db5d489a4f7b9ea770a476b7fbfbaf08055af4a2186e87c719"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/before/test_rt002_s1_routes.py",
+      "size": 113485,
+      "sha256": "4465d47716e8876adf78f7245eb85a9505ac0a8b0aa6632d658afcb71576a66e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/before/web_alarm__launcher.py",
+      "size": 22622,
+      "sha256": "94b4f48e79a658ecb2a0f42c7f52be2bf32f708740778768f82cd42fb9d5b42e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/before/web_alarm__model_cards.py",
+      "size": 54540,
+      "sha256": "03d38fe36361a43fd11b5776cead7e6fe8f054c394d23c3760545b9dae36e02f"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/closeout.json",
+      "size": 926,
+      "sha256": "c45d5d74b67a4b0b676d3657343535a259fef31204f00405fe9e82cd00099d7c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/collect.py",
+      "size": 1787,
+      "sha256": "8bb158a163152398aebf8b03a27f759da4260fa14eca0f5ec157d5bb32dceec7"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/baseline.json",
+      "size": 34341,
+      "sha256": "5e3d2e257ea8c5daacb00c68aa8f06634de1501c87f97092644dc0cb5eb98a92"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks.execution.json",
+      "size": 329,
+      "sha256": "cb0a5141f477f765e07147caeb661d03682f4a19310e339c7ee5d085c326d765"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks.result.json",
+      "size": 16552,
+      "sha256": "7bc4a1e26c8d487f0db7175dd4b7ceb0f802fbc116bbdd77e0a9834222ddab4a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks.stderr.txt",
+      "size": 2597,
+      "sha256": "16043951f6844b03dd8e05339f35a5e6783387490fa8a6bf363765ce9fc714c8"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks.stdout.txt",
+      "size": 16682,
+      "sha256": "66b6ad38d922a7d07dfaa8d46e274e3c1fd622557dde9f2c89b7b008e3b6565e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_before_final_review.execution.json",
+      "size": 329,
+      "sha256": "bc6ddc91ad55089bea60d5c62bc3ea9c89c202dcc6fe8a550a8d06c8c90e5651"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_before_final_review.result.json",
+      "size": 14859,
+      "sha256": "fd2ab9f5224138add59e4be2540a9f957c5ce11cfa28fbcc3090b39791c261eb"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_before_final_review.stderr.txt",
+      "size": 2480,
+      "sha256": "4aad87b920c741bd5d80af4081ab47ab203ca52cd2ea5726b16bbeb98e5da090"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_before_final_review.stdout.txt",
+      "size": 14989,
+      "sha256": "33627899c65d3d7a289dddc16f7fe75487b75f584eb10233e7f954462a8771b2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_first.execution.json",
+      "size": 329,
+      "sha256": "79f1f3bf8cd7dae43754a587bc85f6cfe15eb6abd43fb8e5532b57ecc2f49b2c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_first.result.json",
+      "size": 1542,
+      "sha256": "3b8691e4a5d84f883a0af741cf321a4ba54f7ab9ab45c1489c8c2a54cf915cd2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_first.stderr.txt",
+      "size": 12640,
+      "sha256": "60c996e425591232d4ab991b602e4617b3b859601737bf7c05d29bc16c3dc572"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_first.stdout.txt",
+      "size": 1650,
+      "sha256": "1453abbc59fa0f7bc90ebbea87072566c32412803146be549ce7284524052999"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_initial.execution.json",
+      "size": 329,
+      "sha256": "79f1f3bf8cd7dae43754a587bc85f6cfe15eb6abd43fb8e5532b57ecc2f49b2c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_initial.stderr.txt",
+      "size": 682,
+      "sha256": "0342696fdef1b3857564f8829a977c14f2b300748995a04c5e7af0de47cbf465"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_intermediate.execution.json",
+      "size": 329,
+      "sha256": "a9044fcc5e88e4c6dadccc3865a30bab544051f418ed59062076a313b420a3b1"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_intermediate.result.json",
+      "size": 12316,
+      "sha256": "507c3fd81e472535c3daad7bed725ee8f4df0d959fdb9fca064f5075c32d3ac2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_intermediate.stderr.txt",
+      "size": 1904,
+      "sha256": "27075e781229a226edb2eeb86216a659cc948c91bcbfb8abf649fabab3e9f33e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/checks_intermediate.stdout.txt",
+      "size": 12446,
+      "sha256": "888fc765f91658021699d3686859f8f9e1e81660c8634930050a68a7c548fae7"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/closeout_before.json",
+      "size": 190,
+      "sha256": "ab03278bf388f0c6fc8be6bc720ea25be65abcb9ad802a8020a40c7429d5d95d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/controls.execution.json",
+      "size": 331,
+      "sha256": "894baf8b8256d917e2d19d13b772c8874f3eaffabb4c04f899c5a39c3eab3a73"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/controls.result.json",
+      "size": 140,
+      "sha256": "35d23d33063d94208f866a74c6e1d4a3a22308aa92309d42640565b9b4edeb01"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/controls.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/controls.stdout.txt",
+      "size": 285,
+      "sha256": "f65467e989c3332f139fdcaba58c64ac02391556a933d38a076b2bc3985be3d5"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/controls_intermediate.execution.json",
+      "size": 331,
+      "sha256": "2b9dbda9770a0685f910e2027ab9ccdc0b4b8859368e38d0af28c57e845e27ef"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/controls_intermediate.result.json",
+      "size": 140,
+      "sha256": "35d23d33063d94208f866a74c6e1d4a3a22308aa92309d42640565b9b4edeb01"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/controls_intermediate.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/controls_intermediate.stdout.txt",
+      "size": 285,
+      "sha256": "9fb5ac1bab70389811e515bc4d70d35b7c4c38fd30a7e9bdc24855b0de9f5d23"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/finish_execution.json",
+      "size": 500,
+      "sha256": "ac23e92d7a9676a049ce326e870ea08dcd64950e2e56e2b066cd52c83d77935f"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/history_readback.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/history_readback.txt",
+      "size": 811,
+      "sha256": "4c549115459f26b65c9ca915f69619cbe07ff6c9615d4ca2825a0a0bb0226ad1"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/history_readback_execution.json",
+      "size": 225,
+      "sha256": "ea7c0aead9df00753ce3ae1b90c3954c8a5d40f0f6d9e13bd733c51af5a11f72"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/package_check_post_finish.json",
+      "size": 549,
+      "sha256": "e06394fc0be907a0d319b37d0dca80e9c39b761942bc1e97c8bf16a9f55794e4"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/package_check_post_finish.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/package_check_pre_finish.json",
+      "size": 391,
+      "sha256": "b0d0aef3a1ec8b0b5124916735d04aa5951b4af7b8971ee8a0517afb5c0543f6"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/package_check_pre_finish.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/pinned_fixtures.json",
+      "size": 2303,
+      "sha256": "8b81548f69271f87f32d454d96b9ce063abf0aeeb3b73254ac399aad62646dcb"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/private_logs_check.json",
+      "size": 96,
+      "sha256": "b816a6963fe0fbea488ae5b54619af954f7efe6957374aae039333d7849d33ed"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/private_logs_check.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/reconciled_sites.json",
+      "size": 1616,
+      "sha256": "6b1d17c777d03f69107839b02d2fbcbded0b2791065df3a6e0a42c3465557ec8"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/reconciliation_pins.json",
+      "size": 30472,
+      "sha256": "439566c50e37bf4e56c855edd6ab41cff421f793dd2266bb26436dc81a9c2817"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/red.execution.json",
+      "size": 232,
+      "sha256": "a2e1ed6009b90593523deb27bd00c0139776e405b4639b4b8b4a3eb13a7c9bbe"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/red.result.json",
+      "size": 9300,
+      "sha256": "49cb615a44f7969301f0d461ab0ad5916dea31edcf8c12359abb07b0d7eb822e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/red.stderr.txt",
+      "size": 23716,
+      "sha256": "26264e9856cde085618fe937799c7cd61d6920e2ee8337a3808c71036d779eef"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/red.stdout.txt",
+      "size": 2771,
+      "sha256": "1d853e159498a022aa768acef5f1dabcbcd710757bce3c4718fc3f74b99e1ba2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/red.unittest.txt",
+      "size": 12078,
+      "sha256": "16c270690960e6bbd4fcbb4b5f7fbe56931c89324bb5adf4dd529ff7c9121c6f"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1.execution.json",
+      "size": 325,
+      "sha256": "a11680795f90ba8983f63826a7a7656fef500adb9180b110fb2f43b6a4447c45"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1.result.json",
+      "size": 9302,
+      "sha256": "8a54ef0621c09dec25754864767b74706e19f385b9b6da9c329f9b6df82d7af5"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1.stderr.txt",
+      "size": 23716,
+      "sha256": "d8f0b55e3f41c920d4ca5ed024098a33654a6b4905d36f372a613f92cd4fca88"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1.stdout.txt",
+      "size": 977,
+      "sha256": "a9de0a2b14855f106f2f802f652c9e3c41d317e65cb2bef0561aec473ad070b4"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1.unittest.txt",
+      "size": 10360,
+      "sha256": "712298e631dc6eb102a368a93d6c12730f5280ba109c601b111278287d3ba01d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_before_final_review.execution.json",
+      "size": 325,
+      "sha256": "7a917e4ac63e56e81e02d0cd382bf4ef269b0bb2f1a51431d067a7dabff13411"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_before_final_review.result.json",
+      "size": 9302,
+      "sha256": "2e2b208206e39b75db90c1b8af4e7f2ff51d9185e0976ef24f5d963b8a0e9c43"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_before_final_review.stderr.txt",
+      "size": 23716,
+      "sha256": "3a566c77f8f79925c24cca7473f3a35093d80763dd88703fe25ca0a122eff8b2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_before_final_review.stdout.txt",
+      "size": 977,
+      "sha256": "e3f7d507753a40976017526bc6a6a9879ac22e83f7b6537d5ffee9d6e6f0465f"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_before_final_review.unittest.txt",
+      "size": 10360,
+      "sha256": "21f31794da7b90cf48862cc410d5b6dc432df322436dba36f9ee9237452f7bd1"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_first.execution.json",
+      "size": 325,
+      "sha256": "143f5cd5af70d0869cf7a6f49d260fc6c73fefde366da87667d115b632ab225d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_first.raw_result.json",
+      "size": 8007,
+      "sha256": "66ee9ff06dab0821ab33efb975ce213bd6dd528173a0e11183ea4268dc4721d1"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_first.result.json",
+      "size": 1197,
+      "sha256": "bf371fcd76afe5fae6ad223f6cf0bf9af9808dd74643a578066e6cd62152223a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_first.stderr.txt",
+      "size": 22421,
+      "sha256": "47db2ebf08521b7d21c979f51fd208f2e6b807819d3265aff8ceff6754ec5ab4"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_first.stdout.txt",
+      "size": 5145,
+      "sha256": "e387a8829a5ee38641dc35ad684a85001bc0798b721ea676b576b88c732637e6"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_first.unittest.txt",
+      "size": 14147,
+      "sha256": "8504b03b95b992b2d8332e2799b39ed9418cba2272261009706a01ed08c9a3af"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_intermediate.execution.json",
+      "size": 325,
+      "sha256": "3b279eaf62465b38d1d7f94dad2302d61a4fe30f37c0524dbfb844a824d8290e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_intermediate.raw_result.json",
+      "size": 9302,
+      "sha256": "efd7a268f9855682ccea2ab61e3d82e37bbe02a65855cd4f517cfb5f39bb63f6"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_intermediate.result.json",
+      "size": 9302,
+      "sha256": "efd7a268f9855682ccea2ab61e3d82e37bbe02a65855cd4f517cfb5f39bb63f6"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_intermediate.stderr.txt",
+      "size": 23716,
+      "sha256": "056254b2351f4701cf9e6087edfd366fd9e43a69c4970dcf94571be451dac2ff"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_intermediate.stdout.txt",
+      "size": 977,
+      "sha256": "6c16f8f4b57c4e26b04951a3fefca7a3eeae60ad3380cf5d8d6c7d589e9ec5c2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s1_intermediate.unittest.txt",
+      "size": 10360,
+      "sha256": "b3659c2a60af17673e05eac80bc4f747d01ebef2d3568d63039e8fa412f6d802"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2.execution.json",
+      "size": 151,
+      "sha256": "281f23c3927ac7ce5ff726b21f4421cadfeff567293166f0a79347b51b0c33f4"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2.result.json",
+      "size": 4798,
+      "sha256": "7b03fe3af1952be467bab6cb51f82ecbfb1fb1b4378f702601fda9cc86846496"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2.stdout.txt",
+      "size": 1723,
+      "sha256": "fcffbecce4c03f308efee3872d1d13b21cfeae9a814299de68c92bbee176caa7"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2.unittest.txt",
+      "size": 11258,
+      "sha256": "6d35264efdcf581dd43a187ecc8db8e348aa7d0fe15071a8c7ce17cda3b83a0b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2_intermediate.execution.json",
+      "size": 151,
+      "sha256": "281f23c3927ac7ce5ff726b21f4421cadfeff567293166f0a79347b51b0c33f4"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2_intermediate.result.json",
+      "size": 4875,
+      "sha256": "9a452d5e5b3b3f5b247d87bbff35cb7bf70bfbe8f0011b11952657017e58ef84"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2_intermediate.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2_intermediate.stdout.txt",
+      "size": 2623,
+      "sha256": "11aa53b130af7fb4d371623cc8e25ce3bb68beae6671a54eeeb228434e56db3a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2_intermediate.unittest.txt",
+      "size": 12083,
+      "sha256": "6b0f020e1cbb627d4dbefa3ad0f794b4e86d1480a6921b9c77ba6da7c318df30"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s2_preexisting_failure_analysis.json",
+      "size": 650,
+      "sha256": "3e0b356050546bb3edf2684db9433c6be2fe8de566f2e557c4e1b19d63ca3848"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s3a.execution.json",
+      "size": 179,
+      "sha256": "a9b0cc670085e59b6eebcc0268cbe8b63ba4f42a6815faf79730b68ccbd871df"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s3a.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s3a.stdout.txt",
+      "size": 101,
+      "sha256": "e476d1feb93e26db7b3e252f1d7981cb2b9dc4d097ef091506b131f9c87f40b4"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/s3a.xml",
+      "size": 4809,
+      "sha256": "208750336c8cb81dc2d17676cc438dba599a947b98d3be7aa51f235d4c9a1a7e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/sanitization.json",
+      "size": 20193,
+      "sha256": "6b2360eb8e872c5010c2d21c25493bfc585e4d1264b3585254f4d45f361dcb5b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/source_final.json",
+      "size": 368,
+      "sha256": "c5e09169fff07eb8927a981e2fb841efba40a944a257c9322ef94fb6f9b8d906"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/syntax.json",
+      "size": 549,
+      "sha256": "fb40cb15d488e9818a859ab39fef9d7c99036f73ad6679d232c40f80b4b3a4da"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/test_summary.json",
+      "size": 1118,
+      "sha256": "7b29f8a728a865ae03e08b46ec1888ebc47eabcce07aa33be92571c49e513164"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local.execution.json",
+      "size": 335,
+      "sha256": "481c5c5f142c96b33808c8ab1475225ed9a48df4c33473156e0fea8536251d0c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local.result.json",
+      "size": 14626,
+      "sha256": "4021519a104f4945505129003c6f0578bb1a3fb43757d58f3ae820070644888c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local.stderr.txt",
+      "size": 4936,
+      "sha256": "937e34988649551fd9f23e55bec6338fc70511ebb1d01f48876ef97efa0e3a45"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local.stdout.txt",
+      "size": 14756,
+      "sha256": "b938bf97ee1718e9846decb618ae3d98ec809ccf2f50e1f813926c93c9739c6a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local_before_final_review.execution.json",
+      "size": 335,
+      "sha256": "fba4c0a6e6cb69633fde015b6948d456c8b5f49b73e2cc31517f3dd1d5c93291"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local_before_final_review.result.json",
+      "size": 12933,
+      "sha256": "c5d33b931bb8881b630b1f3ec37d21b40b6607a83a97110ce0c2d71be80e8486"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local_before_final_review.stderr.txt",
+      "size": 4816,
+      "sha256": "34a9ed748fd1eee5fbacc4fe9b6379eff0c1ca47bf61c63e3d75875dcd4488e5"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local_before_final_review.stdout.txt",
+      "size": 13063,
+      "sha256": "88b462fac7351578ce362ea0aa2dd5993003df5bf1d73140f3b1fd21d2283501"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local_intermediate.execution.json",
+      "size": 335,
+      "sha256": "d7230c66b04cc08346a3a5ebe9039783e59aeddbbc577dabe3dba6f38841824a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local_intermediate.result.json",
+      "size": 10994,
+      "sha256": "fb8fd0cd9cc5cccdc3248b1f0b9e8abf075d150ebe644330f598e46016eab29a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local_intermediate.stderr.txt",
+      "size": 3454,
+      "sha256": "3d05268bdd96f79a4fc5efe75d7236847c8466997f8e680e2d2e4f81cb04f38d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_local_intermediate.stdout.txt",
+      "size": 11124,
+      "sha256": "245475937d5e7a4017a47b010a4b873e3c5c2bfcc2fc3c6bdbff6339b7c36540"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata.execution.json",
+      "size": 338,
+      "sha256": "ac5fdfa5e5cda6de72fe03a2e11dea0821367374afb154d84b5aaa97594d3582"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata.result.json",
+      "size": 15651,
+      "sha256": "108f579fc65d75d8dc468fea1d103c640892ce779a20def986456e8a7188a889"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata.stderr.txt",
+      "size": 3396,
+      "sha256": "977ab862e0c66b221fae6d3c759c54cd84705c9728f2a4fbdd79fd0cc241673f"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata.stdout.txt",
+      "size": 15781,
+      "sha256": "c4a327d7e3e3d5f4eb5c25c56b68096d2fffcf5c795b4dd5e646a84717cb37da"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata_before_final_review.execution.json",
+      "size": 338,
+      "sha256": "f924143939a987eb0be85ecc0378e9df3027e9c6771114ad516d9c75a7c3b3e7"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata_before_final_review.result.json",
+      "size": 14059,
+      "sha256": "abee7d943678d2d682b62ffa9f94be3e32273ed1f5c7d3889bc42988efddcaa3"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata_before_final_review.stderr.txt",
+      "size": 3278,
+      "sha256": "257c9915bb54385cb6ec49c46d56f0dc099bf2e2dcea9b0a01306dfc62ac9b03"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata_before_final_review.stdout.txt",
+      "size": 14189,
+      "sha256": "4b23c3fae2830b12fddf8376c2aa63a307a69332074dd62f32c0d64c64ed21c5"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata_intermediate.execution.json",
+      "size": 338,
+      "sha256": "4a23fda228f69c7d0852f54fea00f4237fd2bdb2c159f6be5a87ad9fc0167b45"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata_intermediate.result.json",
+      "size": 11516,
+      "sha256": "f0ae3f0b9c0c5b56fe72f3d1d1648e737a21b43494787ebfcc4f05c03d1c085d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata_intermediate.stderr.txt",
+      "size": 2701,
+      "sha256": "7387a535023eff8305bdda9659f082825d27c6f72225b929fcb1ad77eb450410"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_metadata_intermediate.stdout.txt",
+      "size": 11646,
+      "sha256": "44db53538316b815ba22dac228411602de849894bf04932eebde3d29f0065f5b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown.execution.json",
+      "size": 337,
+      "sha256": "6fc86817f91bbb506e2b748d183d5dcf67d2812fadcfb5ebd22f0c264a72b5da"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown.result.json",
+      "size": 15985,
+      "sha256": "050933454113c8a2cac2b12dfa9d8d578b5a6672695f83eeb6e3a602c31d5819"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown.stderr.txt",
+      "size": 3393,
+      "sha256": "d1ecf9468ca57e3019e6a7f31f03ec31171d2dfef94b45ba829aab59037a71ae"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown.stdout.txt",
+      "size": 16115,
+      "sha256": "22a59dca8bb1c2ffed01e7e3e910f1830323e433ca89f23c3d9d968b6921b931"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown_before_final_review.execution.json",
+      "size": 337,
+      "sha256": "d76bae96719857cd034fbf676b55529736f32bd044bfe6a8125c1ceb48ee2f6b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown_before_final_review.result.json",
+      "size": 14292,
+      "sha256": "313af38ea28868453bb34c4a3ab9bbe176258a5569a03e545dcb30fa03500750"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown_before_final_review.stderr.txt",
+      "size": 3275,
+      "sha256": "0d3ae509bbb593b3b9213bc7ba8d0931da56a513567089639c33e62ec47410db"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown_before_final_review.stdout.txt",
+      "size": 14422,
+      "sha256": "511bd360b1267e5aa6c259e85c5d608c41af584b25e4f77a84a39ab2baebe5a1"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown_intermediate.execution.json",
+      "size": 337,
+      "sha256": "c642561c15d2355c9f4dd15004e2053499482e4ad88393416de7b56e34d72ab3"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown_intermediate.result.json",
+      "size": 11755,
+      "sha256": "a0786bc937bc57d710716777421c2b438b1e55e34a5043c0b4066409c8c4f25e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown_intermediate.stderr.txt",
+      "size": 2698,
+      "sha256": "14983755fb4f32ca3a691ddbf5b24689df5ad8953d4ff6b3aa14683e1bf6777c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/evidence/weaken_unknown_intermediate.stdout.txt",
+      "size": 11885,
+      "sha256": "68cc0e60b967bcddc85890cc568ad4834190a6215dd877d00f27b30d44a4b70d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/final/test_rt002_s1_routes.py.txt",
+      "size": 125103,
+      "sha256": "35426388b49eb4a8154f5dfe8717ff4f3796b315ce3b391a71db6834e4a09696"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/finish_protocol.json",
+      "size": 4922,
+      "sha256": "1ac4805d4481dd8914141227a14fbb099a6bb3ac3c9a4f9334b6dda849488ea1"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/finish_protocol.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/followups.json",
+      "size": 2070,
+      "sha256": "8fad5758634d6e724baf7ef3e05446b70c45852f3e4c156e75d6aaca6f1552a2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/handoff_task.md",
+      "size": 14339,
+      "sha256": "ab2a57b9cdaea891c3877e01f80bd5c355a68a32d14dee0071519cb8e2919aec"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/package.py",
+      "size": 14510,
+      "sha256": "a87fba5ce92531f55034bc914f84c95ca4780049812d3d57846c288d6f8702ff"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/recon_checks.py",
+      "size": 13980,
+      "sha256": "df4ec96af4b410c0b1debe96efb30afc8fe042b9f172f1bed68e8c3e8bc93461"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/report.md",
+      "size": 18907,
+      "sha256": "c997f7f7e23c92eaede26d64e944384cc916a049067cc2095741fb73e0e600a1"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/route_reconciliation.md",
+      "size": 10133,
+      "sha256": "3e2457ae71b8c5f499240b888c72c7c42e62367d83ff52c43e4b1da44a608fe2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/run_guarded.py",
+      "size": 4354,
+      "sha256": "20c65ad2e4e127195567a51bfd47db36916e5de3c3967fa6b18e38f2c85085e9"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/run_s3a.py",
+      "size": 1246,
+      "sha256": "8c5b47f94426a323b11588020d7f6cda143ce2b7264fec43c159a8291bcf154e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/source.diff.patch",
+      "size": 16040,
+      "sha256": "80f3e243c4cb677aa4fe8584b60fcb84c43b4dc278ac420d60bd15bd81f696d3"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/task_record.json",
+      "size": 762,
+      "sha256": "3138c396eb2b27a858e7c7a82a006a4633ad84fb7c6aee15d1c06f0ca9438f33"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/verify_private_logs.py",
+      "size": 2842,
+      "sha256": "dbb357fca14aec3302232003571d46bc3d536d5d4d0918eeb9a653965b3b7c2a"
+    },
+    {
+      "path": "test_rt002_s1_routes.py",
+      "size": 125103,
+      "sha256": "35426388b49eb4a8154f5dfe8717ff4f3796b315ce3b391a71db6834e4a09696"
+    }
+  ]
+}

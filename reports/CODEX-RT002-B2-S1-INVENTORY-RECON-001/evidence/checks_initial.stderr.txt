@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S1-INVENTORY-RECON-001\run_guarded.py", line 76, in <module>
+    runpy.run_path(sys.argv[0], run_name="__main__", init_globals={"SANDBOX": BASE})
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S1-INVENTORY-RECON-001\recon_checks.py", line 17, in <module>
+    assert len(SOURCES) == len(s1._production_modules()), "ambiguous module basename"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ambiguous module basename

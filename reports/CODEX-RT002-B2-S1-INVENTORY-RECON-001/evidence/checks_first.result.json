@@ -1,0 +1,61 @@
+{
+  "mode": "checks",
+  "counts": {
+    "run": 17,
+    "fail": 13,
+    "error": 1,
+    "skip": 0
+  },
+  "isolation_violations": [],
+  "observations": {
+    "fake_launcher": {
+      "requests": [
+        {
+          "url": "http://127.0.0.1:54321/status",
+          "method": "GET",
+          "timeout": 3
+        },
+        {
+          "url": "http://127.0.0.1:54321/",
+          "method": "GET",
+          "timeout": 3
+        },
+        {
+          "url": "http://127.0.0.1:54321/status",
+          "method": "GET",
+          "timeout": 3
+        },
+        {
+          "url": "http://127.0.0.1:54321/",
+          "method": "GET",
+          "timeout": 3
+        },
+        {
+          "url": "http://127.0.0.1:54321/ui/ultra-chat/capability",
+          "method": "GET",
+          "timeout": 3
+        }
+      ],
+      "physical_calls": 0,
+      "all_get_callers": true
+    },
+    "metadata": {
+      "default_check": "LIVE_CHECK_NOT_AUTHORIZED",
+      "network_calls": 0,
+      "injected_authorized_checker": "potential physical boundary; no live approval"
+    },
+    "additional_llm_post": [],
+    "additional_oauth_post": [],
+    "alias_send": [],
+    "duplicate_physical_send": [],
+    "external_health_caller": [],
+    "external_host": [],
+    "extra_metadata_literal": [],
+    "getattr_send": [],
+    "metadata_becomes_network": [],
+    "metadata_field_becomes_network": [],
+    "new_launcher_caller": [],
+    "new_unknown_caller": [],
+    "new_unknown_transport": []
+  }
+}

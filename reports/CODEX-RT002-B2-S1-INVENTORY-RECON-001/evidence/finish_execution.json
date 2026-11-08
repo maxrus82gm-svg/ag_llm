@@ -1,0 +1,22 @@
+{
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-RT002-B2-S1-INVENTORY-RECON-001",
+    "--no-chat-amendment",
+    "--headless",
+    "--date",
+    "2026-11-08",
+    "--expected-card-sha256",
+    "2d772a5c9790520bc91090ec079691c74d8452aff3d93c3ecca553ac283bb7e4",
+    "--apply"
+  ],
+  "exit_code": 0
+}

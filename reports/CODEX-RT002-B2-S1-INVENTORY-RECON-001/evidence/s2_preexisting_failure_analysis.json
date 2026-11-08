@@ -1,0 +1,9 @@
+{
+  "test": "IsolationTests.test_no_production_module_imports_the_policy_yet",
+  "predicate": "all s1._production_modules() except policy must not import ultra_budget_policy",
+  "unchanged_scanner_ast_sha256": "9c2b7eb6e95d010b6b8a5570d6753d45319dd7c87286c6c275e070dd3bd383e1",
+  "unchanged_ledger_import": "ultra_budget_ledger.py:25 imports ultra_budget_policy as policy",
+  "source_provenance": "ledger and S2 test are in before baseline and remain byte-identical",
+  "proof": "source-level independence from changed S1 inventory; not a separate baseline S2 execution",
+  "action": "STOP S2 oracle changes; separate AMENDMENT requested"
+}

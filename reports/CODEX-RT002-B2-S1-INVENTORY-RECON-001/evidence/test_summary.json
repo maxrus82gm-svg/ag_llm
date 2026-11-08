@@ -1,0 +1,63 @@
+{
+  "status": "PARTIAL overall; S1 AUTHOR RESULT READY / INDEPENDENT REVIEW PENDING",
+  "original_red": {
+    "run": 69,
+    "pass": 67,
+    "fail": 2,
+    "error": 0,
+    "skip": 0,
+    "exit": 1
+  },
+  "s1_final": {
+    "run": 69,
+    "pass": 69,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "exit": 0,
+    "guard": 0,
+    "evidence": 0
+  },
+  "extra_checks": {
+    "run": 23,
+    "pass": 23,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "source_mutations": 18,
+    "positive_controls": 1,
+    "fake_execution": 4
+  },
+  "weakened_oracles": {
+    "processes": 3,
+    "expected_exit": 1,
+    "observed_exit": [
+      1,
+      1,
+      1
+    ],
+    "fail_counts": [
+      1,
+      3,
+      1
+    ]
+  },
+  "s2_final": {
+    "run": 73,
+    "pass": 72,
+    "fail": 1,
+    "error": 0,
+    "skip": 0,
+    "exit": 1,
+    "guard": 0
+  },
+  "s3a": {
+    "run": 35,
+    "pass": 35,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "exit": 0
+  },
+  "scope": "one S1 source file; no runtime, policy, ledger, network settings or approved routes changed"
+}

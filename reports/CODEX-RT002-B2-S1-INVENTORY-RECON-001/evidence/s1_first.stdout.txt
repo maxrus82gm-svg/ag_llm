@@ -1,0 +1,101 @@
+{
+  "task": "CLAUDE-RT002-S1-REPAIR-001",
+  "sandbox": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s1-recon-kgxes64t\\temp\\claude-rt002-s1-i7z0z_uo",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "FAILURES:2",
+      "ERRORS:1"
+    ]
+  },
+  "counts": {
+    "run": 69,
+    "failures": 2,
+    "errors": 1,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 69,
+  "failures": [
+    "__main__.StaticRouteInventoryTests.test_every_endpoint_constant_read_is_an_inventoried_send_url",
+    "__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity"
+  ],
+  "errors": [
+    "__main__.RouteTransportTests.test_oauth_token_traffic_is_distinct_from_llm_traffic"
+  ],
+  "skipped": [],
+  "isolation_violations": [],
+  "evidence_root": "M:\\GitHub\\ag_llm",
+  "evidence_problems": [],
+  "selected": null,
+  "elapsed_seconds": 32.075,
+  "log": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s1-recon-kgxes64t\\temp\\claude-rt002-s1-i7z0z_uo\\unittest.log",
+  "log_sha256": "ed6a458e025e7a4f05d3369f1ab1de2a8ce79699ff8c179f838f2ea7179eee08"
+}
+
+ERROR: test_oauth_token_traffic_is_distinct_from_llm_traffic (__main__.RouteTransportTests.test_oauth_token_traffic_is_distinct_from_llm_traffic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 912, in test_oauth_token_traffic_is_distinct_from_llm_traffic
+    with _Patches([capture.patch(),
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 319, in __enter__
+    item.__enter__()
+  File "<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py", line 1893, in __enter__
+    self._patch_dict()
+  File "<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py", line 1905, in _patch_dict
+    original = in_dict.copy()
+               ^^^^^^^^^^^^^^
+  File "<frozen os>", line 749, in copy
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S1-INVENTORY-RECON-001\run_guarded.py", line 26, in secret_getitem
+    raise PermissionError("OFFLINE: credential read forbidden")
+PermissionError: OFFLINE: credential read forbidden
+
+======================================================================
+FAIL: test_every_endpoint_constant_read_is_an_inventoried_send_url (__main__.StaticRouteInventoryTests.test_every_endpoint_constant_read_is_an_inventoried_send_url)
+Second, receiver-independent net: an LLM/OAuth endpoint read anywhere else is unexplained.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1405, in test_every_endpoint_constant_read_is_an_inventoried_send_url
+    self.assertEqual(unexplained, [])
+AssertionError: Lists differ: [('model_cards.py', 128, 18, 'endpoint hos[401 chars]ss')] != []
+
+First list contains 7 additional elements.
+First extra element 0:
+('model_cards.py', 128, 18, 'endpoint host literal')
+
++ []
+- [('model_cards.py', 128, 18, 'endpoint host literal'),
+-  ('model_cards.py', 129, 16, 'endpoint host literal'),
+-  ('model_cards.py', 573, 59, 'unreviewed metadata endpoint access'),
+-  ('model_cards.py', 574, 23, 'unreviewed metadata endpoint access'),
+-  ('model_cards.py', 806, 29, 'unreviewed metadata endpoint access'),
+-  ('model_cards.py', 806, 60, 'unreviewed metadata endpoint access'),
+-  ('model_cards.py', 944, 31, 'unreviewed metadata endpoint access')]
+
+======================================================================
+FAIL: test_production_send_sites_match_inventory_with_multiplicity (__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1366, in test_production_send_sites_match_inventory_with_multiplicity
+    sites = _module_sites(production)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1358, in _module_sites
+    raise AssertionError(analysis["reconciliation_issues"])
+AssertionError: [('ordinary_chat_service.py', 'changed reconciliation AST', 'ChatTransport'), ('ordinary_chat_service.py', 'changed reconciliation AST', 'execute_request')]
+
+----------------------------------------------------------------------
+Ran 69 tests in 32.074s
+
+FAILED (failures=2, errors=1)
+
+{"secret_guard": {"denials": ["environment secret read"], "sandbox": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s1-recon-kgxes64t"}}

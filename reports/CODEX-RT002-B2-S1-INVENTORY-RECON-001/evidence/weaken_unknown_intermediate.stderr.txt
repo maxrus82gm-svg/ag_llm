@@ -1,0 +1,33 @@
+test_launcher_get_and_all_url_callers_without_http (__main__.FakeExecutionTests.test_launcher_get_and_all_url_callers_without_http) ... ok
+test_metadata_default_checker_does_not_send (__main__.FakeExecutionTests.test_metadata_default_checker_does_not_send) ... ok
+test_ordinary_transport_is_one_injected_invocation (__main__.FakeExecutionTests.test_ordinary_transport_is_one_injected_invocation) ... ok
+test_additional_llm_post (__main__.ReconciliationNegativeTests.test_additional_llm_post) ... ok
+test_additional_oauth_post (__main__.ReconciliationNegativeTests.test_additional_oauth_post) ... ok
+test_alias_send (__main__.ReconciliationNegativeTests.test_alias_send) ... ok
+test_duplicate_physical_send (__main__.ReconciliationNegativeTests.test_duplicate_physical_send) ... ok
+test_external_health_caller (__main__.ReconciliationNegativeTests.test_external_health_caller) ... ok
+test_external_host (__main__.ReconciliationNegativeTests.test_external_host) ... ok
+test_extra_metadata_literal (__main__.ReconciliationNegativeTests.test_extra_metadata_literal) ... ok
+test_getattr_send (__main__.ReconciliationNegativeTests.test_getattr_send) ... ok
+test_metadata_becomes_network (__main__.ReconciliationNegativeTests.test_metadata_becomes_network) ... ok
+test_metadata_field_becomes_network (__main__.ReconciliationNegativeTests.test_metadata_field_becomes_network) ... ok
+test_new_launcher_caller (__main__.ReconciliationNegativeTests.test_new_launcher_caller) ... ok
+test_new_unknown_caller (__main__.ReconciliationNegativeTests.test_new_unknown_caller) ... ok
+test_new_unknown_transport (__main__.ReconciliationNegativeTests.test_new_unknown_transport) ... FAIL
+test_nominal_and_whitespace_control (__main__.ReconciliationNegativeTests.test_nominal_and_whitespace_control) ... ok
+
+======================================================================
+FAIL: test_new_unknown_transport (__main__.ReconciliationNegativeTests.test_new_unknown_transport)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S1-INVENTORY-RECON-001\recon_checks.py", line 93, in <lambda>
+    lambda self, name=_name: self.check_mutation(name))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S1-INVENTORY-RECON-001\recon_checks.py", line 88, in check_mutation
+    self.assertTrue(failures, name + " escaped the real S1 oracle")
+AssertionError: [] is not true : new_unknown_transport escaped the real S1 oracle
+
+----------------------------------------------------------------------
+Ran 17 tests in 9.214s
+
+FAILED (failures=1)

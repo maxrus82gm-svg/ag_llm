@@ -1,0 +1,153 @@
+{
+  "mode": "weaken_local",
+  "counts": {
+    "run": 22,
+    "fail": 3,
+    "error": 0,
+    "skip": 0
+  },
+  "isolation_violations": [],
+  "observations": {
+    "fake_launcher": {
+      "requests": [
+        {
+          "url": "http://127.0.0.1:54321/status",
+          "method": "GET",
+          "timeout": 3
+        },
+        {
+          "url": "http://127.0.0.1:54321/",
+          "method": "GET",
+          "timeout": 3
+        },
+        {
+          "url": "http://127.0.0.1:54321/status",
+          "method": "GET",
+          "timeout": 3
+        },
+        {
+          "url": "http://127.0.0.1:54321/",
+          "method": "GET",
+          "timeout": 3
+        },
+        {
+          "url": "http://127.0.0.1:54321/ui/ultra-chat/capability",
+          "method": "GET",
+          "timeout": 3
+        }
+      ],
+      "physical_calls": 0,
+      "all_get_callers": true
+    },
+    "metadata": {
+      "default_check": "LIVE_CHECK_NOT_AUTHORIZED",
+      "network_calls": 0,
+      "injected_authorized_checker": "potential physical boundary; no live approval"
+    },
+    "ordinary_chat": {
+      "injected_calls": 1,
+      "physical_calls": 0,
+      "classification": "POTENTIAL_LLM"
+    },
+    "additional_llm_post": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1381, in test_production_send_sites_match_inventory_with_multiplicity\n    self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)\nAssertionError: {('compressor_runtime.py', '_request_gigacha[859 chars]): 1} != {('server.py', 'ask_gigachat', 'client.post'[805 chars]): 1}\nDiff is 947 characters long. Set self.maxDiff to None to see it.\n"
+      }
+    ],
+    "additional_oauth_post": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1381, in test_production_send_sites_match_inventory_with_multiplicity\n    self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)\nAssertionError: {('compressor_runtime.py', '_request_gigacha[863 chars]): 1} != {('server.py', 'ask_gigachat', 'client.post'[805 chars]): 1}\nDiff is 951 characters long. Set self.maxDiff to None to see it.\n"
+      }
+    ],
+    "alias_send": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1381, in test_production_send_sites_match_inventory_with_multiplicity\n    self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)\nAssertionError: {('compressor_runtime.py', '_request_gigacha[854 chars]): 1} != {('server.py', 'ask_gigachat', 'client.post'[805 chars]): 1}\nDiff is 942 characters long. Set self.maxDiff to None to see it.\n"
+      }
+    ],
+    "duplicate_physical_send": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1378, in test_production_send_sites_match_inventory_with_multiplicity\n    sites = _module_sites(production)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1370, in _module_sites\n    raise AssertionError(analysis[\"reconciliation_issues\"])\nAssertionError: [('ordinary_chat_service.py', 'changed reconciliation AST', 'execute_request')]\n"
+      }
+    ],
+    "external_health_caller": [],
+    "external_host": [],
+    "extra_metadata_literal": [
+      {
+        "test": "test_every_endpoint_constant_read_is_an_inventoried_send_url",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1417, in test_every_endpoint_constant_read_is_an_inventoried_send_url\n    self.assertEqual(unexplained, [])\nAssertionError: Lists differ: [('synthetic.py', 1, 23, 'endpoint host literal')] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n('synthetic.py', 1, 23, 'endpoint host literal')\n\n- [('synthetic.py', 1, 23, 'endpoint host literal')]\n+ []\n"
+      }
+    ],
+    "getattr_send": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1381, in test_production_send_sites_match_inventory_with_multiplicity\n    self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)\nAssertionError: {('compressor_runtime.py', '_request_gigacha[864 chars]): 1} != {('server.py', 'ask_gigachat', 'client.post'[805 chars]): 1}\nDiff is 952 characters long. Set self.maxDiff to None to see it.\n"
+      },
+      {
+        "test": "test_every_endpoint_constant_read_is_an_inventoried_send_url",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1417, in test_every_endpoint_constant_read_is_an_inventoried_send_url\n    self.assertEqual(unexplained, [])\nAssertionError: Lists differ: [('server.py', 7294, 45, 'endpoint reference CHAT_URL')] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n('server.py', 7294, 45, 'endpoint reference CHAT_URL')\n\n- [('server.py', 7294, 45, 'endpoint reference CHAT_URL')]\n+ []\n"
+      }
+    ],
+    "metadata_becomes_network": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1378, in test_production_send_sites_match_inventory_with_multiplicity\n    sites = _module_sites(production)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1370, in _module_sites\n    raise AssertionError(analysis[\"reconciliation_issues\"])\nAssertionError: [('model_cards.py', 'changed reconciliation AST', 'BUILTIN_PROVIDERS'), ('model_cards.py', 'unreviewed reconciliation reference/caller')]\n"
+      },
+      {
+        "test": "test_every_endpoint_constant_read_is_an_inventoried_send_url",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1417, in test_every_endpoint_constant_read_is_an_inventoried_send_url\n    self.assertEqual(unexplained, [])\nAssertionError: Lists differ: [('model_cards.py', 128, 18, 'endpoint hos[401 chars]ss')] != []\n\nFirst list contains 7 additional elements.\nFirst extra element 0:\n('model_cards.py', 128, 18, 'endpoint host literal')\n\n+ []\n- [('model_cards.py', 128, 18, 'endpoint host literal'),\n-  ('model_cards.py', 129, 41, 'endpoint host literal'),\n-  ('model_cards.py', 573, 59, 'unreviewed metadata endpoint access'),\n-  ('model_cards.py', 574, 23, 'unreviewed metadata endpoint access'),\n-  ('model_cards.py', 806, 29, 'unreviewed metadata endpoint access'),\n-  ('model_cards.py', 806, 60, 'unreviewed metadata endpoint access'),\n-  ('model_cards.py', 944, 31, 'unreviewed metadata endpoint access')]\n"
+      }
+    ],
+    "metadata_field_becomes_network": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1378, in test_production_send_sites_match_inventory_with_multiplicity\n    sites = _module_sites(production)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1370, in _module_sites\n    raise AssertionError(analysis[\"reconciliation_issues\"])\nAssertionError: [('model_cards.py', 'unreviewed reconciliation reference/caller')]\n"
+      },
+      {
+        "test": "test_every_endpoint_constant_read_is_an_inventoried_send_url",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1417, in test_every_endpoint_constant_read_is_an_inventoried_send_url\n    self.assertEqual(unexplained, [])\nAssertionError: Lists differ: [('model_cards.py', 128, 18, 'endpoint hos[469 chars]ss')] != []\n\nFirst list contains 8 additional elements.\nFirst extra element 0:\n('model_cards.py', 128, 18, 'endpoint host literal')\n\n+ []\n- [('model_cards.py', 128, 18, 'endpoint host literal'),\n-  ('model_cards.py', 129, 16, 'endpoint host literal'),\n-  ('model_cards.py', 573, 59, 'unreviewed metadata endpoint access'),\n-  ('model_cards.py', 574, 23, 'unreviewed metadata endpoint access'),\n-  ('model_cards.py', 806, 29, 'unreviewed metadata endpoint access'),\n-  ('model_cards.py', 806, 60, 'unreviewed metadata endpoint access'),\n-  ('model_cards.py', 944, 31, 'unreviewed metadata endpoint access'),\n-  ('model_cards.py', 967, 27, 'unreviewed metadata endpoint access')]\n"
+      }
+    ],
+    "new_launcher_caller": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1378, in test_production_send_sites_match_inventory_with_multiplicity\n    sites = _module_sites(production)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1370, in _module_sites\n    raise AssertionError(analysis[\"reconciliation_issues\"])\nAssertionError: [('synthetic.py', 'unreviewed reconciliation reference/caller')]\n"
+      }
+    ],
+    "new_run_web_alarm_caller": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1378, in test_production_send_sites_match_inventory_with_multiplicity\n    sites = _module_sites(production)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1370, in _module_sites\n    raise AssertionError(analysis[\"reconciliation_issues\"])\nAssertionError: [('synthetic.py', 'unreviewed reconciliation reference/caller')]\n"
+      }
+    ],
+    "new_unknown_caller": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1378, in test_production_send_sites_match_inventory_with_multiplicity\n    sites = _module_sites(production)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1370, in _module_sites\n    raise AssertionError(analysis[\"reconciliation_issues\"])\nAssertionError: [('synthetic.py', 'unreviewed reconciliation reference/caller')]\n"
+      }
+    ],
+    "new_unknown_transport": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1381, in test_production_send_sites_match_inventory_with_multiplicity\n    self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)\nAssertionError: {('compressor_runtime.py', '_request_gigacha[865 chars]): 1} != {('server.py', 'ask_gigachat', 'client.post'[805 chars]): 1}\nDiff is 953 characters long. Set self.maxDiff to None to see it.\n"
+      }
+    ],
+    "new_unknown_transport_alias": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1381, in test_production_send_sites_match_inventory_with_multiplicity\n    self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)\nAssertionError: {('compressor_runtime.py', '_request_gigacha[863 chars]): 1} != {('server.py', 'ask_gigachat', 'client.post'[805 chars]): 1}\nDiff is 951 characters long. Set self.maxDiff to None to see it.\n"
+      }
+    ],
+    "new_unknown_transport_getattr": [
+      {
+        "test": "test_production_send_sites_match_inventory_with_multiplicity",
+        "failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_rt002_s1_routes.py\", line 1381, in test_production_send_sites_match_inventory_with_multiplicity\n    self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)\nAssertionError: {('compressor_runtime.py', '_request_gigacha[865 chars]): 1} != {('server.py', 'ask_gigachat', 'client.post'[805 chars]): 1}\nDiff is 953 characters long. Set self.maxDiff to None to see it.\n"
+      }
+    ],
+    "port_validation_removed": []
+  }
+}
+{"secret_guard": {"denials": [], "synthetic_reads": 0, "sandbox": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s1-recon-2byi1uu9"}}

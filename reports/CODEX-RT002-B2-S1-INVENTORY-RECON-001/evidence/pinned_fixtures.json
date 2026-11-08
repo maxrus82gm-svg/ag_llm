@@ -1,0 +1,48 @@
+{
+  "result": "PASS",
+  "files": [
+    {
+      "label": "r031/executor.jsonl",
+      "source": ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/executor.jsonl",
+      "expected_sha256": "a9f8f6112e54e845790fc441241f92199c63e598cfbfff77b260f49853af8f3b",
+      "actual_sha256": "a9f8f6112e54e845790fc441241f92199c63e598cfbfff77b260f49853af8f3b",
+      "bytes": 723052
+    },
+    {
+      "label": "r031/server.jsonl",
+      "source": ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/server.jsonl",
+      "expected_sha256": "f23146df6a356cca2bce23e76592b81a4bc373b62f57bf56fda636ac8b840f25",
+      "actual_sha256": "f23146df6a356cca2bce23e76592b81a4bc373b62f57bf56fda636ac8b840f25",
+      "bytes": 563926
+    },
+    {
+      "label": "r031/executor_base.json",
+      "source": ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/executor_base.json",
+      "expected_sha256": "f3b431ff88215f62c2149e5b69b2b73fdf77d17445c432c97ecec693f767af53",
+      "actual_sha256": "f3b431ff88215f62c2149e5b69b2b73fdf77d17445c432c97ecec693f767af53",
+      "bytes": 35568
+    },
+    {
+      "label": "r031/summary.json",
+      "source": ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/summary.json",
+      "expected_sha256": "de1f26cabcb5051fa5163b947e73077b630f5c545f0c830b1dc8038668c65afa",
+      "actual_sha256": "de1f26cabcb5051fa5163b947e73077b630f5c545f0c830b1dc8038668c65afa",
+      "bytes": 3468
+    },
+    {
+      "label": "r026/executor.jsonl",
+      "source": ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/executor.jsonl",
+      "expected_sha256": "2cd207327044f476b87e12a70c206e0c91be2632e34ba7a1ffbb8892cc8b066c",
+      "actual_sha256": "2cd207327044f476b87e12a70c206e0c91be2632e34ba7a1ffbb8892cc8b066c",
+      "bytes": 735033
+    },
+    {
+      "label": "r026/summary.json",
+      "source": ".ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/summary.json",
+      "expected_sha256": "210849cd30793c1e01b63c344a7c7a730a98e6076f4b98dab7e37165e6bb1b89",
+      "actual_sha256": "210849cd30793c1e01b63c344a7c7a730a98e6076f4b98dab7e37165e6bb1b89",
+      "bytes": 3551
+    }
+  ],
+  "RAW_copied_to_package": false
+}

@@ -1,0 +1,157 @@
+{
+  "task": "CLAUDE-RT002-S2-001",
+  "mode": "core",
+  "sandbox": "<USER_HOME>\\AppData\\Local\\Temp\\claude-rt002-s2-gxjxxx_p",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "FAILURES:1"
+    ]
+  },
+  "counts": {
+    "run": 73,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 73,
+  "failures": [
+    "__main__.IsolationTests.test_no_production_module_imports_the_policy_yet"
+  ],
+  "errors": [],
+  "skipped": [],
+  "isolation_violations": [],
+  "problems": [],
+  "selected": null,
+  "dataset_sha256": "8a3ea10b75280ece550138af9a912b161997e17f5f3f17c894686961babf90ce",
+  "production_hashes": {
+    "server.py": "3f950f0329b7605eb790ce61245a95985146d649d3d5c805660b57374fb6c401",
+    "planner_runtime.py": "ab6c12c3fb02145e9acae692360099922048366a7668a977c350cf98af49384e",
+    "task_planner.py": "c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346",
+    "verifier_runtime.py": "7db030fee149d8f8af1a90d384f3ad23e5086cea5d5ce42e6c728fd096764228",
+    "compressor_runtime.py": "c69ab1d9594b4cb36aeb32703b10de091bea5ce5d876c5962068a9b2fb20940f",
+    "provider_accounting.py": "dd83dbf7a22154347ac6f17ca2110e78757338248bd466f86a0d3599db510902",
+    "gigachat_transport.py": "ee1db75ed04ea432224324d9ffb8271e211985e2d4f3a25f72dff89db251a879",
+    "run_store.py": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e",
+    "audit_storage.py": "5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c",
+    "workspace_runtime_settings.py": "699026e592c27189f55ae80ace3eaf0449e874a887235e24083d9a52126b8c3b",
+    "model_registry.py": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+    "ultra_ui.py": "9b0b7fa52b82e9612f181ce4ec0620c1e6d37376bbe8f9e7ee92728875cb9033",
+    "context_storage.py": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64",
+    "ultra_budget_policy.py": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13"
+  },
+  "elapsed_seconds": 1.12,
+  "observations": {
+    "bytes_div_4": {
+      "underestimates": {
+        "dredd": 24
+      },
+      "worst_actual_over_estimate": 1.6147
+    },
+    "calibration_report_margin_0": [
+      {
+        "provider_model_id": "GigaChat-3-Pro",
+        "profile_key": "compressor",
+        "samples": 1,
+        "observed_min_bytes_per_token": 6.1322,
+        "observed_median_bytes_per_token": 6.1322,
+        "observed_max_bytes_per_token": 6.1322,
+        "bytes_per_token": 6.1321,
+        "status": "NEEDS_CALIBRATION"
+      },
+      {
+        "provider_model_id": "GigaChat-3-Ultra",
+        "profile_key": "dredd",
+        "samples": 37,
+        "observed_min_bytes_per_token": 2.4772,
+        "observed_median_bytes_per_token": 3.2156,
+        "observed_max_bytes_per_token": 4.9671,
+        "bytes_per_token": 2.4771,
+        "status": "CALIBRATED"
+      },
+      {
+        "provider_model_id": "GigaChat-3-Ultra",
+        "profile_key": "executor",
+        "samples": 203,
+        "observed_min_bytes_per_token": 4.5184,
+        "observed_median_bytes_per_token": 7.3635,
+        "observed_max_bytes_per_token": 7.7928,
+        "bytes_per_token": 4.5184,
+        "status": "CALIBRATED"
+      },
+      {
+        "provider_model_id": "GigaChat-3-Ultra",
+        "profile_key": "planner",
+        "samples": 99,
+        "observed_min_bytes_per_token": 4.4426,
+        "observed_median_bytes_per_token": 4.7118,
+        "observed_max_bytes_per_token": 5.0998,
+        "bytes_per_token": 4.4426,
+        "status": "CALIBRATED"
+      }
+    ],
+    "leave_one_out": {
+      "0.0/planner": [
+        1,
+        1.06
+      ],
+      "0.0/executor": [
+        1,
+        1.63
+      ],
+      "0.0/dredd": [
+        1,
+        1.3
+      ],
+      "0.1/planner": [
+        0,
+        1.17
+      ],
+      "0.1/executor": [
+        0,
+        1.79
+      ],
+      "0.1/dredd": [
+        0,
+        1.43
+      ],
+      "0.2/planner": [
+        0,
+        1.27
+      ],
+      "0.2/executor": [
+        0,
+        1.96
+      ],
+      "0.2/dredd": [
+        0,
+        1.56
+      ]
+    },
+    "candidate_blocks": {
+      "A": {
+        "R-025": 3,
+        "R-026": 3,
+        "R-027": 3,
+        "R-031": 9
+      },
+      "B": {
+        "R-025": 4,
+        "R-026": 4,
+        "R-027": 4,
+        "R-031": 10
+      },
+      "C": {
+        "R-026": 8,
+        "R-027": 10,
+        "R-031": 13
+      }
+    }
+  },
+  "log": "<USER_HOME>\\AppData\\Local\\Temp\\claude-rt002-s2-gxjxxx_p\\unittest.log",
+  "log_sha256": "6d35264efdcf581dd43a187ecc8db8e348aa7d0fe15071a8c7ce17cda3b83a0b"
+}
