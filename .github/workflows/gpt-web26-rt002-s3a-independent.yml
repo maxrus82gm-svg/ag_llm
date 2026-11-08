@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 25
     env:
-      WEB26_EVIDENCE_DIR: ${{ runner.temp }}/web26-rt002-s3a
+      WEB26_EVIDENCE_DIR: ${{ github.workspace }}/ci_evidence/web26-rt002-s3a
     steps:
       - name: Checkout only reviewed source and guard (no persisted credentials)
         uses: actions/checkout@v4
@@ -70,6 +70,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: web26-s3a-offline-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/web26-rt002-s3a/
+          path: ${{ github.workspace }}/ci_evidence/web26-rt002-s3a/
           if-no-files-found: error
           retention-days: 14
