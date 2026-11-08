@@ -1,0 +1,618 @@
+{
+  "task_id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+  "status": "LOCAL ONLY / AUTHOR RESULT READY / INDEPENDENT REVIEW PENDING",
+  "hash": "SHA-256 exact bytes",
+  "self_excluded": true,
+  "files": [
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/before/card.md",
+      "size": 44187,
+      "sha256": "903cc91e2085f5cc851202548316a9a07ed2e67dc0462f0b34fb6cc4709e8a41"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/before/s2_before_final_tests.py.txt",
+      "size": 148528,
+      "sha256": "7c9a393867a92a19b833a02e4e31d3dd8bda385aad2f42a0eba2229be4a23d8b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/before/test_rt002_s1_routes.py",
+      "size": 125103,
+      "sha256": "35426388b49eb4a8154f5dfe8717ff4f3796b315ce3b391a71db6834e4a09696"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/before/test_rt002_s2_budget_policy.py",
+      "size": 132484,
+      "sha256": "e029489b2ea34b56f0cc4d66fb6046a010a92e18d5ac799e4b634e5fa5eb1b17"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/before/ultra_budget_ledger.py",
+      "size": 12509,
+      "sha256": "3d64c3024bfc42957c3c0612b33c228ce0beea3e9b790fc97a5b1bbfe2aaf220"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/before/ultra_budget_policy.py",
+      "size": 55417,
+      "sha256": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/closeout.json",
+      "size": 981,
+      "sha256": "efd7279294b9ac6b62b5fdd248c1e0ac6d08e35e5de3c41535bfd371270083f3"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/collect.py",
+      "size": 1853,
+      "sha256": "55219f8eafad4b516c1f29facd3ad12a6dce1d59b2e57d7ce7b96a43c8730472"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/baseline.json",
+      "size": 34237,
+      "sha256": "72ec7a9e5764fc5f53de1360a2e876acb24840dd51df42454916570e6c1e0e65"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/closeout_before.json",
+      "size": 190,
+      "sha256": "9f8c2273aab76dc257fa042031dbbb06c51102006058d39695ccb62ac1ee83f6"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/controls.execution.json",
+      "size": 339,
+      "sha256": "fdaa9172b3d68a461053fe1c18e8fd6b8e8f4ac7c41c7b6f873ec0e7ed0c2a68"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/controls.result.json",
+      "size": 140,
+      "sha256": "35d23d33063d94208f866a74c6e1d4a3a22308aa92309d42640565b9b4edeb01"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/controls.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/controls.stdout.txt",
+      "size": 289,
+      "sha256": "70a597798f2d685cde2558bbb79e46e03a9d386feb5eabe178c7898b06b57c0c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/finish_execution.json",
+      "size": 508,
+      "sha256": "99576664fe13d578508cbd549e6c68316137c9b887c3d7aa55ab2656ec5767bc"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/history_readback.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/history_readback.txt",
+      "size": 803,
+      "sha256": "8a84f196f0f50d893ce96553cb8352ee33927c2c54ca7226f6bca9a0537ac972"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/history_readback_execution.json",
+      "size": 225,
+      "sha256": "05d71e99fdefe67565db252d8a8f501a64e16898c5fcd11c56ce3a1004a86908"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/import_graph.json",
+      "size": 18334,
+      "sha256": "d6e59cbc0df7d3f97587f82fe265b1a61d6a94ea2b13fedad7499533396055d3"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/import_graph_sources.json",
+      "size": 15217,
+      "sha256": "3336dedd41494e972e8889436a8426dd27310e0b87a272b9bbb2bee99561bfaf"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/negative_matrix.json",
+      "size": 19419,
+      "sha256": "6ec9c367d6993cc092cf1dad2171f82af0706161c041ba1c09f9a9a04f3029ac"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/package_check_post_finish.json",
+      "size": 602,
+      "sha256": "529e88bbc64f98d975475536fb93d767fe7a375d3494283f8f6737e4e93c3d39"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/package_check_post_finish.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/package_check_pre_finish.json",
+      "size": 444,
+      "sha256": "fc392a4e2f97736a4111d8ef4396193e954d8c192c4069ecfd92240359480457"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/package_check_pre_finish.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality.execution.json",
+      "size": 338,
+      "sha256": "79c68e6097f7af358c7f286aa061acb6a0f538bac0eed62e6e22d8639a488a44"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality.result.json",
+      "size": 101351,
+      "sha256": "31cfd12c3a0322bf2dc790a96dd7ce4912fb479fc8c038799be296857622fe4c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality.stderr.txt",
+      "size": 4833,
+      "sha256": "b5d7f1be6a5c852f42589341c76bf5f81bcc759af4dd6300fb944df2650ce39c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality.stdout.txt",
+      "size": 101485,
+      "sha256": "c8cddd2dbf198998ecf1dd81e917d3fabf4eb3fb35441757a1441d19b5d62bd0"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_44_cases.execution.json",
+      "size": 338,
+      "sha256": "2171e5f8c4420bd232312ce6763ea3a92e6c479230b4a1bce9f183e8eb702855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_44_cases.result.json",
+      "size": 95070,
+      "sha256": "ffcb14bee9ea43186d2b00d7a2eb9b982d53be324695b5d0f88bc35ebb16fa59"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_44_cases.stderr.txt",
+      "size": 4488,
+      "sha256": "8bec85a861e667292dafdb518645323f84c437dce8db5e7da642bad85ebc3154"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_44_cases.stdout.txt",
+      "size": 95204,
+      "sha256": "f625dddfec240f9188272bee08c0ecafe867b1ab8758983ab4b33b097ffd5010"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_before_final_review.execution.json",
+      "size": 338,
+      "sha256": "45471eb516b4b8afb50d365750f3f3164525c88582af51b442c3db30beada598"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_before_final_review.result.json",
+      "size": 79950,
+      "sha256": "a0894396ea8ab375c40e16a3dc5c2ccbc6216528122cbf3fd1d077891e8b5a2b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_before_final_review.stderr.txt",
+      "size": 3636,
+      "sha256": "dbb4ee3aaf9addda63c09bce1fc6d09d8e5f83ee20fa03831dcfe2ea8be2c00d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_before_final_review.stdout.txt",
+      "size": 80084,
+      "sha256": "e5f06b8e1466ef8702ecabdd04a949ad42afc5c66a3c0411f0ec5062bd0c1ef3"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_initial.execution.json",
+      "size": 338,
+      "sha256": "73dc26fa1bd9eaf14517f7cace37e49d69ef33947b9f239cc19cfbed4c68a14d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_initial.result.json",
+      "size": 74220,
+      "sha256": "85f8d78223acbb0c6c44ac8c3fb9a63d3f76581981e406c917a17aa6853a2fd0"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_initial.stderr.txt",
+      "size": 3309,
+      "sha256": "8f2f3dde053902988bfa818915ac1af8246920a1bb2c8a598dfb529ff7e4460b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/quality_initial.stdout.txt",
+      "size": 74354,
+      "sha256": "5f8fa0bd6744c15e77ff612748473363e522151d192e71c8e0a8e7f2bf1f062f"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/red.execution.json",
+      "size": 239,
+      "sha256": "f06c387108f39a259d1810238ed2061af653ff115725c9081238cca29b085699"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/red.result.json",
+      "size": 4799,
+      "sha256": "190c2da7140629106e91be64e7e83bcdf8eeaf0d991416a2c0e56af4db0b224f"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/red.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/red.stdout.txt",
+      "size": 1724,
+      "sha256": "932a645ef41bab78900fff01aaf38bae8f656eb833d83a4a938a29b3841201a1"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/red.unittest.txt",
+      "size": 11258,
+      "sha256": "5da73f20b96ba7eeb3483aa449ac261827f519be578efc800c55872bea3ce058"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s1.execution.json",
+      "size": 333,
+      "sha256": "b9f614415f5932224a1bc4acb7d925f6d6baaa52443d62eef45a81b7241f4642"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s1.result.json",
+      "size": 9310,
+      "sha256": "e5fc48691267abc8ba964adf2d8ce13b945318643386301ea6c1205f8f205b0e"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s1.stderr.txt",
+      "size": 23716,
+      "sha256": "4e0f03813273b15b7d0fea6028f40b617ecc28a8f34c65df05e066c6225a832c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s1.stdout.txt",
+      "size": 989,
+      "sha256": "f5c217673e10d90cb7807eaf9a0dbf4b8b30ada698ad2b94fd87657864d2e1cb"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s1.unittest.txt",
+      "size": 10360,
+      "sha256": "dad9503aead843111104ee7456c8cc1cb5030ae554b369e8ea8279809b92cccd"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s1_extra.execution.json",
+      "size": 339,
+      "sha256": "0db0b71ba103ef95f30ade664227228fc6edebfdf8afb9bf14d65fdaef6d0334"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s1_extra.result.json",
+      "size": 16552,
+      "sha256": "7bc4a1e26c8d487f0db7175dd4b7ceb0f802fbc116bbdd77e0a9834222ddab4a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s1_extra.stderr.txt",
+      "size": 2597,
+      "sha256": "7d8172c08a8da69c32653f1f8ef02b3c08a790a5e3fa304f8bb1b66be8d6a774"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s1_extra.stdout.txt",
+      "size": 16686,
+      "sha256": "fed6d7fd92c6788f416ec81520c982290b704b004c5a7f40d7a2f26b4b6f4ed4"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2.execution.json",
+      "size": 333,
+      "sha256": "c85010b57750cdc4e18bd5ebc87f5377ee02bfe8b0e090dc6fbb32a98d849d61"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2.result.json",
+      "size": 25670,
+      "sha256": "4c48b4724efa099ee3ae45b49e9e71b6b0ccb875e0735d06ec8d0af45fe7db12"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2.stdout.txt",
+      "size": 1039,
+      "sha256": "83a19dee0074b93b8d398683cf9390cb9a7aa2d0538408ac6f2f449fefdc021f"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2.unittest.txt",
+      "size": 10511,
+      "sha256": "b8a393dbe3f45b540974e8610ae474207483882593e0e964f1b3ae1bd47e571d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_before_final_review.execution.json",
+      "size": 333,
+      "sha256": "b463c0d649e8aa1bfd8072b7e0fa54676e490ca9af85d2569ba19cf864f3d2cf"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_before_final_review.result.json",
+      "size": 25669,
+      "sha256": "a32cee9a371225f55de3818e27028d5ee9dbbdd528a5aba7e1a26f7baac6a869"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_before_final_review.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_before_final_review.stdout.txt",
+      "size": 1038,
+      "sha256": "51d27391f1749348804d185d16a4a44c867d876d4ea50d0dd6059b8e61c2a5a0"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_before_final_review.unittest.txt",
+      "size": 10510,
+      "sha256": "d3407025a4ed0bbc5f3070dcd604fc7ca168fc0b9675a917edd5f91164b642ae"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_first.execution.json",
+      "size": 151,
+      "sha256": "4bb1f402fc1c8c7e0853a829a38bac8a084a7644845885ee0203753ce182a9bc"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_first.result.json",
+      "size": 25599,
+      "sha256": "94687457f5f3769b6ff8949b85540814dde4e2425a9184027f41f062e1f2851f"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_first.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_first.stdout.txt",
+      "size": 834,
+      "sha256": "65739c9ba1e75a264a6e35660c8be4fabefdfad0d7075160a5cadbe7f93c6ea6"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_first.unittest.txt",
+      "size": 10510,
+      "sha256": "2d5b0e2aa8a0ce25c67694eb65907db31f777c03f3e2b84aa71e5e5b68b2f128"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_initial.execution.json",
+      "size": 333,
+      "sha256": "a22c1f09bd9316fffe49ed8415f25a948bcad8b9ec9d4e86d3d4e19b5cdaa772"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_initial.result.json",
+      "size": 25670,
+      "sha256": "43ef37cd6f1be7a86e4932c72689abe3c3f618ab54493802bafa333ed71690df"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_initial.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_initial.stdout.txt",
+      "size": 1039,
+      "sha256": "871486077b738f4b9881f87d2be5fa85b49b6137e6e631f044e7cfe8057d4daa"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2_initial.unittest.txt",
+      "size": 10511,
+      "sha256": "ff9848f5caee4d40039abd33161276503a939dae985dff7f0c961ebafb313269"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s3a.execution.json",
+      "size": 187,
+      "sha256": "55df3642c299d07276b1c04f82b2a86168fa7dce5ac1fe6fd1fbff6caae00228"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s3a.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s3a.stdout.txt",
+      "size": 101,
+      "sha256": "784179fef7a4d576e0c6066c98b0f125e3d8c958948a2cc47689d78fd05a7525"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s3a.xml",
+      "size": 4809,
+      "sha256": "094b7b103a07b23dca2dfb13e7223bcb3a2136f3af68a1d01a52034199cd95e9"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/sanitization.json",
+      "size": 13561,
+      "sha256": "ebe39d01e18031407941f24e3122a5db77fe55ea50fad26ccec28763cdff5cf2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/source_final.json",
+      "size": 382,
+      "sha256": "fb40ed0ee184ef47b17176d75833c40ce1d0b2462bc7e865a42217acf05f792b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/source_preflight.json",
+      "size": 270,
+      "sha256": "8e916f4b4c660c6796b51164c8f34a0d7b0c677ddce7c7eada1beb1c139757c1"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/syntax.json",
+      "size": 593,
+      "sha256": "d594b657194ce4c662c2e2c4b3720ede9be0e5cce240c68eccaacffc28e35f33"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/test_summary.json",
+      "size": 1197,
+      "sha256": "4aec8f37770ff6a219fa64b133e27a21077b9868c9de2c5160b389ab4f4e96fa"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_capsule_hash.execution.json",
+      "size": 350,
+      "sha256": "dc2ed1c50d5e33ad0e07a6f5eed85f39ea7968b402899e2adb443a46893e4551"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_capsule_hash.result.json",
+      "size": 100345,
+      "sha256": "ec43881173e8d7b6ba4aa2488117fe4ea33c5d88657b64648570d9c7c2aa02b6"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_capsule_hash.stderr.txt",
+      "size": 5729,
+      "sha256": "6c5229abd0b22584446d113bf789a8ead5c41d466a00fe5cfe9d45b4d0e57db0"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_capsule_hash.stdout.txt",
+      "size": 100479,
+      "sha256": "0bb285909f72e7d3ebe3e1d1eb63aa99cdf841db3186cb39270ac31e96154538"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_capsule_hash_before_final_review.execution.json",
+      "size": 350,
+      "sha256": "6d2a7a5199a71e224d430d8f90c01de055da4ebabb16bbe400e4496d82be57c9"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_capsule_hash_before_final_review.result.json",
+      "size": 78944,
+      "sha256": "f6c0e010516b9cd428fc2bc95c749a7f6df699de3898d6309db95a392a283317"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_capsule_hash_before_final_review.stderr.txt",
+      "size": 4530,
+      "sha256": "f0da6e7af19974d227f0b6963c8da15baa171527d8babf20e887bb564f458533"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_capsule_hash_before_final_review.stdout.txt",
+      "size": 79078,
+      "sha256": "20eff270f9a9623c2ec499e236478b586352637c9a7f578aa2bf72fd93283b09"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_disable.execution.json",
+      "size": 345,
+      "sha256": "94905f0f7dd77a004ac57d03001c501702498cebd445d16d0a8227f152ffaddb"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_disable.result.json",
+      "size": 67895,
+      "sha256": "a13a716129bc329ea2dda88ef0ca313f1d73e8310bd4f09f0755660f112cc047"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_disable.stderr.txt",
+      "size": 42138,
+      "sha256": "3b944d8e230ef3a1b0dfa9a27861a4f947c003186415897d0efc2faf626a69b2"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_disable.stdout.txt",
+      "size": 68029,
+      "sha256": "bbf0d06aa64b4c8287721fbb5a5f72531ddeeceba1345cf06ee98a268e3ccc0b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_disable_before_final_review.execution.json",
+      "size": 345,
+      "sha256": "d59593a9a8c820ecae5cdad00b40f74795f035bd811c151749afe2820699d79d"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_disable_before_final_review.result.json",
+      "size": 52735,
+      "sha256": "4ec3259a4b4dc838ce2e88c902e4795f04c99160b2a729de73374b40ffd89e72"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_disable_before_final_review.stderr.txt",
+      "size": 33040,
+      "sha256": "43e60e2b9c80d6fd7ed9fd3943366fc0be2ee29a442a164f58ae1c71c5e8b3e5"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_disable_before_final_review.stdout.txt",
+      "size": 52869,
+      "sha256": "b0f829df80c76a72edc395ad24cd64b616803108624653c36146a8c41d8ccbda"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_transitive.execution.json",
+      "size": 348,
+      "sha256": "e2bf6330866374140b691b00efd3f06fff181a22b77f450681b4c8c1be467182"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_transitive.result.json",
+      "size": 100398,
+      "sha256": "99a98779b63b0bb19ac14972d4266340b5f15ad31a465a1df05a3228285898d0"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_transitive.stderr.txt",
+      "size": 5711,
+      "sha256": "f5f93eb4328ada064eebea9e23f2a793a42e202abeae8511ad2a08ec24721e3a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_transitive.stdout.txt",
+      "size": 100532,
+      "sha256": "4d5e72537a824f11faa261f69a7218d9a765c6c4cb2c2a4697de94c58caa97bb"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_transitive_before_final_review.execution.json",
+      "size": 348,
+      "sha256": "90980fd29dee64bc54e720769fc030fe88c5639498e4f869b44a6bd837562224"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_transitive_before_final_review.result.json",
+      "size": 78997,
+      "sha256": "5aa4e49fd803a122894be548c3b35e1921c684405bf94068610b5a02fee3f921"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_transitive_before_final_review.stderr.txt",
+      "size": 4512,
+      "sha256": "377ec662e7b93b633ac40b70b6070d550ffbdb92ed996eb9a70ea801a72b229a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/weaken_transitive_before_final_review.stdout.txt",
+      "size": 79131,
+      "sha256": "f55ca47d9163f87ece9aa1ce2fc092c83ef7429820129e9c5e951802c9630891"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/final/test_rt002_s2_budget_policy.py.txt",
+      "size": 149228,
+      "sha256": "a7fa9b5d2bcf56dc8f037dd726679a8439c4b1f3135de969b9084bf8d3870d2c"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/finish_protocol.json",
+      "size": 4986,
+      "sha256": "1af603e3075e6b929d11e1534736c2a4275d61c43d28a9570b5e557c522bfe14"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/finish_protocol.stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/followups.json",
+      "size": 1870,
+      "sha256": "d1c17d031f558938cd16aaa8625ee66cbc0475f11532f9136257e1c2a0b35afa"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/handoff_task.md",
+      "size": 11762,
+      "sha256": "e4ca0dbc40a21e6666e57a595059afdee25339fcb28c6be7ee663ce1b8930bc9"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/import_review.md",
+      "size": 7237,
+      "sha256": "44c3c250f527fe5dcf5aeff8709d8b68faf7b7cc6ecefe9b7fd2e8ace565c7c3"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py",
+      "size": 10452,
+      "sha256": "6d5fb66c9c378026884cd1e84dce18e78fcfc1cb70be2edeb5fc3300e749e63a"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/package.py",
+      "size": 12271,
+      "sha256": "b7cbde324a4bcd992e699cec52fc0a97302c85a87054fc7ef31be7ea5642022b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/report.md",
+      "size": 16142,
+      "sha256": "1cc7929df5ab41cf0735313ec201ae223dbf46634afda97016060bdba1b92c3b"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/run_guarded.py",
+      "size": 4704,
+      "sha256": "7a0162208f58fef62a983ee1264472b63f913bda06b6881c168e6575bafd1477"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/run_s3a.py",
+      "size": 1273,
+      "sha256": "e294f7f7656bc987e5dab466ca371c9b8b0b08ceac07865d42e45164b0b310a6"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/source.diff.patch",
+      "size": 18842,
+      "sha256": "2084dcae5617544343cda7435af779e9a53fb88f6f06e4de688099165ca45503"
+    },
+    {
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/task_record.json",
+      "size": 754,
+      "sha256": "16241c32139d9b8aa67aba5c6cc01d92c27fc39b1d64758168dc4e1e255c49c9"
+    },
+    {
+      "path": "test_rt002_s2_budget_policy.py",
+      "size": 149228,
+      "sha256": "a7fa9b5d2bcf56dc8f037dd726679a8439c4b1f3135de969b9084bf8d3870d2c"
+    }
+  ]
+}

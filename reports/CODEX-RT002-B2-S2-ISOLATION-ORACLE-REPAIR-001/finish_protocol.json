@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "903cc91e2085f5cc851202548316a9a07ed2e67dc0462f0b34fb6cc4709e8a41",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 203,
+    "b11b": 209,
+    "b11e": 430
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+    "problems": [],
+    "title": "Web Alarm Ultra — RT-002/B2 S2: исправление isolation oracle для OFFLINE ledger",
+    "lines": 154
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-RT002-B2-S1-INVENTORY-RECON-001",
+    "copy_sha256": "1d400713fb5a2d57c21abe073db8cda82219382f25f73ba5a8061a7c02dc01fc",
+    "history_id": "H-CODEX-000024",
+    "history_record": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "903cc91e2085f5cc851202548316a9a07ed2e67dc0462f0b34fb6cc4709e8a41",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-RT002-B2-S1-INVENTORY-RECON-001",
+    "copy_sha256": "1d400713fb5a2d57c21abe073db8cda82219382f25f73ba5a8061a7c02dc01fc",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/handoff_task.md",
+    "archive_sha256": "ab2a57b9cdaea891c3877e01f80bd5c355a68a32d14dee0071519cb8e2919aec"
+   },
+   "history_id": "H-CODEX-000025",
+   "new_card_sha256": "c5ccce2b4974f2aa1c07a0bf5f74bd09543bf1b04fc8940b64bdc27d6c28f38c",
+   "copy_sha256_lf": "37aa98e28f268540a02d78275a3f623b5727950adf68b6f0a4dc9b7faf00cf87",
+   "copy_lines": 154,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "903cc91e2085f5cc851202548316a9a07ed2e67dc0462f0b34fb6cc4709e8a41",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-RT002-B2-S1-INVENTORY-RECON-001",
+    "copy_sha256": "1d400713fb5a2d57c21abe073db8cda82219382f25f73ba5a8061a7c02dc01fc",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/handoff_task.md",
+    "archive_sha256": "ab2a57b9cdaea891c3877e01f80bd5c355a68a32d14dee0071519cb8e2919aec"
+   },
+   "history_id": "H-CODEX-000025",
+   "new_card_sha256": "c5ccce2b4974f2aa1c07a0bf5f74bd09543bf1b04fc8940b64bdc27d6c28f38c",
+   "copy_sha256_lf": "37aa98e28f268540a02d78275a3f623b5727950adf68b6f0a4dc9b7faf00cf87",
+   "copy_lines": 154,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+    "history_id": "H-CODEX-000025",
+    "record": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "e4ca0dbc40a21e6666e57a595059afdee25339fcb28c6be7ee663ce1b8930bc9",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "c5ccce2b4974f2aa1c07a0bf5f74bd09543bf1b04fc8940b64bdc27d6c28f38c",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 213
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+    "copy_sha256": "37aa98e28f268540a02d78275a3f623b5727950adf68b6f0a4dc9b7faf00cf87",
+    "history_id": "H-CODEX-000025",
+    "history_record": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+ "history": {
+  "id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+  "history_id": "H-CODEX-000025",
+  "record": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

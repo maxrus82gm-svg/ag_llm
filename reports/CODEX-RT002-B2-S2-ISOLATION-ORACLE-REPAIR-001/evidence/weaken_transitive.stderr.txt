@@ -1,0 +1,66 @@
+test_benign_builtin_fromlist (__main__.ImportIsolationQualityTests.test_benign_builtin_fromlist) ... ok
+test_benign_new_consumer (__main__.ImportIsolationQualityTests.test_benign_new_consumer) ... ok
+test_changed_offline_capsule (__main__.ImportIsolationQualityTests.test_changed_offline_capsule) ... ok
+test_changed_shared_dependency (__main__.ImportIsolationQualityTests.test_changed_shared_dependency) ... ok
+test_cloned_capsule_new_name (__main__.ImportIsolationQualityTests.test_cloned_capsule_new_name) ... ok
+test_collector_fromlist_benign_child (__main__.ImportIsolationQualityTests.test_collector_fromlist_benign_child) ... ok
+test_collector_fromlist_nested_policy (__main__.ImportIsolationQualityTests.test_collector_fromlist_nested_policy) ... ok
+test_dict_import (__main__.ImportIsolationQualityTests.test_dict_import) ... ok
+test_direct_policy (__main__.ImportIsolationQualityTests.test_direct_policy) ... ok
+test_dynamic_alias (__main__.ImportIsolationQualityTests.test_dynamic_alias) ... ok
+test_dynamic_import (__main__.ImportIsolationQualityTests.test_dynamic_import) ... ok
+test_dynamic_module_alias (__main__.ImportIsolationQualityTests.test_dynamic_module_alias) ... ok
+test_dynamic_relative (__main__.ImportIsolationQualityTests.test_dynamic_relative) ... ok
+test_dynamic_unknown_name (__main__.ImportIsolationQualityTests.test_dynamic_unknown_name) ... ok
+test_exec_literal (__main__.ImportIsolationQualityTests.test_exec_literal) ... ok
+test_exec_unknown (__main__.ImportIsolationQualityTests.test_exec_unknown) ... ok
+test_file_import_loader (__main__.ImportIsolationQualityTests.test_file_import_loader) ... ok
+test_file_loader_name (__main__.ImportIsolationQualityTests.test_file_loader_name) ... ok
+test_from_ledger_alias (__main__.ImportIsolationQualityTests.test_from_ledger_alias) ... ok
+test_from_policy_alias (__main__.ImportIsolationQualityTests.test_from_policy_alias) ... ok
+test_getattr_import (__main__.ImportIsolationQualityTests.test_getattr_import) ... ok
+test_import_cycle_reaches_policy (__main__.ImportIsolationQualityTests.test_import_cycle_reaches_policy) ... ok
+test_loader_container_escape (__main__.ImportIsolationQualityTests.test_loader_container_escape) ... ok
+test_loader_escape (__main__.ImportIsolationQualityTests.test_loader_escape) ... ok
+test_local_stdlib_shadow (__main__.ImportIsolationQualityTests.test_local_stdlib_shadow) ... ok
+test_missing_policy_source (__main__.ImportIsolationQualityTests.test_missing_policy_source) ... ok
+test_new_direct_consumer (__main__.ImportIsolationQualityTests.test_new_direct_consumer) ... ok
+test_offline_capsule_without_production_reachability (__main__.ImportIsolationQualityTests.test_offline_capsule_without_production_reachability) ... ok
+test_opaque_loader_attribute (__main__.ImportIsolationQualityTests.test_opaque_loader_attribute) ... ok
+test_opaque_loader_attribute_alias (__main__.ImportIsolationQualityTests.test_opaque_loader_attribute_alias) ... ok
+test_opaque_loader_namespace (__main__.ImportIsolationQualityTests.test_opaque_loader_namespace) ... ok
+test_package_initializer (__main__.ImportIsolationQualityTests.test_package_initializer) ... ok
+test_pinned_metadata_domain_escape (__main__.ImportIsolationQualityTests.test_pinned_metadata_domain_escape) ... ok
+test_pinned_metadata_registry_escape (__main__.ImportIsolationQualityTests.test_pinned_metadata_registry_escape) ... ok
+test_policy_module_alias (__main__.ImportIsolationQualityTests.test_policy_module_alias) ... ok
+test_protected_submodule_name (__main__.ImportIsolationQualityTests.test_protected_submodule_name) ... ok
+test_reexported_dynamic_alias (__main__.ImportIsolationQualityTests.test_reexported_dynamic_alias) ... ok
+test_relative_builtin_import (__main__.ImportIsolationQualityTests.test_relative_builtin_import) ... ok
+test_relative_from_import (__main__.ImportIsolationQualityTests.test_relative_from_import) ... ok
+test_spec_parent_import (__main__.ImportIsolationQualityTests.test_spec_parent_import) ... ok
+test_star_builtin_fromlist (__main__.ImportIsolationQualityTests.test_star_builtin_fromlist) ... ok
+test_static_star_import (__main__.ImportIsolationQualityTests.test_static_star_import) ... ok
+test_transitive_ledger (__main__.ImportIsolationQualityTests.test_transitive_ledger) ... FAIL
+test_transitive_new_bridge (__main__.ImportIsolationQualityTests.test_transitive_new_bridge) ... ok
+test_unknown_builtin_fromlist (__main__.ImportIsolationQualityTests.test_unknown_builtin_fromlist) ... ok
+test_unknown_import_root (__main__.ImportIsolationQualityTests.test_unknown_import_root) ... ok
+test_unknown_spec_query (__main__.ImportIsolationQualityTests.test_unknown_spec_query) ... ok
+
+======================================================================
+FAIL: test_transitive_ledger (__main__.ImportIsolationQualityTests.test_transitive_ledger)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : transitive_ledger
+
+----------------------------------------------------------------------
+Ran 47 tests in 1.553s
+
+FAILED (failures=1)

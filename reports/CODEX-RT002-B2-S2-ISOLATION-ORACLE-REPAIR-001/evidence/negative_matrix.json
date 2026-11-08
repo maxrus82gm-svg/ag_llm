@@ -1,0 +1,959 @@
+[
+  {
+    "case": "benign_builtin_fromlist",
+    "expected": "PASS",
+    "actual": "PASS",
+    "inner_tests": 1,
+    "issues": [],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "benign_new_consumer",
+    "expected": "PASS",
+    "actual": "PASS",
+    "inner_tests": 1,
+    "issues": [],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "changed_offline_capsule",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "ultra_budget_ledger",
+        0,
+        "OFFLINE_CAPSULE_CHANGED"
+      ],
+      [
+        "ultra_budget_ledger",
+        0,
+        "PRODUCTION_REACHES_POLICY:ultra_budget_ledger -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "ultra_budget_ledger",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "changed_shared_dependency",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "context_storage",
+        0,
+        "PRODUCTION_REACHES_POLICY:context_storage -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "context_storage",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "cloned_capsule_new_name",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "another_ledger",
+        0,
+        "PRODUCTION_REACHES_POLICY:another_ledger -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "another_ledger",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "collector_fromlist_benign_child",
+    "expected": "PASS",
+    "actual": "PASS",
+    "inner_tests": 1,
+    "issues": [],
+    "policy_paths": [],
+    "collected_nested_child": true
+  },
+  {
+    "case": "collector_fromlist_nested_policy",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "pkg.child",
+        0,
+        "PRODUCTION_REACHES_POLICY:pkg.child -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> pkg.child -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "pkg.child",
+        "ultra_budget_policy"
+      ],
+      [
+        "server",
+        "pkg.child",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": true
+  },
+  {
+    "case": "dict_import",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        2,
+        "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "direct_policy",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "dynamic_alias",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        2,
+        "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "dynamic_import",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        1,
+        "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "dynamic_module_alias",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        2,
+        "IMPORT_LOADER_ESCAPE"
+      ],
+      [
+        "server",
+        3,
+        "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "dynamic_relative",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "pkg.bridge",
+        0,
+        "PRODUCTION_REACHES_POLICY:pkg.bridge -> ultra_budget_policy"
+      ],
+      [
+        "pkg.consumer",
+        0,
+        "PRODUCTION_REACHES_POLICY:pkg.consumer -> pkg.bridge -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "pkg.bridge",
+        "ultra_budget_policy"
+      ],
+      [
+        "pkg.consumer",
+        "pkg.bridge",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "dynamic_unknown_name",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        3,
+        "UNKNOWN_DYNAMIC_IMPORT"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "exec_literal",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "exec_unknown",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        2,
+        "OPAQUE_EXEC_IMPORTS"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "file_import_loader",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        3,
+        "OPAQUE_IMPORT_LOADER"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "file_loader_name",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        2,
+        "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "from_ledger_alias",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_ledger -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_ledger",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "from_policy_alias",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "getattr_import",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        2,
+        "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "import_cycle_reaches_policy",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "a",
+        0,
+        "PRODUCTION_REACHES_POLICY:a -> b -> ultra_budget_policy"
+      ],
+      [
+        "b",
+        0,
+        "PRODUCTION_REACHES_POLICY:b -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> a -> b -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "a",
+        "b",
+        "ultra_budget_policy"
+      ],
+      [
+        "b",
+        "ultra_budget_policy"
+      ],
+      [
+        "server",
+        "a",
+        "b",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "loader_container_escape",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        2,
+        "IMPORT_LOADER_ESCAPE"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "loader_escape",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        3,
+        "IMPORT_LOADER_ESCAPE"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "local_stdlib_shadow",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "json",
+        0,
+        "PRODUCTION_REACHES_POLICY:json -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> json -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "json",
+        "ultra_budget_policy"
+      ],
+      [
+        "server",
+        "json",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "missing_policy_source",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "ultra_budget_ledger",
+        25,
+        "UNKNOWN_IMPORT_ROOT:ultra_budget_policy"
+      ],
+      [
+        "ultra_budget_policy",
+        0,
+        "MISSING_POLICY_LIBRARY"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "new_direct_consumer",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "new_consumer",
+        0,
+        "PRODUCTION_REACHES_POLICY:new_consumer -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "new_consumer",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "offline_capsule_without_production_reachability",
+    "expected": "PASS",
+    "actual": "PASS",
+    "inner_tests": 1,
+    "issues": [],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "opaque_loader_attribute",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        3,
+        "UNKNOWN_LOADER_ATTRIBUTE"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "opaque_loader_attribute_alias",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        4,
+        "UNKNOWN_LOADER_ATTRIBUTE"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "opaque_loader_namespace",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        3,
+        "UNKNOWN_LOADER_NAMESPACE_ACCESS"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "package_initializer",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "pkg",
+        0,
+        "PRODUCTION_REACHES_POLICY:pkg -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> pkg -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "pkg",
+        "ultra_budget_policy"
+      ],
+      [
+        "server",
+        "pkg",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "pinned_metadata_domain_escape",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        1,
+        "PINNED_SPEC_INPUT_DOMAIN_ESCAPE"
+      ],
+      [
+        "server",
+        3,
+        "PINNED_SPEC_INPUT_DOMAIN_ESCAPE"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "pinned_metadata_registry_escape",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        1,
+        "PINNED_SPEC_INPUT_DOMAIN_ESCAPE"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "policy_module_alias",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "protected_submodule_name",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        2,
+        "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "reexported_dynamic_alias",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        2,
+        "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "relative_builtin_import",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        1,
+        "RELATIVE_BUILTIN_IMPORT_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "relative_from_import",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "pkg.bridge",
+        0,
+        "PRODUCTION_REACHES_POLICY:pkg.bridge -> ultra_budget_policy"
+      ],
+      [
+        "pkg.consumer",
+        0,
+        "PRODUCTION_REACHES_POLICY:pkg.consumer -> pkg.bridge -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> pkg.consumer -> pkg.bridge -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "pkg.bridge",
+        "ultra_budget_policy"
+      ],
+      [
+        "pkg.consumer",
+        "pkg.bridge",
+        "ultra_budget_policy"
+      ],
+      [
+        "server",
+        "pkg.consumer",
+        "pkg.bridge",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "spec_parent_import",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        2,
+        "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"
+      ],
+      [
+        "server",
+        2,
+        "UNKNOWN_LOCAL_MODULE:ultra_budget_policy.child"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "star_builtin_fromlist",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        1,
+        "UNKNOWN_BUILTIN_FROMLIST"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "static_star_import",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        1,
+        "STAR_IMPORT_REQUIRES_REVIEW"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "transitive_ledger",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> ultra_budget_ledger -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "server",
+        "ultra_budget_ledger",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "transitive_new_bridge",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "bridge",
+        0,
+        "PRODUCTION_REACHES_POLICY:bridge -> ultra_budget_ledger -> ultra_budget_policy"
+      ],
+      [
+        "server",
+        0,
+        "PRODUCTION_REACHES_POLICY:server -> bridge -> ultra_budget_ledger -> ultra_budget_policy"
+      ]
+    ],
+    "policy_paths": [
+      [
+        "bridge",
+        "ultra_budget_ledger",
+        "ultra_budget_policy"
+      ],
+      [
+        "server",
+        "bridge",
+        "ultra_budget_ledger",
+        "ultra_budget_policy"
+      ]
+    ],
+    "collected_nested_child": false
+  },
+  {
+    "case": "unknown_builtin_fromlist",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        2,
+        "UNKNOWN_BUILTIN_FROMLIST"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "unknown_import_root",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        1,
+        "UNKNOWN_IMPORT_ROOT:unreviewed_bridge"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  },
+  {
+    "case": "unknown_spec_query",
+    "expected": "RED",
+    "actual": "RED",
+    "inner_tests": 1,
+    "issues": [
+      [
+        "server",
+        3,
+        "UNKNOWN_DYNAMIC_IMPORT"
+      ]
+    ],
+    "policy_paths": [],
+    "collected_nested_child": false
+  }
+]

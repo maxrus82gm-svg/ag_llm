@@ -1,0 +1,2072 @@
+{
+  "mode": "weaken_disable",
+  "counts": {
+    "run": 36,
+    "fail": 34,
+    "error": 0,
+    "skip": 0
+  },
+  "isolation_violations": [],
+  "observations": {
+    "benign_new_consumer": {
+      "expected": "PASS",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "new_consumer",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "new_consumer": [
+            "context_storage"
+          ],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "changed_offline_capsule": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "ultra_budget_ledger",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_budget_ledger",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "changed_shared_dependency": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "context_storage",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [
+            "ultra_budget_policy"
+          ],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "cloned_capsule_new_name": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "another_ledger",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "another_ledger",
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "another_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "dict_import": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "direct_policy": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "dynamic_alias": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "dynamic_import": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "dynamic_module_alias": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "dynamic_relative": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "pkg.bridge",
+            "ultra_budget_policy"
+          ],
+          [
+            "pkg.consumer",
+            "pkg.bridge",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "pkg",
+          "pkg.bridge",
+          "pkg.consumer",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "pkg": [],
+          "pkg.bridge": [
+            "ultra_budget_policy"
+          ],
+          "pkg.consumer": [
+            "pkg",
+            "pkg.bridge"
+          ],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "dynamic_unknown_name": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "exec_literal": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "exec_unknown": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "file_loader_name": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "from_ledger_alias": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_ledger",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_ledger"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "from_policy_alias": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "getattr_import": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "import_cycle_reaches_policy": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "a",
+            "b",
+            "ultra_budget_policy"
+          ],
+          [
+            "b",
+            "ultra_budget_policy"
+          ],
+          [
+            "server",
+            "a",
+            "b",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "a",
+          "b",
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "a": [
+            "b"
+          ],
+          "b": [
+            "a",
+            "ultra_budget_policy"
+          ],
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "a"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "loader_container_escape": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "loader_escape": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "local_stdlib_shadow": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "json",
+            "ultra_budget_policy"
+          ],
+          [
+            "server",
+            "json",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "json",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "json": [
+            "ultra_budget_policy"
+          ],
+          "run_store": [],
+          "server": [
+            "json"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "json",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "missing_policy_source": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store"
+          ],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "new_direct_consumer": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "new_consumer",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "new_consumer",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "new_consumer": [
+            "ultra_budget_policy"
+          ],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "offline_capsule_without_production_reachability": {
+      "expected": "PASS",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "opaque_loader_attribute": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "opaque_loader_attribute_alias": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "opaque_loader_namespace": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "package_initializer": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "pkg",
+            "ultra_budget_policy"
+          ],
+          [
+            "server",
+            "pkg",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "pkg",
+          "pkg.child",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "pkg": [
+            "ultra_budget_policy"
+          ],
+          "pkg.child": [],
+          "run_store": [],
+          "server": [
+            "pkg",
+            "pkg.child"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "policy_module_alias": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "reexported_dynamic_alias": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "bridge",
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "bridge": [],
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "bridge",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "relative_from_import": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "pkg.bridge",
+            "ultra_budget_policy"
+          ],
+          [
+            "pkg.consumer",
+            "pkg.bridge",
+            "ultra_budget_policy"
+          ],
+          [
+            "server",
+            "pkg.consumer",
+            "pkg.bridge",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "pkg",
+          "pkg.bridge",
+          "pkg.consumer",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "pkg": [],
+          "pkg.bridge": [
+            "ultra_budget_policy"
+          ],
+          "pkg.consumer": [
+            "pkg",
+            "pkg.bridge"
+          ],
+          "run_store": [],
+          "server": [
+            "pkg",
+            "pkg.consumer"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "spec_parent_import": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "transitive_ledger": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "server",
+            "ultra_budget_ledger",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "ultra_budget_ledger"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "transitive_new_bridge": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [
+          [
+            "bridge",
+            "ultra_budget_ledger",
+            "ultra_budget_policy"
+          ],
+          [
+            "server",
+            "bridge",
+            "ultra_budget_ledger",
+            "ultra_budget_policy"
+          ]
+        ],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "bridge",
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "bridge": [
+            "ultra_budget_ledger"
+          ],
+          "context_storage": [],
+          "run_store": [],
+          "server": [
+            "bridge"
+          ],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "unknown_import_root": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    },
+    "unknown_spec_query": {
+      "expected": "RED",
+      "actual": "PASS",
+      "tests_run": 1,
+      "failures": [],
+      "audit": {
+        "issues": [],
+        "policy_paths": [],
+        "offline_capsules": [
+          "ultra_budget_ledger"
+        ],
+        "production_roots": [
+          "context_storage",
+          "run_store",
+          "server",
+          "ultra_ui",
+          "web_alarm",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "entrypoints": [
+          "server",
+          "ultra_ui",
+          "web_alarm.__main__",
+          "web_alarm.cli",
+          "web_alarm.launcher",
+          "web_alarm.server"
+        ],
+        "graph": {
+          "context_storage": [],
+          "run_store": [],
+          "server": [],
+          "ultra_budget_ledger": [
+            "context_storage",
+            "run_store",
+            "ultra_budget_policy"
+          ],
+          "ultra_budget_policy": [],
+          "ultra_ui": [],
+          "web_alarm": [],
+          "web_alarm.__main__": [],
+          "web_alarm.cli": [],
+          "web_alarm.launcher": [],
+          "web_alarm.server": []
+        },
+        "observations": []
+      }
+    }
+  }
+}
+{"secret_guard": {"denials": [], "synthetic_reads": 0, "sandbox": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s2-isolation-szauq6gx"}}

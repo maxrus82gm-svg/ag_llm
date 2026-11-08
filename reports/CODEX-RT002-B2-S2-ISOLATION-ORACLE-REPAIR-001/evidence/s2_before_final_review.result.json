@@ -1,0 +1,790 @@
+{
+  "task": "CLAUDE-RT002-S2-001",
+  "mode": "core",
+  "sandbox": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s2-isolation-u7x1iibg\\temp\\claude-rt002-s2-0ngflxf7",
+  "python": "3.12.10",
+  "gate": {
+    "status": "PASS",
+    "exit_code": 0,
+    "reasons": []
+  },
+  "counts": {
+    "run": 73,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 73,
+  "failures": [],
+  "errors": [],
+  "skipped": [],
+  "isolation_violations": [],
+  "problems": [],
+  "selected": null,
+  "dataset_sha256": "8a3ea10b75280ece550138af9a912b161997e17f5f3f17c894686961babf90ce",
+  "production_hashes": {
+    "server.py": "3f950f0329b7605eb790ce61245a95985146d649d3d5c805660b57374fb6c401",
+    "planner_runtime.py": "ab6c12c3fb02145e9acae692360099922048366a7668a977c350cf98af49384e",
+    "task_planner.py": "c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346",
+    "verifier_runtime.py": "7db030fee149d8f8af1a90d384f3ad23e5086cea5d5ce42e6c728fd096764228",
+    "compressor_runtime.py": "c69ab1d9594b4cb36aeb32703b10de091bea5ce5d876c5962068a9b2fb20940f",
+    "provider_accounting.py": "dd83dbf7a22154347ac6f17ca2110e78757338248bd466f86a0d3599db510902",
+    "gigachat_transport.py": "ee1db75ed04ea432224324d9ffb8271e211985e2d4f3a25f72dff89db251a879",
+    "run_store.py": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e",
+    "audit_storage.py": "5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c",
+    "workspace_runtime_settings.py": "699026e592c27189f55ae80ace3eaf0449e874a887235e24083d9a52126b8c3b",
+    "model_registry.py": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+    "ultra_ui.py": "9b0b7fa52b82e9612f181ce4ec0620c1e6d37376bbe8f9e7ee92728875cb9033",
+    "context_storage.py": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64",
+    "ultra_budget_policy.py": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13"
+  },
+  "elapsed_seconds": 8.113,
+  "observations": {
+    "bytes_div_4": {
+      "underestimates": {
+        "dredd": 24
+      },
+      "worst_actual_over_estimate": 1.6147
+    },
+    "calibration_report_margin_0": [
+      {
+        "provider_model_id": "GigaChat-3-Pro",
+        "profile_key": "compressor",
+        "samples": 1,
+        "observed_min_bytes_per_token": 6.1322,
+        "observed_median_bytes_per_token": 6.1322,
+        "observed_max_bytes_per_token": 6.1322,
+        "bytes_per_token": 6.1321,
+        "status": "NEEDS_CALIBRATION"
+      },
+      {
+        "provider_model_id": "GigaChat-3-Ultra",
+        "profile_key": "dredd",
+        "samples": 37,
+        "observed_min_bytes_per_token": 2.4772,
+        "observed_median_bytes_per_token": 3.2156,
+        "observed_max_bytes_per_token": 4.9671,
+        "bytes_per_token": 2.4771,
+        "status": "CALIBRATED"
+      },
+      {
+        "provider_model_id": "GigaChat-3-Ultra",
+        "profile_key": "executor",
+        "samples": 203,
+        "observed_min_bytes_per_token": 4.5184,
+        "observed_median_bytes_per_token": 7.3635,
+        "observed_max_bytes_per_token": 7.7928,
+        "bytes_per_token": 4.5184,
+        "status": "CALIBRATED"
+      },
+      {
+        "provider_model_id": "GigaChat-3-Ultra",
+        "profile_key": "planner",
+        "samples": 99,
+        "observed_min_bytes_per_token": 4.4426,
+        "observed_median_bytes_per_token": 4.7118,
+        "observed_max_bytes_per_token": 5.0998,
+        "bytes_per_token": 4.4426,
+        "status": "CALIBRATED"
+      }
+    ],
+    "leave_one_out": {
+      "0.0/planner": [
+        1,
+        1.06
+      ],
+      "0.0/executor": [
+        1,
+        1.63
+      ],
+      "0.0/dredd": [
+        1,
+        1.3
+      ],
+      "0.1/planner": [
+        0,
+        1.17
+      ],
+      "0.1/executor": [
+        0,
+        1.79
+      ],
+      "0.1/dredd": [
+        0,
+        1.43
+      ],
+      "0.2/planner": [
+        0,
+        1.27
+      ],
+      "0.2/executor": [
+        0,
+        1.96
+      ],
+      "0.2/dredd": [
+        0,
+        1.56
+      ]
+    },
+    "policy_import_isolation": {
+      "issues": [],
+      "policy_paths": [],
+      "offline_capsules": [
+        "ultra_budget_ledger"
+      ],
+      "production_roots": [
+        "agent_global_context",
+        "apply_context_step1",
+        "apply_ultra_ui_visual_patch",
+        "audit_storage",
+        "compressor_runtime",
+        "compressor_settings",
+        "context_editor_ui",
+        "context_registry",
+        "context_storage",
+        "fix_chat_raw_display",
+        "gigachat_transport",
+        "live_test_context_bridge",
+        "model_registry",
+        "ordinary_chat_service",
+        "patch_allow_py",
+        "planner_runtime",
+        "probe_gigachat_models",
+        "provider_accounting",
+        "run_store",
+        "server",
+        "server_context_messages",
+        "task_planner",
+        "ui_state",
+        "ultra_ui",
+        "verifier_runtime",
+        "wa4a_acceptance",
+        "wa4o_ui_demo",
+        "wa4o_ui_launcher",
+        "web_alarm",
+        "web_alarm.__main__",
+        "web_alarm.blueprint_ui",
+        "web_alarm.blueprints",
+        "web_alarm.cli",
+        "web_alarm.closeout",
+        "web_alarm.context_pack",
+        "web_alarm.event_checkpoint_store",
+        "web_alarm.evidence_sanitizer",
+        "web_alarm.file_state",
+        "web_alarm.folder_picker",
+        "web_alarm.launcher",
+        "web_alarm.manifest_store",
+        "web_alarm.microtask_gate",
+        "web_alarm.model_cards",
+        "web_alarm.models",
+        "web_alarm.mutation_executor",
+        "web_alarm.observation",
+        "web_alarm.operation_contract",
+        "web_alarm.operation_store",
+        "web_alarm.operator_view",
+        "web_alarm.ordinary_chat_test_adapter",
+        "web_alarm.payload_store",
+        "web_alarm.projection",
+        "web_alarm.reconciliation",
+        "web_alarm.reconciliation_decision",
+        "web_alarm.reconciliation_service",
+        "web_alarm.recovery_coordinator",
+        "web_alarm.recovery_report_builder",
+        "web_alarm.recovery_report_service",
+        "web_alarm.recovery_report_store",
+        "web_alarm.remote_entry",
+        "web_alarm.resolution_store",
+        "web_alarm.resolver_service",
+        "web_alarm.rollback_service",
+        "web_alarm.rollback_store",
+        "web_alarm.server",
+        "web_alarm.state_machine",
+        "web_alarm.storage_policy",
+        "web_alarm.store_lock",
+        "web_alarm.target_claim_service",
+        "web_alarm.target_claim_store",
+        "web_alarm.target_identity",
+        "web_alarm.task_store",
+        "web_alarm.transport_event_recovery",
+        "web_alarm.transport_event_store",
+        "web_alarm.turn_service",
+        "web_alarm.ui",
+        "web_alarm.ultra_chat",
+        "web_alarm.ultra_connections",
+        "web_alarm.workspace_registry",
+        "workspace_runtime_settings"
+      ],
+      "entrypoints": [
+        "server",
+        "ultra_ui",
+        "web_alarm.__main__",
+        "web_alarm.cli",
+        "web_alarm.launcher",
+        "web_alarm.server"
+      ],
+      "graph": {
+        "agent_global_context": [],
+        "apply_context_step1": [],
+        "apply_ultra_ui_visual_patch": [],
+        "audit_storage": [
+          "context_storage",
+          "run_store"
+        ],
+        "compressor_runtime": [
+          "agent_global_context",
+          "compressor_settings",
+          "context_storage",
+          "gigachat_transport",
+          "model_registry",
+          "provider_accounting",
+          "server"
+        ],
+        "compressor_settings": [
+          "agent_global_context"
+        ],
+        "context_editor_ui": [
+          "context_registry"
+        ],
+        "context_registry": [],
+        "context_storage": [],
+        "fix_chat_raw_display": [],
+        "gigachat_transport": [],
+        "live_test_context_bridge": [
+          "context_registry",
+          "server_context_messages"
+        ],
+        "model_registry": [],
+        "ordinary_chat_service": [
+          "gigachat_transport",
+          "model_registry",
+          "provider_accounting"
+        ],
+        "patch_allow_py": [],
+        "planner_runtime": [
+          "context_registry",
+          "gigachat_transport",
+          "model_registry",
+          "provider_accounting"
+        ],
+        "probe_gigachat_models": [
+          "server"
+        ],
+        "provider_accounting": [],
+        "run_store": [
+          "context_storage"
+        ],
+        "server": [
+          "agent_global_context",
+          "audit_storage",
+          "context_storage",
+          "gigachat_transport",
+          "model_registry",
+          "planner_runtime",
+          "provider_accounting",
+          "run_store",
+          "server_context_messages",
+          "task_planner",
+          "verifier_runtime",
+          "workspace_runtime_settings"
+        ],
+        "server_context_messages": [
+          "context_registry"
+        ],
+        "task_planner": [
+          "planner_runtime"
+        ],
+        "ui_state": [],
+        "ultra_budget_ledger": [
+          "context_storage",
+          "run_store",
+          "ultra_budget_policy"
+        ],
+        "ultra_budget_policy": [],
+        "ultra_ui": [
+          "agent_global_context",
+          "audit_storage",
+          "compressor_runtime",
+          "compressor_settings",
+          "context_editor_ui",
+          "context_storage",
+          "model_registry",
+          "planner_runtime",
+          "run_store",
+          "server",
+          "ui_state",
+          "web_alarm",
+          "web_alarm.server",
+          "web_alarm.ultra_chat",
+          "workspace_runtime_settings"
+        ],
+        "verifier_runtime": [
+          "agent_global_context",
+          "gigachat_transport",
+          "model_registry",
+          "provider_accounting"
+        ],
+        "wa4a_acceptance": [
+          "web_alarm",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.models",
+          "web_alarm.mutation_executor",
+          "web_alarm.operation_store",
+          "web_alarm.reconciliation_service",
+          "web_alarm.resolver_service",
+          "web_alarm.server",
+          "web_alarm.state_machine",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "wa4o_ui_demo": [
+          "web_alarm",
+          "web_alarm.server"
+        ],
+        "wa4o_ui_launcher": [],
+        "web_alarm": [
+          "web_alarm",
+          "web_alarm.closeout",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.manifest_store",
+          "web_alarm.models",
+          "web_alarm.mutation_executor",
+          "web_alarm.operation_contract",
+          "web_alarm.operation_store",
+          "web_alarm.payload_store",
+          "web_alarm.projection",
+          "web_alarm.reconciliation",
+          "web_alarm.reconciliation_decision",
+          "web_alarm.reconciliation_service",
+          "web_alarm.recovery_coordinator",
+          "web_alarm.recovery_report_builder",
+          "web_alarm.recovery_report_service",
+          "web_alarm.recovery_report_store",
+          "web_alarm.resolution_store",
+          "web_alarm.resolver_service",
+          "web_alarm.rollback_service",
+          "web_alarm.rollback_store",
+          "web_alarm.target_claim_service",
+          "web_alarm.target_claim_store",
+          "web_alarm.target_identity",
+          "web_alarm.task_store",
+          "web_alarm.transport_event_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.__main__": [
+          "web_alarm",
+          "web_alarm.cli"
+        ],
+        "web_alarm.blueprint_ui": [],
+        "web_alarm.blueprints": [
+          "web_alarm",
+          "web_alarm.store_lock"
+        ],
+        "web_alarm.cli": [
+          "web_alarm",
+          "web_alarm.closeout",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.manifest_store",
+          "web_alarm.models",
+          "web_alarm.mutation_executor",
+          "web_alarm.observation",
+          "web_alarm.projection",
+          "web_alarm.recovery_coordinator",
+          "web_alarm.remote_entry",
+          "web_alarm.server",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.closeout": [
+          "web_alarm",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.operation_store",
+          "web_alarm.projection",
+          "web_alarm.store_lock",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.context_pack": [
+          "web_alarm",
+          "web_alarm.projection",
+          "web_alarm.recovery_report_store",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.event_checkpoint_store": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.store_lock",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.evidence_sanitizer": [],
+        "web_alarm.file_state": [],
+        "web_alarm.folder_picker": [],
+        "web_alarm.launcher": [
+          "web_alarm",
+          "web_alarm.server",
+          "web_alarm.store_lock",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.manifest_store": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.store_lock",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.microtask_gate": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.operation_store",
+          "web_alarm.resolution_store",
+          "web_alarm.resolver_service",
+          "web_alarm.rollback_store",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.model_cards": [
+          "ui_state",
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.store_lock",
+          "web_alarm.ultra_connections"
+        ],
+        "web_alarm.models": [],
+        "web_alarm.mutation_executor": [
+          "web_alarm",
+          "web_alarm.file_state",
+          "web_alarm.manifest_store",
+          "web_alarm.models",
+          "web_alarm.operation_contract",
+          "web_alarm.operation_store",
+          "web_alarm.reconciliation",
+          "web_alarm.reconciliation_service",
+          "web_alarm.resolution_store",
+          "web_alarm.resolver_service",
+          "web_alarm.store_lock",
+          "web_alarm.target_claim_service",
+          "web_alarm.target_claim_store",
+          "web_alarm.target_identity",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.observation": [
+          "web_alarm",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.file_state",
+          "web_alarm.operation_store",
+          "web_alarm.reconciliation",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.operation_contract": [
+          "web_alarm",
+          "web_alarm.file_state",
+          "web_alarm.models",
+          "web_alarm.storage_policy",
+          "web_alarm.target_identity"
+        ],
+        "web_alarm.operation_store": [
+          "web_alarm",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.file_state",
+          "web_alarm.models",
+          "web_alarm.operation_contract",
+          "web_alarm.payload_store",
+          "web_alarm.projection",
+          "web_alarm.storage_policy",
+          "web_alarm.store_lock",
+          "web_alarm.target_identity",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.operator_view": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.operation_store",
+          "web_alarm.recovery_report_store",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.ordinary_chat_test_adapter": [
+          "ordinary_chat_service"
+        ],
+        "web_alarm.payload_store": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.storage_policy",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.projection": [
+          "web_alarm",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.manifest_store",
+          "web_alarm.microtask_gate",
+          "web_alarm.models",
+          "web_alarm.operation_store",
+          "web_alarm.reconciliation",
+          "web_alarm.reconciliation_service",
+          "web_alarm.resolution_store",
+          "web_alarm.resolver_service",
+          "web_alarm.rollback_service",
+          "web_alarm.rollback_store",
+          "web_alarm.state_machine",
+          "web_alarm.target_claim_store",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.reconciliation": [
+          "web_alarm",
+          "web_alarm.manifest_store",
+          "web_alarm.models",
+          "web_alarm.operation_store",
+          "web_alarm.target_identity",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.reconciliation_decision": [
+          "web_alarm",
+          "web_alarm.reconciliation"
+        ],
+        "web_alarm.reconciliation_service": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.operation_store",
+          "web_alarm.reconciliation",
+          "web_alarm.reconciliation_decision"
+        ],
+        "web_alarm.recovery_coordinator": [
+          "web_alarm",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.manifest_store",
+          "web_alarm.microtask_gate",
+          "web_alarm.models",
+          "web_alarm.operation_store",
+          "web_alarm.projection",
+          "web_alarm.resolution_store",
+          "web_alarm.resolver_service",
+          "web_alarm.rollback_service",
+          "web_alarm.rollback_store",
+          "web_alarm.target_claim_service",
+          "web_alarm.target_claim_store",
+          "web_alarm.target_identity",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.recovery_report_builder": [
+          "web_alarm",
+          "web_alarm.reconciliation",
+          "web_alarm.reconciliation_decision",
+          "web_alarm.recovery_report_store"
+        ],
+        "web_alarm.recovery_report_service": [
+          "web_alarm",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.models",
+          "web_alarm.reconciliation_service",
+          "web_alarm.recovery_report_builder",
+          "web_alarm.recovery_report_store",
+          "web_alarm.resolver_service",
+          "web_alarm.rollback_service",
+          "web_alarm.transport_event_store"
+        ],
+        "web_alarm.recovery_report_store": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.remote_entry": [
+          "web_alarm",
+          "web_alarm.context_pack",
+          "web_alarm.models",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.resolution_store": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.resolver_service": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.operation_store",
+          "web_alarm.reconciliation",
+          "web_alarm.reconciliation_decision",
+          "web_alarm.resolution_store"
+        ],
+        "web_alarm.rollback_service": [
+          "web_alarm",
+          "web_alarm.file_state",
+          "web_alarm.manifest_store",
+          "web_alarm.microtask_gate",
+          "web_alarm.models",
+          "web_alarm.operation_contract",
+          "web_alarm.operation_store",
+          "web_alarm.payload_store",
+          "web_alarm.resolution_store",
+          "web_alarm.resolver_service",
+          "web_alarm.rollback_store",
+          "web_alarm.storage_policy",
+          "web_alarm.store_lock",
+          "web_alarm.target_claim_store",
+          "web_alarm.target_identity",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.rollback_store": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.payload_store",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.server": [
+          "model_registry",
+          "web_alarm",
+          "web_alarm.blueprints",
+          "web_alarm.closeout",
+          "web_alarm.context_pack",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.folder_picker",
+          "web_alarm.manifest_store",
+          "web_alarm.model_cards",
+          "web_alarm.models",
+          "web_alarm.mutation_executor",
+          "web_alarm.observation",
+          "web_alarm.operation_contract",
+          "web_alarm.operation_store",
+          "web_alarm.operator_view",
+          "web_alarm.projection",
+          "web_alarm.reconciliation",
+          "web_alarm.reconciliation_service",
+          "web_alarm.recovery_coordinator",
+          "web_alarm.recovery_report_builder",
+          "web_alarm.recovery_report_service",
+          "web_alarm.recovery_report_store",
+          "web_alarm.resolution_store",
+          "web_alarm.resolver_service",
+          "web_alarm.rollback_service",
+          "web_alarm.rollback_store",
+          "web_alarm.state_machine",
+          "web_alarm.target_claim_service",
+          "web_alarm.target_claim_store",
+          "web_alarm.task_store",
+          "web_alarm.transport_event_store",
+          "web_alarm.ui",
+          "web_alarm.ultra_chat",
+          "web_alarm.ultra_connections",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.state_machine": [
+          "web_alarm",
+          "web_alarm.event_checkpoint_store",
+          "web_alarm.manifest_store",
+          "web_alarm.microtask_gate",
+          "web_alarm.models",
+          "web_alarm.projection",
+          "web_alarm.task_store"
+        ],
+        "web_alarm.storage_policy": [],
+        "web_alarm.store_lock": [],
+        "web_alarm.target_claim_service": [
+          "web_alarm",
+          "web_alarm.file_state",
+          "web_alarm.microtask_gate",
+          "web_alarm.models",
+          "web_alarm.operation_contract",
+          "web_alarm.operation_store",
+          "web_alarm.resolution_store",
+          "web_alarm.resolver_service",
+          "web_alarm.rollback_store",
+          "web_alarm.store_lock",
+          "web_alarm.target_claim_store",
+          "web_alarm.target_identity",
+          "web_alarm.task_store",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.target_claim_store": [
+          "web_alarm",
+          "web_alarm.models"
+        ],
+        "web_alarm.target_identity": [
+          "web_alarm",
+          "web_alarm.file_state"
+        ],
+        "web_alarm.task_store": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.store_lock",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.transport_event_recovery": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.store_lock",
+          "web_alarm.transport_event_store"
+        ],
+        "web_alarm.transport_event_store": [
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.store_lock",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.turn_service": [
+          "context_storage",
+          "run_store",
+          "web_alarm",
+          "web_alarm.ordinary_chat_test_adapter",
+          "web_alarm.ultra_chat"
+        ],
+        "web_alarm.ui": [
+          "web_alarm",
+          "web_alarm.blueprint_ui"
+        ],
+        "web_alarm.ultra_chat": [
+          "context_storage",
+          "ordinary_chat_service",
+          "provider_accounting",
+          "run_store",
+          "web_alarm",
+          "web_alarm.ordinary_chat_test_adapter",
+          "web_alarm.turn_service",
+          "web_alarm.workspace_registry"
+        ],
+        "web_alarm.ultra_connections": [
+          "model_registry",
+          "web_alarm",
+          "web_alarm.models",
+          "web_alarm.store_lock"
+        ],
+        "web_alarm.workspace_registry": [
+          "web_alarm",
+          "web_alarm.models"
+        ],
+        "workspace_runtime_settings": []
+      },
+      "observations": [
+        [
+          "web_alarm.model_cards",
+          147,
+          "S1_PINNED_PROVIDER_SPEC_QUERY: builtin adapter or None"
+        ]
+      ]
+    },
+    "candidate_blocks": {
+      "A": {
+        "R-025": 3,
+        "R-026": 3,
+        "R-027": 3,
+        "R-031": 9
+      },
+      "B": {
+        "R-025": 4,
+        "R-026": 4,
+        "R-027": 4,
+        "R-031": 10
+      },
+      "C": {
+        "R-026": 8,
+        "R-027": 10,
+        "R-031": 13
+      }
+    }
+  },
+  "log": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s2-isolation-u7x1iibg\\temp\\claude-rt002-s2-0ngflxf7\\unittest.log",
+  "log_sha256": "d3407025a4ed0bbc5f3070dcd604fc7ca168fc0b9675a917edd5f91164b642ae"
+}

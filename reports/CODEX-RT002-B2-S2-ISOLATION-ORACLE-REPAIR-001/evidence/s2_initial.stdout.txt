@@ -1,0 +1,31 @@
+{
+  "task": "CLAUDE-RT002-S2-001",
+  "mode": "core",
+  "sandbox": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s2-isolation-h873nxa0\\temp\\claude-rt002-s2-7rplccle",
+  "python": "3.12.10",
+  "gate": {
+    "status": "PASS",
+    "exit_code": 0,
+    "reasons": []
+  },
+  "counts": {
+    "run": 73,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 73,
+  "failures": [],
+  "errors": [],
+  "skipped": [],
+  "isolation_violations": [],
+  "problems": [],
+  "selected": null,
+  "dataset_sha256": "8a3ea10b75280ece550138af9a912b161997e17f5f3f17c894686961babf90ce",
+  "elapsed_seconds": 10.027,
+  "log": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s2-isolation-h873nxa0\\temp\\claude-rt002-s2-7rplccle\\unittest.log",
+  "log_sha256": "ff9848f5caee4d40039abd33161276503a939dae985dff7f0c961ebafb313269"
+}
+{"secret_guard": {"denials": [], "synthetic_reads": 0, "sandbox": "<USER_HOME>\\AppData\\Local\\Temp\\codex-s2-isolation-h873nxa0"}}

@@ -1,0 +1,74 @@
+{
+  "task_status": "AUTHOR RESULT READY / INDEPENDENT REVIEW PENDING",
+  "original_red": {
+    "run": 73,
+    "pass": 72,
+    "fail": 1,
+    "error": 0,
+    "skip": 0,
+    "exit": 1
+  },
+  "s2": {
+    "run": 73,
+    "pass": 73,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "exit": 0,
+    "guard": 0
+  },
+  "s1": {
+    "run": 69,
+    "pass": 69,
+    "exit": 0,
+    "guard": 0
+  },
+  "s1_extra": {
+    "run": 23,
+    "pass": 23,
+    "exit": 0,
+    "guard": 0
+  },
+  "s3a": {
+    "run": 35,
+    "pass": 35,
+    "exit": 0,
+    "guard": 0
+  },
+  "quality": {
+    "run": 47,
+    "pass": 47,
+    "expected_inner_RED": 43,
+    "expected_inner_PASS": 4,
+    "exit": 0,
+    "guard": 0
+  },
+  "weakening": {
+    "modes": [
+      "disable",
+      "transitive",
+      "capsule_hash"
+    ],
+    "exit": [
+      1,
+      1,
+      1
+    ],
+    "fail": [
+      43,
+      1,
+      1
+    ],
+    "expected": "RED"
+  },
+  "graph": {
+    "local_modules": 82,
+    "conservative_production_roots": 80,
+    "capsules": [
+      "ultra_budget_ledger"
+    ],
+    "incoming_ledger": 0
+  },
+  "live_provider_calls": 0,
+  "Git_GitHub": "NOT USED"
+}

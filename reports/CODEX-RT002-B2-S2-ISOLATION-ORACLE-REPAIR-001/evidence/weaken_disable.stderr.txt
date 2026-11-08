@@ -1,0 +1,653 @@
+test_benign_builtin_fromlist (__main__.ImportIsolationQualityTests.test_benign_builtin_fromlist) ... ok
+test_benign_new_consumer (__main__.ImportIsolationQualityTests.test_benign_new_consumer) ... ok
+test_changed_offline_capsule (__main__.ImportIsolationQualityTests.test_changed_offline_capsule) ... FAIL
+test_changed_shared_dependency (__main__.ImportIsolationQualityTests.test_changed_shared_dependency) ... FAIL
+test_cloned_capsule_new_name (__main__.ImportIsolationQualityTests.test_cloned_capsule_new_name) ... FAIL
+test_collector_fromlist_benign_child (__main__.ImportIsolationQualityTests.test_collector_fromlist_benign_child) ... ok
+test_collector_fromlist_nested_policy (__main__.ImportIsolationQualityTests.test_collector_fromlist_nested_policy) ... FAIL
+test_dict_import (__main__.ImportIsolationQualityTests.test_dict_import) ... FAIL
+test_direct_policy (__main__.ImportIsolationQualityTests.test_direct_policy) ... FAIL
+test_dynamic_alias (__main__.ImportIsolationQualityTests.test_dynamic_alias) ... FAIL
+test_dynamic_import (__main__.ImportIsolationQualityTests.test_dynamic_import) ... FAIL
+test_dynamic_module_alias (__main__.ImportIsolationQualityTests.test_dynamic_module_alias) ... FAIL
+test_dynamic_relative (__main__.ImportIsolationQualityTests.test_dynamic_relative) ... FAIL
+test_dynamic_unknown_name (__main__.ImportIsolationQualityTests.test_dynamic_unknown_name) ... FAIL
+test_exec_literal (__main__.ImportIsolationQualityTests.test_exec_literal) ... FAIL
+test_exec_unknown (__main__.ImportIsolationQualityTests.test_exec_unknown) ... FAIL
+test_file_import_loader (__main__.ImportIsolationQualityTests.test_file_import_loader) ... FAIL
+test_file_loader_name (__main__.ImportIsolationQualityTests.test_file_loader_name) ... FAIL
+test_from_ledger_alias (__main__.ImportIsolationQualityTests.test_from_ledger_alias) ... FAIL
+test_from_policy_alias (__main__.ImportIsolationQualityTests.test_from_policy_alias) ... FAIL
+test_getattr_import (__main__.ImportIsolationQualityTests.test_getattr_import) ... FAIL
+test_import_cycle_reaches_policy (__main__.ImportIsolationQualityTests.test_import_cycle_reaches_policy) ... FAIL
+test_loader_container_escape (__main__.ImportIsolationQualityTests.test_loader_container_escape) ... FAIL
+test_loader_escape (__main__.ImportIsolationQualityTests.test_loader_escape) ... FAIL
+test_local_stdlib_shadow (__main__.ImportIsolationQualityTests.test_local_stdlib_shadow) ... FAIL
+test_missing_policy_source (__main__.ImportIsolationQualityTests.test_missing_policy_source) ... FAIL
+test_new_direct_consumer (__main__.ImportIsolationQualityTests.test_new_direct_consumer) ... FAIL
+test_offline_capsule_without_production_reachability (__main__.ImportIsolationQualityTests.test_offline_capsule_without_production_reachability) ... ok
+test_opaque_loader_attribute (__main__.ImportIsolationQualityTests.test_opaque_loader_attribute) ... FAIL
+test_opaque_loader_attribute_alias (__main__.ImportIsolationQualityTests.test_opaque_loader_attribute_alias) ... FAIL
+test_opaque_loader_namespace (__main__.ImportIsolationQualityTests.test_opaque_loader_namespace) ... FAIL
+test_package_initializer (__main__.ImportIsolationQualityTests.test_package_initializer) ... FAIL
+test_pinned_metadata_domain_escape (__main__.ImportIsolationQualityTests.test_pinned_metadata_domain_escape) ... FAIL
+test_pinned_metadata_registry_escape (__main__.ImportIsolationQualityTests.test_pinned_metadata_registry_escape) ... FAIL
+test_policy_module_alias (__main__.ImportIsolationQualityTests.test_policy_module_alias) ... FAIL
+test_protected_submodule_name (__main__.ImportIsolationQualityTests.test_protected_submodule_name) ... FAIL
+test_reexported_dynamic_alias (__main__.ImportIsolationQualityTests.test_reexported_dynamic_alias) ... FAIL
+test_relative_builtin_import (__main__.ImportIsolationQualityTests.test_relative_builtin_import) ... FAIL
+test_relative_from_import (__main__.ImportIsolationQualityTests.test_relative_from_import) ... FAIL
+test_spec_parent_import (__main__.ImportIsolationQualityTests.test_spec_parent_import) ... FAIL
+test_star_builtin_fromlist (__main__.ImportIsolationQualityTests.test_star_builtin_fromlist) ... FAIL
+test_static_star_import (__main__.ImportIsolationQualityTests.test_static_star_import) ... FAIL
+test_transitive_ledger (__main__.ImportIsolationQualityTests.test_transitive_ledger) ... FAIL
+test_transitive_new_bridge (__main__.ImportIsolationQualityTests.test_transitive_new_bridge) ... FAIL
+test_unknown_builtin_fromlist (__main__.ImportIsolationQualityTests.test_unknown_builtin_fromlist) ... FAIL
+test_unknown_import_root (__main__.ImportIsolationQualityTests.test_unknown_import_root) ... FAIL
+test_unknown_spec_query (__main__.ImportIsolationQualityTests.test_unknown_spec_query) ... FAIL
+
+======================================================================
+FAIL: test_changed_offline_capsule (__main__.ImportIsolationQualityTests.test_changed_offline_capsule)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : changed_offline_capsule
+
+======================================================================
+FAIL: test_changed_shared_dependency (__main__.ImportIsolationQualityTests.test_changed_shared_dependency)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : changed_shared_dependency
+
+======================================================================
+FAIL: test_cloned_capsule_new_name (__main__.ImportIsolationQualityTests.test_cloned_capsule_new_name)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : cloned_capsule_new_name
+
+======================================================================
+FAIL: test_collector_fromlist_nested_policy (__main__.ImportIsolationQualityTests.test_collector_fromlist_nested_policy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 111, in test_collector_fromlist_nested_policy
+    self.collected_case("collector_fromlist_nested_policy", "import ultra_budget_policy\n", "RED")
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 107, in collected_case
+    self.assertEqual(result["actual"], expected)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+
+
+======================================================================
+FAIL: test_dict_import (__main__.ImportIsolationQualityTests.test_dict_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : dict_import
+
+======================================================================
+FAIL: test_direct_policy (__main__.ImportIsolationQualityTests.test_direct_policy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : direct_policy
+
+======================================================================
+FAIL: test_dynamic_alias (__main__.ImportIsolationQualityTests.test_dynamic_alias)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : dynamic_alias
+
+======================================================================
+FAIL: test_dynamic_import (__main__.ImportIsolationQualityTests.test_dynamic_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : dynamic_import
+
+======================================================================
+FAIL: test_dynamic_module_alias (__main__.ImportIsolationQualityTests.test_dynamic_module_alias)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : dynamic_module_alias
+
+======================================================================
+FAIL: test_dynamic_relative (__main__.ImportIsolationQualityTests.test_dynamic_relative)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : dynamic_relative
+
+======================================================================
+FAIL: test_dynamic_unknown_name (__main__.ImportIsolationQualityTests.test_dynamic_unknown_name)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : dynamic_unknown_name
+
+======================================================================
+FAIL: test_exec_literal (__main__.ImportIsolationQualityTests.test_exec_literal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : exec_literal
+
+======================================================================
+FAIL: test_exec_unknown (__main__.ImportIsolationQualityTests.test_exec_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : exec_unknown
+
+======================================================================
+FAIL: test_file_import_loader (__main__.ImportIsolationQualityTests.test_file_import_loader)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : file_import_loader
+
+======================================================================
+FAIL: test_file_loader_name (__main__.ImportIsolationQualityTests.test_file_loader_name)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : file_loader_name
+
+======================================================================
+FAIL: test_from_ledger_alias (__main__.ImportIsolationQualityTests.test_from_ledger_alias)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : from_ledger_alias
+
+======================================================================
+FAIL: test_from_policy_alias (__main__.ImportIsolationQualityTests.test_from_policy_alias)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : from_policy_alias
+
+======================================================================
+FAIL: test_getattr_import (__main__.ImportIsolationQualityTests.test_getattr_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : getattr_import
+
+======================================================================
+FAIL: test_import_cycle_reaches_policy (__main__.ImportIsolationQualityTests.test_import_cycle_reaches_policy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : import_cycle_reaches_policy
+
+======================================================================
+FAIL: test_loader_container_escape (__main__.ImportIsolationQualityTests.test_loader_container_escape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : loader_container_escape
+
+======================================================================
+FAIL: test_loader_escape (__main__.ImportIsolationQualityTests.test_loader_escape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : loader_escape
+
+======================================================================
+FAIL: test_local_stdlib_shadow (__main__.ImportIsolationQualityTests.test_local_stdlib_shadow)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : local_stdlib_shadow
+
+======================================================================
+FAIL: test_missing_policy_source (__main__.ImportIsolationQualityTests.test_missing_policy_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : missing_policy_source
+
+======================================================================
+FAIL: test_new_direct_consumer (__main__.ImportIsolationQualityTests.test_new_direct_consumer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : new_direct_consumer
+
+======================================================================
+FAIL: test_opaque_loader_attribute (__main__.ImportIsolationQualityTests.test_opaque_loader_attribute)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : opaque_loader_attribute
+
+======================================================================
+FAIL: test_opaque_loader_attribute_alias (__main__.ImportIsolationQualityTests.test_opaque_loader_attribute_alias)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : opaque_loader_attribute_alias
+
+======================================================================
+FAIL: test_opaque_loader_namespace (__main__.ImportIsolationQualityTests.test_opaque_loader_namespace)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : opaque_loader_namespace
+
+======================================================================
+FAIL: test_package_initializer (__main__.ImportIsolationQualityTests.test_package_initializer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : package_initializer
+
+======================================================================
+FAIL: test_pinned_metadata_domain_escape (__main__.ImportIsolationQualityTests.test_pinned_metadata_domain_escape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : pinned_metadata_domain_escape
+
+======================================================================
+FAIL: test_pinned_metadata_registry_escape (__main__.ImportIsolationQualityTests.test_pinned_metadata_registry_escape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : pinned_metadata_registry_escape
+
+======================================================================
+FAIL: test_policy_module_alias (__main__.ImportIsolationQualityTests.test_policy_module_alias)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : policy_module_alias
+
+======================================================================
+FAIL: test_protected_submodule_name (__main__.ImportIsolationQualityTests.test_protected_submodule_name)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : protected_submodule_name
+
+======================================================================
+FAIL: test_reexported_dynamic_alias (__main__.ImportIsolationQualityTests.test_reexported_dynamic_alias)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : reexported_dynamic_alias
+
+======================================================================
+FAIL: test_relative_builtin_import (__main__.ImportIsolationQualityTests.test_relative_builtin_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : relative_builtin_import
+
+======================================================================
+FAIL: test_relative_from_import (__main__.ImportIsolationQualityTests.test_relative_from_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : relative_from_import
+
+======================================================================
+FAIL: test_spec_parent_import (__main__.ImportIsolationQualityTests.test_spec_parent_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : spec_parent_import
+
+======================================================================
+FAIL: test_star_builtin_fromlist (__main__.ImportIsolationQualityTests.test_star_builtin_fromlist)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : star_builtin_fromlist
+
+======================================================================
+FAIL: test_static_star_import (__main__.ImportIsolationQualityTests.test_static_star_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : static_star_import
+
+======================================================================
+FAIL: test_transitive_ledger (__main__.ImportIsolationQualityTests.test_transitive_ledger)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : transitive_ledger
+
+======================================================================
+FAIL: test_transitive_new_bridge (__main__.ImportIsolationQualityTests.test_transitive_new_bridge)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : transitive_new_bridge
+
+======================================================================
+FAIL: test_unknown_builtin_fromlist (__main__.ImportIsolationQualityTests.test_unknown_builtin_fromlist)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : unknown_builtin_fromlist
+
+======================================================================
+FAIL: test_unknown_import_root (__main__.ImportIsolationQualityTests.test_unknown_import_root)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : unknown_import_root
+
+======================================================================
+FAIL: test_unknown_spec_query (__main__.ImportIsolationQualityTests.test_unknown_spec_query)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 132, in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py", line 121, in check_case
+    self.assertEqual(result["actual"], expected, name)
+AssertionError: 'PASS' != 'RED'
+- PASS
++ RED
+ : unknown_spec_query
+
+----------------------------------------------------------------------
+Ran 47 tests in 1.606s
+
+FAILED (failures=43)

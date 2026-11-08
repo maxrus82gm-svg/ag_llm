@@ -1,0 +1,22 @@
+{
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+    "--no-chat-amendment",
+    "--headless",
+    "--date",
+    "2026-11-08",
+    "--expected-card-sha256",
+    "903cc91e2085f5cc851202548316a9a07ed2e67dc0462f0b34fb6cc4709e8a41",
+    "--apply"
+  ],
+  "exit_code": 0
+}

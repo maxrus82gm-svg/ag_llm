@@ -1564,6 +1564,261 @@ class SyntheticRunTests(unittest.TestCase):
 
 # --------------------------------------------------------------------------- isolation and non-enforcement
 
+# S1 is a source census, not a list of runtime entrypoints. Only this exact reviewed
+# OFFLINE capsule may depend on policy while disconnected from ALL other local consumers.
+OFFLINE_POLICY_CAPSULES = {"ultra_budget_ledger": "4ec4bc2a511477366ee9e71a7aae7dbf79e259f34f1e0dd018147c2faabfc1fb"}
+POLICY_MODULE = "ultra_budget_policy"
+POLICY_ENTRYPOINTS = frozenset({"server", "ultra_ui", "web_alarm.__main__", "web_alarm.cli",
+                                "web_alarm.server", "web_alarm.launcher"})
+ISOLATION_EXTERNAL_ROOTS = frozenset({"httpx", "mcp"})  # current dependencies; local shadows still win
+_LOADERS = frozenset({"builtins.__import__", "importlib.import_module"})
+_EXECUTORS = frozenset({"builtins.exec", "builtins.eval"})
+_SPEC_FINDERS = frozenset({"importlib.util.find_spec"})
+_OPAQUE_IMPORTERS = frozenset({"importlib.util.spec_from_file_location", "importlib.util.module_from_spec",
+                               "importlib.machinery.SourceFileLoader", "importlib.machinery.SourcelessFileLoader",
+                               "runpy.run_module", "runpy.run_path", "pkgutil.resolve_name"})
+_PINNED_SPEC_INTERNALS = frozenset({"web_alarm.model_cards.Provider", "web_alarm.model_cards._adapter_state",
+                                    "web_alarm.model_cards.BUILTIN_PROVIDERS"})
+
+
+def _module_identity(path):
+    parts = path.relative_to(ROOT).with_suffix("").parts
+    return ".".join(parts[:-1] if parts[-1] == "__init__" else parts)
+
+
+def _absolute_from(module, is_package, node):
+    if not node.level:
+        return node.module or ""
+    package = module.split(".") if is_package else module.split(".")[:-1]
+    if node.level > len(package):
+        raise ValueError("relative import escapes package")
+    return ".".join(package[:len(package) - node.level + 1] + ([node.module] if node.module else []))
+
+
+def _import_aliases(tree, module, is_package):
+    aliases = {name: {"builtins." + name} for name in ("__import__", "exec", "eval", "compile", "getattr")}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for item in node.names:
+                aliases.setdefault(item.asname or item.name.split(".")[0], set()).add(item.name if item.asname else item.name.split(".")[0])
+        elif isinstance(node, ast.ImportFrom):
+            base = _absolute_from(module, is_package, node)
+            for item in node.names:
+                if item.name == "*":
+                    if base == "importlib": aliases.setdefault("import_module", set()).add("importlib.import_module")
+                else:
+                    aliases.setdefault(item.asname or item.name, set()).add(base + "." + item.name)
+
+    def names(expr):
+        if isinstance(expr, ast.Name): return aliases.get(expr.id, set())
+        if isinstance(expr, ast.Attribute): return {name + "." + expr.attr for name in names(expr.value)}
+        if (isinstance(expr, ast.Call) and names(expr.func) & {"builtins.getattr"}
+                and len(expr.args) >= 2 and isinstance(expr.args[1], ast.Constant) and isinstance(expr.args[1].value, str)):
+            return {name + "." + expr.args[1].value for name in names(expr.args[0])}
+        if (isinstance(expr, ast.Subscript) and isinstance(expr.value, ast.Attribute)
+                and expr.value.attr == "__dict__" and isinstance(expr.slice, ast.Constant)
+                and isinstance(expr.slice.value, str)):
+            return {name + "." + expr.slice.value for name in names(expr.value.value)}
+        return set()
+
+    # Union, never last-write-wins: shadowing/rebinding cannot hide a possible loader.
+    for _ in range(len(list(ast.walk(tree))) + 1):
+        changed = False
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.Assign, ast.AnnAssign)) and node.value is not None:
+                for target in node.targets if isinstance(node, ast.Assign) else [node.target]:
+                    if isinstance(target, ast.Name):
+                        value = names(node.value)
+                        existing = aliases.setdefault(target.id, set())
+                        if not value <= existing: existing.update(value); changed = True
+        if not changed: break
+    return aliases, names
+
+
+def _import_events(module, source, is_package=False, exports=None, depth=0):
+    """Parse only; never import/execute inspected code. Unknown dynamic import = fail closed."""
+    tree = ast.parse(source)
+    aliases, names = _import_aliases(tree, module, is_package)
+    exports = exports or {}
+    events, issues, observations = [], [], []
+
+    def expand(name, trail=frozenset()):
+        if name in trail or len(trail) > 20:
+            issues.append((module, 0, "IMPORT_ALIAS_CYCLE_OR_DEPTH:" + name))
+            return {name}
+        for owner in sorted(exports, key=len, reverse=True):
+            if name.startswith(owner + "."):
+                tail = name[len(owner) + 1:].split(".")
+                targets = exports[owner].get(tail[0], set())
+                if targets:
+                    return set().union(*(expand(target + ("." + ".".join(tail[1:]) if len(tail) > 1 else ""), trail | {name}) for target in targets))
+        return {name}
+
+    def resolve(expr): return set().union(*(expand(n) for n in names(expr))) if names(expr) else set()
+
+    bindings = {}
+    params = {a.arg for n in ast.walk(tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+              for a in [*n.args.posonlyargs, *n.args.args, *n.args.kwonlyargs, *filter(None, [n.args.vararg, n.args.kwarg])]}
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Assign, ast.AnnAssign)):
+            for target in node.targets if isinstance(node, ast.Assign) else [node.target]:
+                if isinstance(target, ast.Name): bindings.setdefault(target.id, []).append(node.value)
+
+    def literal(expr, seen=frozenset()):
+        if isinstance(expr, ast.Constant) and isinstance(expr.value, str): return expr.value
+        if isinstance(expr, ast.Name) and expr.id not in params and expr.id not in seen:
+            values = {literal(v, seen | {expr.id}) for v in bindings.get(expr.id, [])}
+            return next(iter(values)) if len(values) == 1 and None not in values else None
+        if isinstance(expr, ast.BinOp) and isinstance(expr.op, ast.Add):
+            left, right = literal(expr.left, seen), literal(expr.right, seen)
+            return left + right if left is not None and right is not None else None
+        if isinstance(expr, ast.Call) and resolve(expr.func) & {"builtins.compile"} and expr.args:
+            return literal(expr.args[0], seen)
+        return None
+
+    parents = {id(child): parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
+    exact_capsule = OFFLINE_POLICY_CAPSULES.get(module) == _sha256(ast.dump(tree, include_attributes=False).encode("utf-8"))
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            events += [(a.name, node.lineno, "import") for a in node.names]
+        elif isinstance(node, ast.ImportFrom):
+            base = _absolute_from(module, is_package, node)
+            if any(a.name == "*" for a in node.names): issues.append((module, node.lineno, "STAR_IMPORT_REQUIRES_REVIEW"))
+            if base: events.append((base, node.lineno, "from"))
+            events += [(base + "." + a.name, node.lineno, "from-member") for a in node.names if a.name != "*"]
+        elif isinstance(node, ast.Call):
+            targets = resolve(node.func)
+            if targets & _OPAQUE_IMPORTERS or (isinstance(node.func, ast.Attribute) and node.func.attr in {"exec_module", "load_module"}):
+                issues.append((module, node.lineno, "OPAQUE_IMPORT_LOADER"))
+            elif targets & (_LOADERS | _SPEC_FINDERS):
+                argument = node.args[0] if node.args else next((k.value for k in node.keywords if k.arg == "name"), None)
+                name = literal(argument)
+                if name is not None:
+                    if name.startswith("."):
+                        package = node.args[1] if len(node.args) > 1 else next((k.value for k in node.keywords if k.arg == "package"), None)
+                        package = literal(package)
+                        if package is None: issues.append((module, node.lineno, "UNKNOWN_DYNAMIC_PACKAGE")); continue
+                        level = len(name) - len(name.lstrip("."))
+                        parts = package.split(".")
+                        if level > len(parts): issues.append((module, node.lineno, "BAD_DYNAMIC_PACKAGE")); continue
+                        name = ".".join(parts[:len(parts) - level + 1] + [name.lstrip(".")])
+                    # Spec queries can import parents; conservatively audit the whole named module.
+                    events.append((name, node.lineno, "dynamic"))
+                    if "builtins.__import__" in targets:
+                        level = node.args[4] if len(node.args) > 4 else next((k.value for k in node.keywords if k.arg == "level"), ast.Constant(0))
+                        if not isinstance(level, ast.Constant) or type(level.value) is not int or level.value != 0:
+                            issues.append((module, node.lineno, "RELATIVE_BUILTIN_IMPORT_REQUIRES_REVIEW"))
+                        fromlist = node.args[3] if len(node.args) > 3 else next((k.value for k in node.keywords if k.arg == "fromlist"), ast.Tuple(elts=[], ctx=ast.Load()))
+                        if isinstance(fromlist, (ast.List, ast.Tuple)) and all(isinstance(v, ast.Constant) and isinstance(v.value, str) and v.value != "*" for v in fromlist.elts):
+                            events += [(name + "." + v.value, node.lineno, "from-member") for v in fromlist.elts]
+                        else: issues.append((module, node.lineno, "UNKNOWN_BUILTIN_FROMLIST"))
+                elif (targets <= _SPEC_FINDERS and module == "web_alarm.model_cards" and argument is not None
+                      and ast.unparse(argument) == "provider.adapter"
+                      and not s1.analyze_module("model_cards.py", source)["reconciliation_issues"]):
+                    observations.append((module, node.lineno, "S1_PINNED_PROVIDER_SPEC_QUERY: builtin adapter or None"))
+                else: issues.append((module, node.lineno, "UNKNOWN_DYNAMIC_IMPORT"))
+            elif targets & _EXECUTORS:
+                text = literal(node.args[0]) if node.args else None
+                if text is None or depth >= 4:
+                    issues.append((module, node.lineno, "OPAQUE_EXEC_IMPORTS"))
+                else:
+                    nested = _import_events(module, text, is_package, exports, depth + 1)
+                    events += nested[0]; issues += nested[1]; observations += nested[2]
+            elif (targets & {"builtins.getattr"} and node.args
+                  and any(n.startswith(("importlib", "builtins", "web_alarm.model_cards")) for n in resolve(node.args[0]))
+                  and (len(node.args) < 2 or literal(node.args[1]) is None)):
+                issues.append((module, node.lineno, "UNKNOWN_LOADER_ATTRIBUTE"))
+        elif (isinstance(node, ast.Subscript) and isinstance(node.value, ast.Attribute)
+              and node.value.attr == "__dict__" and any(n.startswith(("importlib", "builtins", "web_alarm.model_cards")) for n in resolve(node.value.value))
+              and not isinstance(node.slice, ast.Constant)):
+            issues.append((module, node.lineno, "UNKNOWN_LOADER_NAMESPACE_ACCESS"))
+        targets = resolve(node)
+        if module != "web_alarm.model_cards" and targets & _PINNED_SPEC_INTERNALS:
+            issues.append((module, getattr(node, "lineno", 0), "PINNED_SPEC_INPUT_DOMAIN_ESCAPE"))
+        if targets & (_LOADERS | _EXECUTORS | _OPAQUE_IMPORTERS):
+            parent = parents.get(id(node))
+            if not ((isinstance(parent, ast.Call) and parent.func is node)
+                    or (isinstance(parent, (ast.Assign, ast.AnnAssign)) and parent.value is node)):
+                issues.append((module, getattr(node, "lineno", 0), "IMPORT_LOADER_ESCAPE"))
+        if isinstance(node, (ast.Constant, ast.BinOp)):
+            value = literal(node)
+            if (value is not None and any(value.removesuffix(".py") == protected or value.startswith(protected + ".")
+                                         for protected in {POLICY_MODULE, *OFFLINE_POLICY_CAPSULES}) and not exact_capsule):
+                # Receiver-independent backstop: an opaque loader cannot hide a protected name/path.
+                issues.append((module, getattr(node, "lineno", 0), "PROTECTED_MODULE_LITERAL_REQUIRES_REVIEW"))
+    return events, issues, observations
+
+
+def policy_import_audit(sources, *, packages=frozenset(), required_entrypoints=frozenset()):
+    """Every unclassified local module is a conservative production root, even if unused today."""
+    issues, observations, graph = [], [], {name: set() for name in sources}
+    if POLICY_MODULE not in sources: issues.append((POLICY_MODULE, 0, "MISSING_POLICY_LIBRARY"))
+    trees = {name: ast.parse(text) for name, text in sources.items()}
+    exports = {name: _import_aliases(tree, name, name in packages)[0] for name, tree in trees.items()}
+    capsules = set()
+    for name, expected in OFFLINE_POLICY_CAPSULES.items():
+        if name in trees:
+            actual = _sha256(ast.dump(trees[name], include_attributes=False).encode("utf-8"))
+            if actual == expected: capsules.add(name)
+            else: issues.append((name, 0, "OFFLINE_CAPSULE_CHANGED"))
+    for name in required_entrypoints - sources.keys(): issues.append((name, 0, "MISSING_ENTRYPOINT"))
+    for name in required_entrypoints & capsules: issues.append((name, 0, "CAPSULE_IS_PRODUCTION_ENTRYPOINT"))
+    for module, source in sources.items():
+        events, errors, observed = _import_events(module, source, module in packages, exports)
+        issues += errors; observations += observed
+        for name, line, kind in events:
+            if module != "web_alarm.model_cards" and name in _PINNED_SPEC_INTERNALS:
+                issues.append((module, line, "PINNED_SPEC_INPUT_DOMAIN_ESCAPE"))
+            if not name or any(not part.isidentifier() for part in name.split(".")):
+                issues.append((module, line, "INVALID_IMPORT_NAME")); continue
+            prefixes = {".".join(name.split(".")[:i]) for i in range(1, len(name.split(".")) + 1)}
+            local = prefixes & sources.keys()
+            graph[module].update(local)
+            if not local and name.split(".")[0] not in sys.stdlib_module_names | ISOLATION_EXTERNAL_ROOTS:
+                issues.append((module, line, "UNKNOWN_IMPORT_ROOT:" + name))
+            if local and kind in {"import", "dynamic"} and name not in sources:
+                issues.append((module, line, "UNKNOWN_LOCAL_MODULE:" + name))
+    roots = set(sources) - capsules - {POLICY_MODULE}
+    paths = []
+    for root in sorted(roots):
+        queue = [(root, [root])]; visited = set()
+        while queue:
+            node, path = queue.pop(0)
+            if node in visited: continue
+            visited.add(node)
+            if node == POLICY_MODULE:
+                paths.append(path); issues.append((root, 0, "PRODUCTION_REACHES_POLICY:" + " -> ".join(path))); break
+            queue += [(target, path + [target]) for target in sorted(graph[node] - visited)]
+    return {"issues": sorted(set(issues)), "policy_paths": paths, "offline_capsules": sorted(capsules),
+            "production_roots": sorted(roots), "entrypoints": sorted(required_entrypoints),
+            "graph": {name: sorted(edges) for name, edges in sorted(graph.items())}, "observations": sorted(set(observations))}
+
+
+def policy_isolation_sources():
+    """S1 census plus named local dependencies/package initializers, without recursive archive scans."""
+    pending = list(s1._production_modules()); sources, packages = {}, set()
+    identities = {}
+    while pending:
+        path = pending.pop()
+        name = _module_identity(path)
+        if path.is_symlink() or not path.resolve().is_relative_to(ROOT): raise ValueError("unsafe isolation source: " + name)
+        if name in sources:
+            if identities[name] != path: raise ValueError("ambiguous module identity: " + name)
+            continue
+        identities[name] = path
+        source = path.read_text(encoding="utf-8"); sources[name] = source
+        if path.name == "__init__.py": packages.add(name)
+        events = _import_events(name, source, name in packages)[0]
+        for imported, _, _ in events:
+            if not imported or any(not part.isidentifier() for part in imported.split(".")): continue
+            parts = imported.split(".")
+            for i in range(1, len(parts) + 1):
+                candidate = ROOT.joinpath(*parts[:i])
+                for target in [candidate.with_suffix(".py"), candidate / "__init__.py"]:
+                    if target.is_file() and _module_identity(target) not in sources: pending.append(target)
+    return sources, packages
+
+
 class IsolationTests(unittest.TestCase):
     def test_policy_evaluation_does_not_mutate_inputs(self):
         import ultra_budget_policy as b
@@ -1591,13 +1846,10 @@ class IsolationTests(unittest.TestCase):
         self.assertFalse(calls & {"open", "print", "exec", "eval", "__import__"})
 
     def test_no_production_module_imports_the_policy_yet(self):
-        for module in s1._production_modules():
-            if module.name == "ultra_budget_policy.py":
-                continue
-            tree = ast.parse(module.read_text(encoding="utf-8"))
-            names = {a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
-            names |= {n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module}
-            self.assertNotIn("ultra_budget_policy", names, module.name)
+        sources, packages = policy_isolation_sources()
+        result = policy_import_audit(sources, packages=packages, required_entrypoints=POLICY_ENTRYPOINTS)
+        _OBSERVATIONS["policy_import_isolation"] = result
+        self.assertEqual(result["issues"], [])
 
     def test_manifest_matches_the_loaded_collection(self):
         loaded = []

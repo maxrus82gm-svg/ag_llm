@@ -1,0 +1,12 @@
+{
+  "task_id": "CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001",
+  "new_task_assigned": false,
+  "items": [
+    {"id": "S2-OFFLINE-LEDGER-ISOLATION-ORACLE", "status": "AUTHOR REPAIRED / WEB26 INDEPENDENT REVIEW PENDING", "owner": "WEB26 after user publication", "evidence": "evidence/s2.result.json", "next": "Review exact sources, import graph, negative controls and repeat guarded selectors; coordinator decides closure"},
+    {"id": "S2-STATIC-IMPORT-COVERAGE", "status": "KNOWN BOUNDED LIMIT", "owner": "S2/S3b verifier", "evidence": "import_review.md", "next": "Review new loaders, plugins, native/external dependencies and source changes; no inference of complete dynamic runtime enforcement"},
+    {"id": "S3A-INDEPENDENT-EXECUTION", "status": "OPEN / UNCHANGED", "owner": "Independent verifier", "evidence": "evidence/s3a.xml", "next": "Author 35 PASS is regression only, not independent S3a predecessor acceptance"},
+    {"id": "ORDINARY-CHAT-POLICY-S3B", "status": "OPEN / NO GO", "owner": "USER + RT-002 owner", "evidence": "../CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/ordinary_chat_contract.md", "next": "Approve route/role/scope/numeric policy separately; S3b physical pre-HTTP coverage requires its own task and predecessors"},
+    {"id": "H23-STORAGE-PRIVACY-DURABILITY", "status": "OPEN / UNCHANGED", "owner": "S3a/S3b owner + USER", "evidence": "../CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/followups.json", "next": "Preserve adoption/upgrade, RAW wire retention, capacity, durability/fencing and trusted NOT_SENT proof requirements"},
+    {"id": "H24-DYNAMIC-SEND-BOUNDARIES", "status": "OPEN / UNCHANGED", "owner": "S1/S3b verifier", "evidence": "../CODEX-RT002-B2-S1-INVENTORY-RECON-001/route_reconciliation.md", "next": "Launcher origin is not redirect/proxy confinement; injected Ordinary Chat/checker adapters remain potential physical boundaries"}
+  ]
+}
