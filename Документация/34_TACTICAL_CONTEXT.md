@@ -1,5 +1,11 @@
 # Оперативная память проекта — №34
 
+## CURRENT WEB26 / 08.11.2026 — existing Ultra token accounting shown in owner GUI screenshots
+
+**OWNER DEMONSTRATION / UI OBSERVATION:** The existing Ultra legacy interface already shows per-role token statistics in its execution-inspection panel: `PLANNER`, `EXECUTOR`, `DREDD`, `TOTAL`, with detailed execution events/logging and context/answer views. In one screenshot the displayed example is Planner **7,367**, Executor **23,671**, Dredd **8,511**, Total **39,549** tokens (role sum matches total). These are example observed spent-token counters for a past agent run, **not** Ordinary Chat real consumption data, model context-window size, a provider quota, or proof of pre-send budget denial. The visible `tools limit 20` is a tool-count setting, not a token quota.
+
+**DECISION / NEXT:** Reuse the existing Ultra core accounting/event evidence where compatible, rather than rebuild a separate role-token telemetry engine. Map future Ordinary Chat UI accounting and model/profile context-window reporting separately; source-code audit must establish exact reusable APIs and persistence semantics. H26 U1 concerns a typed Ordinary budget route and attribution, while S2/S3a/S3b will additionally need reliable *pre-physical-send admission and durable quota enforcement*, not merely end-of-run statistics. CHAT-A01 aggregate Workspace envelope and U2–U6 remain OPEN; S3b/paid/live HOLD. Legacy GUI shown solely as historical evidence; do not reopen its development. No runtime/code/GUI changes authorized by this note.
+
 ## CURRENT WEB26 / 08.11.2026 — owner clarification: web-only UI; Ordinary budget vs model context
 
 **USER UI DECISION:** Legacy desktop GUI is frozen/untouched, remains as-is, and is excluded from future planning/discussion unless the owner explicitly reopens it. All new UI development targets Web Alarm Ultra. Preserve the existing Ultra core; no second engine. This does not authorize removal/refactoring of legacy code.
