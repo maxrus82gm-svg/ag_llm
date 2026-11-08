@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Web Alarm Ultra — Stage 6: исправление инвентаризации сетевых маршрутов RT-002/B2 S1",
   "date": "2026-11-08",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / S1 OFFLINE BOUNDED INDEPENDENT PASS; S2 one FAIL OPEN; Stage6 HOLD",
+  "review": "PASS / TARGETED INDEPENDENT WINDOWS S1 69/69 + extra 23/23; S2 INDEPENDENT 72/73 FAIL; overall PARTIAL",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/handoff_task.md",
@@ -15,7 +15,32 @@
     "report": {
       "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/report.md",
       "sha256": "c997f7f7e23c92eaede26d64e944384cc916a049067cc2095741fb73e0e600a1"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB25-CODEX-RT002-S1-REVIEW-20261108/review.md",
+      "sha256": "ac88e87555b0edbfab293822beeec6b6f43ef7a17009236a2c8dc9398dbee45e"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-RT002-B2-S1-INVENTORY-RECON-001",
+      "history_id": "H-CODEX-000024",
+      "agent": "codex",
+      "title": "Web Alarm Ultra — Stage 6: исправление инвентаризации сетевых маршрутов RT-002/B2 S1",
+      "date": "2026-11-08",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/handoff_task.md",
+          "sha256": "ab2a57b9cdaea891c3877e01f80bd5c355a68a32d14dee0071519cb8e2919aec"
+        },
+        "report": {
+          "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/report.md",
+          "sha256": "c997f7f7e23c92eaede26d64e944384cc916a049067cc2095741fb73e0e600a1"
+        }
+      }
+    }
+  ]
 }

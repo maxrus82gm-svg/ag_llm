@@ -239,6 +239,8 @@ Tkinter сохраняется до доказанного соответств�
 
 ### Этап 6. Общая защита расходов
 
+**CURRENT WEB25 / 08.11.2026 / H-CODEX-000024 S1:** main №542 `a455d97f`. Independent Windows guarded S1 **69/69 PASS** and extra reconciliation **23/23 PASS** (18 mutations), exit0/guard0; author 3 weakening RED (reviewer did not rerun). Independent guarded S2 **72/73 FAIL** on isolation oracle treating standalone S3a ledger importing pure policy as production import; separate narrow scope required. S3a independent runtime 35 NOT RUN (author 35 PASS). **S1 bounded accepted; H24 overall PARTIAL; Stage6 S3b/Stage7/paid/live HOLD**. Review `reports/CHATGPT-WEB25-CODEX-RT002-S1-REVIEW-20261108/review.md`; OPEN S2-OFFLINE-LEDGER-ISOLATION-ORACLE, S3A-INDEPENDENT-EXECUTION, Ordinary Chat policy/adoption/privacy, dynamic S3b coverage.
+
 **Фактический срез 08.11.2026 / WEB25:** первая OFFLINE подзадача S3a `H-CODEX-000023` опубликована №539. Автор 35 ledger/51 Run Store/73 S2 PASS; S1 67 PASS / 2 FAIL. Независимая source/evidence оценка **PARTIAL/BOUNDED**, independent runtime S3a NOT RUN. Пока **нет** обязательной independent S3a acceptance для начала S3b; Ordinary Chat policy, перенос старых reserves, live protections и approval ещё открыты. Сохраняются все зависимости №20 §5а, Stage6 NOT DONE, Stage7 HOLD. Review `reports/CHATGPT-WEB25-CODEX-RT002-S3A-REVIEW-20261108/review.md`.
 
 **Зачем:** новый веб-вход не должен обходить защиту, которую строит программа RT-002/B2.
