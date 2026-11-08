@@ -1,0 +1,112 @@
+{
+  "schema_version": 2,
+  "revision": 6,
+  "next_task_number": 1,
+  "next_run_number": 1,
+  "tasks": {},
+  "runs": {},
+  "budget_ledger": {
+    "schema_version": 1,
+    "workspace_id": "ws_19c293a2e58049aaa779c479c60ec4e9",
+    "ledger_id": "779382dc13584200b68f0d81268b6c85",
+    "events": [
+      {
+        "data": {
+          "binding": {
+            "chat_id": "chat_synthetic",
+            "logical_call_id": "lc_1",
+            "run_id": "run_synthetic",
+            "turn_id": "turn_synthetic"
+          },
+          "context": {
+            "final_audit_enabled": false,
+            "scope_id": "run_synthetic"
+          },
+          "policy": {
+            "compressor": {
+              "mode": "DENY"
+            },
+            "estimation": {
+              "missing_profile": "DENY",
+              "profiles": [
+                {
+                  "bytes_per_token": 1.0,
+                  "profile_key": "executor",
+                  "provider_model_id": "SYNTHETIC",
+                  "samples": 10,
+                  "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              ]
+            },
+            "mcp": {
+              "mode": "DENY"
+            },
+            "output_reserve": "MAX_TOKENS",
+            "read": {
+              "max_full_read_bytes": 4096
+            },
+            "revision_label": "S3a SYNTHETIC ONLY",
+            "run": {
+              "max_attempts_per_role": {
+                "dredd": null,
+                "executor": null,
+                "planner": null
+              },
+              "max_request_bytes": 4096,
+              "max_request_input_tokens_est": 1000,
+              "max_run_attempts": 10,
+              "max_run_liability_tokens": 2000,
+              "max_verification_request_bytes": 4096,
+              "max_verification_request_input_tokens_est": 1000,
+              "verification_reserve_attempts": 0,
+              "verification_reserve_tokens": 100
+            },
+            "schema_version": 1
+          },
+          "route_id": "executor",
+          "wire_utf8": "{\"model\":\"SYNTHETIC\",\"max_tokens\":8,\"messages\":[{\"role\":\"user\",\"content\":\"synthetic\"}]}"
+        },
+        "op": "reserve",
+        "provider_attempt_id": "pa_1"
+      },
+      {
+        "data": {},
+        "op": "mark_sent",
+        "provider_attempt_id": "pa_1"
+      },
+      {
+        "data": {
+          "outcome": "timeout",
+          "usage": null
+        },
+        "op": "terminal",
+        "provider_attempt_id": "pa_1"
+      },
+      {
+        "data": {
+          "outcome": "completed",
+          "usage": {
+            "completion_tokens": 5,
+            "precached_prompt_tokens": 0,
+            "prompt_tokens": 20
+          }
+        },
+        "op": "terminal",
+        "provider_attempt_id": "pa_1"
+      },
+      {
+        "data": {
+          "outcome": "completed",
+          "usage": {
+            "completion_tokens": 0,
+            "precached_prompt_tokens": 0,
+            "prompt_tokens": 1
+          }
+        },
+        "op": "terminal",
+        "provider_attempt_id": "pa_1"
+      }
+    ],
+    "events_sha256": "4ac9145f0d3b2e18ac4a4c015b7f3b37586629c87029d7473877088bc34e827f"
+  }
+}

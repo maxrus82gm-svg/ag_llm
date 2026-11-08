@@ -1,0 +1,73 @@
+{
+  "workspace_id": "ws_19c293a2e58049aaa779c479c60ec4e9",
+  "rows": [
+    {
+      "phase": "01_reserved",
+      "sha256": "997a41e9ad1fb6cba2a776334e9129ceb97c06ac1d8fd498b75ef39d3dbb93ca",
+      "revision": 2,
+      "events": 1,
+      "attempts": [
+        {
+          "provider_attempt_id": "pa_1",
+          "state": "RESERVED",
+          "liability_tokens": 95
+        }
+      ]
+    },
+    {
+      "phase": "02_sent",
+      "sha256": "1ded376954fdea1a62cde720ad77e48854e744acb2da80fbf66fa312a2851d51",
+      "revision": 3,
+      "events": 2,
+      "attempts": [
+        {
+          "provider_attempt_id": "pa_1",
+          "state": "SENT",
+          "liability_tokens": 95
+        }
+      ]
+    },
+    {
+      "phase": "03_unknown",
+      "sha256": "c8d5a9c0eef81a176d5fea22cc23b3d2d8b42f0b9f0ae2244bae5eb2e82ac09f",
+      "revision": 4,
+      "events": 3,
+      "attempts": [
+        {
+          "provider_attempt_id": "pa_1",
+          "state": "UNKNOWN_TERMINAL",
+          "liability_tokens": 95
+        }
+      ]
+    },
+    {
+      "phase": "04_late_reconciled",
+      "sha256": "fbb0606e3a7e2db879473c2d2675661fa452ebbd947f95261b1c969aaf5a6cee",
+      "revision": 5,
+      "events": 4,
+      "attempts": [
+        {
+          "provider_attempt_id": "pa_1",
+          "state": "RECONCILED",
+          "liability_tokens": 25
+        }
+      ]
+    },
+    {
+      "phase": "05_anomaly",
+      "sha256": "b8adb5a23419613cf9b976cfbbeb863e5e7c57146c2ea998c3a2757d238c4866",
+      "revision": 6,
+      "events": 5,
+      "attempts": [
+        {
+          "provider_attempt_id": "pa_1",
+          "state": "ANOMALY",
+          "liability_tokens": 95
+        }
+      ]
+    }
+  ],
+  "duplicate_terminal_no_write": true,
+  "new_attempt_after_anomaly_denied": true,
+  "physical_network_calls": 0
+}

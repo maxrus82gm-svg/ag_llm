@@ -1,0 +1,41 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+____________ test_corrupt_or_missing_ledger_fails_closed[checksum] ____________
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x00000222A2088DD0>
+change = 'checksum'
+
+    @pytest.mark.parametrize("change", ["bad_json", "ledger_version", "bool_version", "missing_state", "checksum", "bad_event", "missing_index", "missing_marker", "marker_version"])
+    def test_corrupt_or_missing_ledger_fails_closed(ledger, change):
+        reserve(ledger)
+        path = store.workspace_index_path(ledger.root)
+        value = json.loads(path.read_bytes())
+        state = value["budget_ledger"]
+        if change == "missing_index":
+            path.unlink()
+        elif change in {"missing_marker", "marker_version"}:
+            marker = ledger.root / ".ultra/audit/budget.enrollment.json"
+            if change == "missing_marker": marker.unlink()
+            else:
+                data = json.loads(marker.read_bytes());data["schema_version"] = 99
+                marker.write_text(json.dumps(data), encoding="utf-8")
+        elif change == "bad_json":
+            path.write_bytes(b'{"broken":')
+        else:
+            if change == "ledger_version": state["schema_version"] = 2
+            elif change == "bool_version": state["schema_version"] = True
+            elif change == "missing_state": del value["budget_ledger"]
+            elif change == "checksum": state["events"][0]["provider_attempt_id"] = "changed"
+            elif change == "bad_event":
+                state["events"][0]["op"] = "new_unknown_op"
+                from ultra_budget_ledger import _hash
+                state["events_sha256"] = _hash(state["events"])
+            path.write_text(json.dumps(value), encoding="utf-8")
+>       with pytest.raises(LedgerDenied): ledger.recover()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE LedgerDenied
+
+test_rt002_s3a_ledger.py:198: Failed
+=========================== short test summary info ===========================
+FAILED test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[checksum]
+1 failed in 0.41s

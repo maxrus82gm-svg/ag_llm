@@ -1,0 +1,22 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_sent_timeout_unknown_late_usage_and_duplicate ______________
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000016E9D1E7950>
+
+    def test_sent_timeout_unknown_late_usage_and_duplicate(ledger):
+        limited = policy(max_run_attempts=1)
+        held = reserve(ledger, raw=limited).record.reserved_liability_tokens
+        assert not ledger.mark_sent("pa_1").replayed
+        assert ledger.mark_sent("pa_1").replayed
+>       assert ledger.terminal("pa_1", "timeout", None).record.liability_tokens == held
+E       AssertionError: assert 0 == 95
+E        +  where 0 = AttemptRecord(attempt_id='pa_1', route_id='executor', provider_model_id='SYNTHETIC', scope_id='run_synthetic', reserve...ate='UNKNOWN_TERMINAL', usage=None, terminal_outcomes=('timeout',), anomalies=(), terminal_events=(('timeout', None),)).liability_tokens
+E        +    where AttemptRecord(attempt_id='pa_1', route_id='executor', provider_model_id='SYNTHETIC', scope_id='run_synthetic', reserve...ate='UNKNOWN_TERMINAL', usage=None, terminal_outcomes=('timeout',), anomalies=(), terminal_events=(('timeout', None),)) = Receipt(record=AttemptRecord(attempt_id='pa_1', route_id='executor', provider_model_id='SYNTHETIC', scope_id='run_synt...=None, terminal_outcomes=('timeout',), anomalies=(), terminal_events=(('timeout', None),)), replayed=False, revision=4).record
+E        +      where Receipt(record=AttemptRecord(attempt_id='pa_1', route_id='executor', provider_model_id='SYNTHETIC', scope_id='run_synt...=None, terminal_outcomes=('timeout',), anomalies=(), terminal_events=(('timeout', None),)), replayed=False, revision=4) = terminal('pa_1', 'timeout', None)
+E        +        where terminal = <ultra_budget_ledger.BudgetLedger object at 0x0000016E9D1E7950>.terminal
+
+test_rt002_s3a_ledger.py:139: AssertionError
+=========================== short test summary info ===========================
+FAILED test_rt002_s3a_ledger.py::test_sent_timeout_unknown_late_usage_and_duplicate
+1 failed in 0.54s

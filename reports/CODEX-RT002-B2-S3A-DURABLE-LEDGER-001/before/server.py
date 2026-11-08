@@ -1,0 +1,7290 @@
+import asyncio
+import copy
+import hashlib
+from bisect import bisect_right
+import json
+import os
+import re
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+import time
+import unicodedata
+import uuid
+from difflib import SequenceMatcher
+from pathlib import Path
+
+import httpx
+from mcp.server.mcpserver import MCPServer
+
+from context_storage import (
+    ensure_workspace_storage,
+    load_chat_working_messages,
+    load_project_context,
+    validate_task_block_id,
+)
+from workspace_runtime_settings import ensure_workspace_runtime_dirs
+from agent_global_context import load_agent_global_context
+from server_context_messages import resolve_server_context_message
+from model_registry import get_model_spec
+from gigachat_transport import CHAT_URL, OAUTH_URL, extract_usage, get_access_token
+from audit_storage import AuditThreadRecorder
+from run_store import validate_run_record
+from planner_runtime import (
+    DEFAULT_PLANNER_MODEL_ID,
+    PlannerSession,
+    raw_task_explicitly_forbids_file_mutation,
+    run_planner,
+)
+from provider_accounting import (
+    build_provider_attempt_started,
+    build_provider_attempt_terminal,
+    measure_json_block,
+    measure_text_block,
+)
+from task_planner import (
+    TaskLifecycle,
+    LifecycleBlocked,
+    PlanInvalidated,
+    PersistencePreflightRejected,
+    evidence_arguments_fingerprint,
+    evidence_dependency_state_fingerprint,
+    evidence_dependency_targets,
+    postcondition_holds,
+)
+from verifier_runtime import (
+    DEFAULT_VERIFIER_MODEL_ID,
+    VerifierProtocolError,
+    VerifierRuntimeError,
+    run_planner_dredd_review,
+    run_verifier_check,
+)
+
+mcp = MCPServer("GigaChat Ultra Subagent")
+
+# MODEL REGISTRY хранит описание доступных моделей.
+# Эти глобальные значения остаются compatibility default для старых путей;
+# основной agent RUN выбирает модель локально через run_agent_task().
+MAIN_CHAT_MODEL_ID = "gigachat_ultra"
+MAIN_CHAT_MODEL = get_model_spec(MAIN_CHAT_MODEL_ID)
+MODEL = MAIN_CHAT_MODEL.provider_model_id
+
+TEMPERATURE = 0.15
+MAX_TOKENS = 32768
+MAX_AUDIT_DIAGNOSTIC_TOKENS = 160
+AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS = 25
+AUDIT_DIAGNOSTIC_QUESTION = (
+    "Кратко объясни, какое требование, контекст или предположение привели "
+    "тебя к отклонённому решению. "
+    "Не спорь с FAIL. Не исправляй TASK в этом ответе. Не раскрывай "
+    "пошаговые внутренние рассуждения. Дай 1–3 коротких предложения "
+    "об основании решения."
+)
+
+MAX_TASK_FILE_BYTES = 2 * 1024 * 1024
+ALLOWED_TEXT_SUFFIXES = {
+    # Обычный текст / документация / данные
+    ".txt", ".md", ".mdx", ".rst", ".log", ".csv", ".tsv",
+
+    # Конфигурации / structured text
+    ".json", ".jsonl", ".jsonc", ".json5", ".xml", ".yaml", ".yml", ".toml",
+    ".ini", ".cfg", ".conf", ".config", ".properties", ".vdf", ".lock",
+    ".reg", ".inf", ".manifest",
+
+    # Python
+    ".py", ".pyi",
+
+    # C / C++
+    ".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx",
+    ".inl", ".ipp", ".tpp", ".ixx", ".cppm", ".mpp", ".rc", ".def",
+
+    # C# / .NET / Visual Studio
+    ".cs", ".csproj", ".fs", ".fsx", ".fsproj", ".vb", ".vbproj",
+    ".sln", ".slnx", ".vcxproj", ".props", ".targets", ".filters",
+    ".user", ".natvis",
+
+    # Shell / Windows scripts
+    ".bat", ".cmd", ".ps1", ".psm1", ".psd1", ".sh", ".bash", ".zsh", ".fish",
+
+    # Web / JavaScript / TypeScript
+    ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx",
+    ".html", ".htm", ".css", ".scss", ".sass", ".less", ".vue", ".svelte",
+
+    # Java / Kotlin / Gradle
+    ".java", ".kt", ".kts", ".gradle",
+
+    # Другие языки разработки
+    ".go", ".rs", ".lua", ".rb", ".php", ".pl", ".sql",
+    ".graphql", ".gql", ".proto",
+
+    # Build / native tooling
+    ".cmake", ".mk", ".mak",
+
+    # Assembly / include
+    ".asm", ".s", ".inc",
+
+    # Unity / shaders
+    ".shader", ".compute", ".cginc", ".hlsl", ".glsl",
+    ".asmdef", ".asmref", ".uxml", ".uss",
+    ".shadergraph", ".shadersubgraph",
+}
+
+ALLOWED_TEXT_FILENAMES = {
+    ".gitignore", ".gitattributes", ".gitmodules", ".editorconfig",
+    ".dockerignore", ".npmrc", ".nvmrc",
+    "Dockerfile", "Makefile", "CMakeLists.txt", "Jenkinsfile",
+    "Procfile", "Vagrantfile", "Pipfile",
+}
+
+MAX_AGENT_FILE_BYTES = 2 * 1024 * 1024
+MAX_FIND_TEXT_MATCHES = 100
+MAX_FIND_TEXT_SNIPPET_CHARS = 120
+MAX_READ_RANGE_LINES = 200
+MAX_READ_RANGE_BYTES = 64 * 1024
+MAX_AGENT_LIST_ENTRIES = 500
+MAX_AGENT_LIST_BYTES = 64 * 1024
+MAX_AGENT_TOOL_ITERATIONS = 20
+MAX_CONFIGURABLE_TOOL_ITERATIONS = 200
+MAX_VERIFY_OUTPUT_BYTES = 128 * 1024
+MAX_FINAL_AUDIT_CONTEXT_BYTES = 1024 * 1024
+MAX_FINAL_AUDIT_NEW_FILE_BYTES = MAX_VERIFY_OUTPUT_BYTES
+MAX_FINAL_AUDIT_TOOL_MATERIAL_ITEM_BYTES = 8 * 1024
+MAX_FINAL_AUDIT_TOOL_MATERIAL_BYTES = 32 * 1024
+# Discovery evidence is proven by its own server-observed tool result, never by Git state.
+FINAL_AUDIT_DISCOVERY_TOOLS = frozenset({"list_dir", "find_text"})
+FINAL_AUDIT_CORRECTION_LIMIT = 2
+EXECUTION_CONSISTENCY_SERVER_RETRY_LIMIT = 1
+EXECUTION_CONSISTENCY_CORRECTION_LIMIT = 1
+MAX_CONSISTENCY_CONTEXT_BYTES = 128 * 1024
+FINAL_AUDIT_REPEATED_FAILURE_THRESHOLD = 3
+VERIFY_TIMEOUT_SECONDS = 30
+UI_SMOKE_TIMEOUT_SECONDS = 30
+MAX_VERIFICATION_GATE_RETRIES = 3
+
+# GUARD P1 — server-side supervisor для мягкого вмешательства
+# в явно подозрительные действия агента.
+GUARD_P1_VERSION = 1
+GUARD_P1_REPEAT_AFTER_SUCCESSES = 2
+GUARD_P1_REPEAT_MAX_INTERVENTIONS = 2
+GUARD_P1_MAX_INTERVENTIONS_PER_RUN = 8
+GUARD_P1_CREATE_SCORE_THRESHOLD = 75
+GUARD_P1_REPEAT_TOOL_NAMES = {"read_file", "list_dir"}
+TOOL_RESERVE_MAX_INTERVENTIONS = 3
+EVIDENCE_GATE_MAX_INTERVENTIONS = 3
+FINAL_RESPONSE_REPAIR_LIMIT = 1
+
+VERIFICATION_TOOL_NAMES = {
+    "verify_file_content",
+    "python_compile",
+    "git_status",
+    "git_diff",
+    "ui_smoke_test",
+}
+READ_TOOL_NAMES = {"list_dir", "read_file", "find_text", "read_file_range"}
+TEXT_MUTATION_TOOL_NAMES = {
+    "write_file", "replace_text", "insert_before", "insert_after",
+}
+MUTATION_TOOL_NAMES = TEXT_MUTATION_TOOL_NAMES | {"delete_file"}
+CAPABILITY_BY_TOOL = {
+    **{name: "READ" for name in READ_TOOL_NAMES},
+    **{name: "WRITE" for name in TEXT_MUTATION_TOOL_NAMES},
+    "delete_file": "DELETE",
+    **{name: "VERIFY" for name in VERIFICATION_TOOL_NAMES},
+}
+PERMISSION_ESCALATION_THRESHOLD = 2
+
+
+def _classify_mutation_intent(task: str) -> dict:
+    """Only a high-confidence hint; it never requires a write."""
+    clauses = re.split(r"(?<=[.!?;,])\s+|[\r\n]+", task.casefold())
+    action_pattern = re.compile(
+        r"\b(?:измен(?:и|ить|ять|яй)|обнов(?:и|ить|лять|ляй)|исправ(?:ь|ить)|"
+        r"добав(?:ь|ить)|встав(?:ь|ить)|замен(?:и|ить)|удал(?:и|ить)|"
+        r"созда(?:й|ть)|созд(?:ай|ать)|перепиш(?:и|ите)|"
+        r"edit|update|modify|fix|add|insert|replace|delete|create|write)\b"
+    )
+    path_pattern = re.compile(
+        r"(?:[\wА-Яа-яЁё .-]+[/\\][\wА-Яа-яЁё .-]+|[^\s\"'<>:;]+)"
+        r"\.(?:md|mdx|txt|py|json|yaml|yml|toml|ini|cfg|js|jsx|ts|tsx|html|css|csv|xml)\b"
+    )
+    target_pattern = re.compile(
+        r"\b(?:файл\w*|документ\w*|код|конфигураци\w*|file\w*|document\w*|code|config\w*)\b"
+    )
+    declaration_pattern = re.compile(
+        r"^\s*(?:работай(?:те)?\s+(?:только\s+)?с\s+файлом|"
+        r"изменять\s+можно\s+только\s+один\s+файл|целевой\s+файл|"
+        r"target\s+file|work\s+(?:only\s+)?with\s+(?:the\s+)?file)\s*:\s*(.*)$"
+    )
+    declared_paths = []
+    lines = task.casefold().splitlines()
+    for index, line in enumerate(lines):
+        declaration = declaration_pattern.match(line)
+        if declaration is None:
+            continue
+        candidate = declaration.group(1).strip()
+        if not candidate:
+            for following in lines[index + 1:index + 4]:
+                if following.strip():
+                    candidate = following.strip()
+                    break
+        path = path_pattern.search(candidate)
+        if path is not None:
+            declared_paths.append(path.group().strip())
+    declared_target = declared_paths[0] if len(set(declared_paths)) == 1 else None
+    saw_negation = False
+    for index, clause in enumerate(clauses):
+        if declaration_pattern.match(clause):
+            continue  # A working-file declaration alone does not request a mutation.
+        target = path_pattern.search(clause) or target_pattern.search(clause)
+        for action in action_pattern.finditer(clause):
+            prefix = clause[:action.start()]
+            if re.search(r"\b(?:не|not|don't|do not)\b(?:\s+\w+){0,2}\s*$", prefix):
+                saw_negation = True
+                continue
+            local_target = path_pattern.search(clause)
+            if local_target is None and index + 1 < len(clauses):
+                following = clauses[index + 1]
+                if not re.search(r"\b(?:не|not|don't|do not)\b", following):
+                    local_target = path_pattern.search(following)
+            if local_target is None:
+                local_target = target
+            if local_target is not None:
+                return {
+                    "mutation_intent": "LIKELY_MUTATION",
+                    "reasons": [f"action:{action.group()}", f"target:{local_target.group()[:120]}"],
+                }
+            if declared_target is not None:
+                return {
+                    "mutation_intent": "LIKELY_MUTATION",
+                    "reasons": [f"action:{action.group()}", f"target:{declared_target[:120]}",
+                                "target_source:declared"],
+                }
+    return {
+        "mutation_intent": "UNKNOWN",
+        "reasons": ["negated_mutation_instruction" if saw_negation else "no_unambiguous_action_target_pair"],
+    }
+
+
+def _consistency_target_paths(task: str) -> list[str]:
+    """Extract only explicit relative file names; reads still pass READ scope checks."""
+    suffixes = r"md|mdx|txt|py|json|yaml|yml|toml|ini|cfg|js|jsx|ts|tsx|html|css|csv|xml"
+    found = re.findall(rf"[^\r\n\"'<>:;]+?\.(?:{suffixes})\b", task, re.I)
+    paths = []
+    for value in found:
+        value = re.sub(r"^(?:.*?\b(?:файл|file|документ|document)\s*:?\s*)", "", value.strip(), flags=re.I)
+        value = value.strip(" \t`*•-.,")
+        if value and value not in paths:
+            paths.append(value)
+    return paths[:3]
+
+
+def _consistency_safe_snippet(content: str, limit: int = 12000) -> str:
+    redacted = []
+    for line in content.splitlines(keepends=True):
+        if re.search(
+            r"(?i)(?:\b(?:password|passwd|api[_-]?key|secret|access[_-]?token|private[_-]?key)\b[\"']?\s*[:=]|\bbearer\s+|-----BEGIN .*PRIVATE KEY-----)",
+            line,
+        ):
+            redacted.append("<sensitive line omitted>\n")
+        else:
+            redacted.append(line)
+    return _clip_final_audit_text("".join(redacted), limit)[0]
+
+
+def _collect_consistency_evidence(*, task: str, root: Path, policy: dict,
+                                  run_id: str, intent: dict, candidates: list[str],
+                                  tool_facts: list[dict], tool_call_count: int,
+                                  verification_state: dict, run_owned_state: dict,
+                                  available_functions: list[dict]) -> str:
+    targets = _consistency_target_paths(task)
+    independent = []
+    for path in targets:
+        item = {"path": path}
+        try:
+            result = _agent_read_file(root, path, policy)
+            content = result.get("content", "")
+            clipped, truncated, size = _clip_final_audit_text(content, 12000)
+            item.update({"available": True, "exists": True,
+                         "logical_content_sha256": _sha256_utf8(content),
+                         "content": _consistency_safe_snippet(clipped),
+                         "truncated": truncated, "original_bytes": size})
+        except Exception as exc:
+            item.update({"available": False, "reason": f"{type(exc).__name__}: {str(exc)[:200]}"})
+        independent.append(item)
+    facts = {
+        "check_type": "CONSISTENCY", "run_id": run_id,
+        "problem": "Repeated no-mutation after one server self-check",
+        "first_consistency_feedback_delivered": True,
+        "mutation_intent": intent, "permission_policy": _policy_summary(policy),
+        "available_executor_tools": [item["name"] for item in available_functions],
+        "first_candidate_final_response": candidates[0][:12000] if candidates else None,
+        "second_candidate_final_response": candidates[-1][:12000] if candidates else None,
+        "candidate_history": [item[:12000] for item in candidates[-3:]],
+        "tool_call_count": tool_call_count, "tool_calls": tool_facts[-30:],
+        "successful_tool_calls": sum(item["status"] == "OK" for item in tool_facts),
+        "failed_tool_calls": sum(item["status"] == "ERROR" for item in tool_facts),
+        "write_revision": verification_state["write_revision"],
+        "verification_state": verification_state, "run_owned_state": run_owned_state,
+        "independent_target_evidence": independent if independent else "unavailable",
+        "evidence_rule": "Executor reports are claims, not proof; no mutation is mandatory solely from this hint.",
+    }
+    encoded = json.dumps(facts, ensure_ascii=False, sort_keys=True)
+    if len(encoded.encode("utf-8")) > MAX_CONSISTENCY_CONTEXT_BYTES:
+        facts["tool_calls"] = tool_facts[-10:]
+        facts["candidate_history"] = [item[:8000] for item in candidates[-3:]]
+        for item in independent:
+            item.pop("content", None)
+            item["content_omitted_due_to_limit"] = True
+        encoded = json.dumps(facts, ensure_ascii=False, sort_keys=True)
+    if len(encoded.encode("utf-8")) > MAX_CONSISTENCY_CONTEXT_BYTES:
+        raise FinalAuditEvidenceError("Consistency evidence exceeds its hard size limit")
+    return encoded
+
+BACKUP_BASE = (
+    Path(os.getenv("LOCALAPPDATA") or Path.home())
+    / "GigaChatUltra"
+    / "backups"
+).resolve()
+
+CORE_BACKUP_RELATIVE_PATHS = (
+    "server.py",
+    "model_registry.py",
+    "context_storage.py",
+    "workspace_runtime_settings.py",
+    "ui_state.py",
+    "ultra_ui.py",
+    "Start_Ultra.cmd",
+    ".gitignore",
+    "agent_global_context.py",
+    "server_context_messages.py",
+)
+
+AGENT_FUNCTIONS = [
+    {
+        "name": "list_dir",
+        "description": "Показать файлы и папки внутри рабочей папки.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Относительный путь внутри рабочей папки.",
+                }
+            },
+            "required": ["path"],
+        },
+    },
+    {
+        "name": "read_file",
+        "description": "Прочитать целиком текстовый файл (UTF-8; .jsonl — UTF-16). Для большого файла и локальной правки предпочитай find_text/read_file_range.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Относительный путь к текстовому файлу.",
+                }
+            },
+            "required": ["path"],
+        },
+    },
+    {
+        "name": "find_text",
+        "description": "Найти точное вхождение текста в файле; вернуть позиции, короткие фрагменты и SHA-256 содержимого. Для локальной правки большого файла начни с этого инструмента.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "description": "Относительный путь к текстовому файлу."},
+            "text": {"type": "string", "description": "Непустая точная подстрока для поиска."},
+        }, "required": ["path", "text"]},
+    },
+    {
+        "name": "read_file_range",
+        "description": "Прочитать только заданные строки файла (1-based, границы включительно) и вернуть SHA-256 полного logical content.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "description": "Относительный путь к текстовому файлу."},
+            "start_line": {"type": "integer", "description": "Первая строка, от 1."},
+            "end_line": {"type": "integer", "description": "Последняя строка включительно."},
+        }, "required": ["path", "start_line", "end_line"]},
+    },
+    {
+        "name": "write_file",
+        "description": (
+            "Создать файл или намеренно полностью перезаписать текстовый файл "
+            "(UTF-8; .jsonl — UTF-16). Для локальной правки существующего файла "
+            "предпочитай find_text/read_file_range и точные edit tools."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Относительный путь к текстовому файлу.",
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Полное новое содержимое файла.",
+                },
+            },
+            "required": ["path", "content"],
+        },
+    },
+    {
+        "name": "replace_text",
+        "description": "Точно заменить единственное вхождение old_text после проверки SHA-256 файла. Не выполняет fuzzy replacement и не возвращает весь файл.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "description": "Относительный путь к существующему текстовому файлу."},
+            "old_text": {"type": "string", "description": "Непустой уникальный точный фрагмент."},
+            "new_text": {"type": "string", "description": "Новый фрагмент."},
+            "expected_content_sha256": {"type": "string", "description": "SHA-256 полного logical content из find_text/read_file_range."},
+        }, "required": ["path", "old_text", "new_text", "expected_content_sha256"]},
+    },
+    *[
+        {
+            "name": name,
+            "description": f"Точно вставить content {'перед' if name == 'insert_before' else 'после'} единственного marker после проверки SHA-256 файла. Не возвращает весь файл.",
+            "parameters": {"type": "object", "properties": {
+                "path": {"type": "string", "description": "Относительный путь к существующему текстовому файлу."},
+                "marker": {"type": "string", "description": "Непустой уникальный точный маркер."},
+                "content": {"type": "string", "description": "Вставляемый фрагмент."},
+                "expected_content_sha256": {"type": "string", "description": "SHA-256 полного logical content из find_text/read_file_range."},
+            }, "required": ["path", "marker", "content", "expected_content_sha256"]},
+        }
+        for name in ("insert_before", "insert_after")
+    ],
+    {
+        "name": "delete_file",
+        "description": (
+            "Удалить существующий текстовый файл внутри рабочей папки. "
+            "Инструмент доступен только когда сервер явно разрешил удаление."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Относительный путь к удаляемому текстовому файлу.",
+                }
+            },
+            "required": ["path"],
+        },
+    },
+
+    {
+        "name": "verify_file_content",
+        "description": (
+            "Server-side read-only verification текстового файла. "
+            "Проверяет exists/absent/equals/contains/sha256 без запуска shell/Python. "
+            "Используй для точной проверки .txt/.md/.json и других текстовых файлов."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "kind": {"type": "string", "enum": [
+                    "exists", "absent", "equals", "contains", "sha256",
+                ]},
+                "value": {"type": "string"},
+            },
+            "required": ["path", "kind", "value"],
+        },
+    },
+    {
+        "name": "python_compile",
+        "description": (
+            "Реально проверить синтаксис одного или нескольких Python-файлов "
+            "внутри разрешённой области чтения. Использует py_compile текущего "
+            "Python и не создаёт __pycache__ внутри workspace."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "paths": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Список относительных путей .py внутри workspace.",
+                }
+            },
+            "required": ["paths"],
+        },
+    },
+    {
+        "name": "git_status",
+        "description": (
+            "Read-only проверка git status рабочего дерева. Ничего не изменяет "
+            "в Git и возвращает только файлы внутри разрешённой области чтения."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+        },
+    },
+    {
+        "name": "git_diff",
+        "description": (
+            "Read-only git diff относительно HEAD. Показывает фактические изменения "
+            "только для проверенных относительных путей в области чтения."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "paths": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": (
+                        "Относительные пути. Пустой список означает текущую "
+                        "разрешённую область чтения."
+                    ),
+                }
+            },
+            "required": ["paths"],
+        },
+    },
+    {
+        "name": "ui_smoke_test",
+        "description": (
+            "Ограниченный runtime smoke-test ultra_ui.UltraApp. Сервер сам задаёт "
+            "target; произвольный Python-код или команды передать нельзя."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+        },
+    },
+]
+
+async def ask_gigachat(prompt: str) -> str:
+    token = await get_access_token()
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json",
+    }
+
+    body = {
+        "model": MODEL,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": TEMPERATURE,
+        "max_tokens": MAX_TOKENS,
+        "stream": False,
+    }
+
+    async with httpx.AsyncClient(timeout=180.0) as client:
+        response = await client.post(
+            CHAT_URL,
+            headers=headers,
+            json=body,
+        )
+        response.raise_for_status()
+
+    data = response.json()
+
+    try:
+        choice = data["choices"][0]
+        content = choice["message"]["content"]
+        finish_reason = choice.get("finish_reason")
+
+        if not content:
+            raise RuntimeError(f"GigaChat вернул пустой ответ: {data}")
+
+        if finish_reason and finish_reason not in ("stop", "eos"):
+            raise RuntimeError(
+                "Ответ GigaChat завершён нештатно. "
+                f"finish_reason={finish_reason}. "
+                "Возможна обрезка ответа по лимиту токенов."
+            )
+
+        return content
+    except (KeyError, IndexError, TypeError) as exc:
+        raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
+
+def _validate_workspace_root(workspace_root: str) -> Path:
+    if not isinstance(workspace_root, str) or not workspace_root.strip():
+        raise ValueError("workspace_root должен быть непустой строкой.")
+
+    root = Path(workspace_root)
+    if not root.is_absolute():
+        raise ValueError("workspace_root должен быть абсолютным путём.")
+    if not root.exists():
+        raise FileNotFoundError(f"Рабочая папка не найдена: {root}")
+    if not root.is_dir():
+        raise NotADirectoryError(f"workspace_root не является папкой: {root}")
+
+    return root.resolve()
+
+def _resolve_workspace_path(root: Path, path_text: str) -> Path:
+    if not isinstance(path_text, str) or not path_text.strip():
+        raise ValueError("path должен быть непустой строкой.")
+
+    relative_path = Path(path_text)
+    if relative_path.is_absolute() or relative_path.drive or relative_path.anchor:
+        raise ValueError("Абсолютные пути запрещены; используйте путь от workspace_root.")
+    if ".." in relative_path.parts:
+        raise ValueError("Выход через '..' запрещён.")
+
+    resolved = (root / relative_path).resolve()
+    if resolved != root and root not in resolved.parents:
+        raise ValueError("Путь выходит за пределы workspace_root.")
+
+    return resolved
+
+def get_backup_base_path() -> Path:
+    """Путь к локальным защищённым backup-снимкам Ultra."""
+    return BACKUP_BASE
+
+def _is_within(path: Path, base: Path) -> bool:
+    return path == base or base in path.parents
+
+def _normalize_permissions(permissions: dict | None) -> dict:
+    """Нормализовать серверные разрешения одного запуска.
+
+    Если permissions=None, применяется безопасный fail-closed default:
+    чтение разрешено во всём workspace, запись запрещена, автобэкап включён.
+    UI всегда передаёт явную политику.
+    """
+    if permissions is None:
+        permissions = {
+            "allow_read": True,
+            "allow_write": False,
+            "allow_delete": False,
+            "allow_verify": True,
+            "allow_guard_p1": True,
+            "read_scope": ".",
+            "write_scope": ".",
+            "delete_scope": ".",
+            "tool_limit": MAX_AGENT_TOOL_ITERATIONS,
+            "auto_backup": True,
+        }
+    if not isinstance(permissions, dict):
+        raise ValueError("permissions должен быть словарём или None.")
+
+    def clean_scope(value: object, name: str) -> str:
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"{name} должен быть непустым относительным путём.")
+        scope = value.strip().replace("\\", "/")
+        candidate = Path(scope)
+        if candidate.is_absolute() or candidate.drive or candidate.anchor:
+            raise ValueError(f"{name}: абсолютные пути запрещены.")
+        if ".." in candidate.parts:
+            raise ValueError(f"{name}: выход через '..' запрещён.")
+        return candidate.as_posix() or "."
+
+    allow_read = bool(permissions.get("allow_read", True))
+    allow_write = bool(permissions.get("allow_write", False))
+    allow_delete = bool(permissions.get("allow_delete", False))
+    allow_verify = bool(permissions.get("allow_verify", True))
+    allow_guard_p1 = bool(permissions.get("allow_guard_p1", True))
+    # Защищённый backup — обязательная серверная защита.
+    # Поле сохраняется в policy для обратной совместимости старых вызовов,
+    # но отключить backup через permissions больше нельзя.
+    auto_backup = True
+    read_scope = clean_scope(permissions.get("read_scope", "."), "read_scope")
+    write_scope = clean_scope(permissions.get("write_scope", "."), "write_scope")
+    delete_scope = clean_scope(permissions.get("delete_scope", "."), "delete_scope")
+
+    try:
+        tool_limit = int(
+            permissions.get("tool_limit", MAX_AGENT_TOOL_ITERATIONS)
+        )
+    except (TypeError, ValueError) as exc:
+        raise ValueError("tool_limit должен быть целым числом.") from exc
+    if not 1 <= tool_limit <= MAX_CONFIGURABLE_TOOL_ITERATIONS:
+        raise ValueError(
+            "tool_limit должен быть в диапазоне "
+            f"1..{MAX_CONFIGURABLE_TOOL_ITERATIONS}."
+        )
+
+    return {
+        "allow_read": allow_read,
+        "allow_write": allow_write,
+        "allow_delete": allow_delete,
+        "allow_verify": allow_verify,
+        "allow_guard_p1": allow_guard_p1,
+        "read_scope": read_scope,
+        "write_scope": write_scope,
+        "delete_scope": delete_scope,
+        "tool_limit": tool_limit,
+        "auto_backup": auto_backup,
+    }
+
+def _prepare_policy_for_workspace(root: Path, policy: dict) -> dict:
+    result = dict(policy)
+    read_root = _resolve_workspace_path(root, result["read_scope"])
+    write_root = _resolve_workspace_path(root, result["write_scope"])
+    delete_root = _resolve_workspace_path(root, result["delete_scope"])
+
+    if result["allow_read"] and not read_root.is_dir():
+        raise NotADirectoryError(
+            f"Разрешённая область чтения не найдена: {result['read_scope']}"
+        )
+    if result["allow_write"] and not write_root.is_dir():
+        raise NotADirectoryError(
+            f"Разрешённая область записи не найдена: {result['write_scope']}"
+        )
+    if result["allow_delete"] and not delete_root.is_dir():
+        raise NotADirectoryError(
+            f"Разрешённая область удаления не найдена: {result['delete_scope']}"
+        )
+
+    # Фундаментальный fail-closed: изменяющий RUN нельзя запускать без
+    # возможности перечитать и реально проверить результат.
+    if result["allow_write"] or result["allow_delete"]:
+        if not result["allow_read"]:
+            raise PermissionError(
+                "WRITE/DELETE требуют READ=ON: сервер обязан иметь возможность "
+                "перечитать и проверить изменения до SUCCESS."
+            )
+        if not result["allow_verify"]:
+            raise PermissionError(
+                "WRITE/DELETE требуют VERIFY=ON: изменяющий RUN без реальных "
+                "проверок запрещён сервером."
+            )
+        if result["allow_write"] and not _is_within(write_root, read_root):
+            raise PermissionError(
+                "Область WRITE должна находиться внутри области READ: сервер "
+                "обязан иметь возможность перечитать и проверить каждый файл, "
+                "который Ultra может изменить."
+            )
+        if result["allow_delete"] and not _is_within(delete_root, read_root):
+            raise PermissionError(
+                "Область DELETE должна находиться внутри области READ: сервер "
+                "обязан видеть изменения рабочего дерева до финального SUCCESS."
+            )
+
+    result["_read_root"] = read_root
+    result["_write_root"] = write_root
+    result["_delete_root"] = delete_root
+    return result
+
+def _deny_backup_area(path: Path) -> None:
+    if _is_within(path, BACKUP_BASE):
+        raise PermissionError(
+            "Защищённая папка резервных копий недоступна агенту."
+        )
+
+def _deny_context_storage_area(root: Path, path: Path) -> None:
+    context_root = (root / ".ultra").resolve()
+    if _is_within(path, context_root):
+        raise PermissionError(
+            "Служебное хранилище .ultra недоступно обычным file tools. "
+            "PROJECT CONTEXT и история должны изменяться только через "
+            "контролируемый Context Storage API."
+        )
+
+def _require_operation_permission(
+    root: Path, path_text: str, operation: str, policy: dict
+) -> Path:
+    path = _resolve_workspace_path(root, path_text)
+    _deny_backup_area(path)
+    _deny_context_storage_area(root, path)
+
+    if (
+        operation in {"write", "delete"}
+        and policy.get("_raw_task_forbids_file_mutation")
+    ):
+        raise PermissionError(
+            "RAW TASK явно запрещает изменения файлов для этого RUN."
+        )
+
+    if operation in {"list", "read"}:
+        if not policy["allow_read"]:
+            raise PermissionError("Чтение отключено для этого запуска.")
+        scope_root = policy["_read_root"]
+        scope_name = policy["read_scope"]
+    elif operation == "write":
+        if not policy["allow_write"]:
+            raise PermissionError("Запись отключена для этого запуска.")
+        scope_root = policy["_write_root"]
+        scope_name = policy["write_scope"]
+    elif operation == "delete":
+        if not policy["allow_delete"]:
+            raise PermissionError("Удаление отключено для этого запуска.")
+        scope_root = policy["_delete_root"]
+        scope_name = policy["delete_scope"]
+    else:
+        raise ValueError(f"Неизвестная операция доступа: {operation}")
+    if not _is_within(path, scope_root):
+        raise PermissionError(
+            f"Доступ запрещён сервером: {path_text!r} находится вне "
+            f"разрешённой области {scope_name!r}."
+        )
+    return path
+
+def _functions_for_policy(
+    policy: dict, allowed_capabilities: set[str] | None = None,
+) -> list[dict]:
+    allowed_names = set()
+    if policy["allow_read"]:
+        allowed_names.update(READ_TOOL_NAMES)
+    # Schemas are visible for permission review unless RAW TASK explicitly
+    # forbids every file mutation. In that case no escalation can make mutation valid.
+    if not policy.get("_raw_task_forbids_file_mutation"):
+        allowed_names.update(MUTATION_TOOL_NAMES)
+    # VERIFY не является обходом READ: инструменты проверки получают код/дифф
+    # только когда физически разрешено чтение.
+    if policy["allow_verify"] and policy["allow_read"]:
+        allowed_names.update(VERIFICATION_TOOL_NAMES)
+    functions = []
+    for item in AGENT_FUNCTIONS:
+        capability = CAPABILITY_BY_TOOL.get(item["name"])
+        if allowed_capabilities is not None and capability not in allowed_capabilities:
+            continue
+        if item["name"] not in allowed_names:
+            continue
+        exposed = dict(item)
+        if capability in {"WRITE", "DELETE"} and not policy[f"allow_{capability.lower()}"]:
+            exposed["description"] += (
+                f" Schema доступна, но {capability} выключена: сервер отклонит "
+                "выполнение до отдельного разрешения для текущего RUN."
+            )
+        functions.append(exposed)
+    return functions
+
+def _policy_summary(policy: dict) -> dict:
+    return {
+        "allow_read": policy["allow_read"],
+        "allow_write": policy["allow_write"],
+        "allow_delete": policy["allow_delete"],
+        "allow_verify": policy["allow_verify"],
+        "allow_guard_p1": policy["allow_guard_p1"],
+        "read_scope": policy["read_scope"],
+        "write_scope": policy["write_scope"],
+        "delete_scope": policy["delete_scope"],
+        "tool_limit": policy["tool_limit"],
+        "auto_backup": policy["auto_backup"],
+    }
+
+
+def _permission_review_context(
+    *, policy: dict, capability: str, attempts: list[dict],
+    tool_facts: list[dict], verification_state: dict, run_owned_state: dict,
+    available_functions: list[dict],
+) -> str:
+    """Bounded, server-owned facts; no Executor conversation or assertions."""
+    facts = {
+        "permission_policy": _policy_summary(policy),
+        "capability": capability,
+        "denied_attempts": attempts[:PERMISSION_ESCALATION_THRESHOLD],
+        "denied_calls_executed": False,
+        "recent_server_observed_tools": tool_facts[-12:],
+        "write_revision": verification_state["write_revision"],
+        "run_owned_mutation_state": dict(list(run_owned_state.items())[-20:]),
+        "run_owned_mutation_count": len(run_owned_state),
+        "allowed_capabilities": [name for name, key in (
+            ("READ", "allow_read"), ("WRITE", "allow_write"),
+            ("DELETE", "allow_delete"), ("VERIFY", "allow_verify"),
+        ) if policy[key]],
+        "exposed_tool_schemas": [item["name"] for item in available_functions],
+    }
+    encoded = json.dumps(facts, ensure_ascii=False, default=str)
+    if len(encoded) > MAX_VERIFY_OUTPUT_BYTES:
+        facts["recent_server_observed_tools"] = tool_facts[-4:]
+        facts["run_owned_mutation_state"] = dict(list(run_owned_state.items())[-5:])
+        encoded = json.dumps(facts, ensure_ascii=False, default=str)
+    if len(encoded) > MAX_VERIFY_OUTPUT_BYTES:
+        facts["recent_server_observed_tools"] = []
+        facts["run_owned_mutation_state"] = {}
+        facts["evidence_truncated"] = True
+        encoded = json.dumps(facts, ensure_ascii=False, default=str)
+    return encoded
+
+def _write_backup_manifest(session: dict) -> None:
+    manifest_path = session["backup_dir"] / "manifest.json"
+    content = json.dumps(session["manifest"], ensure_ascii=False, indent=2)
+    fd, temporary_name = tempfile.mkstemp(
+        prefix=".manifest.", suffix=".tmp", dir=session["backup_dir"]
+    )
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="") as stream:
+            stream.write(content)
+        os.replace(temporary_name, manifest_path)
+    finally:
+        if os.path.exists(temporary_name):
+            os.unlink(temporary_name)
+
+def _create_backup_session(
+    app_dir: Path,
+    root: Path,
+    run_id: str,
+    task: str,
+    policy: dict,
+    *,
+    backup_base: Path,
+    workspace_id: str,
+    chat_id: str | None,
+) -> dict | None:
+    if not policy["auto_backup"]:
+        return None
+
+    backup_dir = backup_base / run_id
+    backup_dir.mkdir(parents=True, exist_ok=False)
+    core_dir = backup_dir / "core"
+    copied_core = []
+
+    for relative_text in CORE_BACKUP_RELATIVE_PATHS:
+        source = app_dir / Path(relative_text)
+        if not source.is_file():
+            continue
+        destination = core_dir / Path(relative_text)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+        copied_core.append(relative_text)
+
+    # Snapshot переносимого context state: metadata, PROJECT CONTEXT,
+    # чаты и RAW HISTORY. Persistent Audit Thread не нужен для rollback.
+    context_snapshot = None
+    context_source = (root / ".ultra").resolve()
+    if context_source.is_dir():
+        context_destination = backup_dir / "context" / ".ultra"
+        context_destination.parent.mkdir(parents=True, exist_ok=True)
+        def ignore_audit_namespace(source_dir: str, names: list[str]) -> set[str]:
+            if Path(source_dir) == context_source and "audit" in names:
+                return {"audit"}
+            return set()
+
+        shutil.copytree(
+            context_source, context_destination, ignore=ignore_audit_namespace
+        )
+        context_snapshot = "context/.ultra"
+
+    manifest = {
+        "run_id": run_id,
+        "created_at": time.time(),
+        "workspace_id": workspace_id,
+        "workspace": str(root),
+        "chat_id": chat_id,
+        "task_preview": task[:500],
+        "policy": _policy_summary(policy),
+        "context_snapshot": context_snapshot,
+        "core_files": copied_core,
+        "changed_files": [],
+        "new_files": [],
+        "deleted_files": [],
+    }
+    session = {
+        "backup_dir": backup_dir,
+        "backed_up_paths": set(),
+        "delete_backed_up_paths": set(),
+        "manifest": manifest,
+    }
+    _write_backup_manifest(session)
+    return session
+
+def _backup_before_write(root: Path, path: Path, session: dict | None) -> None:
+    if session is None:
+        return
+
+    relative = path.relative_to(root).as_posix()
+    if relative in session["backed_up_paths"]:
+        return
+
+    if path.exists():
+        if not path.is_file():
+            raise ValueError(f"Нельзя резервировать не-файл: {relative}")
+        destination = session["backup_dir"] / "changed" / Path(relative)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(path, destination)
+        manifest_key = "changed_files"
+    else:
+        manifest_key = "new_files"
+    updated_manifest = dict(session["manifest"])
+    updated_manifest[manifest_key] = [
+        *updated_manifest[manifest_key], relative
+    ]
+    _write_backup_manifest({**session, "manifest": updated_manifest})
+    session["manifest"] = updated_manifest
+    session["backed_up_paths"].add(relative)
+
+def _backup_before_delete(root: Path, path: Path, session: dict | None) -> None:
+    """Сохранить файл непосредственно перед delete_file."""
+    if session is None:
+        return
+
+    relative = path.relative_to(root).as_posix()
+    if relative in session["delete_backed_up_paths"]:
+        return
+    if not path.is_file():
+        raise ValueError(f"Нельзя резервировать перед удалением не-файл: {relative}")
+
+    destination = session["backup_dir"] / "deleted" / Path(relative)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(path, destination)
+
+    updated_manifest = dict(session["manifest"])
+    if relative not in updated_manifest["deleted_files"]:
+        updated_manifest["deleted_files"] = [
+            *updated_manifest["deleted_files"], relative
+        ]
+    _write_backup_manifest({**session, "manifest": updated_manifest})
+    session["manifest"] = updated_manifest
+    session["delete_backed_up_paths"].add(relative)
+
+
+def _require_text_suffix(path: Path) -> None:
+    suffix = path.suffix.lower()
+    name = path.name
+
+    if suffix in ALLOWED_TEXT_SUFFIXES:
+        return
+
+    if name in ALLOWED_TEXT_FILENAMES:
+        return
+
+    if name == ".env" or name.startswith(".env."):
+        return
+
+    allowed_suffixes = ", ".join(sorted(ALLOWED_TEXT_SUFFIXES))
+    allowed_names = ", ".join(sorted(ALLOWED_TEXT_FILENAMES))
+
+    raise ValueError(
+        "Формат файла не разрешён для обычных текстовых file tools. "
+        f"Расширения: {allowed_suffixes}. "
+        f"Специальные имена: {allowed_names}. "
+        "Также разрешены .env и .env.*"
+    )
+
+def _agent_list_dir(root: Path, path_text: str, policy: dict) -> dict:
+    path = _require_operation_permission(root, path_text, "list", policy)
+    if not path.is_dir():
+        raise NotADirectoryError(f"Папка не найдена: {path_text}")
+
+    entries = []
+    truncated = False
+    for child in sorted(path.iterdir(), key=lambda item: item.name.casefold()):
+        # Даже если backup-папка когда-либо окажется внутри workspace,
+        # агент её не увидит в листинге.
+        try:
+            if _is_within(child.resolve(), BACKUP_BASE):
+                continue
+        except OSError:
+            pass
+
+        if len(entries) >= MAX_AGENT_LIST_ENTRIES:
+            truncated = True
+            break
+
+        if child.is_symlink():
+            kind = "symlink"
+        elif child.is_dir():
+            kind = "directory"
+        elif child.is_file():
+            kind = "file"
+        else:
+            kind = "other"
+
+        candidate = entries + [{"name": child.name, "type": kind}]
+        encoded = json.dumps(candidate, ensure_ascii=False).encode("utf-8")
+        if len(encoded) > MAX_AGENT_LIST_BYTES:
+            truncated = True
+            break
+        entries = candidate
+
+    return {
+        "path": path.relative_to(root).as_posix() or ".",
+        "entries": entries,
+        "truncated": truncated,
+    }
+
+def _logical_text_encoding(path: Path) -> str:
+    return "utf-16" if path.suffix.lower() == ".jsonl" else "utf-8"
+
+
+def _logical_line_starts(content: str) -> list[int]:
+    starts = [0]
+    offset = 0
+    for line in content.splitlines(keepends=True):
+        offset += len(line)
+        if offset < len(content):
+            starts.append(offset)
+    return starts
+
+
+def _read_logical_text(path: Path) -> str:
+    _require_text_suffix(path)
+    if not path.is_file():
+        raise FileNotFoundError(f"Файл не найден: {path}")
+    physical_limit = MAX_AGENT_FILE_BYTES * (2 if path.suffix.lower() == ".jsonl" else 1) + 2
+    if path.stat().st_size > physical_limit:
+        raise ValueError(f"Файл превышает лимит чтения: {physical_limit} байт.")
+    try:
+        with path.open("r", encoding=_logical_text_encoding(path), newline="") as stream:
+            content = stream.read()
+    except UnicodeError as exc:
+        raise ValueError(f"Некорректная кодировка {_logical_text_encoding(path)}: {path}") from exc
+    if len(content.encode("utf-8")) > MAX_AGENT_FILE_BYTES:
+        raise ValueError(f"Logical content превышает лимит: {MAX_AGENT_FILE_BYTES} байт.")
+    return content
+
+
+def _agent_verify_file_content(
+    root: Path, path_text: str, kind: str, value: str, policy: dict,
+) -> dict:
+    _require_verify_enabled(policy)
+    if kind not in {"exists", "absent", "equals", "contains", "sha256"}:
+        raise ValueError(f"Неизвестный kind проверки: {kind!r}.")
+    if not isinstance(value, str):
+        raise ValueError("value должен быть строкой.")
+    if kind in {"exists", "absent"} and value != "":
+        raise ValueError(f"Для {kind} value должен быть пустой строкой.")
+    if kind == "sha256" and not re.fullmatch(r"[0-9a-f]{64}", value):
+        raise ValueError("Для sha256 value должен быть lowercase SHA-256 hex.")
+
+    path = _require_operation_permission(root, path_text, "read", policy)
+    _require_text_suffix(path)
+    try:
+        target_exists = True
+        exists = stat.S_ISREG(path.stat().st_mode)
+    except FileNotFoundError:
+        target_exists = exists = False
+    actual_sha256 = None
+    if kind == "exists":
+        passed = exists
+    elif kind == "absent":
+        passed = not target_exists
+    else:
+        if not exists:
+            raise FileNotFoundError(f"Файл не найден: {path_text}")
+        content = _read_logical_text(path)
+        target_exists = exists = True
+        actual_sha256 = _sha256_utf8(content)
+        passed = {
+            "equals": content == value,
+            "contains": value in content,
+            "sha256": actual_sha256 == value,
+        }[kind]
+    result = {
+        "ok": passed,
+        "check": "verify_file_content",
+        "path": path.relative_to(root).as_posix(),
+        "kind": kind,
+        "passed": passed,
+        "matched": passed,
+        "exists": exists,
+        "target_exists": target_exists,
+        "actual_sha256": actual_sha256,
+    }
+    if kind == "equals":
+        result["expected_sha256"] = _sha256_utf8(value)
+    elif kind == "contains":
+        result["expected_chars"] = len(value)
+        result["needle_sha256"] = _sha256_utf8(value)
+    elif kind == "sha256":
+        result["expected_sha256"] = value
+    return result
+
+
+def _can_use_windows_entry_script_write_fallback(path: Path) -> bool:
+    if os.name != "nt" or not path.exists():
+        return False
+    try:
+        entry = Path(sys.argv[0])
+        if not entry.is_absolute():
+            entry = Path.cwd() / entry
+        return path.resolve() == entry.resolve()
+    except (OSError, RuntimeError, ValueError):
+        return False
+
+
+def _rewrite_existing_logical_text_in_place(path: Path, content: str) -> None:
+    payload = content.encode(_logical_text_encoding(path))
+    with path.open("r+b") as stream:
+        stream.seek(0)
+        stream.write(payload)
+        stream.truncate()
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def _write_logical_text(path: Path, content: str) -> int:
+    if not isinstance(content, str):
+        raise ValueError("content должен быть строкой.")
+    _require_text_suffix(path)
+    encoded_bytes = len(content.encode("utf-8"))
+    if encoded_bytes > MAX_AGENT_FILE_BYTES:
+        raise ValueError(f"Содержимое слишком большое: {encoded_bytes} байт. Лимит: {MAX_AGENT_FILE_BYTES} байт.")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w", encoding=_logical_text_encoding(path), newline="") as stream:
+            stream.write(content)
+        try:
+            os.replace(temporary_name, path)
+        except PermissionError:
+            if not _can_use_windows_entry_script_write_fallback(path):
+                raise
+            _rewrite_existing_logical_text_in_place(path, content)
+    finally:
+        if os.path.exists(temporary_name):
+            os.unlink(temporary_name)
+    return encoded_bytes
+
+
+def _agent_read_file(root: Path, path_text: str, policy: dict) -> dict:
+    path = _require_operation_permission(root, path_text, "read", policy)
+    content = _read_logical_text(path)
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "content": content,
+        "content_sha256": _sha256_utf8(content),
+    }
+
+
+def _agent_find_text(root: Path, path_text: str, text: str, policy: dict) -> dict:
+    if not isinstance(text, str) or not text:
+        raise ValueError("text должен быть непустой строкой.")
+    path = _require_operation_permission(root, path_text, "read", policy)
+    content = _read_logical_text(path)
+    line_starts = _logical_line_starts(content)
+    matches = []
+    count = 0
+    offset = 0
+    while (found := content.find(text, offset)) != -1:
+        count += 1
+        if len(matches) < MAX_FIND_TEXT_MATCHES:
+            line_index = bisect_right(line_starts, found) - 1
+            line_start = line_starts[line_index]
+            snippet_start = max(line_start, found - 40)
+            snippet = content[snippet_start:found + len(text) + 40]
+            matches.append({
+                "line": line_index + 1,
+                "column": found - line_start + 1,
+                "snippet": snippet[:MAX_FIND_TEXT_SNIPPET_CHARS],
+            })
+        offset = found + 1
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "count": count,
+        "matches": matches,
+        "truncated": count > len(matches),
+        "content_sha256": _sha256_utf8(content),
+    }
+
+
+def _agent_read_file_range(
+    root: Path, path_text: str, start_line: int, end_line: int, policy: dict
+) -> dict:
+    if (type(start_line) is not int or type(end_line) is not int
+            or start_line < 1 or end_line < start_line):
+        raise ValueError("start_line/end_line должны быть целыми 1-based inclusive границами.")
+    if end_line - start_line + 1 > MAX_READ_RANGE_LINES:
+        raise ValueError(f"Диапазон превышает {MAX_READ_RANGE_LINES} строк.")
+    path = _require_operation_permission(root, path_text, "read", policy)
+    content = _read_logical_text(path)
+    lines = content.splitlines(keepends=True)
+    if end_line > len(lines):
+        raise ValueError(f"end_line={end_line} выходит за пределы файла ({len(lines)} строк).")
+    selected = "".join(lines[start_line - 1:end_line])
+    if len(selected.encode("utf-8")) > MAX_READ_RANGE_BYTES:
+        raise ValueError(f"Диапазон превышает {MAX_READ_RANGE_BYTES} байт.")
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "start_line": start_line,
+        "end_line": end_line,
+        "total_lines": len(lines),
+        "content": selected,
+        "content_sha256": _sha256_utf8(content),
+    }
+
+def _agent_write_file(
+    root: Path,
+    path_text: str,
+    content: str,
+    policy: dict,
+    backup_session: dict | None,
+) -> dict:
+    if not isinstance(content, str):
+        raise ValueError("content должен быть строкой.")
+
+    encoded_content = content.encode("utf-8")
+    if len(encoded_content) > MAX_AGENT_FILE_BYTES:
+        raise ValueError(
+            f"Содержимое слишком большое: {len(encoded_content)} байт. "
+            f"Лимит: {MAX_AGENT_FILE_BYTES} байт."
+        )
+
+    path = _require_operation_permission(root, path_text, "write", policy)
+    _require_text_suffix(path)
+    if path == root:
+        raise ValueError("Путь файла не может совпадать с workspace_root.")
+
+    # Снимок исходного файла создаётся ДО первого изменения.
+    _backup_before_write(root, path, backup_session)
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    resolved_parent = path.parent.resolve()
+    if resolved_parent != root and root not in resolved_parent.parents:
+        raise ValueError("Родительская папка выходит за пределы workspace_root.")
+
+    _write_logical_text(path, content)
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "bytes_written": len(encoded_content),
+        "content_sha256": _sha256_utf8(_read_logical_text(path)),
+    }
+
+
+class StaleFileStateError(ValueError):
+    """The file changed since the model obtained its expected content hash."""
+
+
+def _agent_precise_edit(
+    root: Path,
+    name: str,
+    path_text: str,
+    target_text: str,
+    replacement_text: str,
+    expected_content_sha256: str,
+    policy: dict,
+    backup_session: dict | None,
+) -> dict:
+    if name not in {"replace_text", "insert_before", "insert_after"}:
+        raise ValueError(f"Неизвестный precise edit: {name!r}.")
+    if not isinstance(target_text, str) or not target_text:
+        raise ValueError("old_text/marker должен быть непустой строкой.")
+    if not isinstance(replacement_text, str):
+        raise ValueError("new_text/content должен быть строкой.")
+    if not isinstance(expected_content_sha256, str) or not re.fullmatch(
+        r"[0-9a-f]{64}", expected_content_sha256
+    ):
+        raise ValueError("expected_content_sha256 должен быть lowercase SHA-256 hex.")
+    path = _require_operation_permission(root, path_text, "write", policy)
+    previous = _read_logical_text(path)
+    previous_hash = _sha256_utf8(previous)
+    if previous_hash != expected_content_sha256:
+        raise StaleFileStateError("STALE_FILE_STATE: logical content SHA-256 не совпадает.")
+    index = previous.find(target_text)
+    if index < 0:
+        raise ValueError("Точный old_text/marker не найден; файл не изменён.")
+    if previous.find(target_text, index + 1) >= 0:
+        raise ValueError("old_text/marker встречается больше одного раза; файл не изменён.")
+
+    if name == "replace_text":
+        start, end = index, index + len(target_text)
+        inserted = replacement_text
+    elif name == "insert_before":
+        start = end = index
+        inserted = replacement_text
+    else:
+        start = end = index + len(target_text)
+        inserted = replacement_text
+    updated = previous[:start] + inserted + previous[end:]
+    if updated == previous:
+        raise ValueError("Логическое содержимое не изменилось; mutation не выполнена.")
+    if len(updated.encode("utf-8")) > MAX_AGENT_FILE_BYTES:
+        raise ValueError(f"Результат превышает лимит {MAX_AGENT_FILE_BYTES} байт.")
+
+    # All checks are complete. Preserve the original before physical mutation.
+    _backup_before_write(root, path, backup_session)
+    _write_logical_text(path, updated)
+    changed_line = bisect_right(_logical_line_starts(previous), start)
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "previous_content_sha256": previous_hash,
+        "content_sha256": _sha256_utf8(_read_logical_text(path)),
+        "start_line": changed_line,
+        "end_line": changed_line + len(re.findall(r"\r\n|\r|\n", inserted)),
+        "removed_chars": end - start,
+        "added_chars": len(inserted),
+        "resulting_snippet": updated[max(0, start - 40):start + min(len(inserted), 80) + 40][:160],
+    }
+
+def _agent_delete_file(
+    root: Path,
+    path_text: str,
+    policy: dict,
+    backup_session: dict | None,
+) -> dict:
+    path = _require_operation_permission(root, path_text, "delete", policy)
+    _require_text_suffix(path)
+
+    if path == root:
+        raise ValueError("Нельзя удалить workspace_root.")
+    if path.is_symlink():
+        raise ValueError("Удаление symlink запрещено.")
+    if not path.exists():
+        raise FileNotFoundError(f"Файл не найден: {path_text}")
+    if not path.is_file():
+        raise ValueError("delete_file удаляет только файлы, не папки.")
+
+    size = path.stat().st_size
+    _backup_before_delete(root, path, backup_session)
+    path.unlink()
+
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "deleted": True,
+        "bytes": size,
+    }
+
+
+
+def _truncate_verify_output(text: str) -> tuple[str, bool, int]:
+    if not isinstance(text, str):
+        text = str(text)
+    raw = text.encode("utf-8", errors="replace")
+    original_bytes = len(raw)
+    if original_bytes <= MAX_VERIFY_OUTPUT_BYTES:
+        return text, False, original_bytes
+    clipped = raw[:MAX_VERIFY_OUTPUT_BYTES].decode("utf-8", errors="replace")
+    return clipped + "\n... <OUTPUT TRUNCATED> ...", True, original_bytes
+
+
+def _verification_env() -> dict[str, str]:
+    env = dict(os.environ)
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    env["GIT_PAGER"] = "cat"
+    env["GIT_EXTERNAL_DIFF"] = ""
+    env["GIT_OPTIONAL_LOCKS"] = "0"
+    env.pop("PYTHONPATH", None)
+    env.pop("PYTHONHOME", None)
+    return env
+
+
+def _run_verify_process(
+    args: list[str],
+    *,
+    cwd: Path,
+    timeout: int = VERIFY_TIMEOUT_SECONDS,
+) -> dict:
+    kwargs = {
+        "cwd": str(cwd),
+        "capture_output": True,
+        "text": True,
+        "encoding": "utf-8",
+        "errors": "replace",
+        "timeout": timeout,
+        "env": _verification_env(),
+        "shell": False,
+    }
+    if os.name == "nt" and hasattr(subprocess, "CREATE_NO_WINDOW"):
+        kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
+
+    try:
+        completed = subprocess.run(args, **kwargs)
+        stdout, stdout_truncated, stdout_bytes = _truncate_verify_output(
+            completed.stdout or ""
+        )
+        stderr, stderr_truncated, stderr_bytes = _truncate_verify_output(
+            completed.stderr or ""
+        )
+        return {
+            "ok": completed.returncode == 0,
+            "exit_code": completed.returncode,
+            "stdout": stdout,
+            "stderr": stderr,
+            "truncated": stdout_truncated or stderr_truncated,
+            "stdout_bytes": stdout_bytes,
+            "stderr_bytes": stderr_bytes,
+        }
+    except subprocess.TimeoutExpired as exc:
+        stdout = exc.stdout.decode("utf-8", errors="replace") if isinstance(exc.stdout, bytes) else (exc.stdout or "")
+        stderr = exc.stderr.decode("utf-8", errors="replace") if isinstance(exc.stderr, bytes) else (exc.stderr or "")
+        stdout, stdout_truncated, stdout_bytes = _truncate_verify_output(stdout)
+        stderr, stderr_truncated, stderr_bytes = _truncate_verify_output(stderr)
+        return {
+            "ok": False,
+            "exit_code": None,
+            "stdout": stdout,
+            "stderr": (stderr + f"\nTIMEOUT after {timeout} seconds").strip(),
+            "truncated": stdout_truncated or stderr_truncated,
+            "stdout_bytes": stdout_bytes,
+            "stderr_bytes": stderr_bytes,
+            "timeout": True,
+        }
+    except FileNotFoundError as exc:
+        return {
+            "ok": False,
+            "exit_code": None,
+            "stdout": "",
+            "stderr": str(exc),
+            "truncated": False,
+            "stdout_bytes": 0,
+            "stderr_bytes": len(str(exc).encode("utf-8", errors="replace")),
+        }
+
+
+def _require_verify_enabled(policy: dict) -> None:
+    if not policy["allow_verify"]:
+        raise PermissionError("VERIFY отключён для этого запуска.")
+    if not policy["allow_read"]:
+        raise PermissionError(
+            "VERIFY требует READ: проверка кода и diff не должны обходить запрет чтения."
+        )
+
+
+def _validate_verify_paths(
+    root: Path,
+    paths: object,
+    policy: dict,
+    *,
+    python_only: bool = False,
+    allow_empty: bool = False,
+    allow_missing: bool = False,
+    allow_directory: bool = False,
+) -> list[tuple[str, Path]]:
+    _require_verify_enabled(policy)
+    if not isinstance(paths, list):
+        raise ValueError("paths должен быть JSON-массивом относительных путей.")
+    if not paths and not allow_empty:
+        raise ValueError("paths не должен быть пустым.")
+
+    result: list[tuple[str, Path]] = []
+    seen: set[str] = set()
+    for item in paths:
+        if not isinstance(item, str) or not item.strip():
+            raise ValueError("Каждый элемент paths должен быть непустой строкой.")
+        path = _require_operation_permission(root, item, "read", policy)
+        if python_only and path.suffix.lower() != ".py":
+            raise ValueError(f"python_compile принимает только .py: {item}")
+        if not path.is_file():
+            directory_ok = allow_directory and path.is_dir()
+            missing_ok = allow_missing and not path.exists()
+            if not (directory_ok or missing_ok):
+                raise FileNotFoundError(f"Файл не найден: {item}")
+        rel = path.relative_to(root).as_posix()
+        if rel not in seen:
+            result.append((rel, path))
+            seen.add(rel)
+    return result
+
+
+def _agent_python_compile(root: Path, paths: object, policy: dict) -> dict:
+    checked = _validate_verify_paths(root, paths, policy, python_only=True)
+    payload = [
+        {"relative": rel, "absolute": str(path)}
+        for rel, path in checked
+    ]
+    child_code = (
+        "import json, py_compile, sys\n"
+        "from pathlib import Path\n"
+        "items = json.loads(sys.argv[1])\n"
+        "out_dir = Path(sys.argv[2])\n"
+        "out_dir.mkdir(parents=True, exist_ok=True)\n"
+        "for index, item in enumerate(items):\n"
+        "    source = item[\"absolute\"]\n"
+        "    target = out_dir / f\"verify_{index}.pyc\"\n"
+        "    py_compile.compile(source, cfile=str(target), doraise=True)\n"
+        "    print(f\"OK: {item['relative']}\")\n"
+    )
+    with tempfile.TemporaryDirectory(prefix="ultra_verify_") as temp_dir:
+        result = _run_verify_process(
+            [
+                sys.executable,
+                "-E",
+                "-B",
+                "-c",
+                child_code,
+                json.dumps(payload, ensure_ascii=False),
+                temp_dir,
+            ],
+            cwd=root,
+        )
+    result["paths"] = [rel for rel, _ in checked]
+    result["check"] = "python_compile"
+    return result
+
+
+def _git_path_in_read_scope(root: Path, path_text: str, policy: dict) -> bool:
+    text = path_text.strip().strip('"')
+    if " -> " in text:
+        text = text.rsplit(" -> ", 1)[-1].strip().strip('"')
+    try:
+        path = _resolve_workspace_path(root, text)
+    except Exception:
+        return False
+    return _is_within(path, policy["_read_root"])
+
+
+def _agent_git_status(
+    root: Path,
+    policy: dict,
+    paths: object | None = None,
+) -> dict:
+    _require_verify_enabled(policy)
+    checked = None
+    if paths is not None:
+        checked = _validate_verify_paths(
+            root,
+            paths,
+            policy,
+            python_only=False,
+            allow_empty=True,
+            allow_missing=True,
+            allow_directory=True,
+        )
+        if not checked:
+            return {
+                "ok": True,
+                "exit_code": 0,
+                "stdout": "",
+                "stderr": "",
+                "truncated": False,
+                "stdout_bytes": 0,
+                "stderr_bytes": 0,
+                "paths": [],
+                "check": "git_status",
+                "read_scope": policy["read_scope"],
+                "not_applicable": True,
+                "reason": "no_task_scoped_paths",
+            }
+
+    command = [
+        "git",
+        "--literal-pathspecs",
+        "-c",
+        "core.quotepath=false",
+        "--no-pager",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+    ]
+    if checked is not None:
+        command.extend(["--", *[rel for rel, _ in checked]])
+    result = _run_verify_process(command, cwd=root)
+    if result["ok"]:
+        filtered = []
+        for line in result["stdout"].splitlines():
+            path_text = line[3:] if len(line) >= 4 else ""
+            if path_text and _git_path_in_read_scope(root, path_text, policy):
+                filtered.append(line)
+        result["stdout"] = "\n".join(filtered)
+    result["paths"] = [rel for rel, _ in checked] if checked is not None else None
+    result["check"] = "git_status"
+    result["read_scope"] = policy["read_scope"]
+    return result
+
+
+def _agent_git_diff(
+    root: Path,
+    paths: object,
+    policy: dict,
+    *,
+    allow_missing: bool = False,
+) -> dict:
+    _require_verify_enabled(policy)
+    checked = _validate_verify_paths(
+        root,
+        paths,
+        policy,
+        python_only=False,
+        allow_empty=True,
+        allow_missing=allow_missing,
+        allow_directory=allow_missing,
+    )
+    if checked:
+        pathspecs = [rel for rel, _ in checked]
+    else:
+        scope = policy["read_scope"]
+        if scope == ".":
+            pathspecs = ["."]
+        else:
+            scope_path = _require_operation_permission(root, scope, "read", policy)
+            if not scope_path.is_dir():
+                raise NotADirectoryError(f"Область чтения не найдена: {scope}")
+            pathspecs = [scope_path.relative_to(root).as_posix()]
+
+    result = _run_verify_process(
+        [
+            "git",
+            "--literal-pathspecs",
+            "-c",
+            "core.quotepath=false",
+            "--no-pager",
+            "diff",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--no-color",
+            "HEAD",
+            "--",
+            *pathspecs,
+        ],
+        cwd=root,
+    )
+    result["paths"] = pathspecs
+    result["check"] = "git_diff"
+    result["note"] = (
+        "git diff HEAD не показывает содержимое обычных untracked-файлов; "
+        "их наличие проверяй через git_status."
+    )
+    return result
+
+
+def _agent_ui_smoke_test(root: Path, policy: dict) -> dict:
+    _require_verify_enabled(policy)
+    target = _require_operation_permission(root, "ultra_ui.py", "read", policy)
+    if not target.is_file():
+        raise FileNotFoundError("ultra_ui.py не найден в workspace.")
+
+    child_code = (
+        "import ultra_ui\n"
+        "app = None\n"
+        "try:\n"
+        "    app = ultra_ui.UltraApp()\n"
+        "    app.withdraw()\n"
+        "    app.update_idletasks()\n"
+        "    print(\"OK: UltraApp constructed\")\n"
+        "finally:\n"
+        "    if app is not None:\n"
+        "        app.destroy()\n"
+    )
+    result = _run_verify_process(
+        [sys.executable, "-E", "-B", "-c", child_code],
+        cwd=root,
+        timeout=UI_SMOKE_TIMEOUT_SECONDS,
+    )
+    result["check"] = "ui_smoke_test"
+    result["target"] = "ultra_ui.UltraApp"
+    return result
+
+def _parse_agent_arguments(function_name: str, raw_arguments: object) -> dict:
+    if isinstance(raw_arguments, str):
+        try:
+            arguments = json.loads(raw_arguments)
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                f"Функция {function_name} получила невалидный JSON arguments."
+            ) from exc
+    elif isinstance(raw_arguments, dict):
+        arguments = raw_arguments
+    else:
+        raise ValueError(f"Функция {function_name} получила невалидные arguments.")
+
+    if not isinstance(arguments, dict):
+        raise ValueError(f"arguments функции {function_name} должны быть объектом JSON.")
+    return arguments
+
+
+def _guard_p1_normalize_stem(path: Path) -> tuple[str, list[str]]:
+    stem = unicodedata.normalize("NFKC", path.stem).casefold().replace("ё", "е")
+    stem = re.sub(r"[\s_.\-–—]+", " ", stem).strip()
+    stem = re.sub(r"\s+", " ", stem)
+    return stem, stem.split()
+
+
+def _guard_p1_common_prefix_len(left: str, right: str) -> int:
+    limit = min(len(left), len(right))
+    index = 0
+    while index < limit and left[index] == right[index]:
+        index += 1
+    return index
+
+
+def _guard_p1_word_ending_variant(
+    left_tokens: list[str],
+    right_tokens: list[str],
+) -> bool:
+    if len(left_tokens) != len(right_tokens) or not left_tokens:
+        return False
+
+    differences = [
+        (left, right)
+        for left, right in zip(left_tokens, right_tokens)
+        if left != right
+    ]
+    if len(differences) != 1:
+        return False
+
+    left, right = differences[0]
+    common = _guard_p1_common_prefix_len(left, right)
+    if common < 3:
+        return False
+    return len(left) - common <= 2 and len(right) - common <= 2
+
+
+def _guard_p1_without_edge_number(
+    tokens: list[str],
+    edge: str,
+) -> list[str] | None:
+    if not tokens:
+        return None
+    index = 0 if edge == "left" else -1
+    token = tokens[index]
+    if not re.fullmatch(r"\d{1,2}", token):
+        return None
+    return tokens[1:] if edge == "left" else tokens[:-1]
+
+
+def _guard_p1_numeric_edge_variant(
+    left_tokens: list[str],
+    right_tokens: list[str],
+) -> bool:
+    for edge in ("left", "right"):
+        left_core = _guard_p1_without_edge_number(left_tokens, edge)
+        right_core = _guard_p1_without_edge_number(right_tokens, edge)
+
+        if (
+            left_core is not None
+            and right_core is not None
+            and left_core == right_core
+            and left_tokens != right_tokens
+        ):
+            return True
+
+        if left_core is not None and left_core == right_tokens:
+            return True
+        if right_core is not None and right_core == left_tokens:
+            return True
+
+    return False
+
+
+def _guard_p1_same_leading_number(
+    left_tokens: list[str],
+    right_tokens: list[str],
+) -> bool:
+    if not left_tokens or not right_tokens:
+        return False
+    return bool(
+        re.fullmatch(r"\d{1,2}", left_tokens[0])
+        and left_tokens[0] == right_tokens[0]
+    )
+
+
+def _guard_p1_explicit_target_in_task(task: str, target_text: str) -> bool:
+    task_folded = (
+        unicodedata.normalize("NFKC", task)
+        .casefold()
+        .replace("\\", "/")
+    )
+    target_folded = (
+        unicodedata.normalize("NFKC", target_text)
+        .casefold()
+        .replace("\\", "/")
+    )
+    name_folded = (
+        unicodedata.normalize("NFKC", Path(target_text).name)
+        .casefold()
+    )
+    return target_folded in task_folded or name_folded in task_folded
+
+
+def _guard_p1_candidate_score(
+    target: Path,
+    candidate: Path,
+    *,
+    candidate_used_in_run: bool,
+) -> tuple[int, float, list[str]]:
+    target_norm, target_tokens = _guard_p1_normalize_stem(target)
+    candidate_norm, candidate_tokens = _guard_p1_normalize_stem(candidate)
+
+    ratio = SequenceMatcher(None, target_norm, candidate_norm).ratio()
+    score = 0
+    reasons: list[str] = []
+
+    if target.suffix.casefold() == candidate.suffix.casefold():
+        score += 10
+
+    if target_norm == candidate_norm:
+        score += 80
+        reasons.append("нормализованные имена совпадают")
+
+    if _guard_p1_numeric_edge_variant(target_tokens, candidate_tokens):
+        score += 60
+        reasons.append("отличается числовой префикс/суффикс 1–2 цифры")
+
+    if _guard_p1_word_ending_variant(target_tokens, candidate_tokens):
+        score += 60
+        reasons.append(
+            "одно слово отличается почти только окончанием 1–2 символа"
+        )
+
+    if ratio >= 0.97:
+        score += 50
+        reasons.append(f"очень высокая похожесть имени ({ratio:.2f})")
+    elif ratio >= 0.93:
+        score += 35
+        reasons.append(f"высокая похожесть имени ({ratio:.2f})")
+    elif ratio >= 0.88:
+        score += 20
+        reasons.append(f"заметная похожесть имени ({ratio:.2f})")
+
+    if _guard_p1_same_leading_number(target_tokens, candidate_tokens):
+        score += 10
+        reasons.append("совпадает ведущий номер документа")
+
+    if candidate_used_in_run:
+        score += 30
+        reasons.append(
+            "похожий существующий файл уже использовался в этом RUN"
+        )
+
+    return score, ratio, reasons
+
+
+def _guard_p1_find_suspicious_create(
+    root: Path,
+    target_text: str,
+    policy: dict,
+    task: str,
+    used_paths: set[str],
+) -> dict | None:
+    try:
+        target = _require_operation_permission(
+            root,
+            target_text,
+            "write",
+            policy,
+        )
+    except Exception:
+        # Реальные permission/path errors обрабатывает штатный executor.
+        return None
+
+    if target.exists():
+        return None
+
+    # Если пользователь прямо назвал этот новый target в TASK —
+    # не мешаем легитимному CREATE.
+    if _guard_p1_explicit_target_in_task(task, target_text):
+        return None
+
+    parent = target.parent
+    if not parent.is_dir():
+        return None
+
+    best: dict | None = None
+    for candidate in parent.iterdir():
+        if not candidate.is_file():
+            continue
+        if candidate.suffix.casefold() != target.suffix.casefold():
+            continue
+
+        relative_candidate = candidate.relative_to(root).as_posix()
+        score, ratio, reasons = _guard_p1_candidate_score(
+            target,
+            candidate,
+            candidate_used_in_run=relative_candidate in used_paths,
+        )
+        if score < GUARD_P1_CREATE_SCORE_THRESHOLD:
+            continue
+
+        item = {
+            "requested_path": target.relative_to(root).as_posix(),
+            "similar_path": relative_candidate,
+            "score": score,
+            "ratio": round(ratio, 4),
+            "reasons": reasons,
+        }
+        if best is None or item["score"] > best["score"]:
+            best = item
+
+    return best
+
+
+def _guard_p1_resource_token(
+    root: Path,
+    function_name: str,
+    safe_args: dict,
+    write_revision: int,
+) -> tuple:
+    token: list[object] = [write_revision]
+    if function_name in {"read_file", "list_dir"}:
+        path_text = safe_args.get("path")
+        if isinstance(path_text, str):
+            try:
+                path = _resolve_workspace_path(root, path_text)
+                stat = path.stat()
+                token.extend([stat.st_mtime_ns, stat.st_size])
+            except OSError:
+                token.extend([None, None])
+    return tuple(token)
+
+
+def _guard_p1_repeat_key(
+    root: Path,
+    function_name: str,
+    safe_args: dict,
+    write_revision: int,
+) -> tuple | None:
+    if function_name not in GUARD_P1_REPEAT_TOOL_NAMES:
+        return None
+
+    args_json = json.dumps(
+        safe_args,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return (
+        function_name,
+        args_json,
+        _guard_p1_resource_token(
+            root,
+            function_name,
+            safe_args,
+            write_revision,
+        ),
+    )
+
+
+def _safe_tool_result_summary(
+    function_name: str,
+    result: object,
+) -> str:
+    if not isinstance(result, dict):
+        return str(result)[:500]
+
+    path = result.get("path")
+    if function_name in {"read_file", "read_file_range"}:
+        content = result.get("content")
+        chars = len(content) if isinstance(content, str) else None
+        return f"path={path!r}, chars={chars}"
+
+    if function_name == "find_text":
+        return f"path={path!r}, count={result.get('count')!r}"
+
+    if function_name == "list_dir":
+        entries = result.get("entries")
+        count = len(entries) if isinstance(entries, list) else None
+        return f"path={path!r}, entries={count}"
+
+    if function_name in MUTATION_TOOL_NAMES:
+        return f"path={path!r}, ok={result.get('ok', True)!r}"
+
+    safe = {
+        key: value
+        for key, value in result.items()
+        if key not in {"content", "stdout", "stderr"}
+    }
+    return json.dumps(
+        safe,
+        ensure_ascii=False,
+        sort_keys=True,
+    )[:500]
+
+
+def _sha256_utf8(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def _candidate_final_fingerprint(candidate: str) -> str:
+    """Fingerprint Candidate без разрушения значимого текста/отступов."""
+
+    normalized = unicodedata.normalize("NFC", str(candidate))
+    normalized = normalized.replace("\r\n", "\n").replace("\r", "\n")
+    normalized = "\n".join(line.rstrip() for line in normalized.split("\n"))
+    normalized = normalized.strip("\n")
+    return _sha256_utf8(normalized)
+
+
+def _normalize_final_audit_failure_prose(value: object) -> str:
+    normalized = unicodedata.normalize("NFKC", str(value)).casefold()
+    return re.sub(r"\s+", " ", normalized).strip()
+
+
+def _final_audit_failure_signatures(
+    *,
+    check_type: str,
+    reason: str,
+    violations: tuple[str, ...] | list[str],
+    required_action: str,
+) -> tuple[str, str]:
+    normalized_check_type = _normalize_final_audit_failure_prose(check_type)
+    normalized_reason = _normalize_final_audit_failure_prose(reason)
+    normalized_violations = sorted(
+        _normalize_final_audit_failure_prose(item) for item in violations
+    )
+    normalized_required_action = _normalize_final_audit_failure_prose(
+        required_action
+    )
+    exact_payload = {
+        "check_type": normalized_check_type,
+        "reason": normalized_reason,
+        "violations": normalized_violations,
+        "required_action": normalized_required_action,
+    }
+    core_payload = {
+        "check_type": normalized_check_type,
+        "failure_core": (
+            normalized_violations
+            if normalized_violations
+            else normalized_reason
+        ),
+    }
+    exact_signature = _sha256_utf8(
+        json.dumps(
+            exact_payload,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
+    core_signature = _sha256_utf8(
+        json.dumps(
+            core_payload,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
+    return exact_signature, core_signature
+
+
+def _record_run_owned_mutation(
+    run_owned_state: dict[str, dict[str, str]],
+    *,
+    function_name: str,
+    relative_path: str,
+    content: str | None = None,
+    content_sha256: str | None = None,
+) -> None:
+    path = str(relative_path).replace("\\", "/")
+    if function_name in TEXT_MUTATION_TOOL_NAMES:
+        if content_sha256 is None and isinstance(content, str):
+            content_sha256 = _sha256_utf8(content)
+        if not isinstance(content_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", content_sha256):
+            raise TypeError("Успешная text mutation должна иметь logical content SHA-256.")
+        run_owned_state[path] = {
+            "state": "present",
+            "content_sha256": content_sha256,
+        }
+        return
+    if function_name == "delete_file":
+        run_owned_state[path] = {"state": "absent"}
+        return
+    raise ValueError(f"Неизвестная RUN-owned mutation: {function_name!r}.")
+
+
+def _bookkeep_successful_mutation(
+    *,
+    function_name: str,
+    result: dict,
+    run_owned_state: dict[str, dict[str, str]],
+    verification_state: dict,
+) -> None:
+    if function_name not in MUTATION_TOOL_NAMES:
+        raise ValueError(f"Неизвестная mutation: {function_name!r}.")
+    changed_path = result.get("path")
+    if not isinstance(changed_path, str):
+        raise RuntimeError("Успешная mutation не вернула относительный path.")
+    _record_run_owned_mutation(
+        run_owned_state,
+        function_name=function_name,
+        relative_path=changed_path,
+        content_sha256=result.get("content_sha256"),
+    )
+    verification_state["write_revision"] += 1
+    current_revision = verification_state["write_revision"]
+    verification_state["git_status_revision"] = None
+    verification_state["git_diff_revision"] = None
+
+    if changed_path.lower().endswith(".py"):
+        verification_state["python_write_revision"] = current_revision
+        verification_state["python_verified_revision"] = None
+        verification_state["python_verified_paths"] = []
+        changed_paths = verification_state["changed_python_paths"]
+        deleted_paths = verification_state["deleted_python_paths"]
+        if function_name in TEXT_MUTATION_TOOL_NAMES:
+            if changed_path not in changed_paths:
+                changed_paths.append(changed_path)
+            if changed_path in deleted_paths:
+                deleted_paths.remove(changed_path)
+        else:
+            if changed_path in changed_paths:
+                changed_paths.remove(changed_path)
+            if changed_path not in deleted_paths:
+                deleted_paths.append(changed_path)
+
+    if changed_path in {"server.py", "ultra_ui.py"}:
+        verification_state["ui_smoke_required"] = True
+        verification_state["ui_smoke_write_revision"] = current_revision
+        verification_state["ui_smoke_verified_revision"] = None
+
+
+def _run_owned_state_fingerprint(
+    run_owned_state: dict[str, dict[str, str]],
+) -> str:
+    canonical = [
+        {
+            "path": path,
+            "state": record["state"],
+            **(
+                {"content_sha256": record["content_sha256"]}
+                if record["state"] == "present"
+                else {}
+            ),
+        }
+        for path, record in sorted(run_owned_state.items())
+    ]
+    return _sha256_utf8(
+        json.dumps(
+            canonical,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
+
+
+def _verify_run_owned_filesystem(
+    root: Path, run_owned_state: dict[str, dict[str, str]]
+) -> tuple[list[dict], list[str]]:
+    """Check current-RUN writes/deletes against physical files, without Executor READ."""
+    evidence: list[dict] = []
+    mismatches: list[str] = []
+    for relative_path, expected in sorted(run_owned_state.items()):
+        expected_state = expected.get("state")
+        expected_hash = expected.get("content_sha256") if expected_state == "present" else None
+        item = {
+            "path": relative_path,
+            "expected_state": expected_state,
+            "actual_state": "unavailable",
+            "expected_content_sha256": expected_hash,
+            "actual_content_sha256": None,
+            "match": False,
+        }
+        try:
+            lexical_path = root / relative_path
+            path = _resolve_workspace_path(root, relative_path)
+            _require_text_suffix(path)
+            if lexical_path.is_symlink():
+                item["actual_state"] = "symlink"
+            elif not path.exists():
+                item["actual_state"] = "absent"
+            elif not path.is_file():
+                item["actual_state"] = "not_regular_file"
+            else:
+                item["actual_state"] = "present"
+                item["actual_content_sha256"] = _sha256_utf8(_read_logical_text(path))
+            item["match"] = item["actual_state"] == expected_state and (
+                expected_state == "absent"
+                or item["actual_content_sha256"] == expected_hash
+            )
+        except Exception as exc:
+            item["reason"] = type(exc).__name__
+        if not item["match"]:
+            mismatches.append(f"run_owned_filesystem_mismatch:{relative_path}")
+        evidence.append(item)
+    return evidence, mismatches
+
+
+
+def _execute_agent_function(
+    root: Path,
+    function_call: object,
+    policy: dict,
+    backup_session: dict | None,
+) -> dict:
+    if not isinstance(function_call, dict):
+        raise ValueError("GigaChat вернул невалидный function_call.")
+
+    name = function_call.get("name")
+    allowed_names = {
+        *READ_TOOL_NAMES,
+        *MUTATION_TOOL_NAMES,
+        *VERIFICATION_TOOL_NAMES,
+    }
+    if name not in allowed_names:
+        raise ValueError(f"GigaChat запросил неизвестную функцию: {name!r}.")
+
+    arguments = _parse_agent_arguments(name, function_call.get("arguments"))
+    expected_keys = {
+        "list_dir": {"path"},
+        "read_file": {"path"},
+        "find_text": {"path", "text"},
+        "read_file_range": {"path", "start_line", "end_line"},
+        "write_file": {"path", "content"},
+        "replace_text": {"path", "old_text", "new_text", "expected_content_sha256"},
+        "insert_before": {"path", "marker", "content", "expected_content_sha256"},
+        "insert_after": {"path", "marker", "content", "expected_content_sha256"},
+        "delete_file": {"path"},
+        "verify_file_content": {"path", "kind", "value"},
+        "python_compile": {"paths"},
+        "git_status": set(),
+        "git_diff": {"paths"},
+        "ui_smoke_test": set(),
+    }[name]
+    if set(arguments) != expected_keys:
+        raise ValueError(
+            f"Невалидные аргументы {name}: ожидаются {sorted(expected_keys)}."
+        )
+
+    if name == "list_dir":
+        return _agent_list_dir(root, arguments["path"], policy)
+    if name == "read_file":
+        return _agent_read_file(root, arguments["path"], policy)
+    if name == "find_text":
+        return _agent_find_text(root, arguments["path"], arguments["text"], policy)
+    if name == "read_file_range":
+        return _agent_read_file_range(
+            root, arguments["path"], arguments["start_line"], arguments["end_line"], policy
+        )
+    if name == "delete_file":
+        return _agent_delete_file(
+            root,
+            arguments["path"],
+            policy,
+            backup_session,
+        )
+    if name == "write_file":
+        return _agent_write_file(
+            root,
+            arguments["path"],
+            arguments["content"],
+            policy,
+            backup_session,
+        )
+    if name in {"replace_text", "insert_before", "insert_after"}:
+        target_key = "old_text" if name == "replace_text" else "marker"
+        replacement_key = "new_text" if name == "replace_text" else "content"
+        return _agent_precise_edit(
+            root, name, arguments["path"], arguments[target_key],
+            arguments[replacement_key], arguments["expected_content_sha256"],
+            policy, backup_session,
+        )
+    if name == "python_compile":
+        return _agent_python_compile(root, arguments["paths"], policy)
+    if name == "verify_file_content":
+        return _agent_verify_file_content(
+            root, arguments["path"], arguments["kind"], arguments["value"], policy,
+        )
+    if name == "git_status":
+        return _agent_git_status(root, policy)
+    if name == "git_diff":
+        return _agent_git_diff(root, arguments["paths"], policy)
+    return _agent_ui_smoke_test(root, policy)
+
+
+def _verification_missing_requirements(state: dict) -> list[dict]:
+    """Вернуть физически недостающие проверки для финального SUCCESS."""
+    if state.get("write_revision", 0) <= 0:
+        return []
+
+    missing: list[dict] = []
+    changed_python_paths = sorted(set(state.get("changed_python_paths") or []))
+    verified_python_paths = set(state.get("python_verified_paths") or [])
+
+    if changed_python_paths:
+        python_revision_ok = (
+            state.get("python_write_revision") is not None
+            and state.get("python_verified_revision")
+            == state.get("python_write_revision")
+        )
+        paths_ok = set(changed_python_paths).issubset(verified_python_paths)
+        if not python_revision_ok or not paths_ok:
+            missing.append(
+                {
+                    "tool": "python_compile",
+                    "paths": changed_python_paths,
+                    "reason": (
+                        "Все изменённые существующие .py должны быть успешно "
+                        "скомпилированы после последней Python-записи."
+                    ),
+                }
+            )
+
+    if state.get("ui_smoke_required"):
+        if (
+            state.get("ui_smoke_write_revision") is None
+            or state.get("ui_smoke_verified_revision")
+            != state.get("ui_smoke_write_revision")
+        ):
+            missing.append(
+                {
+                    "tool": "ui_smoke_test",
+                    "reason": (
+                        "После последнего изменения server.py/ultra_ui.py "
+                        "обязателен реальный UltraApp smoke-test."
+                    ),
+                }
+            )
+
+    return missing
+
+
+def _verification_missing_lines(missing: list[dict]) -> str:
+    lines = []
+    for item in missing:
+        tool = item["tool"]
+        paths = item.get("paths")
+        if paths is not None:
+            lines.append(f"- {tool}(paths={paths}) — {item['reason']}")
+        else:
+            lines.append(f"- {tool} — {item['reason']}")
+    return "\n".join(lines)
+
+
+class FinalAuditEvidenceError(RuntimeError):
+    """Server could not collect mutation evidence safely enough to audit."""
+
+
+class FinalAuditSemanticError(RuntimeError):
+    """A valid verifier response rejected the candidate final answer."""
+
+
+def _clip_final_audit_text(text: str, limit: int) -> tuple[str, bool, int]:
+    """Bound one evidence field without ever claiming that it is complete."""
+    raw = text.encode("utf-8", errors="replace")
+    original_bytes = len(raw)
+    if original_bytes <= limit:
+        return text, False, original_bytes
+    marker = b"\n... <FINAL AUDIT EVIDENCE TRUNCATED> ..."
+    limit = max(limit, 0)
+    if limit < len(marker):
+        return marker[:limit].decode("ascii"), True, original_bytes
+    kept = limit - len(marker)
+    clipped = raw[:kept].decode("utf-8", errors="ignore")
+    return clipped + marker.decode("ascii"), True, original_bytes
+
+
+def _final_audit_tool_material_preview(
+    function_name: str,
+    result: object,
+) -> dict | None:
+    """Keep bounded semantic material while full tool output stays in Run Store."""
+    if not isinstance(result, dict):
+        text = str(result)
+    elif function_name in {"read_file", "read_file_range"}:
+        content = result.get("content")
+        if not isinstance(content, str):
+            return None
+        text = content
+    elif function_name in {
+        "find_text",
+        "list_dir",
+        "verify_file_content",
+    }:
+        text = json.dumps(result, ensure_ascii=False, sort_keys=True)
+    elif function_name in {
+        "git_status",
+        "git_diff",
+        "python_compile",
+        "ui_smoke_test",
+    }:
+        text = json.dumps(
+            {
+                key: result.get(key)
+                for key in (
+                    "ok",
+                    "check",
+                    "paths",
+                    "target",
+                    "stdout",
+                    "stderr",
+                    "truncated",
+                )
+                if key in result
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    else:
+        return None
+
+    clipped, truncated, original_bytes = _clip_final_audit_text(
+        text,
+        MAX_FINAL_AUDIT_TOOL_MATERIAL_ITEM_BYTES,
+    )
+    return {
+        "content": clipped,
+        "truncated": truncated or (isinstance(result, dict) and bool(result.get("truncated"))),
+        "original_bytes": original_bytes,
+    }
+
+
+def _candidate_fact_conflicts(
+    candidate: str, *, tool_call_count: int, write_revision: int,
+    run_owned_state: dict, mutation_facts: dict, observed_tool_names: set[str],
+) -> list[str]:
+    """Flag only explicit current-RUN completion claims contradicted by server facts."""
+    lowered = candidate.casefold()
+    completion_pattern = re.compile(
+        r"\b(?:выполнен\w*|использован\w*|применен\w*|применён\w*|"
+        r"вызван\w*|сделан\w*|измен[её]н\w*|обновл[её]н\w*|"
+        r"completed|performed|executed|used|called|modified|updated)\b"
+    )
+    denial_pattern = re.compile(
+        r"\b(?:не\s+выполнен\w*|не\s+использован\w*|"
+        r"no\s+tools?\s+(?:were\s+)?(?:used|called|executed))\b"
+    )
+    tool_pattern = re.compile(
+        r"\b(?:read_file(?:_range)?|find_text|list_dir|replace_text|insert_before|"
+        r"insert_after|write_file|delete_file|python_compile|git_diff|git_status|ui_smoke_test)\b"
+    )
+    claimed_names = set()
+    for clause in re.split(r"[.!?;]+", lowered):
+        if completion_pattern.search(clause) and not denial_pattern.search(clause):
+            claimed_names.update(tool_pattern.findall(clause))
+    conflicts = []
+    unobserved = claimed_names - observed_tool_names
+    if unobserved:
+        conflicts.append("candidate_claims_unobserved_tools:" + ",".join(sorted(unobserved)))
+    physical_claim = re.search(
+        r"\b(?:файл|документ|workspace|file|document)\b[^\n.!?]{0,60}"
+        r"\b(?:измен[её]н\w*|обновл[её]н\w*|создан\w*|удал[её]н\w*|modified|updated|created|deleted)\b"
+        r"|\b(?:изменил\w*|обновил\w*|создал\w*|удалил\w*|modified|updated|created|deleted)\b"
+        r"[^\n.!?]{0,40}\b(?:файл|документ|file|document)\b"
+        r"|\b(?:выполнен\w*|completed|performed)\b[^\n.!?]{0,40}"
+        r"\b\d+\s+(?:successful\s+)?(?:precise\s+)?mutations\b",
+        lowered,
+    )
+    no_mutation = (
+        write_revision == 0 and not run_owned_state
+        and not any(mutation_facts.values())
+    )
+    physical_denial = (
+        physical_claim is not None and re.search(
+            r"\b(?:не|not)\s+(?:был\s+)?(?:измен[её]н\w*|обновл[её]н\w*|"
+            r"создан\w*|удал[её]н\w*|modified|updated|created|deleted)\b",
+            physical_claim.group(),
+        )
+    )
+    prior_state = (
+        physical_claim is not None and re.search(
+            r"\b(?:ранее|раньше|уже|previously|already|до\s+запуска)\b",
+            physical_claim.group(),
+        )
+    )
+    if no_mutation and physical_claim and not physical_denial and not prior_state:
+        conflicts.append("candidate_claims_unobserved_physical_mutation")
+    return conflicts
+
+
+def _collect_final_audit_task_paths(
+    *,
+    root: Path,
+    policy: dict,
+    task_plan_evidence: dict | None,
+    mutation_facts: dict,
+    run_owned_state: dict,
+    verification_state: dict,
+    tool_facts: list[dict],
+) -> tuple[list[str], list[str]]:
+    """Build deterministic task-scoped paths for Final Audit observations.
+
+    Git observes only file targets whose state the audit checks: artifacts, RUN-owned
+    mutations, verification targets and file-level evidence requirements. Discovery
+    requirements (list_dir/find_text) and requirement paths that are directories are
+    still READ-scope validated, but their evidence is their own server-observed result:
+    observing them through Git would import every unrelated change beneath them.
+    """
+    candidates: list[tuple[object, bool]] = []  # (path, from an evidence requirement)
+    discovery: list[object] = []
+
+    if isinstance(task_plan_evidence, dict):
+        for stage in task_plan_evidence.get("stages") or []:
+            if not isinstance(stage, dict):
+                continue
+            for artifact in stage.get("artifacts") or []:
+                if isinstance(artifact, dict):
+                    candidates.append((artifact.get("path"), False))
+            for requirement in stage.get("evidence_requirements") or []:
+                if not isinstance(requirement, dict):
+                    continue
+                arguments = requirement.get("arguments")
+                if not isinstance(arguments, dict):
+                    continue
+                requirement_paths = []
+                if "path" in arguments:
+                    requirement_paths.append(arguments.get("path"))
+                if isinstance(arguments.get("paths"), list):
+                    requirement_paths.extend(arguments["paths"])
+                if requirement.get("tool") in FINAL_AUDIT_DISCOVERY_TOOLS:
+                    discovery.extend(requirement_paths)
+                else:
+                    candidates.extend((path, True) for path in requirement_paths)
+
+    for key in ("changed_files", "new_files", "deleted_files"):
+        candidates.extend((path, False) for path in mutation_facts.get(key) or [])
+    candidates.extend((path, False) for path in (run_owned_state or {}).keys())
+    candidates.extend(
+        (path, False) for path in verification_state.get("changed_python_paths") or []
+    )
+    candidates.extend(
+        (path, False) for path in verification_state.get("deleted_python_paths") or []
+    )
+
+    # Arbitrary exploratory tool calls do not expand task scope. Relevant
+    # dependencies must be present in the accepted contract/evidence targets;
+    # actual mutations/run-owned state are added separately above.
+
+    paths: list[str] = []
+    invalid: list[str] = []
+    seen: set[str] = set()
+    for candidate in discovery:
+        if not isinstance(candidate, str) or not candidate.strip():
+            continue
+        try:
+            _require_operation_permission(root, candidate.strip(), "read", policy)
+        except Exception:
+            invalid.append(str(candidate)[:300])
+    for candidate, from_requirement in candidates:
+        if not isinstance(candidate, str) or not candidate.strip():
+            continue
+        try:
+            resolved = _require_operation_permission(
+                root, candidate.strip(), "read", policy
+            )
+            relative = resolved.relative_to(root).as_posix()
+        except Exception:
+            invalid.append(str(candidate)[:300])
+            continue
+        if resolved.is_dir():
+            # Never observe a directory through Git; artifacts and RUN-owned targets
+            # must be files, so a directory there is a malformed contract/state.
+            if not from_requirement:
+                invalid.append(str(candidate)[:300])
+            continue
+        if relative not in seen:
+            seen.add(relative)
+            paths.append(relative)
+    return sorted(paths), sorted(set(invalid))
+
+
+def _compact_final_audit_literal(value: object) -> object:
+    if not isinstance(value, str):
+        return copy.deepcopy(value)
+    encoded = value.encode("utf-8", errors="replace")
+    if len(encoded) <= 512:
+        return value
+    return {
+        "omitted": True,
+        "utf8_bytes": len(encoded),
+        "sha256": hashlib.sha256(encoded).hexdigest(),
+    }
+
+
+def _compact_final_audit_task_plan(
+    task_plan_evidence: dict | None,
+) -> dict | None:
+    """Project the accepted contract without replaying large exact literals."""
+    if not isinstance(task_plan_evidence, dict):
+        return None
+
+    compact_stages = []
+    for stage in task_plan_evidence.get("stages") or []:
+        if not isinstance(stage, dict):
+            continue
+        compact_stage = {
+            "stage_id": stage.get("stage_id"),
+            "goal": stage.get("goal"),
+            "stage_type": stage.get("stage_type"),
+            "persistence_required": stage.get("persistence_required"),
+            "allowed_capabilities": copy.deepcopy(
+                stage.get("allowed_capabilities") or []
+            ),
+            "completion_mode": stage.get("completion_mode"),
+            "completion_criteria": copy.deepcopy(
+                stage.get("completion_criteria") or []
+            ),
+            "artifacts": [],
+            "evidence_requirements": [],
+        }
+        for artifact in stage.get("artifacts") or []:
+            if not isinstance(artifact, dict):
+                continue
+            post = artifact.get("postcondition") or {}
+            compact_stage["artifacts"].append({
+                "artifact_id": artifact.get("artifact_id"),
+                "path": artifact.get("path"),
+                "operation": artifact.get("operation"),
+                "allow_already_satisfied": artifact.get(
+                    "allow_already_satisfied"
+                ),
+                "postcondition": {
+                    "kind": post.get("kind"),
+                    "value": _compact_final_audit_literal(post.get("value")),
+                },
+            })
+        for requirement in stage.get("evidence_requirements") or []:
+            if not isinstance(requirement, dict):
+                continue
+            arguments = requirement.get("arguments") or {}
+            compact_arguments = {
+                key: (
+                    [_compact_final_audit_literal(item) for item in value]
+                    if isinstance(value, list)
+                    else _compact_final_audit_literal(value)
+                )
+                for key, value in arguments.items()
+            }
+            compact_stage["evidence_requirements"].append({
+                "evidence_id": requirement.get("evidence_id"),
+                "tool": requirement.get("tool"),
+                "arguments": compact_arguments,
+                "arguments_sha256": evidence_arguments_fingerprint(arguments),
+            })
+        compact_stages.append(compact_stage)
+
+    compact_states = {}
+    for stage_id, state in (task_plan_evidence.get("stage_states") or {}).items():
+        if not isinstance(state, dict):
+            continue
+        stage_result, result_truncated, result_bytes = _clip_final_audit_text(
+            str(state.get("result") or ""), MAX_FINAL_AUDIT_TOOL_MATERIAL_ITEM_BYTES,
+        )
+        compact_states[str(stage_id)] = {
+            "status": state.get("status"),
+            "result": stage_result,
+            "result_truncated": result_truncated,
+            "result_original_bytes": result_bytes,
+            "evidence_generation": int(state.get("evidence_generation", 0)),
+            "repair": bool(state.get("repair", False)),
+            "obligations": copy.deepcopy(state.get("obligations") or {}),
+        }
+
+    return {
+        "task_block_id": task_plan_evidence.get("task_block_id"),
+        "run_id": task_plan_evidence.get("run_id"),
+        "plan_id": task_plan_evidence.get("plan_id"),
+        "plan_version": task_plan_evidence.get("plan_version"),
+        "stages": compact_stages,
+        "stage_states": compact_states,
+        "replan_count": len(task_plan_evidence.get("replans") or []),
+    }
+
+
+def _final_audit_requirement_coverage(
+    task_plan_evidence: dict | None,
+    freshness_snapshot: dict | None,
+) -> dict:
+    """Map accepted contract requirements to authoritative current evidence."""
+    if not isinstance(task_plan_evidence, dict):
+        return {
+            "required": False,
+            "complete": True,
+            "requirements": [],
+            "missing": [],
+        }
+
+    stage_states = task_plan_evidence.get("stage_states") or {}
+    snapshot_stages = {
+        str(item.get("stage_id")): item
+        for item in (freshness_snapshot or {}).get("stages", [])
+        if isinstance(item, dict) and item.get("stage_id")
+    }
+    requirements: list[dict] = []
+    missing: list[str] = []
+
+    def append_requirement(item: dict) -> None:
+        requirements.append(item)
+        if not item.get("covered"):
+            missing.append(str(item.get("requirement_id")))
+
+    for stage in task_plan_evidence.get("stages") or []:
+        if not isinstance(stage, dict):
+            continue
+        stage_id = str(stage.get("stage_id") or "")
+        state = stage_states.get(stage_id) or {}
+        stage_status = state.get("status")
+        append_requirement({
+            "requirement_id": f"stage:{stage_id}:satisfied",
+            "stage_id": stage_id,
+            "kind": "stage_completion",
+            "covered": stage_status == "SATISFIED",
+            "source": {"stage_status": stage_status},
+        })
+
+        snapshot_stage = snapshot_stages.get(stage_id) or {}
+        artifact_snapshot = {
+            str(item.get("artifact_id")): item
+            for item in snapshot_stage.get("artifacts", [])
+            if isinstance(item, dict) and item.get("artifact_id")
+        }
+        for artifact in stage.get("artifacts") or []:
+            if not isinstance(artifact, dict):
+                continue
+            artifact_id = str(artifact.get("artifact_id") or "")
+            obligation = (state.get("obligations") or {}).get(artifact_id) or {}
+            current = artifact_snapshot.get(artifact_id)
+            status = obligation.get("status")
+            covered = (
+                stage_status == "SATISFIED"
+                and status in {"SATISFIED", "ALREADY_SATISFIED"}
+                and isinstance(current, dict)
+                and current.get("observed_state_sha256") is not None
+            )
+            append_requirement({
+                "requirement_id": f"artifact:{stage_id}:{artifact_id}",
+                "stage_id": stage_id,
+                "kind": "persistence",
+                "artifact_id": artifact_id,
+                "path": artifact.get("path"),
+                "operation": artifact.get("operation"),
+                "covered": covered,
+                "obligation_status": status,
+                "source": copy.deepcopy(
+                    obligation.get("receipt")
+                    or obligation.get("observed")
+                    or current
+                ),
+            })
+
+        evidence_snapshot = {
+            str(item.get("evidence_id")): item
+            for item in snapshot_stage.get("requirements", [])
+            if isinstance(item, dict) and item.get("evidence_id")
+        }
+        for requirement in stage.get("evidence_requirements") or []:
+            if not isinstance(requirement, dict):
+                continue
+            evidence_id = str(requirement.get("evidence_id") or "")
+            current = evidence_snapshot.get(evidence_id)
+            source_records = (
+                current.get("source_records") if isinstance(current, dict) else []
+            ) or []
+            covered = (
+                stage_status == "SATISFIED"
+                and isinstance(current, dict)
+                and current.get("target_state_sha256") != "UNRESOLVED"
+                and bool(source_records)
+            )
+            append_requirement({
+                "requirement_id": f"evidence:{stage_id}:{evidence_id}",
+                "stage_id": stage_id,
+                "kind": "server_evidence",
+                "evidence_id": evidence_id,
+                "tool": requirement.get("tool"),
+                "arguments_sha256": (
+                    evidence_arguments_fingerprint(requirement.get("arguments") or {})
+                ),
+                "covered": covered,
+                "source_records": copy.deepcopy(source_records),
+                "target_identity": (
+                    copy.deepcopy(current.get("target_identity"))
+                    if isinstance(current, dict)
+                    else []
+                ),
+                "target_state_sha256": (
+                    current.get("target_state_sha256")
+                    if isinstance(current, dict)
+                    else None
+                ),
+            })
+
+    return {
+        "required": True,
+        "complete": not missing,
+        "requirements": requirements,
+        "missing": missing,
+    }
+
+
+def _final_audit_git_not_applicable(check: str, reason: str, policy: dict) -> dict:
+    """Explicit NOT_APPLICABLE Git observation; produced without running Git."""
+    return {
+        "available": True,
+        "ok": True,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "truncated": False,
+        "stdout_bytes": 0,
+        "stderr_bytes": 0,
+        "paths": [],
+        "check": check,
+        "read_scope": policy.get("read_scope"),
+        "not_applicable": True,
+        "reason": reason,
+    }
+
+
+def _collect_final_audit_evidence(
+    *,
+    root: Path,
+    candidate_final: str,
+    policy: dict,
+    run_id: str,
+    api_request_count: int,
+    tool_call_count: int,
+    verification_state: dict,
+    backup_session: dict | None,
+    run_owned_state: dict[str, dict[str, str]] | None = None,
+    tool_facts: list[dict] | None = None,
+    task_plan_evidence: dict | None = None,
+    freshness_snapshot: dict | None = None,
+) -> tuple[str, dict]:
+    """Build a bounded FINAL context only from server-observed facts."""
+    mutation_manifest = (
+        dict(backup_session.get("manifest") or {})
+        if isinstance(backup_session, dict)
+        else {}
+    )
+    mutation_facts = {
+        "changed_files": sorted(set(mutation_manifest.get("changed_files") or [])),
+        "new_files": sorted(set(mutation_manifest.get("new_files") or [])),
+        "deleted_files": sorted(set(mutation_manifest.get("deleted_files") or [])),
+    }
+    observed_tool_names = {
+        str(item.get("tool")) for item in (tool_facts or []) if item.get("tool")
+    }
+    task_scoped = isinstance(task_plan_evidence, dict)
+    # Git evidence is path-scoped in every RUN: the Planner contract plus RUN-owned
+    # mutation/verification targets, or only the latter without a Task Plan. Workspace
+    # changes outside that scope are never collected, so unrelated (possibly sensitive)
+    # work can neither reach the verifier nor inflate the packet.
+    git_scope_mode = "task_scoped_v1" if task_scoped else "run_scoped_v1"
+    no_scoped_paths_reason = "no_task_scoped_paths" if task_scoped else "no_run_scoped_paths"
+    task_paths, invalid_task_paths = _collect_final_audit_task_paths(
+        root=root,
+        policy=policy,
+        task_plan_evidence=task_plan_evidence,
+        mutation_facts=mutation_facts,
+        run_owned_state=run_owned_state or {},
+        verification_state=verification_state,
+        tool_facts=tool_facts or [],
+    )
+    requirement_coverage = _final_audit_requirement_coverage(
+        task_plan_evidence,
+        freshness_snapshot,
+    )
+    compact_task_plan = _compact_final_audit_task_plan(task_plan_evidence)
+    candidate_conflicts = _candidate_fact_conflicts(
+        candidate_final, tool_call_count=tool_call_count,
+        write_revision=verification_state.get("write_revision", 0),
+        run_owned_state=run_owned_state or {}, mutation_facts=mutation_facts,
+        observed_tool_names=observed_tool_names,
+    )
+    is_mutating_run = verification_state.get("write_revision", 0) > 0
+    incomplete_reasons: list[str] = []
+    mutation_evidence_incomplete_reasons: list[str] = []
+    critical_reasons: list[str] = []
+    any_truncated = False
+
+    for stage in (compact_task_plan or {}).get("stages") or []:
+        stage_id = str(stage.get("stage_id") or "")
+        state = compact_task_plan["stage_states"].get(stage_id) or {}
+        if state.get("result_truncated"):
+            any_truncated = True
+            reason = f"stage_result_truncated:{stage_id}"
+            incomplete_reasons.append(reason)
+            if stage.get("completion_mode") == "model_result":
+                critical_reasons.append(reason)
+
+    if task_scoped and not isinstance(freshness_snapshot, dict):
+        reason = "task_plan_freshness_snapshot_missing"
+        incomplete_reasons.append(reason)
+        critical_reasons.append(reason)
+    if invalid_task_paths:
+        reason = "task_scope_contains_unreadable_or_out_of_scope_paths"
+        incomplete_reasons.append(reason)
+        critical_reasons.append(reason)
+    elif is_mutating_run and not task_paths:
+        # Server state says this RUN wrote, yet no RUN-owned path exists to observe:
+        # an inconsistent ledger must not yield an evidence-free audit.
+        reason = "mutating_run_without_scoped_paths"
+        incomplete_reasons.append(reason)
+        critical_reasons.append(reason)
+    if requirement_coverage.get("required") and not requirement_coverage.get("complete"):
+        for requirement_id in requirement_coverage.get("missing") or []:
+            reason = f"requirement_evidence_missing:{requirement_id}"
+            incomplete_reasons.append(reason)
+            critical_reasons.append(reason)
+
+    run_owned_filesystem_evidence, filesystem_mismatches = (
+        _verify_run_owned_filesystem(root, run_owned_state or {})
+    )
+    incomplete_reasons.extend(filesystem_mismatches)
+    critical_reasons.extend(filesystem_mismatches)
+    policy_conflicts: list[str] = []
+    if (
+        policy.get("_raw_task_forbids_file_mutation")
+        and (is_mutating_run or any(mutation_facts.values()))
+    ):
+        policy_conflicts.append(
+            "raw_task_forbids_file_mutation_but_mutation_observed"
+        )
+        critical_reasons.extend(policy_conflicts)
+
+    candidate_text, candidate_truncated, candidate_bytes = (
+        _clip_final_audit_text(candidate_final, MAX_VERIFY_OUTPUT_BYTES)
+    )
+    if candidate_truncated:
+        any_truncated = True
+        incomplete_reasons.append("candidate_final_response_truncated")
+        critical_reasons.append("candidate_final_response_truncated")
+
+    if policy.get("allow_read"):
+        # Final Audit is mandatory even when Executor-facing VERIFY is off.
+        # These are server-side, read-only observations; READ scope still
+        # remains authoritative and is enforced by the existing primitives.
+        audit_policy = dict(policy)
+        audit_policy["allow_verify"] = True
+        if not task_paths:
+            # Nothing is in this RUN's scope: no Git process runs at all.
+            fresh_status = _final_audit_git_not_applicable(
+                "git_status", no_scoped_paths_reason, policy
+            )
+            fresh_diff = _final_audit_git_not_applicable(
+                "git_diff", no_scoped_paths_reason, policy
+            )
+        else:
+            try:
+                status_result = _agent_git_status(root, audit_policy, task_paths)
+                fresh_status = {"available": bool(status_result.get("ok")), **status_result}
+            except Exception as exc:
+                fresh_status = {"available": False, "reason": type(exc).__name__}
+            try:
+                diff_result = _agent_git_diff(
+                    root, task_paths, audit_policy, allow_missing=True
+                )
+                fresh_diff = {"available": bool(diff_result.get("ok")), **diff_result}
+            except Exception as exc:
+                fresh_diff = {"available": False, "reason": type(exc).__name__}
+        for label, evidence in (
+            ("fresh_git_status", fresh_status),
+            ("fresh_git_diff", fresh_diff),
+        ):
+            if not evidence.get("ok"):
+                evidence.setdefault("reason", f"{label}_unavailable")
+            if evidence.get("truncated"):
+                # Scoped output only covers this RUN's own paths: truncation hides
+                # mandatory evidence with or without a Planner.
+                any_truncated = True
+                truncated_reason = f"{label}_truncated"
+                evidence.setdefault("reason", truncated_reason)
+                incomplete_reasons.append(truncated_reason)
+                critical_reasons.append(truncated_reason)
+    else:
+        unavailable = {
+            "available": False,
+            "complete": False,
+            "truncated": False,
+            "reason": "READ is disabled; server did not inspect workspace state.",
+        }
+        fresh_status = dict(unavailable)
+        fresh_diff = dict(unavailable)
+
+    new_file_evidence = []
+    remaining_new_file_bytes = MAX_FINAL_AUDIT_NEW_FILE_BYTES
+    for relative_path in mutation_facts["new_files"]:
+        item = {
+            "path": relative_path,
+            "available": False,
+            "complete": False,
+            "truncated": False,
+        }
+        try:
+            resolved = _resolve_workspace_path(root, relative_path)
+            if not resolved.exists():
+                item.update(
+                    {
+                        "state": "absent_after_run",
+                        "complete": True,
+                        "reason": "File was created during the run but is now absent.",
+                    }
+                )
+            else:
+                file_result = _agent_read_file(root, relative_path, policy)
+                content = file_result["content"]
+                clipped, truncated, original_bytes = _clip_final_audit_text(
+                    content,
+                    remaining_new_file_bytes,
+                )
+                consumed = len(clipped.encode("utf-8", errors="replace"))
+                remaining_new_file_bytes = max(
+                    remaining_new_file_bytes - consumed,
+                    0,
+                )
+                item.update(
+                    {
+                        "available": True,
+                        "complete": not truncated,
+                        "truncated": truncated,
+                        "original_bytes": original_bytes,
+                        "content": clipped,
+                    }
+                )
+                if truncated:
+                    any_truncated = True
+                    reason = f"new_file_content_truncated:{relative_path}"
+                    incomplete_reasons.append(reason)
+                    mutation_evidence_incomplete_reasons.append(reason)
+        except Exception as exc:
+            item["reason"] = f"{type(exc).__name__}: {exc}"
+            reason = f"new_file_content_unavailable:{relative_path}"
+            incomplete_reasons.append(reason)
+            mutation_evidence_incomplete_reasons.append(reason)
+        new_file_evidence.append(item)
+
+    unattributed_git_status = []
+    if fresh_status.get("ok") and not fresh_status.get("not_applicable"):
+        run_owned_mutation_paths = set().union(
+            mutation_facts["changed_files"],
+            mutation_facts["new_files"],
+            mutation_facts["deleted_files"],
+        )
+        for line in str(fresh_status.get("stdout") or "").splitlines():
+            path_text = line[3:] if len(line) >= 4 else ""
+            path_text = path_text.strip().strip('"')
+            if " -> " in path_text:
+                path_text = path_text.rsplit(" -> ", 1)[-1].strip().strip('"')
+            if path_text and path_text not in run_owned_mutation_paths:
+                unattributed_git_status.append(line)
+
+    freshness_snapshot_sha256 = None
+    if isinstance(freshness_snapshot, dict):
+        freshness_snapshot_sha256 = hashlib.sha256(
+            json.dumps(
+                freshness_snapshot,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
+
+    compact_tool_evidence = []
+    remaining_tool_material_bytes = MAX_FINAL_AUDIT_TOOL_MATERIAL_BYTES
+    task_material_included_bytes = 0
+    task_material_truncated = False
+    task_material_deduplicated = 0
+    seen_material: dict[tuple[str, str, str], dict] = {}
+    material_required_tools = {
+        "read_file",
+        "read_file_range",
+        "find_text",
+        "list_dir",
+    }
+
+    # Only source records bound to the current freshness snapshot can impose
+    # mandatory semantic material. Older generations remain visible as facts.
+    active_material_sources: dict[tuple[str, str], list[tuple[str, str]]] = {}
+    for requirement in requirement_coverage.get("requirements") or []:
+        if requirement.get("tool") not in material_required_tools:
+            continue
+        stage_id = str(requirement.get("stage_id") or "")
+        evidence_id = str(requirement.get("evidence_id") or "")
+        for source in requirement.get("source_records") or []:
+            source_id = str(source.get("source_record_id") or "")
+            if source_id:
+                active_material_sources.setdefault((stage_id, source_id), []).append(
+                    (stage_id, evidence_id)
+                )
+
+    def material_requirements(fact: dict) -> list[tuple[str, str]]:
+        stage_id = str(fact.get("stage_id") or "")
+        if task_scoped:
+            return active_material_sources.get(
+                (stage_id, str(fact.get("source_record_id") or "")), []
+            )
+        if fact.get("tool") in material_required_tools:
+            return [(stage_id, str(item)) for item in fact.get("requirement_ids") or []]
+        return []
+
+    indexed_facts = [
+        (index, fact) for index, fact in enumerate(tool_facts or [])
+        if isinstance(fact, dict)
+    ]
+    seen_material_sources: set[tuple[str, str]] = set()
+    # Allocate material to current requirements before optional exploration,
+    # then restore the original event order in the compact packet.
+    for fact_index, fact in sorted(
+        indexed_facts, key=lambda pair: (
+            not bool(material_requirements(pair[1])), pair[1].get("status") == "OK",
+        )
+    ):
+        required_material = material_requirements(fact)
+        seen_material_sources.add((
+            str(fact.get("stage_id") or ""),
+            str(fact.get("source_record_id") or ""),
+        ))
+        item = {
+            key: copy.deepcopy(fact.get(key))
+            for key in (
+                "sequence",
+                "source_record_id",
+                "source_run_store_record_id",
+                "source_run_store_sha256",
+                "task_block_id",
+                "run_id",
+                "plan_id",
+                "plan_version",
+                "candidate_id",
+                "stage_id",
+                "evidence_generation",
+                "requirement_ids",
+                "target_identity",
+                "tool",
+                "path",
+                "capability",
+                "status",
+                "executed",
+                "arguments_sha256",
+                "observed_state_sha256",
+                "result",
+            )
+            if key in fact
+        }
+        # A successful tool can still report a negative fact (e.g. zero matches).
+        # Keep its bounded summary even when no preview material can be included.
+        item["summary"] = str(fact.get("summary") or "")[:1000]
+        if fact.get("status") != "OK":
+            item["error"] = str(fact.get("error") or "")[:300]
+        preview = fact.get("material_preview")
+        result_sha256 = str((fact.get("result") or {}).get("sha256") or "")
+        material_key = (
+            str(fact.get("tool") or ""),
+            str(fact.get("path") or ""),
+            result_sha256,
+        )
+        material_problem = None
+        if isinstance(preview, dict) and isinstance(preview.get("content"), str):
+            if result_sha256 and material_key in seen_material:
+                source_material = seen_material[material_key]
+                item["material_deduplicated"] = True
+                item["material_source_record_id"] = source_material["source_record_id"]
+                item["material_truncated"] = source_material["truncated"]
+                task_material_deduplicated += 1
+                if source_material["truncated"]:
+                    material_problem = "truncated"
+            elif remaining_tool_material_bytes > 0:
+                clipped, total_truncated, _original_bytes = _clip_final_audit_text(
+                    preview["content"],
+                    remaining_tool_material_bytes,
+                )
+                consumed = len(clipped.encode("utf-8", errors="replace"))
+                remaining_tool_material_bytes = max(
+                    remaining_tool_material_bytes - consumed,
+                    0,
+                )
+                task_material_included_bytes += consumed
+                material_truncated = bool(
+                    preview.get("truncated") or total_truncated
+                )
+                seen_material[material_key] = {
+                    "source_record_id": fact.get("source_record_id"),
+                    "truncated": material_truncated,
+                }
+                item["material_preview"] = {
+                    "content": clipped,
+                    "truncated": material_truncated,
+                    "original_bytes": int(preview.get("original_bytes") or consumed),
+                }
+                if material_truncated:
+                    task_material_truncated = True
+                    material_problem = "truncated"
+            else:
+                item["material_omitted_due_to_budget"] = True
+                task_material_truncated = True
+                material_problem = "budget_exhausted"
+        else:
+            material_problem = "missing"
+        if material_problem:
+            for stage_id, requirement_id in required_material:
+                reason = f"requirement_material_{material_problem}:{stage_id}:{requirement_id}"
+                incomplete_reasons.append(reason)
+                critical_reasons.append(reason)
+        compact_tool_evidence.append((fact_index, item))
+
+    for source_key, requirements in active_material_sources.items():
+        if source_key not in seen_material_sources:
+            for stage_id, requirement_id in requirements:
+                reason = f"requirement_material_missing:{stage_id}:{requirement_id}"
+                incomplete_reasons.append(reason)
+                critical_reasons.append(reason)
+    compact_tool_evidence = [item for _index, item in sorted(compact_tool_evidence)]
+
+    if is_mutating_run:
+        critical_reasons.extend(mutation_evidence_incomplete_reasons)
+    any_truncated = any_truncated or task_material_truncated
+    incomplete_reasons = list(dict.fromkeys(incomplete_reasons))
+    critical_reasons = list(dict.fromkeys(critical_reasons))
+    completeness = {
+        "complete": not incomplete_reasons,
+        "truncated": any_truncated,
+        "reasons": incomplete_reasons,
+        "critical_for_success": bool(critical_reasons),
+        "critical_reasons": critical_reasons,
+        "critical_for_mutating_run": bool(
+            is_mutating_run and (
+                mutation_evidence_incomplete_reasons or filesystem_mismatches
+            )
+        ),
+        "policy_conflicts": policy_conflicts,
+        "candidate_fact_conflicts": candidate_conflicts,
+    }
+    evidence = {
+        "check_type": "FINAL",
+        "evidence_semantics": {
+            "raw_task": (
+                "Source of truth for requested work; supplied separately as "
+                "run_verifier_check.raw_task."
+            ),
+            "candidate_final_response": (
+                "Executor claim about completion; not an authoritative fact."
+            ),
+            "mutation_facts": (
+                "Server-observed mutations performed during the current RUN."
+            ),
+            "run_owned_filesystem_evidence": (
+                "Server integrity check of the current RUN's expected file states "
+                "and logical content hashes; no file content is included."
+            ),
+            "fresh_git_state": (
+                "Path-scoped observation in every RUN: task_scoped_v1 (Planner "
+                "contract plus RUN-owned paths) or run_scoped_v1 (RUN-owned "
+                "mutation/verification paths only). Workspace changes outside these "
+                "paths are intentionally not collected; their absence is not a defect. "
+                "Within scope Git may include pre-existing or external changes."
+            ),
+            "git_attribution_rule": (
+                "Do not attribute a Git change to the current RUN unless it is "
+                "corroborated by mutation_facts."
+            ),
+            "candidate_fact_conflict_rule": (
+                "A claim that current-RUN tools or physical mutations occurred "
+                "cannot be accepted when server-observed facts contradict it."
+            ),
+        },
+        "candidate_final_response": {
+            "content": candidate_text,
+            "complete": not candidate_truncated,
+            "truncated": candidate_truncated,
+            "original_bytes": candidate_bytes,
+        },
+        "run_facts": {
+            "run_id": run_id,
+            "api_request_count": api_request_count,
+            "tool_call_count": tool_call_count,
+            "write_revision": verification_state.get("write_revision", 0),
+            "changed_python_paths": list(
+                verification_state.get("changed_python_paths") or []
+            ),
+            "deleted_python_paths": list(
+                verification_state.get("deleted_python_paths") or []
+            ),
+        },
+        "permission_policy": _policy_summary(policy),
+        "deterministic_verification": {
+            "verification_state": dict(verification_state),
+            "missing_requirements": _verification_missing_requirements(
+                verification_state
+            ),
+        },
+        "task_plan": compact_task_plan,
+        "requirement_coverage": requirement_coverage,
+        "evidence_freshness": {
+            "snapshot_sha256": freshness_snapshot_sha256,
+            "snapshot": copy.deepcopy(freshness_snapshot),
+        },
+        "task_scope": {
+            "mode": git_scope_mode,
+            "paths": task_paths,
+            "invalid_paths": invalid_task_paths,
+            "unattributed_git_status": unattributed_git_status,
+        },
+        "mutation_facts": mutation_facts,
+        "observed_executor_tools": {
+            "tool_call_count": tool_call_count,
+            "names": sorted(observed_tool_names),
+            "summary_complete": tool_facts is not None,
+        },
+        "authoritative_tool_evidence": compact_tool_evidence,
+        "task_material": {
+            "item_limit_bytes": MAX_FINAL_AUDIT_TOOL_MATERIAL_ITEM_BYTES,
+            "total_limit_bytes": MAX_FINAL_AUDIT_TOOL_MATERIAL_BYTES,
+            "included_bytes": task_material_included_bytes,
+            "remaining_bytes": remaining_tool_material_bytes,
+            "truncated": task_material_truncated,
+            "deduplicated_count": task_material_deduplicated,
+        },
+        "run_owned_filesystem_evidence": run_owned_filesystem_evidence,
+        "fresh_git_status": fresh_status,
+        "fresh_git_diff": fresh_diff,
+        "new_file_evidence": new_file_evidence,
+        "evidence_completeness": completeness,
+    }
+    completeness["context_limit_bytes"] = MAX_FINAL_AUDIT_CONTEXT_BYTES
+    context = ""
+    context_bytes = -1
+    for _attempt in range(4):
+        context = json.dumps(evidence, ensure_ascii=False, sort_keys=True, indent=2)
+        measured_bytes = len(context.encode("utf-8", errors="replace"))
+        if measured_bytes == context_bytes:
+            break
+        context_bytes = measured_bytes
+        completeness["context_bytes"] = context_bytes
+    if context_bytes > MAX_FINAL_AUDIT_CONTEXT_BYTES:
+        completeness["complete"] = False
+        size_reason = "verification_context_size_limit_exceeded"
+        if size_reason not in completeness["reasons"]:
+            completeness["reasons"].append(size_reason)
+        if size_reason not in completeness["critical_reasons"]:
+            completeness["critical_reasons"].append(size_reason)
+        completeness["critical_for_success"] = True
+        for _attempt in range(4):
+            context = json.dumps(
+                evidence, ensure_ascii=False, sort_keys=True, indent=2
+            )
+            measured_bytes = len(context.encode("utf-8", errors="replace"))
+            if measured_bytes == completeness["context_bytes"]:
+                break
+            completeness["context_bytes"] = measured_bytes
+
+    return context, completeness
+
+
+async def _request_audit_diagnostic(
+    client, headers: dict, run_model: str, messages: list[dict],
+    rejected_candidate: str, question: str, *,
+    model_id: str | None = None,
+    provider: str = "gigachat",
+    diagnostic_callback=None,
+    source_references: list[str] | tuple[str, ...] = (),
+) -> str:
+    """One bounded, tool-free call on an isolated copy of Executor context."""
+    fork = copy.deepcopy(messages)
+    fork.append({"role": "assistant", "content": rejected_candidate})
+    fork.append({"role": "user", "content": question})
+    body = {
+        "model": run_model,
+        "messages": fork,
+        "temperature": TEMPERATURE,
+        "max_tokens": MAX_AUDIT_DIAGNOSTIC_TOKENS,
+        "stream": False,
+    }
+    provider_started = build_provider_attempt_started(
+        role="executor",
+        mode="AUDIT_DIAGNOSTIC",
+        provider=provider,
+        model_id=model_id or run_model,
+        provider_model_id=run_model,
+        body=body,
+        blocks=[
+            measure_json_block(
+                "executor_context",
+                messages,
+                source_ref="executor_context:audit_diagnostic",
+            ),
+            measure_text_block(
+                "rejected_candidate",
+                rejected_candidate,
+                source_ref="audit_diagnostic:rejected_candidate",
+            ),
+            measure_text_block(
+                "diagnostic_question",
+                question,
+                source_ref="audit_diagnostic:question",
+            ),
+        ],
+        source_references=source_references,
+    )
+    provider_started_at = time.time()
+    provider_usage = None
+    provider_http_status = None
+    provider_terminal_emitted = False
+
+    def notify(kind: str, payload: dict) -> None:
+        if diagnostic_callback is None:
+            return
+        try:
+            diagnostic_callback(kind, payload)
+        except Exception:
+            pass
+
+    def finish_provider_attempt(
+        outcome: str, error_type: str | None = None
+    ) -> None:
+        nonlocal provider_terminal_emitted
+        if provider_terminal_emitted:
+            return
+        provider_terminal_emitted = True
+        notify(
+            "provider_attempt_terminal",
+            build_provider_attempt_terminal(
+                provider_started,
+                outcome=outcome,
+                provider_usage=provider_usage,
+                duration=max(time.time() - provider_started_at, 0.0),
+                http_status=provider_http_status,
+                error_type=error_type,
+            ),
+        )
+
+    notify("provider_attempt_started", provider_started)
+    try:
+        response = await asyncio.wait_for(
+            client.post(CHAT_URL, headers=headers, json=body),
+            timeout=AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS,
+        )
+        response.raise_for_status()
+        provider_http_status = getattr(response, "status_code", None)
+    except asyncio.CancelledError:
+        finish_provider_attempt("cancelled", "CancelledError")
+        raise
+    except (asyncio.TimeoutError, httpx.TimeoutException) as exc:
+        finish_provider_attempt("timeout", type(exc).__name__)
+        raise
+    except httpx.HTTPStatusError as exc:
+        provider_http_status = (
+            exc.response.status_code if exc.response is not None else None
+        )
+        finish_provider_attempt("provider_error", type(exc).__name__)
+        raise
+    except httpx.HTTPError as exc:
+        finish_provider_attempt("transport_error", type(exc).__name__)
+        raise
+    except Exception as exc:
+        finish_provider_attempt("transport_error", type(exc).__name__)
+        raise
+
+    try:
+        data = response.json()
+    except Exception as exc:
+        finish_provider_attempt("parse_error", type(exc).__name__)
+        raise ValueError("Malformed diagnostic transport response") from exc
+    provider_usage = extract_usage(data)
+    try:
+        answer = data["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError) as exc:
+        finish_provider_attempt("parse_error", type(exc).__name__)
+        raise ValueError("Malformed diagnostic response") from exc
+    if not isinstance(answer, str) or not answer.strip():
+        finish_provider_attempt("parse_error", "ValueError")
+        raise ValueError("Empty diagnostic response")
+    finish_provider_attempt("completed")
+    return answer.strip()[:600]
+
+
+def _planner_target_snapshot(root: Path, path_text: str, policy: dict) -> dict:
+    path = _require_operation_permission(root, path_text, "read", policy)
+    if path.exists() and not path.is_file():
+        raise ValueError("Persistence target is not a regular file")
+    if not path.exists():
+        return {"exists": False, "sha256": None, "content": ""}
+    _require_text_suffix(path)
+    content = _read_logical_text(path)
+    return {"exists": True, "sha256": _sha256_utf8(content), "content": content}
+
+
+def _tool_observation_fingerprint(tool: str, arguments: dict, result: dict) -> str | None:
+    """Fingerprint the observation that produced the result, never a later read."""
+    path = arguments.get("path")
+    if tool in {"read_file", "read_file_range", "find_text", "verify_file_content", "list_dir"}:
+        if result.get("path") != os.path.normpath(path).replace("\\", "/"):
+            return None
+    if tool == "list_dir":
+        if result.get("truncated"):
+            return None
+        observation = {key: result.get(key) for key in ("path", "entries", "truncated")}
+    elif tool == "git_diff":
+        if not result.get("ok") or result.get("truncated"):
+            return None
+        observation = {key: result.get(key) for key in ("stdout", "stderr", "paths", "truncated")}
+    elif tool == "verify_file_content" and arguments.get("kind") in {"exists", "absent"}:
+        observation = {"target": path, "exists": result.get("exists"),
+                       "target_exists": result.get("target_exists")}
+    elif tool in {"read_file", "read_file_range", "find_text", "verify_file_content"}:
+        digest = result.get("actual_sha256") if tool == "verify_file_content" else result.get("content_sha256")
+        if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+            return None
+        return evidence_dependency_state_fingerprint(
+            lambda _path: {"exists": True, "sha256": digest}, tool, arguments,
+        )
+    else:
+        return None
+    return _sha256_utf8(json.dumps(observation, ensure_ascii=False, sort_keys=True))
+
+
+def _planner_dependency_fingerprint(root: Path, tool: str, arguments: dict, policy: dict) -> str | None:
+    """Bind evidence to its observed semantics without widening persistence targets."""
+    if tool == "list_dir":
+        observation = _agent_list_dir(root, arguments["path"], policy)
+    elif tool == "git_diff":
+        observation = _agent_git_diff(root, arguments["paths"], policy, allow_missing=True)
+        if not observation.get("ok"):
+            raise ValueError("Git dependency state is unavailable")
+    elif tool == "verify_file_content" and arguments.get("kind") in {"exists", "absent"}:
+        observation = _agent_verify_file_content(
+            root, arguments["path"], arguments["kind"], arguments["value"], policy,
+        )
+    else:
+        return evidence_dependency_state_fingerprint(
+            lambda path: _planner_target_snapshot(root, path, policy), tool, arguments,
+        )
+    if observation.get("truncated"):
+        raise ValueError("Dependency observation is truncated")
+    return _tool_observation_fingerprint(tool, arguments, observation)
+
+
+def _tool_evidence_binding(fact: dict) -> dict:
+    return {key: copy.deepcopy(fact.get(key)) for key in (
+        "source_record_id", "task_block_id", "run_id", "plan_id", "plan_version", "stage_id", "candidate_id",
+        "evidence_generation", "requirement_ids", "target_identity", "tool",
+        "capability", "status", "executed", "arguments_sha256",
+        "observed_state_sha256", "sequence", "result",
+    )}
+
+
+def _validate_durable_tool_outcome(root: Path, run_id: str, fact: dict) -> dict | None:
+    if not fact.get("executed"):
+        return
+    if fact.get("run_id") != run_id:
+        raise ValueError("Outcome belongs to another RUN")
+    record = validate_run_record(root, run_id, {
+        "record_id": fact.get("source_run_store_record_id"),
+        "sha256": fact.get("source_run_store_sha256"),
+    }, event="tool_finished" if fact.get("status") == "OK" else "tool_error")
+    payload = record.get("payload") or {}
+    if payload.get("evidence_binding") != _tool_evidence_binding(fact):
+        raise ValueError("Durable outcome binding mismatch")
+    result_sha256 = _sha256_utf8(json.dumps(
+        payload.get("result"), ensure_ascii=False, sort_keys=True,
+        separators=(",", ":"), default=str,
+    ))
+    if result_sha256 != (fact.get("result") or {}).get("sha256"):
+        raise ValueError("Durable tool result mismatch")
+    return record
+
+
+def _prepare_persistence_candidate(root: Path, call: dict, artifact: dict, policy: dict, repair=False) -> dict:
+    name, args = call.get("name"), call.get("arguments")
+    if name not in MUTATION_TOOL_NAMES or not isinstance(args, dict):
+        raise ValueError("Unsupported persistence operation")
+    expected_keys = {
+        "write_file": {"path", "content"}, "delete_file": {"path"},
+        "replace_text": {"path", "old_text", "new_text", "expected_content_sha256"},
+        "insert_before": {"path", "marker", "content", "expected_content_sha256"},
+        "insert_after": {"path", "marker", "content", "expected_content_sha256"},
+    }[name]
+    if set(args) != expected_keys or args["path"] != artifact["path"]:
+        raise ValueError("Candidate arguments do not match the artifact")
+    operation = "delete" if name == "delete_file" else "write"
+    target = _require_operation_permission(root, args["path"], operation, policy)
+    _require_text_suffix(target)
+    before = _planner_target_snapshot(root, args["path"], policy)
+    contract_op = artifact["operation"]
+    if (contract_op == "delete") != (name == "delete_file"):
+        raise ValueError("Candidate operation does not match the contract")
+    if contract_op == "create" and before["exists"] and not repair:
+        raise PlanInvalidated({
+            "reason": "create_target_already_exists",
+            "path": args["path"],
+            "observed_sha256": before["sha256"],
+            "postcondition_holds": postcondition_holds(artifact, before),
+        })
+    if contract_op in {"update", "delete"} and not before["exists"]:
+        raise PlanInvalidated({"reason": "required_target_missing", "path": args["path"]})
+    if name == "delete_file":
+        expected = {"exists": False, "sha256": None}
+    else:
+        if name == "write_file":
+            content = args["content"]
+        else:
+            if args["expected_content_sha256"] != before["sha256"]:
+                raise PlanInvalidated({"reason": "candidate_hash_stale", "path": args["path"],
+                                       "observed_sha256": before["sha256"]})
+            marker = args["old_text"] if name == "replace_text" else args["marker"]
+            replacement = args["new_text"] if name == "replace_text" else args["content"]
+            if not isinstance(marker, str) or not marker or before["content"].count(marker) != 1:
+                raise ValueError("Candidate anchor must be unique")
+            if not isinstance(replacement, str):
+                raise ValueError("Candidate payload must be text")
+            insertion = (replacement if name == "replace_text" else
+                         replacement + marker if name == "insert_before" else marker + replacement)
+            content = before["content"].replace(marker, insertion, 1)
+        if not isinstance(content, str) or len(content.encode("utf-8")) > MAX_AGENT_FILE_BYTES:
+            raise ValueError("Invalid candidate content")
+        if before["exists"] and content == before["content"]:
+            raise ValueError("No logical mutation; verify ALREADY_SATISFIED instead")
+        expected = {"exists": True, "sha256": _sha256_utf8(content)}
+    return {"before": {k: before[k] for k in ("exists", "sha256")}, "expected": expected}
+
+
+def _select_executor_seed_messages(
+    task: str,
+    active_chat_messages: list[dict],
+    *,
+    planner_enabled: bool,
+) -> list[dict]:
+    if planner_enabled:
+        return [{"role": "user", "content": task}]
+    return copy.deepcopy(active_chat_messages)
+
+
+async def run_agent_task(
+    task: str, workspace_root: str, *, on_event=None, permissions: dict | None = None,
+    chat_id: str | None = None, model_id: str | None = None,
+    verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID, task_block_id: str | None = None,
+    permission_request_callback=None, planner_enabled: bool = False,
+    final_audit_enabled: bool = True,
+    planner_model_id: str = DEFAULT_PLANNER_MODEL_ID,
+) -> str:
+    """Legacy direct callers opt in; normal UI explicitly enables the V6 contract."""
+    try:
+        return await _run_agent_task_impl(
+            task, workspace_root, on_event=on_event, permissions=permissions, chat_id=chat_id,
+            model_id=model_id, verifier_model_id=verifier_model_id, task_block_id=task_block_id,
+            permission_request_callback=permission_request_callback,
+            planner_enabled=planner_enabled,
+            final_audit_enabled=final_audit_enabled,
+            planner_model_id=planner_model_id,
+        )
+    except LifecycleBlocked as exc:
+        return f"RUN STATUS: BLOCKED\nreason: {exc}"
+
+
+async def _run_agent_task_impl(
+    task: str,
+    workspace_root: str,
+    *,
+    on_event=None,
+    permissions: dict | None = None,
+    chat_id: str | None = None,
+    model_id: str | None = None,
+    verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID,
+    task_block_id: str | None = None,
+    permission_request_callback=None,
+    planner_enabled: bool = False,
+    final_audit_enabled: bool = True,
+    planner_model_id: str = DEFAULT_PLANNER_MODEL_ID,
+) -> str:
+    """Запустить автономный GigaChat file-agent с серверными ограничениями."""
+    if not isinstance(task, str) or not task.strip():
+        raise ValueError("task должен быть непустой строкой.")
+    if task_block_id is not None:
+        validate_task_block_id(task_block_id)
+
+    selected_model_id = model_id or MAIN_CHAT_MODEL_ID
+    selected_model = get_model_spec(selected_model_id)
+    if selected_model.provider != "gigachat":
+        raise RuntimeError(
+            "MAIN CHAT Provider пока не поддерживается: "
+            f"{selected_model.provider}"
+        )
+    run_model = selected_model.provider_model_id
+
+    run_id = time.strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
+    start_time = time.time()
+    api_request_count = 0
+    tool_call_count = 0
+    policy = _normalize_permissions(permissions)
+    policy["_raw_task_forbids_file_mutation"] = (
+        raw_task_explicitly_forbids_file_mutation(task)
+    )
+    # DIAGNOSTIC ONLY — NOT A CONTROL GATE.
+    mutation_intent = _classify_mutation_intent(task)
+
+    # Пока workspace_id ещё не загружен, ошибки пишутся в системный fallback.
+    # После загрузки Workspace путь переключается на его собственный namespace.
+    runtime_log_path = (
+        Path(os.getenv("LOCALAPPDATA") or Path.home())
+        / "GigaChatUltra"
+        / "system_logs"
+        / f"{run_id}.jsonl"
+    ).resolve()
+    workspace_backup_base = BACKUP_BASE
+    audit_recorder: AuditThreadRecorder | None = None
+    lifecycle = None
+    certification_records = []
+
+    def _block_evidence(reason: str):
+        if lifecycle is not None:
+            try:
+                lifecycle.block(reason)
+            except LifecycleBlocked:
+                raise
+            except Exception:
+                # Storage failure must not hide the terminal safety decision.
+                pass
+        _emit("run_finished", {"status": "BLOCKED", "reason": reason})
+        raise LifecycleBlocked(reason)
+
+    def _assert_durable_outcomes():
+        for fact in consistency_tool_facts:
+            try:
+                _validate_durable_tool_outcome(root, run_id, fact)
+            except Exception as exc:
+                candidate = lifecycle.state["candidates"].get(fact.get("candidate_id")) if lifecycle else None
+                if candidate is not None:
+                    candidate["evidence_status"] = "UNAVAILABLE"
+                    if not candidate.get("executed"):
+                        candidate["executed"] = True
+                        candidate["outcome"] = "UNKNOWN"
+                    try:
+                        lifecycle.save()
+                    except OSError:
+                        pass
+                _block_evidence("mandatory_evidence_unavailable:" + type(exc).__name__ + ":" + str(exc))
+        for saved in certification_records:
+            try:
+                validate_run_record(root, run_id, saved["ack"], event=saved["event"], payload=saved["payload"])
+            except Exception as exc:
+                _block_evidence("mandatory_certification_unavailable:" + type(exc).__name__)
+
+    def _terminal_evidence_snapshot():
+        try:
+            if lifecycle is not None:
+                if any(lifecycle.remaining_evidence_requirements_for_stage(stage, consistency_tool_facts)
+                       for stage in lifecycle.plan["stages"] if not stage["persistence_required"]):
+                    raise ValueError("required evidence is no longer current")
+                lifecycle.assert_satisfied()
+                return lifecycle.evidence_freshness_snapshot_sha256(consistency_tool_facts)
+            # Legacy callers have no declared stages. Bind their file observations
+            # across the callback without introducing extra Git diagnostics.
+            states = []
+            for fact in consistency_tool_facts:
+                tool = fact["tool"]
+                if not fact.get("executed") or tool == "git_diff":
+                    continue
+                record = _validate_durable_tool_outcome(root, run_id, fact)
+                arguments = record["payload"].get("arguments") or {}
+                if not evidence_dependency_targets(tool, arguments):
+                    continue
+                try:
+                    state = _planner_dependency_fingerprint(root, tool, arguments, policy)
+                except (PermissionError, ValueError, OSError):
+                    state = "UNRESOLVED"
+                states.append((fact["source_record_id"], state))
+            return states
+        except LifecycleBlocked:
+            raise
+        except Exception as exc:
+            _block_evidence("terminal_evidence_invalid:" + type(exc).__name__)
+
+    def _emit(event_type: str, payload: dict):
+        event = {
+            "event": event_type,
+            "run_id": run_id,
+            "timestamp": time.time(),
+            **payload,
+        }
+        # Role switches do not waive the proof required for a returned SUCCESS.
+        terminal_success = event_type == "run_finished" and payload.get("status") == "SUCCESS"
+        required_event = (
+            event_type in {"tool_started", "final_audit_passed"}
+            or terminal_success
+        )
+        expected_payload = {key: copy.deepcopy(value) for key, value in event.items()
+                            if key not in {"event", "timestamp", "run_id"}} if required_event else None
+        if event_type == "final_audit_passed" or terminal_success:
+            _assert_durable_outcomes()
+        terminal_snapshot = _terminal_evidence_snapshot() if terminal_success else None
+        persisted_record = None
+        if audit_recorder is not None:
+            try:
+                persisted_record = audit_recorder.observe(event)
+            except Exception as exc:
+                event["audit_storage_error"] = type(exc).__name__
+        if required_event:
+            try:
+                validate_run_record(root, run_id, persisted_record or {},
+                                    event=event_type, payload=expected_payload)
+            except Exception as exc:
+                _block_evidence("mandatory_evidence_event_unavailable:" + event_type + ":" + type(exc).__name__)
+            if event_type == "final_audit_passed":
+                certification_records.append({"ack": copy.deepcopy(persisted_record),
+                                              "event": event_type, "payload": expected_payload})
+        if on_event:
+            try:
+                on_event(copy.deepcopy(event))
+            except Exception:
+                pass
+            except BaseException:
+                if terminal_success:
+                    try:
+                        _block_evidence("terminal_callback_interrupted")
+                    except LifecycleBlocked:
+                        pass
+                raise
+
+        try:
+            runtime_log_path.parent.mkdir(parents=True, exist_ok=True)
+            with runtime_log_path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(event, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+        if terminal_success:
+            # SUCCESS observed by a synchronous callback is provisional until it
+            # returns. Never retry tools/audit after a terminal observer fault.
+            _assert_durable_outcomes()
+            try:
+                validate_run_record(root, run_id, persisted_record or {},
+                                    event=event_type, payload=expected_payload)
+            except Exception as exc:
+                _block_evidence("mandatory_evidence_event_unavailable:" + event_type + ":" + type(exc).__name__)
+            if _terminal_evidence_snapshot() != terminal_snapshot:
+                _block_evidence("terminal_evidence_changed_after_callback")
+        return persisted_record
+
+    def _context_message(
+        event_id: str,
+        variables: dict | None = None,
+    ) -> str:
+        return resolve_server_context_message(
+            event_id,
+            variables,
+            "ultra",
+            on_warning=lambda warning: _emit(
+                "server_context_message_warning", warning
+            ),
+        )
+
+    root = _validate_workspace_root(workspace_root)
+    policy = _prepare_policy_for_workspace(root, policy)
+
+    # STEP 1 CONTEXT STORAGE:
+    # создаём или подхватываем переносимый `.ultra/` данного Workspace.
+    # Существующий workspace_id никогда не пересоздаётся автоматически.
+    try:
+        workspace_info = ensure_workspace_storage(root)
+        project_context = load_project_context(root)
+    except Exception as exc:
+        _emit(
+            "run_failed",
+            {
+                "reason": "workspace_context_load_error",
+                "api_requests": api_request_count,
+                "tool_calls": tool_call_count,
+                "duration": time.time() - start_time,
+                "error": str(exc),
+                "trace_path": str(runtime_log_path),
+            },
+        )
+        raise RuntimeError(
+            "Не удалось создать или загрузить переносимый контекст Workspace."
+        ) from exc
+
+    try:
+        audit_recorder = AuditThreadRecorder(
+            root, workspace_info["workspace_id"], chat_id, run_id,
+            task_block_id=task_block_id, raw_task=task,
+        )
+    except Exception as exc:
+        # Audit observability is not allowed to veto the Executor RUN.
+        audit_recorder = None
+        _emit("audit_storage_error", {"error_type": type(exc).__name__})
+
+    if audit_recorder is None:
+        _block_evidence("mandatory_evidence_store_unavailable")
+
+    try:
+        runtime_paths = ensure_workspace_runtime_dirs(
+            workspace_info["workspace_id"]
+        )
+        workspace_backup_base = Path(
+            runtime_paths["backup_dir"]
+        ).resolve()
+        runtime_log_dir = Path(runtime_paths["log_dir"]).resolve()
+
+        # Бэкапы/логи не должны лежать внутри Workspace: иначе снимок может
+        # начать резервировать сам себя и потеряется смысл внешней защиты.
+        for label, path in (
+            ("backup", workspace_backup_base),
+            ("log", runtime_log_dir),
+        ):
+            if path == root or root in path.parents:
+                raise ValueError(
+                    f"{label} directory не должна находиться внутри Workspace."
+                )
+
+        runtime_log_path = runtime_log_dir / f"{run_id}.jsonl"
+    except Exception as exc:
+        _emit(
+            "run_failed",
+            {
+                "reason": "workspace_runtime_settings_error",
+                "api_requests": api_request_count,
+                "tool_calls": tool_call_count,
+                "duration": time.time() - start_time,
+                "error": str(exc),
+                "trace_path": str(runtime_log_path),
+            },
+        )
+        raise RuntimeError(
+            "Не удалось подготовить локальные пути backup/log для Workspace."
+        ) from exc
+
+    active_chat_messages = []
+    if chat_id:
+        try:
+            working_history = load_chat_working_messages(root, chat_id)
+        except Exception as exc:
+            _emit(
+                "run_failed",
+                {
+                    "reason": "chat_context_load_error",
+                    "api_requests": api_request_count,
+                    "tool_calls": tool_call_count,
+                    "duration": time.time() - start_time,
+                    "chat_id": chat_id,
+                    "error": str(exc),
+                    "trace_path": str(runtime_log_path),
+                },
+            )
+            raise RuntimeError(
+                "Не удалось загрузить историю активного чата."
+            ) from exc
+
+        raw_message_count = 0
+        compressed_message_count = 0
+        for item in working_history:
+            role = item.get("role")
+            content = item.get("content")
+            if (
+                role in {"user", "assistant"}
+                and isinstance(content, str)
+                and content.strip()
+            ):
+                active_chat_messages.append(
+                    {"role": role, "content": content}
+                )
+                if item.get("context_representation") == "summary":
+                    compressed_message_count += 1
+                else:
+                    raw_message_count += 1
+
+        # UI сохраняет текущее пользовательское сообщение ДО запуска API.
+        # Для прямых вызовов run_agent_task без предварительного сохранения
+        # гарантируем, что текущая задача всё равно попадёт в запрос ровно один раз.
+        if not (
+            active_chat_messages
+            and active_chat_messages[-1]["role"] == "user"
+            and active_chat_messages[-1]["content"] == task
+        ):
+            active_chat_messages.append({"role": "user", "content": task})
+            raw_message_count += 1
+
+    else:
+        active_chat_messages = [{"role": "user", "content": task}]
+
+    executor_seed_messages = _select_executor_seed_messages(
+        task,
+        active_chat_messages,
+        planner_enabled=planner_enabled,
+    )
+
+    _emit(
+        "run_started",
+        {
+            "task_preview": task[:200],
+            "permissions": _policy_summary(policy),
+            "workspace_id": workspace_info["workspace_id"],
+            "chat_id": chat_id,
+            "task_block_id": task_block_id,
+            "model_id": selected_model.model_id,
+            "model_display_name": selected_model.display_name,
+            "provider": selected_model.provider,
+            "provider_model_id": selected_model.provider_model_id,
+        },
+    )
+    _emit("mutation_intent_classified", {
+        "mutation_intent": mutation_intent["mutation_intent"],
+        "reasons": list(mutation_intent["reasons"]),
+    })
+    if chat_id:
+        _emit(
+            "chat_context_loaded",
+            {
+                "chat_id": chat_id,
+                "messages": len(active_chat_messages),
+                "raw_messages": raw_message_count,
+                "compressed_messages": compressed_message_count,
+                "chars": sum(
+                    len(item.get("content") or "")
+                    for item in active_chat_messages
+                ),
+            },
+        )
+    _emit(
+        "workspace_context_loaded",
+        {
+            "workspace_id": workspace_info["workspace_id"],
+            "storage_created": workspace_info["storage_created"],
+            "workspace_created": workspace_info["workspace_created"],
+            "project_context_created": workspace_info[
+                "project_context_created"
+            ],
+            "project_context_chars": len(project_context),
+        },
+    )
+    _emit(
+        "executor_context_compiled",
+        {
+            "policy": (
+                "task_scoped_v1"
+                if planner_enabled
+                else "chat_working_history"
+            ),
+            "included_chat_messages": len(executor_seed_messages),
+            "excluded_chat_messages": max(
+                len(active_chat_messages) - len(executor_seed_messages),
+                0,
+            ),
+            "included_chat_chars": sum(
+                len(item.get("content") or "")
+                for item in executor_seed_messages
+            ),
+            "excluded_chat_chars": max(
+                sum(
+                    len(item.get("content") or "")
+                    for item in active_chat_messages
+                )
+                - sum(
+                    len(item.get("content") or "")
+                    for item in executor_seed_messages
+                ),
+                0,
+            ),
+        },
+    )
+
+    # GLOBAL_ULTRA_CONTEXT_V1
+    # Глобальный контекст Ultra — локальный app-level контекст агента,
+    # общий для всех Workspace. Он хранится вне Workspace и поэтому
+    # недоступен обычным file tools Ultra.
+    app_dir = Path(__file__).resolve().parent
+    try:
+        global_agent_context = load_agent_global_context("ultra")
+    except Exception as exc:
+        _emit(
+            "run_failed",
+            {
+                "reason": "global_agent_context_load_error",
+                "api_requests": api_request_count,
+                "tool_calls": tool_call_count,
+                "duration": time.time() - start_time,
+                "error": str(exc),
+                "trace_path": str(runtime_log_path),
+            },
+        )
+        raise RuntimeError(
+            "Не удалось загрузить ГЛОБАЛЬНЫЙ КОНТЕКСТ ULTRA. "
+            "Открой в UI «Глобальный контекст Ultra» и сохрани непустой текст."
+        ) from exc
+
+    _emit(
+        "global_agent_context_loaded",
+        {
+            "agent_id": "ultra",
+            "chars": len(global_agent_context),
+        },
+    )
+
+    # Бэкап выполняется синхронно ДО обращения к модели.
+    backup_session = None
+    if policy["auto_backup"]:
+        planned_backup_path = workspace_backup_base / run_id
+        _emit("backup_started", {"backup_path": str(planned_backup_path)})
+        try:
+            backup_session = _create_backup_session(
+                app_dir,
+                root,
+                run_id,
+                task,
+                policy,
+                backup_base=workspace_backup_base,
+                workspace_id=workspace_info["workspace_id"],
+                chat_id=chat_id,
+            )
+        except Exception as exc:
+            _emit("run_failed", {
+                "reason": "backup_failed",
+                "api_requests": api_request_count,
+                "tool_calls": tool_call_count,
+                "duration": time.time() - start_time,
+                "error": str(exc),
+                "trace_path": str(runtime_log_path),
+            })
+            raise RuntimeError(
+                "Не удалось создать обязательный backup. "
+                "Запуск Ultra отменён до обращения к модели."
+            ) from exc
+
+        _emit("backup_finished", {
+            "backup_path": str(backup_session["backup_dir"]),
+            "core_files": len(backup_session["manifest"]["core_files"]),
+        })
+
+    try:
+        token = await get_access_token()
+    except Exception as exc:
+        _emit(
+            "run_failed",
+            {
+                "reason": "provider_auth_error",
+                "api_requests": api_request_count,
+                "tool_calls": tool_call_count,
+                "duration": time.time() - start_time,
+                "error": str(exc),
+                "trace_path": str(runtime_log_path),
+            },
+        )
+        raise RuntimeError(
+            "Не удалось получить токен GigaChat до обращения к модели."
+        ) from exc
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json",
+    }
+
+    permission_text = (
+        "\n\nСЕРВЕРНЫЕ РАЗРЕШЕНИЯ ЭТОГО ЗАПУСКА\n"
+        f"Чтение: {'РАЗРЕШЕНО' if policy['allow_read'] else 'ЗАПРЕЩЕНО'}\n"
+        f"Область чтения: {policy['read_scope']}\n"
+        f"Запись: {'РАЗРЕШЕНА' if policy['allow_write'] else 'ЗАПРЕЩЕНА'}\n"
+        f"Область записи: {policy['write_scope']}\n"
+        f"Удаление: {'РАЗРЕШЕНО' if policy['allow_delete'] else 'ЗАПРЕЩЕНО'}\n"
+        f"Область удаления: {policy['delete_scope']}\n"
+        f"VERIFY: {'РАЗРЕШЁН' if policy['allow_verify'] else 'ЗАПРЕЩЁН'}\n"
+        f"GUARD P1: {'ВКЛЮЧЁН' if policy['allow_guard_p1'] else 'ВЫКЛЮЧЕН'}\n"
+        f"Лимит вызовов инструментов: {policy['tool_limit']}\n"
+        "Планируй действия так, чтобы уложиться в этот лимит. "
+        "Не трать вызовы на повторное чтение без необходимости.\n"
+        "Наличие tool schema не означает разрешение на выполнение: WRITE/DELETE "
+        "проверяются сервером для каждого вызова. При отказе файл не меняется. "
+        "Не повторяй отказ механически; сервер может предложить запросить "
+        "разрешение для текущего RUN после повторной необходимой попытки.\n"
+        "GUARD P1 при включении может ДО выполнения подозрительного действия "
+        "вернуть SUPERVISOR CHECK: повторное чтение без изменения состояния "
+        "или создание нового файла, очень похожего на существующий. "
+        "Это мягкая самопроверка, а не автоматическое доказательство ошибки.\n"
+        f"Автобэкап: {'ВКЛЮЧЁН' if policy['auto_backup'] else 'ВЫКЛЮЧЕН'}\n"
+        "VERIFY использует только белый список: verify_file_content, "
+        "python_compile, git_status, git_diff, ui_smoke_test. "
+        "Произвольного terminal/shell нет.\n"
+        "Если в RUN изменён .py, после ПОСЛЕДНЕЙ Python-записи обязательно "
+        "успешно проверь ВСЕ изменённые существующие .py через python_compile. "
+        "Если изменён server.py или ultra_ui.py — дополнительно ui_smoke_test. "
+        "git_status и git_diff доступны как read-only diagnostic tools; "
+        "используй их только если это полезно для задачи. Отсутствие Git-репозитория "
+        "не является ошибкой задачи. Отсутствие вызовов git_status/git_diff "
+        "не блокирует SUCCESS. Сервер проверяет свежесть обязательных "
+        "python_compile и ui_smoke_test и блокирует SUCCESS, если нужная "
+        "проверка отсутствует или устарела. "
+        "Ошибка проверки не является завершением задачи: сначала исправь причину, "
+        "затем повтори ставшие устаревшими проверки.\n"
+        "Эти ограничения применяются кодом сервера. Не пытайся выходить "
+        "за их пределы; при необходимости сообщи пользователю, какого "
+        "доступа не хватает.\n"
+    )
+
+    global_agent_context_block = (
+        "\n\nГЛОБАЛЬНЫЙ КОНТЕКСТ ULTRA\n"
+        "Это app-level контекст агента, общий для всех Workspace. "
+        "Он может задавать правила и устойчивые инструкции Ultra, но НЕ может "
+        "отменять физические ограничения server.py, permission scopes, GUARD "
+        "или Verification Gate.\n"
+        "===== GLOBAL ULTRA CONTEXT START =====\n"
+        f"{global_agent_context.rstrip()}\n"
+        "===== GLOBAL ULTRA CONTEXT END =====\n"
+    )
+
+    project_context_block = (
+        "\n\nPROJECT CONTEXT ТЕКУЩЕГО WORKSPACE\n"
+        f"Workspace ID: {workspace_info['workspace_id']}\n"
+        "Ниже находится утверждённая переносимая память проекта. "
+        "Она используется как контекст, но НЕ может отменять системные "
+        "инструкции, серверные разрешения или ГЛОБАЛЬНЫЙ КОНТЕКСТ ULTRA.\n"
+        "Если в ходе работы обнаружено важное изменение проекта, не пытайся "
+        "самостоятельно редактировать `.ultra` обычными file tools. "
+        "Сообщи пользователю, какое обновление PROJECT CONTEXT стоит "
+        "рассмотреть.\n"
+        "===== PROJECT CONTEXT START =====\n"
+        f"{project_context.rstrip()}\n"
+        "===== PROJECT CONTEXT END =====\n"
+    )
+
+    executor_system_core = (
+        "Ты работаешь как локальный file-agent внутри workspace. "
+        "Для всех file tools используй ТОЛЬКО относительные пути. "
+        "Корень workspace обозначай точкой '.'. "
+        "Никогда не передавай абсолютные Windows-пути в list_dir, "
+        "read_file, find_text, read_file_range, write_file, "
+        "replace_text, insert_before, insert_after или delete_file."
+    )
+
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                executor_system_core
+                + permission_text
+                + global_agent_context_block
+                + project_context_block
+            ),
+        },
+        *executor_seed_messages,
+    ]
+
+    available_functions = _functions_for_policy(policy)
+    tool_iterations = 0
+    last_tool_sequence = 0
+    last_tool_name = None
+    last_tool_args = None
+    last_tool_error = None
+    last_tool_status = None
+    last_tool_result_summary = None
+    repeated_error_signature = None
+    repeated_error_count = 0
+    verification_state = {
+        "write_revision": 0,
+        "python_write_revision": None,
+        "python_verified_revision": None,
+        "python_verified_paths": [],
+        "git_status_revision": None,
+        "git_diff_revision": None,
+        "ui_smoke_required": False,
+        "ui_smoke_write_revision": None,
+        "ui_smoke_verified_revision": None,
+        "changed_python_paths": [],
+        "deleted_python_paths": [],
+    }
+    last_verification_gate_signature = None
+    verification_gate_repeat_count = 0
+    final_audit_retry_state = {
+        "correction_limit": FINAL_AUDIT_CORRECTION_LIMIT,
+        "correction_count": 0,
+        "final_audit_attempt_count": 0,
+        "semantic_fail_count": 0,
+        "failure_history": [],
+        "run_owned_state": {},
+    }
+    consistency_tool_facts: list[dict] = []
+    permission_attempts: dict[str, list[dict]] = {"WRITE": [], "DELETE": []}
+    permission_review_failed: set[str] = set()
+    tool_reserve_state = {
+        "signature": None,
+        "interventions": 0,
+    }
+    evidence_gate_state = {
+        "signature": None,
+        "interventions": 0,
+    }
+    final_response_repair_count = 0
+
+    def _permission_blocked(reason: str, capability: str, detail: str) -> str:
+        _emit("permission_escalation_terminal", {
+            "status": "BLOCKED", "reason": reason, "capability": capability,
+            "detail": detail,
+        })
+        _emit("run_finished", {
+            "status": "BLOCKED", "reason": reason,
+            "api_requests": api_request_count, "tool_calls": tool_call_count,
+            "duration": time.time() - start_time,
+        })
+        return f"RUN STATUS: BLOCKED\nreason: {reason}\n{detail}"
+
+    guard_p1_state = {
+        "used_paths": set(),
+        "last_repeat_success_key": None,
+        "repeat_success_count": 0,
+        "repeat_interventions": {},
+        "create_challenges": set(),
+        "interventions": 0,
+    }
+
+    lifecycle = None
+    pending_persistence_call = None
+
+    def provider_accounting_diagnostic(event_name: str, payload: dict) -> None:
+        facts = lifecycle.facts() if lifecycle is not None else {}
+        _emit(event_name, {**facts, **payload})
+
+    if planner_enabled:
+        def planner_diagnostic(kind, payload):
+            event_name = {
+                "request": "planner_diagnostic_request",
+                "context": "planner_diagnostic_context",
+                "response": "planner_diagnostic_response",
+                "error": "planner_diagnostic_error",
+                "provider_attempt_started": "provider_attempt_started",
+                "provider_attempt_terminal": "provider_attempt_terminal",
+            }.get(kind)
+            if event_name is None:
+                return
+            facts = lifecycle.facts() if lifecycle is not None else {}
+            _emit(event_name, {**facts, **payload})
+
+        planner_model = get_model_spec(planner_model_id)
+
+        def planner_session_message(speaker, mode, attempt, text):
+            payload = {
+                "session_id": planner_session.session_id,
+                "task_block_id": task_block_id,
+                "mode": mode,
+                "speaker": speaker,
+                "attempt": attempt,
+                "text": text,
+            }
+            if speaker == "PLANNER":
+                payload.update({
+                    "model_id": planner_model.model_id,
+                    "model_display_name": planner_model.display_name,
+                    "provider_model_id": planner_model.provider_model_id,
+                })
+            _emit("planner_session_message", payload)
+
+        planner_session = PlannerSession(
+            raw_task=task,
+            planner_model_id=planner_model_id,
+            diagnostic_callback=planner_diagnostic,
+            message_callback=planner_session_message,
+        )
+
+        async def planner_call(**kwargs):
+            return await run_planner(
+                planner_model_id=planner_model_id,
+                diagnostic_callback=planner_diagnostic,
+                session=planner_session,
+                **kwargs,
+            )
+
+        async def planner_review(*, mode, validation_error):
+            return await run_planner_dredd_review(
+                verifier_model_id=verifier_model_id,
+                raw_task=task,
+                planner_session_transcript=planner_session.transcript(),
+                mode=mode,
+                validation_error=validation_error,
+                task_block_id=task_block_id,
+                diagnostic_callback=provider_accounting_diagnostic,
+            )
+
+        lifecycle = TaskLifecycle(
+            path=runtime_log_dir / "task_plans" / f"{run_id}.json", run_id=run_id,
+            task_block_id=task_block_id, raw_task=task, planner_call=planner_call, emit=_emit,
+            snapshot=lambda path: _planner_target_snapshot(root, path, policy),
+            dependency_state=lambda tool, args: _planner_dependency_fingerprint(root, tool, args, policy),
+            prepare=lambda call, artifact, repair: _prepare_persistence_candidate(root, call, artifact, policy, repair),
+            planner_session_id=planner_session.session_id,
+            planner_feedback=planner_session.add_control_message,
+            planner_review=planner_review,
+            dredd_enabled=final_audit_enabled,
+        )
+        await lifecycle.initialize({
+            "permissions": _policy_summary(policy),
+            "tools": [{"name": f["name"], "capability": CAPABILITY_BY_TOOL.get(f["name"], "READ")}
+                      for f in available_functions],
+        })
+    else:
+        _emit("planner_disabled_compatibility", {"reason": "direct_caller_did_not_enable_planner"})
+
+    def executor_diagnostic_facts() -> dict:
+        if lifecycle is None:
+            return {}
+
+        facts = lifecycle.facts()
+
+        return {
+            "plan_id": facts.get("plan_id"),
+            "plan_version": facts.get("plan_version"),
+            "stage_id": facts.get("active_stage_id"),
+        }
+
+    def executor_accounting_blocks(
+        request_messages: list[dict], request_functions: list[dict]
+    ) -> list[dict]:
+        blocks = [
+            measure_text_block(
+                "system_core",
+                executor_system_core,
+                source_ref="server:executor_system_core",
+                kind="executor_system",
+            ),
+            measure_text_block(
+                "permission_policy",
+                permission_text,
+                source_ref=f"run_policy:{run_id}",
+                kind="executor_system",
+            ),
+            measure_text_block(
+                "global_context",
+                global_agent_context_block,
+                source_ref="agent_global_context:ultra",
+                kind="executor_system",
+            ),
+            measure_text_block(
+                "project_context",
+                project_context_block,
+                source_ref=f"project_context:{workspace_info['workspace_id']}",
+                kind="executor_system",
+            ),
+        ]
+        stage_id = executor_diagnostic_facts().get("stage_id")
+        for index, message in enumerate(request_messages[1:], start=1):
+            role = str(message.get("role") or "unknown")
+            content = message.get("content")
+            if (
+                planner_enabled
+                and index == 1
+                and role == "user"
+                and isinstance(content, str)
+                and content == task
+            ):
+                source_ref = f"raw_task:{task_block_id or run_id}"
+            elif (
+                role == "user"
+                and isinstance(content, str)
+                and "SERVER FACTS — NOT TEMPLATE CONTROLLED:" in content
+            ):
+                source_ref = f"stage_context:{stage_id or 'unknown'}"
+            elif role == "function":
+                source_ref = f"tool_result:{message.get('name') or 'unknown'}"
+            elif role == "assistant" and isinstance(message.get("function_call"), dict):
+                source_ref = "executor_function_call_history"
+            else:
+                source_ref = f"executor_transcript:{index}:{role}"
+            blocks.append(
+                measure_json_block(
+                    f"message_{index}_{role}",
+                    message,
+                    source_ref=source_ref,
+                    kind="executor_message",
+                )
+            )
+        if request_functions:
+            blocks.append(
+                measure_json_block(
+                    "tool_schemas",
+                    request_functions,
+                    source_ref="tool_schema:"
+                    + ",".join(
+                        str(item.get("name") or "?") for item in request_functions
+                    ),
+                    kind="tool_schema",
+                )
+            )
+        return blocks
+
+    executor_base_messages = copy.deepcopy(messages)
+
+    def stage_context(reset=False):
+        if not lifecycle:
+            return
+
+        messages_before = len(messages)
+        removed_function_messages = []
+        removed_assistant_function_calls = []
+
+        if reset:
+            for item in messages:
+                if not isinstance(item, dict):
+                    continue
+
+                if item.get("role") == "function":
+                    name = item.get("name")
+                    if isinstance(name, str):
+                        removed_function_messages.append(name)
+
+                if item.get("role") == "assistant":
+                    function_call = item.get("function_call")
+                    if isinstance(function_call, dict):
+                        name = function_call.get("name")
+                        if isinstance(name, str):
+                            removed_assistant_function_calls.append(name)
+
+            messages[:] = copy.deepcopy(
+                executor_base_messages
+            )
+
+        messages.append(
+            {
+                "role": "user",
+                "content": (
+                    _context_message("task.stage", {})
+                    + "\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
+                    + json.dumps(
+                        lifecycle.executor_context(),
+                        ensure_ascii=False,
+                    )
+                ),
+            }
+        )
+
+        if reset:
+            _emit(
+                "executor_diagnostic_reset",
+                {
+                    **executor_diagnostic_facts(),
+                    "messages_before": messages_before,
+                    "messages_after": len(messages),
+                    "removed_messages": max(
+                        messages_before - len(messages),
+                        0,
+                    ),
+                    "removed_function_messages": (
+                        removed_function_messages
+                    ),
+                    "removed_assistant_function_calls": (
+                        removed_assistant_function_calls
+                    ),
+                },
+            )
+
+    stage_context()
+
+    async with httpx.AsyncClient(timeout=180.0) as client:
+        while True:
+            _assert_durable_outcomes()
+            if lifecycle:
+                lifecycle.tick("EXECUTOR_OR_DISPATCH")
+                active_stage = lifecycle.stage
+                stage_capabilities = (
+                    set(active_stage.get("allowed_capabilities") or [])
+                    if active_stage else set()
+                )
+                available_functions = _functions_for_policy(
+                    policy, stage_capabilities,
+                )
+
+            evidence_gate_active = False
+            evidence_gate_requirements: list[dict] = []
+            evidence_gate_allowed_names: set[str] = set()
+            if (
+                lifecycle
+                and lifecycle.stage
+                and not lifecycle.stage["persistence_required"]
+                and lifecycle.stage.get("completion_mode") == "server_evidence"
+            ):
+                evidence_gate_requirements = (
+                    lifecycle.remaining_evidence_requirements_for_stage(
+                        lifecycle.stage,
+                        consistency_tool_facts,
+                    )
+                )
+                if evidence_gate_requirements:
+                    evidence_gate_active = True
+                    evidence_gate_allowed_names = {
+                        requirement["tool"]
+                        for requirement in evidence_gate_requirements
+                    }
+                    available_functions = [
+                        item
+                        for item in available_functions
+                        if item["name"] in evidence_gate_allowed_names
+                    ]
+                    evidence_signature = (
+                        lifecycle.stage["stage_id"],
+                        tuple(
+                            (
+                                requirement["evidence_id"],
+                                requirement["tool"],
+                                evidence_arguments_fingerprint(
+                                    requirement["arguments"]
+                                ),
+                            )
+                            for requirement in evidence_gate_requirements
+                        ),
+                    )
+                    if evidence_signature != evidence_gate_state["signature"]:
+                        evidence_gate_state["signature"] = evidence_signature
+                        evidence_gate_state["interventions"] = 0
+                        _emit(
+                            "server_evidence_gate_activated",
+                            {
+                                **lifecycle.facts(),
+                                "allowed_tool_names": sorted(
+                                    evidence_gate_allowed_names
+                                ),
+                                "evidence_ids": [
+                                    requirement["evidence_id"]
+                                    for requirement in evidence_gate_requirements
+                                ],
+                            },
+                        )
+                else:
+                    evidence_gate_state["signature"] = None
+                    evidence_gate_state["interventions"] = 0
+            else:
+                evidence_gate_state["signature"] = None
+                evidence_gate_state["interventions"] = 0
+
+            tool_reserve_active = False
+            tool_reserve_required = 0
+            tool_reserve_allowed_names: set[str] = set()
+            tool_reserve_requirements: list[dict] = []
+            if lifecycle:
+                remaining_slots = max(
+                    policy["tool_limit"] - tool_iterations,
+                    0,
+                )
+                tool_reserve_required = lifecycle.minimum_remaining_tool_calls(
+                    consistency_tool_facts
+                )
+                if remaining_slots < tool_reserve_required:
+                    lifecycle.block("mandatory_tool_budget_exhausted")
+                if tool_reserve_required and remaining_slots == tool_reserve_required:
+                    tool_reserve_active = True
+                    tool_reserve_allowed_names = lifecycle.current_reserved_tool_names(
+                        consistency_tool_facts
+                    )
+                    if lifecycle.stage and not lifecycle.stage["persistence_required"]:
+                        tool_reserve_requirements = (
+                            lifecycle.remaining_evidence_requirements_for_stage(
+                                lifecycle.stage,
+                                consistency_tool_facts,
+                            )
+                        )
+                    available_functions = [
+                        item
+                        for item in available_functions
+                        if item["name"] in tool_reserve_allowed_names
+                    ]
+                    signature = (
+                        lifecycle.stage["stage_id"] if lifecycle.stage else None,
+                        tool_reserve_required,
+                        tuple(sorted(tool_reserve_allowed_names)),
+                    )
+                    if signature != tool_reserve_state["signature"]:
+                        tool_reserve_state["signature"] = signature
+                        tool_reserve_state["interventions"] = 0
+                        _emit(
+                            "tool_budget_reserve_activated",
+                            {
+                                **lifecycle.facts(),
+                                "remaining_tool_slots": remaining_slots,
+                                "mandatory_tool_reserve": tool_reserve_required,
+                                "allowed_tool_names": sorted(
+                                    tool_reserve_allowed_names
+                                ),
+                            },
+                        )
+                else:
+                    tool_reserve_state["signature"] = None
+                    tool_reserve_state["interventions"] = 0
+
+            body = {
+                "model": run_model,
+                "messages": messages,
+                "temperature": TEMPERATURE,
+                "max_tokens": MAX_TOKENS,
+                "stream": False,
+            }
+            if available_functions:
+                body["functions"] = available_functions
+                body["function_call"] = "auto"
+            request_message_chars = len(json.dumps(
+                body["messages"], ensure_ascii=False, separators=(",", ":"),
+            ))
+            request_functions_chars = len(json.dumps(
+                available_functions, ensure_ascii=False, separators=(",", ":"),
+            ))
+            request_total_chars = request_message_chars + request_functions_chars
+            provider_started = None
+            provider_started_at = None
+            provider_usage = None
+            provider_http_status = None
+            provider_terminal_emitted = False
+
+            def finish_executor_provider_attempt(
+                outcome: str, error_type: str | None = None
+            ) -> None:
+                nonlocal provider_terminal_emitted
+                if provider_started is None or provider_terminal_emitted:
+                    return
+                provider_terminal_emitted = True
+                _emit(
+                    "provider_attempt_terminal",
+                    build_provider_attempt_terminal(
+                        provider_started,
+                        outcome=outcome,
+                        provider_usage=provider_usage,
+                        duration=max(
+                            time.time()
+                            - float(provider_started_at or time.time()),
+                            0.0,
+                        ),
+                        http_status=provider_http_status,
+                        error_type=error_type,
+                    ),
+                )
+
+            if pending_persistence_call is not None:
+                # Reuse the ordinary permission/guard/backup/tool path with a prepared payload.
+                # This is server dispatch, not an invented model API response or forced call.
+                dispatched_call = pending_persistence_call
+                pending_persistence_call = None
+                _emit("persistence_dispatch", {**lifecycle.facts(), "function": dispatched_call["name"]})
+                data = {"choices": [{"message": {"content": "", "function_call": dispatched_call},
+                                     "finish_reason": "function_call"}]}
+                response_status, request_duration = None, 0.0
+                server_dispatched = True
+                usage = None
+            else:
+                api_request_count += 1
+
+                _emit(
+                    "executor_diagnostic_context",
+                    {
+                        **executor_diagnostic_facts(),
+                        "api_request_number": api_request_count,
+                        "model_id": selected_model.model_id,
+                        "provider_model_id": run_model,
+                        "function_call_mode": (
+                            "auto"
+                            if available_functions
+                            else "none"
+                        ),
+                        "message_count": len(body["messages"]),
+                        "request_message_chars": request_message_chars,
+                        "request_functions_chars": request_functions_chars,
+                        "request_total_chars": request_total_chars,
+                        "messages": copy.deepcopy(
+                            body["messages"]
+                        ),
+                    },
+                )
+
+                _emit("api_request", {"api_request_number": api_request_count,
+                    "exposed_tool_count": len(available_functions),
+                    "exposed_tool_names": [f["name"] for f in available_functions],
+                    "function_call_mode": "auto" if available_functions else "none",
+                    "request_message_chars": request_message_chars,
+                    "request_functions_chars": request_functions_chars,
+                    "request_total_chars": request_total_chars,
+                    **(lifecycle.facts() if lifecycle else {})})
+                provider_started = build_provider_attempt_started(
+                    role="executor",
+                    mode=(
+                        f"STAGE:{executor_diagnostic_facts().get('stage_id')}"
+                        if lifecycle is not None
+                        else "DIRECT"
+                    ),
+                    provider=selected_model.provider,
+                    model_id=selected_model.model_id,
+                    provider_model_id=run_model,
+                    body=body,
+                    blocks=executor_accounting_blocks(
+                        body["messages"], available_functions
+                    ),
+                    source_references=[
+                        f"run:{run_id}",
+                        f"task_block:{task_block_id or 'direct'}",
+                    ],
+                )
+                provider_started_at = time.time()
+                _emit("provider_attempt_started", provider_started)
+                request_start = time.time()
+                try:
+                    response = await client.post(
+                        CHAT_URL, headers=headers, json=body
+                    )
+                    request_duration = time.time() - request_start
+                    response.raise_for_status()
+                    provider_http_status = response.status_code
+                    response_status = response.status_code
+                except asyncio.CancelledError:
+                    finish_executor_provider_attempt(
+                        "cancelled", "CancelledError"
+                    )
+                    raise
+                except httpx.TimeoutException as exc:
+                    request_duration = time.time() - request_start
+                    finish_executor_provider_attempt(
+                        "timeout", type(exc).__name__
+                    )
+                    raise
+                except httpx.HTTPStatusError as exc:
+                    request_duration = time.time() - request_start
+                    provider_http_status = (
+                        exc.response.status_code
+                        if exc.response is not None
+                        else None
+                    )
+                    response_status = provider_http_status
+                    finish_executor_provider_attempt(
+                        "provider_error", type(exc).__name__
+                    )
+                    raise
+                except httpx.HTTPError as exc:
+                    request_duration = time.time() - request_start
+                    finish_executor_provider_attempt(
+                        "transport_error", type(exc).__name__
+                    )
+                    raise
+                except Exception as exc:
+                    request_duration = time.time() - request_start
+                    finish_executor_provider_attempt(
+                        "transport_error", type(exc).__name__
+                    )
+                    raise
+                try:
+                    data = response.json()
+                except Exception as exc:
+                    finish_executor_provider_attempt(
+                        "parse_error", type(exc).__name__
+                    )
+                    raise
+                provider_usage = extract_usage(data)
+                usage = provider_usage
+                server_dispatched = False
+
+            try:
+                choice = data["choices"][0]
+                message = choice["message"]
+                finish_reason = choice.get("finish_reason")
+            except (KeyError, IndexError, TypeError) as exc:
+                if not server_dispatched:
+                    finish_executor_provider_attempt(
+                        "parse_error", type(exc).__name__
+                    )
+                _emit("api_response", {
+                    "api_request_number": api_request_count,
+                    "http_status": response_status,
+                    "duration": request_duration,
+                    "error": "Malformed response",
+                    "usage": usage,
+                })
+                _emit("run_failed", {
+                    "reason": "malformed_response",
+                    "api_requests": api_request_count,
+                    "tool_calls": tool_call_count,
+                    "duration": time.time() - start_time,
+                })
+                raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
+
+            if not server_dispatched:
+                finish_executor_provider_attempt("completed")
+
+            _emit("persistence_dispatch_ready" if server_dispatched else "api_response", {
+                "api_request_number": api_request_count,
+                "http_status": response_status,
+                "finish_reason": finish_reason,
+                "duration": request_duration,
+                "usage": usage,
+            })
+
+            if not server_dispatched:
+                _emit(
+                    "executor_diagnostic_response",
+                    {
+                        **executor_diagnostic_facts(),
+                        "api_request_number": api_request_count,
+                        "finish_reason": finish_reason,
+                        "message": copy.deepcopy(message),
+                        "usage": usage,
+                        "request_message_chars": request_message_chars,
+                        "request_functions_chars": request_functions_chars,
+                        "request_total_chars": request_total_chars,
+                    },
+                )
+
+            if finish_reason == "function_call":
+                if tool_iterations >= policy["tool_limit"]:
+                    _emit("run_failed", {
+                        "reason": "tool_limit",
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "last_function": last_tool_name,
+                        "last_arguments": last_tool_args,
+                        "last_error": last_tool_error,
+                        "trace_path": str(runtime_log_path),
+                    })
+                    raise RuntimeError(
+                        f"TOOL LIMIT REACHED\n"
+                        f"Run ID: {run_id}\n"
+                        f"API requests: {api_request_count}\n"
+                        f"Tool calls: {tool_call_count}\n"
+                        f"Tool limit: {policy['tool_limit']}\n"
+                        f"Last function: {last_tool_name}\n"
+                        f"Last arguments: {last_tool_args}\n"
+                        f"Last status: {last_tool_status}\n"
+                        f"Last result/error: {last_tool_result_summary}\n"
+                        f"Trace: {runtime_log_path}"
+                    )
+
+                function_call = message.get("function_call")
+                assistant_message = {
+                    "role": "assistant",
+                    "content": message.get("content") or "",
+                    "function_call": function_call,
+                }
+                if "functions_state_id" in message:
+                    assistant_message["functions_state_id"] = message[
+                        "functions_state_id"
+                    ]
+                messages.append(assistant_message)
+
+                function_name = (
+                    function_call.get("name")
+                    if isinstance(function_call, dict)
+                    else "<invalid>"
+                )
+                raw_args = (
+                    function_call.get("arguments", {})
+                    if isinstance(function_call, dict)
+                    else {}
+                )
+                try:
+                    parsed_tool_args = _parse_agent_arguments(
+                        function_name,
+                        raw_args,
+                    )
+                except (TypeError, ValueError):
+                    parsed_tool_args = None
+                if isinstance(raw_args, dict):
+                    safe_args = dict(raw_args)
+                else:
+                    safe_args = {"raw_arguments": str(raw_args)}
+                for field in ("content", "new_text", "old_text", "marker", "text"):
+                    if field in safe_args:
+                        safe_args[field] = f"<{len(str(safe_args[field]))} chars>"
+
+                if evidence_gate_active:
+                    evidence_call_allowed = (
+                        function_name in evidence_gate_allowed_names
+                    )
+                    if evidence_call_allowed:
+                        if parsed_tool_args is None:
+                            evidence_call_allowed = False
+                        else:
+                            actual_fingerprint = evidence_arguments_fingerprint(
+                                parsed_tool_args
+                            )
+                            evidence_call_allowed = any(
+                                requirement["tool"] == function_name
+                                and evidence_arguments_fingerprint(
+                                    requirement["arguments"]
+                                ) == actual_fingerprint
+                                for requirement in evidence_gate_requirements
+                            )
+                    if not evidence_call_allowed:
+                        evidence_gate_state["interventions"] += 1
+                        _emit(
+                            "server_evidence_gate_intervention",
+                            {
+                                **(lifecycle.facts() if lifecycle else {}),
+                                "function": function_name,
+                                "arguments": safe_args,
+                                "allowed_tool_names": sorted(
+                                    evidence_gate_allowed_names
+                                ),
+                                "evidence_ids": [
+                                    requirement["evidence_id"]
+                                    for requirement in evidence_gate_requirements
+                                ],
+                                "intervention": evidence_gate_state[
+                                    "interventions"
+                                ],
+                                "executed": False,
+                            },
+                        )
+                        if (
+                            evidence_gate_state["interventions"]
+                            > EVIDENCE_GATE_MAX_INTERVENTIONS
+                        ):
+                            lifecycle.block("server_evidence_gate_violation")
+                        evidence_gate_result = {
+                            "ok": False,
+                            "executed": False,
+                            "server_evidence_gate": True,
+                            "instruction": (
+                                "SERVER EVIDENCE GATE: этот вызов не выполнен и "
+                                "не списал tool budget. Текущий stage закрывается "
+                                "только exact evidence requirement; вызови один из "
+                                "указанных tools с точными arguments."
+                            ),
+                            "requirements": copy.deepcopy(
+                                evidence_gate_requirements
+                            ),
+                            "_tool_budget": {
+                                "limit": policy["tool_limit"],
+                                "used": tool_iterations,
+                                "remaining": max(
+                                    policy["tool_limit"] - tool_iterations,
+                                    0,
+                                ),
+                            },
+                        }
+                        messages.append(
+                            {
+                                "role": "function",
+                                "name": function_name,
+                                "content": json.dumps(
+                                    evidence_gate_result,
+                                    ensure_ascii=False,
+                                ),
+                            }
+                        )
+                        continue
+
+                if tool_reserve_active:
+                    reserve_call_allowed = (
+                        function_name in tool_reserve_allowed_names
+                    )
+                    if reserve_call_allowed and tool_reserve_requirements:
+                        if parsed_tool_args is None:
+                            reserve_call_allowed = False
+                        else:
+                            actual_fingerprint = evidence_arguments_fingerprint(
+                                parsed_tool_args
+                            )
+                            reserve_call_allowed = any(
+                                requirement["tool"] == function_name
+                                and evidence_arguments_fingerprint(
+                                    requirement["arguments"]
+                                ) == actual_fingerprint
+                                for requirement in tool_reserve_requirements
+                            )
+                    if not reserve_call_allowed:
+                        tool_reserve_state["interventions"] += 1
+                        _emit(
+                            "tool_budget_reserve_intervention",
+                            {
+                                **(lifecycle.facts() if lifecycle else {}),
+                                "function": function_name,
+                                "arguments": safe_args,
+                                "mandatory_tool_reserve": tool_reserve_required,
+                                "allowed_tool_names": sorted(
+                                    tool_reserve_allowed_names
+                                ),
+                                "intervention": tool_reserve_state[
+                                    "interventions"
+                                ],
+                                "executed": False,
+                            },
+                        )
+                        if (
+                            tool_reserve_state["interventions"]
+                            > TOOL_RESERVE_MAX_INTERVENTIONS
+                        ):
+                            lifecycle.block("tool_budget_reserve_violation")
+                        reserve_result = {
+                            "ok": False,
+                            "executed": False,
+                            "tool_budget_reserve": True,
+                            "instruction": (
+                                "SERVER TOOL RESERVE: этот вызов не выполнен и "
+                                "не списал tool budget. Используй только обязательный "
+                                "вызов текущего stage с точными arguments либо заверши "
+                                "текущий model_result stage без дополнительных tools."
+                            ),
+                            "allowed_tool_names": sorted(
+                                tool_reserve_allowed_names
+                            ),
+                            "requirements": copy.deepcopy(
+                                tool_reserve_requirements
+                            ),
+                            "_tool_budget": {
+                                "limit": policy["tool_limit"],
+                                "used": tool_iterations,
+                                "remaining": max(
+                                    policy["tool_limit"] - tool_iterations,
+                                    0,
+                                ),
+                                "mandatory_reserve": tool_reserve_required,
+                            },
+                        }
+                        messages.append(
+                            {
+                                "role": "function",
+                                "name": function_name,
+                                "content": json.dumps(
+                                    reserve_result,
+                                    ensure_ascii=False,
+                                ),
+                            }
+                        )
+                        continue
+
+                # GUARD P1 — supervisor BEFORE actual tool execution.
+                # Interventions do not consume tool budget because the
+                # requested tool is not executed. They are separately capped.
+                if policy.get("allow_guard_p1"):
+                    guard_payload = None
+
+                    repeat_key = _guard_p1_repeat_key(
+                        root,
+                        function_name,
+                        safe_args,
+                        verification_state["write_revision"],
+                    )
+                    if (
+                        repeat_key is not None
+                        and repeat_key
+                        == guard_p1_state["last_repeat_success_key"]
+                        and guard_p1_state["repeat_success_count"]
+                        >= GUARD_P1_REPEAT_AFTER_SUCCESSES
+                    ):
+                        repeat_hits = guard_p1_state[
+                            "repeat_interventions"
+                        ].get(repeat_key, 0)
+
+                        if (
+                            repeat_hits
+                            < GUARD_P1_REPEAT_MAX_INTERVENTIONS
+                        ):
+                            repeat_hits += 1
+                            guard_p1_state["repeat_interventions"][
+                                repeat_key
+                            ] = repeat_hits
+                            guard_payload = {
+                                "kind": "repeated_tool",
+                                "function": function_name,
+                                "arguments": safe_args,
+                                "repeat_successes": guard_p1_state[
+                                    "repeat_success_count"
+                                ],
+                                "intervention": repeat_hits,
+                            }
+                        else:
+                            _emit(
+                                "guard_blocked",
+                                {
+                                    "guard": "P1",
+                                    "kind": "repeated_tool",
+                                    "function": function_name,
+                                    "arguments": safe_args,
+                                    "trace_path": str(runtime_log_path),
+                                },
+                            )
+                            _emit(
+                                "run_failed",
+                                {
+                                    "reason": "guard_p1_loop",
+                                    "api_requests": api_request_count,
+                                    "tool_calls": tool_call_count,
+                                    "duration": time.time() - start_time,
+                                    "function": function_name,
+                                    "arguments": safe_args,
+                                    "trace_path": str(runtime_log_path),
+                                },
+                            )
+                            raise RuntimeError(
+                                "GUARD P1 LOOP BLOCKED\\n"
+                                f"Run ID: {run_id}\\n"
+                                f"Function: {function_name}\\n"
+                                f"Arguments: {safe_args}\\n"
+                                "Причина: агент продолжил одинаковый успешный "
+                                "read/list после двух SUPERVISOR CHECK.\\n"
+                                f"Trace: {runtime_log_path}"
+                            )
+
+                    if (
+                        guard_payload is None
+                        and function_name == "write_file"
+                    ):
+                        target_text = safe_args.get("path")
+                        if isinstance(target_text, str):
+                            suspicious = (
+                                _guard_p1_find_suspicious_create(
+                                    root,
+                                    target_text,
+                                    policy,
+                                    task,
+                                    guard_p1_state["used_paths"],
+                                )
+                            )
+                            if suspicious is not None:
+                                challenge_key = (
+                                    suspicious["requested_path"],
+                                    suspicious["similar_path"],
+                                )
+                                if (
+                                    challenge_key
+                                    not in guard_p1_state[
+                                        "create_challenges"
+                                    ]
+                                ):
+                                    guard_p1_state[
+                                        "create_challenges"
+                                    ].add(challenge_key)
+                                    guard_payload = {
+                                        "kind": (
+                                            "possible_duplicate_create"
+                                        ),
+                                        **suspicious,
+                                    }
+                                else:
+                                    _emit(
+                                        "guard_override",
+                                        {
+                                            "guard": "P1",
+                                            "kind": (
+                                                "possible_duplicate_create"
+                                            ),
+                                            **suspicious,
+                                            "message": (
+                                                "Повторный write_file после "
+                                                "SUPERVISOR CHECK — считаем "
+                                                "осознанным подтверждением модели."
+                                            ),
+                                        },
+                                    )
+
+                    if guard_payload is not None:
+                        guard_event_id = (
+                            "guard.repeat"
+                            if guard_payload.get("kind") == "repeated_tool"
+                            else "guard.suspicious_create"
+                        )
+                        guard_variables = {
+                            key: value
+                            for key, value in guard_payload.items()
+                            if key != "instruction"
+                        }
+                        resolved_guard_text = _context_message(
+                            guard_event_id,
+                            guard_variables,
+                        )
+                        guard_payload["instruction"] = resolved_guard_text
+                        guard_payload["_server_context_message"] = {
+                            "event_id": guard_event_id,
+                            "text": resolved_guard_text,
+                            "facts": {
+                                "guard": "P1",
+                                **guard_variables,
+                            },
+                        }
+                        guard_p1_state["interventions"] += 1
+                        if (
+                            guard_p1_state["interventions"]
+                            > GUARD_P1_MAX_INTERVENTIONS_PER_RUN
+                        ):
+                            _emit(
+                                "run_failed",
+                                {
+                                    "reason": (
+                                        "guard_p1_intervention_limit"
+                                    ),
+                                    "api_requests": api_request_count,
+                                    "tool_calls": tool_call_count,
+                                    "duration": time.time() - start_time,
+                                    "trace_path": str(runtime_log_path),
+                                },
+                            )
+                            raise RuntimeError(
+                                "GUARD P1 INTERVENTION LIMIT REACHED\\n"
+                                f"Run ID: {run_id}\\n"
+                                "Interventions: "
+                                f"{guard_p1_state['interventions']}\\n"
+                                f"Trace: {runtime_log_path}"
+                            )
+
+                        _emit(
+                            "guard_intervention",
+                            {
+                                "guard": "P1",
+                                **guard_payload,
+                                "tool_budget_used": tool_iterations,
+                                "tool_budget_limit": policy[
+                                    "tool_limit"
+                                ],
+                            },
+                        )
+                        remaining_tools = max(
+                            policy["tool_limit"] - tool_iterations,
+                            0,
+                        )
+                        guard_result = {
+                            "ok": False,
+                            "executed": False,
+                            "guard_p1": True,
+                            **guard_payload,
+                            "_verification_state": dict(
+                                verification_state
+                            ),
+                            "_tool_budget": {
+                                "limit": policy["tool_limit"],
+                                "used": tool_iterations,
+                                "remaining": remaining_tools,
+                                "instruction": (
+                                    "GUARD P1 не исполнил tool и не списал "
+                                    "tool budget. Пересмотри действие и продолжи."
+                                ),
+                            },
+                        }
+                        messages.append(
+                            {
+                                "role": "function",
+                                "name": function_name,
+                                "content": json.dumps(
+                                    guard_result,
+                                    ensure_ascii=False,
+                                ),
+                            }
+                        )
+                        continue
+
+                permission_denied = False
+                candidate_id = None
+                plan_invalidated = None
+                post_mutation_stage_decision = None
+                tool_stage_id = (
+                    lifecycle.stage["stage_id"]
+                    if lifecycle is not None and lifecycle.stage is not None
+                    else None
+                )
+                tool_run_id = (
+                    lifecycle.state["run_id"]
+                    if lifecycle is not None
+                    else run_id
+                )
+                tool_plan_version = (
+                    lifecycle.state["plan_version"]
+                    if lifecycle is not None
+                    else None
+                )
+                tool_evidence_generation = (
+                    int(
+                        lifecycle.state["stage_states"]
+                        .get(tool_stage_id, {})
+                        .get("evidence_generation", 0)
+                    )
+                    if lifecycle is not None and tool_stage_id is not None
+                    else None
+                )
+                tool_task_block_id = (
+                    lifecycle.state.get("task_block_id")
+                    if lifecycle is not None
+                    else task_block_id
+                )
+                tool_dependency_identities = (
+                    evidence_dependency_targets(
+                        function_name,
+                        parsed_tool_args,
+                    )
+                    if isinstance(parsed_tool_args, dict)
+                    else []
+                )
+                tool_requirement_ids = []
+                if (
+                    lifecycle is not None
+                    and lifecycle.stage is not None
+                    and isinstance(parsed_tool_args, dict)
+                ):
+                    actual_fingerprint = evidence_arguments_fingerprint(
+                        parsed_tool_args
+                    )
+                    tool_requirement_ids = [
+                        requirement["evidence_id"]
+                        for requirement in (
+                            lifecycle.stage.get("evidence_requirements") or []
+                        )
+                        if requirement["tool"] == function_name
+                        and evidence_arguments_fingerprint(
+                            requirement["arguments"]
+                        ) == actual_fingerprint
+                    ]
+                dispatcher_started = False
+                tool_evidence_record_id = "evidence_" + uuid.uuid4().hex
+                tool_started_record = None
+                tool_dependency_before = None
+                try:
+                    _assert_durable_outcomes()
+                    if lifecycle and function_name in MUTATION_TOOL_NAMES:
+                        # Permission denial still goes through the existing permission lifecycle.
+                        _require_operation_permission(root, safe_args.get("path"),
+                            "delete" if function_name == "delete_file" else "write", policy)
+                        candidate_id = await lifecycle.before_mutation({"name": function_name,
+                            "arguments": _parse_agent_arguments(function_name, function_call.get("arguments"))})
+                    if (tool_dependency_identities and function_name not in {
+                        "read_file", "read_file_range", "find_text", "list_dir", "verify_file_content", "git_diff",
+                    }):
+                        try:
+                            tool_dependency_before = (
+                                lifecycle.dependency_state(function_name, parsed_tool_args) if lifecycle else
+                                _planner_dependency_fingerprint(root, function_name, parsed_tool_args, policy)
+                            )
+                        except (PermissionError, ValueError, OSError):
+                            pass
+                    tool_started_record = _emit("tool_started", {
+                        "tool_sequence": last_tool_sequence + 1,
+                        "evidence_record_id": tool_evidence_record_id,
+                        "function": function_name,
+                        "arguments": safe_args,
+                        "evidence_identity": {
+                            "task_block_id": tool_task_block_id, "run_id": tool_run_id,
+                            "plan_version": tool_plan_version, "stage_id": tool_stage_id,
+                            "evidence_generation": tool_evidence_generation,
+                            "requirement_ids": list(tool_requirement_ids),
+                            "target_identity": list(tool_dependency_identities),
+                            "arguments_sha256": evidence_arguments_fingerprint(parsed_tool_args) if isinstance(parsed_tool_args, dict) else None,
+                            "candidate_id": candidate_id,
+                        },
+                        "timestamp": time.time(),
+                    })
+                    try:
+                        validate_run_record(root, run_id, tool_started_record or {}, event="tool_started")
+                    except Exception as exc:
+                        _block_evidence("mandatory_tool_intent_unavailable:" + type(exc).__name__)
+                    _assert_durable_outcomes()
+                    dispatcher_started = True
+                    result = _execute_agent_function(
+                        root, function_call, policy, backup_session
+                    )
+                    if (
+                        function_name in VERIFICATION_TOOL_NAMES
+                        and isinstance(result, dict)
+                        and result.get("ok") is False
+                    ):
+                        tool_ok = False
+                        diagnostic = (
+                            result.get("stderr")
+                            or result.get("stdout")
+                            or "Verification check failed."
+                        )
+                        tool_error = {
+                            "type": "VerificationError",
+                            "message": diagnostic[:4000],
+                        }
+                    else:
+                        tool_ok = True
+                        tool_error = None
+                except LifecycleBlocked as exc:
+                    if lifecycle and function_name in MUTATION_TOOL_NAMES and not dispatcher_started:
+                        _emit("mutation_preflight_rejected", {
+                            "function": function_name, "path": safe_args.get("path"),
+                            "reason_code": str(exc)[:120], "executed": False,
+                            "stage_id": lifecycle.stage["stage_id"] if lifecycle.stage else None,
+                            **lifecycle.facts(),
+                        })
+                    raise
+                except Exception as exc:
+                    if isinstance(exc, PlanInvalidated):
+                        plan_invalidated = exc.fact
+                    preflight_rejected = bool(lifecycle and function_name in MUTATION_TOOL_NAMES
+                                              and not dispatcher_started)
+                    if preflight_rejected:
+                        reason_code = (
+                            exc.reason_code if isinstance(exc, PersistencePreflightRejected)
+                            else exc.fact["reason"] if isinstance(exc, PlanInvalidated)
+                            else "permission_denied" if isinstance(exc, PermissionError)
+                            else "candidate_preparation_failed"
+                        )
+                        _emit("mutation_preflight_rejected", {
+                            "function": function_name, "path": safe_args.get("path"),
+                            "reason_code": reason_code, "executed": False,
+                            "stage_id": lifecycle.stage["stage_id"] if lifecycle.stage else None,
+                            **lifecycle.facts(),
+                        })
+                    permission_denied = isinstance(exc, PermissionError)
+                    error_type = (
+                        "STALE_FILE_STATE" if isinstance(exc, StaleFileStateError)
+                        else type(exc).__name__
+                    )
+                    error_message = str(exc)
+                    capability = CAPABILITY_BY_TOOL.get(
+                        function_name, "UNKNOWN"
+                    )
+                    if permission_denied:
+                        context_event_id = "permission.denied"
+                    elif preflight_rejected:
+                        context_event_id = "persistence.preflight_rejected"
+                    else:
+                        context_event_id = "tool.error"
+                    context_variables = {
+                        "capability": capability,
+                        "tool_name": function_name,
+                        "error_type": error_type,
+                        "error_message": error_message,
+                        "path": safe_args.get("path", ""),
+                    }
+                    context_text = _context_message(
+                        context_event_id,
+                        context_variables,
+                    )
+                    result = {
+                        "ok": False,
+                        "executed": False if preflight_rejected else dispatcher_started,
+                        "reason_code": reason_code if preflight_rejected else None,
+                        "error_type": error_type,
+                        "error": error_message,
+                        "instruction": context_text,
+                        "_server_context_message": {
+                            "event_id": context_event_id,
+                            "text": context_text,
+                            "facts": {
+                                "decision": (
+                                    "DENIED"
+                                    if permission_denied
+                                    else "ERROR"
+                                ),
+                                "arguments": safe_args,
+                                **context_variables,
+                            },
+                        },
+                    }
+                    tool_ok = False
+                    tool_error = {
+                        "type": error_type,
+                        "message": error_message,
+                    }
+
+                if (
+                    not tool_ok
+                    and isinstance(result, dict)
+                    and "_server_context_message" not in result
+                ):
+                    error_type = str(tool_error.get("type") or "ToolError")
+                    error_message = str(tool_error.get("message") or "")
+                    context_variables = {
+                        "tool_name": function_name,
+                        "error_type": error_type,
+                        "error_message": error_message,
+                    }
+                    context_text = _context_message(
+                        "tool.error",
+                        context_variables,
+                    )
+                    result = dict(result)
+                    result["instruction"] = context_text
+                    result["_server_context_message"] = {
+                        "event_id": "tool.error",
+                        "text": context_text,
+                        "facts": {
+                            "decision": "ERROR",
+                            "arguments": safe_args,
+                            **context_variables,
+                        },
+                    }
+
+                if tool_ok and function_name in MUTATION_TOOL_NAMES:
+                    _bookkeep_successful_mutation(
+                        function_name=function_name,
+                        result=result,
+                        run_owned_state=final_audit_retry_state["run_owned_state"],
+                        verification_state=verification_state,
+                    )
+
+                if tool_ok and function_name == "python_compile":
+                    python_revision = verification_state["python_write_revision"]
+                    if python_revision is not None:
+                        if verification_state["python_verified_revision"] != python_revision:
+                            verification_state["python_verified_paths"] = []
+                        verified = set(verification_state["python_verified_paths"])
+                        verified.update(result.get("paths") or [])
+                        verification_state["python_verified_paths"] = sorted(verified)
+                        verification_state["python_verified_revision"] = python_revision
+                elif tool_ok and function_name == "git_status":
+                    verification_state["git_status_revision"] = verification_state[
+                        "write_revision"
+                    ]
+                elif tool_ok and function_name == "git_diff":
+                    verification_state["git_diff_revision"] = verification_state[
+                        "write_revision"
+                    ]
+                elif tool_ok and function_name == "ui_smoke_test":
+                    ui_revision = verification_state["ui_smoke_write_revision"]
+                    if ui_revision is not None:
+                        verification_state["ui_smoke_verified_revision"] = ui_revision
+
+                tool_call_count += 1
+                last_tool_sequence += 1
+                last_tool_name = function_name
+                last_tool_args = safe_args
+                last_tool_error = tool_error
+                last_tool_status = "OK" if tool_ok else "ERROR" if dispatcher_started else "PREFLIGHT_REJECTED"
+                last_tool_result_summary = (
+                    _safe_tool_result_summary(
+                        function_name,
+                        result,
+                    )
+                    if tool_ok
+                    else (
+                        f"{tool_error.get('type')}: "
+                        f"{tool_error.get('message')}"
+                        if isinstance(tool_error, dict)
+                        else str(tool_error)
+                    )
+                )
+                result_identity = {
+                    "sha256": hashlib.sha256(
+                        json.dumps(
+                            result,
+                            ensure_ascii=False,
+                            sort_keys=True,
+                            separators=(",", ":"),
+                            default=str,
+                        ).encode("utf-8")
+                    ).hexdigest(),
+                    "ok": (
+                        result.get("ok")
+                        if isinstance(result, dict)
+                        else tool_ok
+                    ),
+                    "exit_code": (
+                        result.get("exit_code")
+                        if isinstance(result, dict)
+                        else None
+                    ),
+                    "truncated": (
+                        result.get("truncated")
+                        if isinstance(result, dict)
+                        else None
+                    ),
+                }
+                if function_name == "verify_file_content" and isinstance(result, dict):
+                    # Exact positive/negative facts survive even when the optional
+                    # material-preview budget has been exhausted.
+                    result_identity["verification"] = {
+                        key: result[key] for key in (
+                            "check", "path", "kind", "passed", "matched", "exists",
+                            "actual_sha256", "expected_sha256", "needle_sha256", "expected_chars", "target_exists",
+                        ) if key in result
+                    }
+                observed_state_sha256 = None
+                if (
+                    tool_ok
+                    and isinstance(parsed_tool_args, dict)
+                    and tool_dependency_identities
+                ):
+                    observed_state_sha256 = _tool_observation_fingerprint(function_name, parsed_tool_args, result)
+                    if function_name not in {
+                        "read_file", "read_file_range", "find_text", "list_dir", "verify_file_content", "git_diff",
+                    }:
+                        observed_state_sha256 = tool_dependency_before
+
+                consistency_tool_facts.append({
+                    "sequence": last_tool_sequence,
+                    "source_record_id": tool_evidence_record_id,
+                    "source_run_store_record_id": (
+                        tool_started_record.get("record_id")
+                        if isinstance(tool_started_record, dict)
+                        else None
+                    ),
+                    "source_run_store_sha256": None,
+                    "task_block_id": tool_task_block_id,
+                    "run_id": tool_run_id,
+                    "plan_version": tool_plan_version,
+                    "plan_id": lifecycle.state["plan_id"] if lifecycle else None,
+                    "candidate_id": candidate_id,
+                    "stage_id": tool_stage_id,
+                    "evidence_generation": tool_evidence_generation,
+                    "requirement_ids": list(tool_requirement_ids),
+                    "target_identity": list(tool_dependency_identities),
+                    "tool": function_name,
+                    "path": str(safe_args.get("path", ""))[:300],
+                    "capability": CAPABILITY_BY_TOOL.get(function_name, "UNKNOWN"),
+                    "status": "OK" if tool_ok else "ERROR" if dispatcher_started else "PREFLIGHT_REJECTED",
+                    "executed": dispatcher_started,
+                    "arguments_sha256": (
+                        evidence_arguments_fingerprint(parsed_tool_args)
+                        if isinstance(parsed_tool_args, dict)
+                        else None
+                    ),
+                    "observed_state_sha256": observed_state_sha256,
+                    "result": result_identity,
+                    "material_preview": (
+                        _final_audit_tool_material_preview(function_name, result)
+                        if tool_ok or function_name in VERIFICATION_TOOL_NAMES
+                        else None
+                    ),
+                    "summary": str(last_tool_result_summary)[:1000],
+                    "error": (str(tool_error.get("message", ""))[:300]
+                              if isinstance(tool_error, dict) else None),
+                    "content_sha256": (result.get("content_sha256")
+                                       if tool_ok and isinstance(result, dict) else None),
+                    "result_excerpt": (
+                        _consistency_safe_snippet(result.get("content", ""), 1000)
+                        if tool_ok and function_name in {"read_file", "read_file_range"}
+                        and isinstance(result, dict)
+                        else json.dumps(result.get("matches", [])[:5], ensure_ascii=False)[:1000]
+                        if tool_ok and function_name == "find_text" and isinstance(result, dict)
+                        else json.dumps(result.get("entries", [])[:20], ensure_ascii=False)[:1000]
+                        if tool_ok and function_name == "list_dir" and isinstance(result, dict)
+                        else None
+                    ),
+                })
+
+                if permission_denied:
+                    _emit("permission_denied", {
+                        "tool_sequence": last_tool_sequence,
+                        "function": function_name,
+                        "arguments": safe_args,
+                        "error": tool_error,
+                        "capability": CAPABILITY_BY_TOOL.get(function_name, "UNKNOWN"),
+                        "attempt": (len(permission_attempts.get(
+                            CAPABILITY_BY_TOOL.get(function_name, ""), [])) + 1),
+                    })
+
+                if tool_ok:
+                    repeated_error_signature = None
+                    repeated_error_count = 0
+
+                    if policy.get("allow_guard_p1"):
+                        path_text = safe_args.get("path")
+                        if (
+                            function_name
+                            in (READ_TOOL_NAMES | MUTATION_TOOL_NAMES)
+                            and isinstance(path_text, str)
+                        ):
+                            try:
+                                used_path = (
+                                    _resolve_workspace_path(
+                                        root,
+                                        path_text,
+                                    )
+                                    .relative_to(root)
+                                    .as_posix()
+                                )
+                                guard_p1_state[
+                                    "used_paths"
+                                ].add(used_path)
+                            except Exception:
+                                pass
+
+                        repeat_key_after = _guard_p1_repeat_key(
+                            root,
+                            function_name,
+                            safe_args,
+                            verification_state["write_revision"],
+                        )
+                        if repeat_key_after is None:
+                            guard_p1_state[
+                                "last_repeat_success_key"
+                            ] = None
+                            guard_p1_state[
+                                "repeat_success_count"
+                            ] = 0
+                        elif (
+                            repeat_key_after
+                            == guard_p1_state[
+                                "last_repeat_success_key"
+                            ]
+                        ):
+                            guard_p1_state[
+                                "repeat_success_count"
+                            ] += 1
+                        else:
+                            guard_p1_state[
+                                "last_repeat_success_key"
+                            ] = repeat_key_after
+                            guard_p1_state[
+                                "repeat_success_count"
+                            ] = 1
+
+                    tool_result_record = _emit("tool_finished", {
+                        "tool_sequence": last_tool_sequence,
+                        "evidence_record_id": tool_evidence_record_id,
+                        "function": function_name,
+                        "arguments": safe_args,
+                        "duration": None,
+                        "result": result,
+                        "evidence_binding": _tool_evidence_binding(consistency_tool_facts[-1]),
+                    })
+                    if consistency_tool_facts:
+                        consistency_tool_facts[-1][
+                            "source_run_store_record_id"
+                        ] = (
+                            tool_result_record.get("record_id")
+                            if isinstance(tool_result_record, dict)
+                            else None
+                        )
+                        consistency_tool_facts[-1]["source_run_store_sha256"] = (
+                            tool_result_record.get("sha256") if isinstance(tool_result_record, dict) else None
+                        )
+                else:
+                    if dispatcher_started:
+                        tool_result_record = _emit("tool_error", {
+                            "tool_sequence": last_tool_sequence,
+                            "evidence_record_id": tool_evidence_record_id,
+                            "function": function_name,
+                            "arguments": safe_args,
+                            "error": tool_error,
+                            "result": result,
+                            "evidence_binding": _tool_evidence_binding(consistency_tool_facts[-1]),
+                        })
+                        if consistency_tool_facts:
+                            consistency_tool_facts[-1]["source_run_store_record_id"] = (
+                                tool_result_record.get("record_id")
+                                if isinstance(tool_result_record, dict)
+                                else None
+                            )
+                            consistency_tool_facts[-1]["source_run_store_sha256"] = (
+                                tool_result_record.get("sha256") if isinstance(tool_result_record, dict) else None
+                            )
+
+                    signature = (
+                        function_name,
+                        json.dumps(safe_args, ensure_ascii=False, sort_keys=True),
+                        tool_error["type"],
+                        tool_error["message"],
+                    )
+                    if signature == repeated_error_signature:
+                        repeated_error_count += 1
+                    else:
+                        repeated_error_signature = signature
+                        repeated_error_count = 1
+
+                    if repeated_error_count >= 3 and not (
+                        permission_denied and function_name in MUTATION_TOOL_NAMES
+                        and CAPABILITY_BY_TOOL[function_name] in permission_review_failed
+                    ):
+                        _emit("run_failed", {
+                            "reason": "loop_detected",
+                            "api_requests": api_request_count,
+                            "tool_calls": tool_call_count,
+                            "duration": time.time() - start_time,
+                            "function": function_name,
+                            "arguments": safe_args,
+                            "error": tool_error,
+                            "repeat_count": repeated_error_count,
+                            "trace_path": str(runtime_log_path),
+                        })
+                        raise RuntimeError(
+                            f"LOOP DETECTED\n"
+                            f"Run ID: {run_id}\n"
+                            f"Function: {function_name}\n"
+                            f"Arguments: {safe_args}\n"
+                            f"Error: {tool_error}\n"
+                            f"Repeats: {repeated_error_count}\n"
+                            f"Trace: logs/runs/{run_id}.jsonl"
+                        )
+
+                _assert_durable_outcomes()
+
+                # A receipt/stage may advance only after its outcome is recoverable.
+                if lifecycle and tool_ok and function_name in MUTATION_TOOL_NAMES:
+                    post_mutation_stage_decision = lifecycle.after_mutation(candidate_id, result)
+                    if post_mutation_stage_decision is None:
+                        try:
+                            pending_persistence_call = lifecycle.next_prepared_call()
+                        except PlanInvalidated as exc:
+                            plan_invalidated = exc.fact
+
+                observation_stale = False
+                if (lifecycle and tool_ok and tool_requirement_ids and tool_dependency_identities
+                        and function_name not in MUTATION_TOOL_NAMES):
+                    try:
+                        current_observation = lifecycle.dependency_state(function_name, parsed_tool_args)
+                    except (PermissionError, ValueError, OSError):
+                        current_observation = None
+                    if observed_state_sha256 is None or current_observation != observed_state_sha256:
+                        observation_stale = True
+                        _emit("tool_evidence_stale", {
+                            "stage_id": tool_stage_id, "source_record_id": tool_evidence_record_id,
+                            "observed_state_sha256": observed_state_sha256,
+                            "current_state_sha256": current_observation,
+                            "reason": "fresh_observation_required",
+                        })
+                        lifecycle.execution_defect([tool_stage_id])
+
+                tool_iterations += 1
+
+                if (
+                    lifecycle
+                    and tool_ok
+                    and function_name not in MUTATION_TOOL_NAMES
+                    and tool_stage_id is not None
+                ):
+                    stage_evidence = [
+                        fact
+                        for fact in consistency_tool_facts
+                        if fact.get("stage_id") == tool_stage_id
+                    ]
+                    evidence_stage_decision = (
+                        lifecycle.after_non_persistence_evidence(stage_evidence)
+                    )
+                    if evidence_stage_decision is not None:
+                        if evidence_stage_decision["action"] == "next_stage":
+                            stage_context(reset=True)
+                            continue
+                        if evidence_stage_decision["action"] == "final":
+                            messages[:] = copy.deepcopy(executor_base_messages)
+                            messages.append(
+                                {
+                                    "role": "user",
+                                    "content": (
+                                        "SERVER FACTS — ALL TASK PLAN STAGES ARE SATISFIED.\n"
+                                        "Return the concise final response for the RAW TASK now. "
+                                        "Do not request more tools or repeat completed checks."
+                                    ),
+                                }
+                            )
+                            continue
+
+                result_for_model = dict(result)
+                if observation_stale:
+                    result_for_model["_evidence_status"] = "STALE"
+                    result_for_model["_evidence_instruction"] = "Target changed after this observation. Obtain fresh evidence for the current stage; this result cannot satisfy it."
+                result_for_model["_verification_state"] = dict(verification_state)
+                remaining_tools = max(policy["tool_limit"] - tool_iterations, 0)
+                result_for_model["_tool_budget"] = {
+                    "limit": policy["tool_limit"],
+                    "used": tool_iterations,
+                    "remaining": remaining_tools,
+                    "instruction": (
+                        "Если оставшихся вызовов мало, прекрати лишнее исследование "
+                        "и заверши задачу или сообщи, что требуется новый запуск."
+                    ),
+                }
+                messages.append(
+                    {
+                        "role": "function",
+                        "name": function_name,
+                        "content": json.dumps(result_for_model, ensure_ascii=False),
+                    }
+                )
+                if lifecycle and plan_invalidated is not None:
+                    await lifecycle.replan(plan_invalidated)
+                    stage_context(reset=True)
+                    continue
+                if post_mutation_stage_decision is not None:
+                    if post_mutation_stage_decision.get("action") in {"next_stage", "final"}:
+                        stage_context(reset=True)
+                        continue
+                if permission_denied and function_name in MUTATION_TOOL_NAMES:
+                    capability = CAPABILITY_BY_TOOL[function_name]
+                    path_text = safe_args.get("path")
+                    scope_root = policy[f"_{capability.lower()}_root"]
+                    try:
+                        requested_path = _resolve_workspace_path(root, path_text)
+                        outside_scope = not _is_within(requested_path, scope_root)
+                        _deny_backup_area(requested_path)
+                        _deny_context_storage_area(root, requested_path)
+                    except PermissionError:
+                        outside_scope = True
+                    except (TypeError, ValueError):
+                        outside_scope = False
+                    if outside_scope:
+                        _emit("permission_scope_blocked", {
+                            "capability": capability, "path": path_text,
+                            "scope": policy[f"{capability.lower()}_scope"],
+                        })
+                        return _permission_blocked(
+                            "permission_scope_blocked", capability,
+                            _context_message("permission.scope_blocked", {
+                                "capability": capability, "path": path_text,
+                            }),
+                        )
+                    if not policy[f"allow_{capability.lower()}"]:
+                        attempt = {
+                            "attempt": len(permission_attempts[capability]) + 1,
+                            "tool": function_name, "path": path_text,
+                            "tool_sequence": last_tool_sequence,
+                            "executed": False,
+                        }
+                        permission_attempts[capability].append(attempt)
+                        if capability in permission_review_failed:
+                            return _permission_blocked(
+                                "permission_escalation_not_justified_repeat",
+                                capability,
+                                "Расширение прав не подтверждено; повторный запрещённый вызов не выполнен.",
+                            )
+                        if len(permission_attempts[capability]) == PERMISSION_ESCALATION_THRESHOLD:
+                            _emit("permission_review_started", {
+                                "capability": capability, "attempts": permission_attempts[capability],
+                                "scope": policy[f"{capability.lower()}_scope"],
+                            })
+                            try:
+                                if lifecycle:
+                                    lifecycle.tick("PERMISSION_VERIFIER")
+                                review = await run_verifier_check(
+                                    verifier_model_id=verifier_model_id,
+                                    check_type="PERMISSION", raw_task=task,
+                                    verification_context=_permission_review_context(
+                                        policy=policy, capability=capability,
+                                        attempts=permission_attempts[capability],
+                                        tool_facts=consistency_tool_facts,
+                                        verification_state=verification_state,
+                                        run_owned_state=final_audit_retry_state["run_owned_state"],
+                                        available_functions=available_functions,
+                                    ), task_id=run_id,
+                                    diagnostic_callback=provider_accounting_diagnostic,
+                                )
+                            except LifecycleBlocked:
+                                raise
+                            except Exception as exc:
+                                _emit("permission_review_failed", {
+                                    "capability": capability, "reason": f"{type(exc).__name__}: {exc}",
+                                })
+                                return _permission_blocked(
+                                    "permission_review_error", capability,
+                                    "Проверка разрешения недоступна; запрещённые вызовы не выполнены.",
+                                )
+                            review_payload = {
+                                "capability": capability,
+                                "verifier_run_id": review.verifier_run_id,
+                                "verifier_reason": review.reason,
+                                "required_action": review.required_action,
+                            }
+                            if review.verdict != "PASS":
+                                permission_review_failed.add(capability)
+                                _emit("permission_review_failed", review_payload)
+                                messages.append({"role": "user", "content": _context_message(
+                                    "permission.review_not_required", {"capability": capability},
+                                )})
+                            else:
+                                _emit("permission_review_passed", review_payload)
+                                new_policy = dict(policy)
+                                new_policy[f"allow_{capability.lower()}"] = True
+                                try:
+                                    _prepare_policy_for_workspace(
+                                        root, _normalize_permissions(new_policy))
+                                except (PermissionError, ValueError, OSError) as exc:
+                                    return _permission_blocked(
+                                        "permission_policy_validation_failed", capability,
+                                        f"Текущая policy не допускает {capability}: {exc}",
+                                    )
+                                if permission_request_callback is None:
+                                    return _permission_blocked(
+                                        "permission_callback_unavailable", capability,
+                                        f"Для завершения TASK требуется {capability}. Повторите RUN с разрешением или UI permission callback; запрещённые операции не выполнялись.",
+                                    )
+                                request = {
+                                    **review_payload, "run_id": run_id,
+                                    "attempts": list(permission_attempts[capability]),
+                                    "scope": policy[f"{capability.lower()}_scope"],
+                                    "last_requested_path": path_text,
+                                }
+                                _emit("permission_user_prompted", request)
+                                try:
+                                    granted = permission_request_callback(request) is True
+                                except Exception:
+                                    granted = False
+                                if not granted:
+                                    _emit("permission_user_denied", {**request, "user_decision": "DENIED"})
+                                    return _permission_blocked(
+                                        "permission_not_granted", capability,
+                                        f"Для завершения TASK требуется {capability}, но пользователь не предоставил разрешение. Запрещённые операции не выполнялись.",
+                                    )
+                                try:
+                                    policy = _prepare_policy_for_workspace(
+                                        root, _normalize_permissions(new_policy))
+                                except (PermissionError, ValueError, OSError) as exc:
+                                    return _permission_blocked(
+                                        "permission_policy_validation_failed", capability,
+                                        f"Разрешение не применено: {exc}",
+                                    )
+                                old_flag = ("Запись: ЗАПРЕЩЕНА" if capability == "WRITE"
+                                            else "Удаление: ЗАПРЕЩЕНО")
+                                new_flag = ("Запись: РАЗРЕШЕНА" if capability == "WRITE"
+                                            else "Удаление: РАЗРЕШЕНО")
+                                messages[0]["content"] = messages[0]["content"].replace(old_flag, new_flag)
+                                available_functions = _functions_for_policy(policy)
+                                _emit("permission_granted", {
+                                    **request, "user_decision": "GRANTED",
+                                    "permissions": _policy_summary(policy),
+                                })
+                                messages.append({"role": "user", "content": _context_message(
+                                    "permission.granted", {"capability": capability},
+                                )})
+                continue
+
+            if finish_reason not in ("stop", "eos"):
+                _emit("run_failed", {
+                    "reason": "bad_finish_reason",
+                    "finish_reason": finish_reason,
+                    "api_requests": api_request_count,
+                    "tool_calls": tool_call_count,
+                    "duration": time.time() - start_time,
+                })
+                raise RuntimeError(
+                    "Агент GigaChat завершён нештатно. "
+                    f"finish_reason={finish_reason!r}."
+                )
+
+            if lifecycle:
+                candidate_content = message.get("content") or ""
+                if not isinstance(candidate_content, str):
+                    lifecycle.block("invalid_executor_stage_result")
+                try:
+                    active_stage_id = (
+                        lifecycle.stage["stage_id"]
+                        if lifecycle.stage is not None else None
+                    )
+                    stage_evidence = [
+                        fact for fact in consistency_tool_facts
+                        if fact.get("stage_id") == active_stage_id
+                    ]
+                    stage_decision = await lifecycle.on_stop(
+                        candidate_content,
+                        stage_evidence=stage_evidence,
+                    )
+                except PlanInvalidated as exc:
+                    await lifecycle.replan(exc.fact)
+                    stage_context(reset=True)
+                    continue
+                except PermissionError:
+                    # A prepared but unauthorized operation follows the existing denied-call
+                    # review path; it does not acquire the latch or receive a forced API call.
+                    try:
+                        proposed = json.loads(candidate_content)["candidates"][0]
+                        if not isinstance(proposed, dict) or proposed.get("name") not in MUTATION_TOOL_NAMES:
+                            raise ValueError("Invalid operation")
+                    except (ValueError, KeyError, IndexError, TypeError):
+                        lifecycle.block("persistence_permission_or_scope_unavailable")
+                    stage_decision = {"action": "dispatch", "call": proposed}
+                except (ValueError, TypeError) as exc:
+                    stage_decision = {"action": "continue", "reason": str(exc)[:1000]}
+                if stage_decision["action"] != "final":
+                    if stage_decision["action"] == "dispatch":
+                        pending_persistence_call = stage_decision["call"]
+                    if stage_decision["action"] == "next_stage":
+                        stage_context(reset=True)
+                    elif stage_decision["action"] == "evidence_required":
+                        if candidate_content:
+                            messages.append(
+                                {"role": "assistant", "content": candidate_content}
+                            )
+                        messages.append(
+                            {
+                                "role": "user",
+                                "content": (
+                                    "SERVER EVIDENCE REQUIRED — stage is not complete.\n"
+                                    "Execute the exact evidence requirement(s) below. "
+                                    "A different tool or different arguments do not satisfy them.\n"
+                                    + json.dumps(
+                                        {
+                                            "requirements": stage_decision.get(
+                                                "requirements", []
+                                            ),
+                                            "reason": stage_decision.get("reason", ""),
+                                            **lifecycle.executor_context(),
+                                        },
+                                        ensure_ascii=False,
+                                    )
+                                ),
+                            }
+                        )
+                    else:
+                        messages.append({"role": "assistant", "content": candidate_content})
+                        messages.append({"role": "user", "content": _context_message("persistence.required", {})
+                            + "\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
+                            + json.dumps({**lifecycle.executor_context(), "next_action": stage_decision.get("reason", "Apply prepared operation")}, ensure_ascii=False)})
+                    continue
+
+            missing_verification = _verification_missing_requirements(
+                verification_state
+            )
+            if missing_verification:
+                gate_signature = json.dumps(
+                    {
+                        "write_revision": verification_state["write_revision"],
+                        "missing": missing_verification,
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+                if gate_signature == last_verification_gate_signature:
+                    verification_gate_repeat_count += 1
+                else:
+                    last_verification_gate_signature = gate_signature
+                    verification_gate_repeat_count = 1
+
+                _emit(
+                    "verification_required",
+                    {
+                        "attempt": verification_gate_repeat_count,
+                        "missing": missing_verification,
+                        "verification_state": dict(verification_state),
+                    },
+                )
+
+                if verification_gate_repeat_count > MAX_VERIFICATION_GATE_RETRIES:
+                    _emit(
+                        "run_failed",
+                        {
+                            "reason": "verification_gate_stuck",
+                            "api_requests": api_request_count,
+                            "tool_calls": tool_call_count,
+                            "duration": time.time() - start_time,
+                            "missing": missing_verification,
+                            "verification_state": dict(verification_state),
+                            "trace_path": str(runtime_log_path),
+                        },
+                    )
+                    raise RuntimeError(
+                        "VERIFICATION GATE STUCK\n"
+                        f"Run ID: {run_id}\n"
+                        f"Missing: {missing_verification}\n"
+                        f"Trace: logs/runs/{run_id}.jsonl"
+                    )
+
+                premature_content = message.get("content")
+                messages.append(
+                    {
+                        "role": "assistant",
+                        "content": (
+                            premature_content
+                            if isinstance(premature_content, str)
+                            else ""
+                        ),
+                    }
+                )
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": _context_message(
+                            "verification.required",
+                            {
+                                "attempt": verification_gate_repeat_count,
+                                "missing_count": len(missing_verification),
+                                "missing": json.dumps(
+                                    missing_verification,
+                                    ensure_ascii=False,
+                                    sort_keys=True,
+                                ),
+                                "missing_lines": _verification_missing_lines(
+                                    missing_verification
+                                ),
+                                "verification_state": json.dumps(
+                                    verification_state,
+                                    ensure_ascii=False,
+                                    sort_keys=True,
+                                ),
+                            },
+                        )
+                        + "\n\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
+                        + json.dumps(
+                            {
+                                "event_id": "verification.required",
+                                "decision": "SUCCESS_BLOCKED",
+                                "attempt": verification_gate_repeat_count,
+                                "missing": missing_verification,
+                                "verification_state": verification_state,
+                            },
+                            ensure_ascii=False,
+                            sort_keys=True,
+                        ),
+                    }
+                )
+                continue
+
+            if verification_state["write_revision"] > 0:
+                _emit(
+                    "verification_passed",
+                    {
+                        "verification_state": dict(verification_state),
+                    },
+                )
+
+            content = message.get("content")
+            if not isinstance(content, str) or not content:
+                _emit("run_failed", {
+                    "reason": "empty_final_content",
+                    "api_requests": api_request_count,
+                    "tool_calls": tool_call_count,
+                    "duration": time.time() - start_time,
+                })
+                raise RuntimeError(f"GigaChat вернул пустой финальный ответ: {data}")
+
+            stripped_content = content.strip()
+            final_response_problem = None
+            if not any(character.isalnum() for character in content):
+                final_response_problem = "non_human_readable_final_content"
+            elif (
+                stripped_content.startswith("<tool_calls>")
+                or (
+                    stripped_content.startswith("<invoke")
+                    and "</invoke>" in stripped_content
+                )
+            ):
+                final_response_problem = "tool_call_markup_final_content"
+
+            if final_response_problem is not None:
+                if final_response_repair_count < FINAL_RESPONSE_REPAIR_LIMIT:
+                    final_response_repair_count += 1
+                    _emit(
+                        "final_response_repair_requested",
+                        {
+                            "attempt": final_response_repair_count,
+                            "reason": final_response_problem,
+                            "content_preview": content[:160],
+                            "executed": False,
+                        },
+                    )
+                    messages[:] = copy.deepcopy(executor_base_messages)
+                    messages.append(
+                        {
+                            "role": "user",
+                            "content": (
+                                "SERVER RESPONSE FORMAT CORRECTION.\n"
+                                "All required task stages are already satisfied. "
+                                "Your previous final response was not human-readable. "
+                                "Return a concise user-facing summary in normal prose now. "
+                                "Do not request tools and do not output punctuation-only text "
+                                "or serialized tool-call markup."
+                            ),
+                        }
+                    )
+                    continue
+                _emit(
+                    "run_failed",
+                    {
+                        "reason": "invalid_final_content",
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "content_preview": content[:160],
+                    },
+                )
+                raise RuntimeError(
+                    "GigaChat повторно вернул нечитаемый финальный ответ."
+                )
+
+            if not final_audit_enabled:
+                if lifecycle:
+                    stale_stage_ids = lifecycle.invalidate_stale_satisfied_evidence(
+                        consistency_tool_facts
+                    )
+                    if stale_stage_ids:
+                        _emit(
+                            "terminal_evidence_freshness_blocked",
+                            {
+                                **lifecycle.facts(),
+                                "stale_stage_ids": stale_stage_ids,
+                                "phase": "pre_success_without_final_audit",
+                            },
+                        )
+                        stage_context(reset=True)
+                        continue
+                    lifecycle.assert_satisfied()
+                    lifecycle.complete_planner_session()
+
+                _emit(
+                    "final_audit_skipped",
+                    {
+                        "reason": "disabled_by_run_setting",
+                        "model_id": verifier_model_id,
+                    },
+                )
+
+                _emit(
+                    "run_finished",
+                    {
+                        "status": "SUCCESS",
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "backup_path": (
+                            str(backup_session["backup_dir"])
+                            if backup_session is not None
+                            else None
+                        ),
+                        "verification_state": verification_state,
+                    },
+                )
+                return content
+
+            final_audit_started_at = time.time()
+            final_audit_evidence_snapshot_sha256 = None
+            _emit(
+                "final_audit_started",
+                {
+                    "check_type": "FINAL",
+                    "model_id": verifier_model_id,
+                    "write_revision": verification_state["write_revision"],
+                },
+            )
+            try:
+                _assert_durable_outcomes()
+                task_plan_evidence = None
+                freshness_snapshot = None
+                if lifecycle:
+                    stale_stage_ids = lifecycle.invalidate_stale_satisfied_evidence(
+                        consistency_tool_facts
+                    )
+                    if stale_stage_ids:
+                        _emit(
+                            "final_audit_evidence_snapshot_stale",
+                            {
+                                **lifecycle.facts(),
+                                "stale_stage_ids": stale_stage_ids,
+                                "phase": "before_final_audit",
+                            },
+                        )
+                        stage_context(reset=True)
+                        continue
+                    lifecycle.assert_satisfied()
+                    task_plan_evidence = lifecycle.evidence()
+                    freshness_snapshot = lifecycle.evidence_freshness_snapshot(
+                        consistency_tool_facts
+                    )
+                    final_audit_evidence_snapshot_sha256 = (
+                        lifecycle.evidence_freshness_snapshot_sha256(
+                            consistency_tool_facts
+                        )
+                    )
+                    _emit(
+                        "final_audit_evidence_snapshot_bound",
+                        {
+                            **lifecycle.facts(),
+                            "evidence_snapshot_sha256": (
+                                final_audit_evidence_snapshot_sha256
+                            ),
+                        },
+                    )
+
+                verification_context, evidence_completeness = (
+                    _collect_final_audit_evidence(
+                        root=root,
+                        candidate_final=content,
+                        policy=policy,
+                        run_id=run_id,
+                        api_request_count=api_request_count,
+                        tool_call_count=tool_call_count,
+                        verification_state=verification_state,
+                        backup_session=backup_session,
+                        run_owned_state=final_audit_retry_state["run_owned_state"],
+                        tool_facts=consistency_tool_facts,
+                        task_plan_evidence=task_plan_evidence,
+                        freshness_snapshot=freshness_snapshot,
+                    )
+                )
+                if evidence_completeness.get("critical_for_success"):
+                    raise FinalAuditEvidenceError(
+                        "Критические доказательства для SUCCESS неполны: "
+                        + ", ".join(
+                            evidence_completeness.get("critical_reasons") or []
+                        )
+                    )
+
+                if lifecycle:
+                    pre_verifier_snapshot_sha256 = (
+                        lifecycle.evidence_freshness_snapshot_sha256(
+                            consistency_tool_facts
+                        )
+                    )
+                    if (
+                        pre_verifier_snapshot_sha256
+                        != final_audit_evidence_snapshot_sha256
+                    ):
+                        stale_stage_ids = (
+                            lifecycle.invalidate_stale_satisfied_evidence(
+                                consistency_tool_facts
+                            )
+                        )
+                        _emit(
+                            "final_audit_evidence_snapshot_stale",
+                            {
+                                **lifecycle.facts(),
+                                "stale_stage_ids": stale_stage_ids,
+                                "phase": "after_packet_before_final_audit",
+                                "bound_snapshot_sha256": (
+                                    final_audit_evidence_snapshot_sha256
+                                ),
+                                "current_snapshot_sha256": (
+                                    pre_verifier_snapshot_sha256
+                                ),
+                            },
+                        )
+                        if stale_stage_ids:
+                            stage_context(reset=True)
+                            continue
+                        lifecycle.assert_satisfied()
+                        raise FinalAuditEvidenceError(
+                            "Final Audit evidence snapshot changed during packet "
+                            "collection without a resolvable freshness repair."
+                        )
+
+                _assert_durable_outcomes()
+                final_audit_retry_state["final_audit_attempt_count"] += 1
+                audit_attempt = final_audit_retry_state[
+                    "final_audit_attempt_count"
+                ]
+                if lifecycle:
+                    lifecycle.tick("FINAL_VERIFIER")
+                _assert_durable_outcomes()
+                audit_result = await run_verifier_check(
+                    verifier_model_id=verifier_model_id,
+                    check_type="FINAL",
+                    raw_task=task,
+                    verification_context=verification_context,
+                    task_id=run_id,
+                    diagnostic_callback=provider_accounting_diagnostic,
+                )
+                if (audit_result.verdict == "PASS"
+                        and evidence_completeness.get("candidate_fact_conflicts")):
+                    raise FinalAuditEvidenceError(
+                        "Final Verifier PASS contradicted authoritative Server facts: "
+                        + ", ".join(evidence_completeness["candidate_fact_conflicts"])
+                    )
+
+                if audit_result.verdict == "FAIL":
+                    if lifecycle:
+                        route = getattr(audit_result, "route", "UNKNOWN")
+                        if route not in {"EXECUTION_DEFECT", "PLAN_DEFECT", "UNKNOWN"}:
+                            lifecycle.block("invalid_final_audit_route")
+                        if route == "PLAN_DEFECT":
+                            _emit("final_audit_failed", {
+                                "verifier_run_id": audit_result.verifier_run_id, "audit_attempt": audit_attempt,
+                                "reason": audit_result.reason, "violations": list(audit_result.violations),
+                                "required_action": audit_result.required_action, "route": route,
+                                "usage": audit_result.usage,
+                            })
+                            lifecycle.event("final_audit_routed_plan_defect", reason=audit_result.reason)
+                            await lifecycle.replan({"reason": "final_audit_plan_defect", "finding": {
+                                "verifier_run_id": audit_result.verifier_run_id,
+                                "reason": audit_result.reason, "violations": list(audit_result.violations),
+                                "required_action": audit_result.required_action}})
+                            stage_context(reset=True)
+                            continue
+                        lifecycle.event("final_audit_routed_execution_defect", route=route, reason=audit_result.reason)
+                    final_audit_retry_state["semantic_fail_count"] += 1
+                    semantic_fail_count = final_audit_retry_state[
+                        "semantic_fail_count"
+                    ]
+                    correction_count = final_audit_retry_state[
+                        "correction_count"
+                    ]
+                    correction_limit = final_audit_retry_state[
+                        "correction_limit"
+                    ]
+                    candidate_fingerprint = _candidate_final_fingerprint(
+                        content
+                    )
+                    run_owned_state_fingerprint = (
+                        _run_owned_state_fingerprint(
+                            final_audit_retry_state["run_owned_state"]
+                        )
+                    )
+                    (
+                        exact_failure_signature,
+                        core_failure_signature,
+                    ) = _final_audit_failure_signatures(
+                        check_type=audit_result.check_type,
+                        reason=audit_result.reason,
+                        violations=audit_result.violations,
+                        required_action=audit_result.required_action,
+                    )
+
+                    history = final_audit_retry_state["failure_history"]
+                    previous_failure = history[-1] if history else None
+                    if previous_failure is None:
+                        candidate_changed = False
+                        run_owned_state_changed = False
+                        progress_class = "INITIAL"
+                    else:
+                        candidate_changed = (
+                            candidate_fingerprint
+                            != previous_failure["candidate_fingerprint"]
+                        )
+                        run_owned_state_changed = (
+                            run_owned_state_fingerprint
+                            != previous_failure[
+                                "run_owned_state_fingerprint"
+                            ]
+                        )
+                        progress_class = (
+                            "MATERIAL_PROGRESS"
+                            if candidate_changed or run_owned_state_changed
+                            else "NO_PROGRESS"
+                        )
+
+                    same_core_failure_streak = (
+                        previous_failure["same_core_failure_streak"] + 1
+                        if previous_failure is not None
+                        and previous_failure["core_failure_signature"]
+                        == core_failure_signature
+                        else 1
+                    )
+                    failure_snapshot = {
+                        "audit_attempt": audit_attempt,
+                        "semantic_fail_count": semantic_fail_count,
+                        "candidate_fingerprint": candidate_fingerprint,
+                        "run_owned_state_fingerprint": (
+                            run_owned_state_fingerprint
+                        ),
+                        "exact_failure_signature": exact_failure_signature,
+                        "core_failure_signature": core_failure_signature,
+                        "same_core_failure_streak": (
+                            same_core_failure_streak
+                        ),
+                    }
+                    history.append(failure_snapshot)
+                    history_limit = max(
+                        correction_limit + 1,
+                        FINAL_AUDIT_REPEATED_FAILURE_THRESHOLD,
+                        3,
+                    )
+                    del history[:-history_limit]
+                    ping_pong_detected = (
+                        len(history) >= 3
+                        and history[-1]["core_failure_signature"]
+                        == history[-3]["core_failure_signature"]
+                        and history[-1]["core_failure_signature"]
+                        != history[-2]["core_failure_signature"]
+                    )
+
+                    terminal_reason = None
+                    policy_reason = progress_class
+                    if progress_class == "NO_PROGRESS":
+                        terminal_reason = "final_audit_retry_no_progress"
+                        policy_reason = "NO_PROGRESS"
+                    elif ping_pong_detected:
+                        terminal_reason = "final_audit_retry_ping_pong"
+                        policy_reason = "PING_PONG"
+                    elif (
+                        same_core_failure_streak
+                        >= FINAL_AUDIT_REPEATED_FAILURE_THRESHOLD
+                    ):
+                        terminal_reason = (
+                            "final_audit_retry_repeated_failure"
+                        )
+                        policy_reason = "REPEATED_FAILURE"
+                    elif correction_count >= correction_limit:
+                        terminal_reason = "final_audit_correction_exhausted"
+                        policy_reason = "CORRECTION_EXHAUSTED"
+
+                    decision = (
+                        "TERMINATE" if terminal_reason else "CONTINUE"
+                    )
+                    correction_cycle = (
+                        correction_count + 1
+                        if decision == "CONTINUE"
+                        else None
+                    )
+                    _emit(
+                        "final_audit_failed",
+                        {
+                            "verifier_run_id": audit_result.verifier_run_id,
+                            "model_id": audit_result.model_id,
+                            "provider_model_id": audit_result.provider_model_id,
+                            "check_type": audit_result.check_type,
+                            "verdict": audit_result.verdict,
+                            "violations_count": len(audit_result.violations),
+                            "violations": list(audit_result.violations),
+                            "reason": audit_result.reason,
+                            "required_action": audit_result.required_action,
+                            "usage": audit_result.usage,
+                            "audit_attempt": audit_attempt,
+                            "semantic_fail_count": semantic_fail_count,
+                            "correction_count": correction_count,
+                            "correction_limit": correction_limit,
+                            "correction_handoff_available": (
+                                decision == "CONTINUE"
+                            ),
+                            **(
+                                {"correction_cycle": correction_cycle}
+                                if correction_cycle is not None
+                                else {}
+                            ),
+                            "duration": time.time() - final_audit_started_at,
+                        },
+                    )
+
+                    _emit(
+                        "final_audit_retry_evaluated",
+                        {
+                            "audit_attempt": audit_attempt,
+                            "semantic_fail_count": semantic_fail_count,
+                            "correction_count": correction_count,
+                            "correction_limit": correction_limit,
+                            "candidate_fingerprint": candidate_fingerprint,
+                            "run_owned_state_fingerprint": (
+                                run_owned_state_fingerprint
+                            ),
+                            "exact_failure_signature": (
+                                exact_failure_signature
+                            ),
+                            "core_failure_signature": (
+                                core_failure_signature
+                            ),
+                            "progress_class": progress_class,
+                            "candidate_changed": candidate_changed,
+                            "run_owned_state_changed": (
+                                run_owned_state_changed
+                            ),
+                            "same_core_failure_streak": (
+                                same_core_failure_streak
+                            ),
+                            "ping_pong_detected": ping_pong_detected,
+                            "decision": decision,
+                            "decision_reason": policy_reason,
+                        },
+                    )
+
+                    violations = "\n".join(
+                        f"- {item}" for item in audit_result.violations
+                    ) or "- отсутствуют"
+
+                    if terminal_reason is not None:
+                        _emit(
+                            "run_failed",
+                            {
+                                "reason": terminal_reason,
+                                "api_requests": api_request_count,
+                                "tool_calls": tool_call_count,
+                                "duration": time.time() - start_time,
+                                "verifier_reason": audit_result.reason,
+                                "violations_count": len(
+                                    audit_result.violations
+                                ),
+                                "required_action": (
+                                    audit_result.required_action
+                                ),
+                                "audit_attempt": audit_attempt,
+                                "semantic_fail_count": semantic_fail_count,
+                                "correction_count": correction_count,
+                                "correction_limit": correction_limit,
+                                "policy_reason": policy_reason,
+                                "trace_path": str(runtime_log_path),
+                            },
+                        )
+                        raise FinalAuditSemanticError(
+                            "FINAL AUDIT RETRY TERMINATED\n"
+                            f"Policy: {policy_reason}\n"
+                            f"Reason: {audit_result.reason}\n"
+                            f"Violations:\n{violations}\n"
+                            "Required action: "
+                            f"{audit_result.required_action}"
+                        )
+
+                    if correction_cycle is not None:
+                        if lifecycle:
+                            lifecycle.execution_defect(getattr(audit_result, "affected_stage_ids", ()))
+                            stage_context(reset=True)
+                        diagnostic_question = (
+                            "Судья Дредд отклонил результат. Его замечания:\n"
+                            f"REASON:\n{audit_result.reason}\n\n"
+                            "VIOLATIONS:\n"
+                            + "\n".join(
+                                f"- {violation}"
+                                for violation in audit_result.violations
+                            )
+                            + f"\n\nREQUIRED ACTION:\n{audit_result.required_action}\n\n"
+                            + AUDIT_DIAGNOSTIC_QUESTION
+                        )
+                        _emit(
+                            "audit_diagnostic_question",
+                            {
+                                "audit_attempt": audit_attempt,
+                                "text": diagnostic_question,
+                            },
+                        )
+                        try:
+                            if lifecycle:
+                                lifecycle.tick("AUDIT_DIAGNOSTIC")
+                            diagnostic_answer = await _request_audit_diagnostic(
+                                client,
+                                headers,
+                                run_model,
+                                messages,
+                                content,
+                                diagnostic_question,
+                                model_id=selected_model.model_id,
+                                provider=selected_model.provider,
+                                diagnostic_callback=_emit,
+                                source_references=[
+                                    f"run:{run_id}",
+                                    f"task_block:{task_block_id or 'direct'}",
+                                    f"final_audit_attempt:{audit_attempt}",
+                                ],
+                            )
+                        except LifecycleBlocked:
+                            raise
+                        except Exception as exc:
+                            _emit(
+                                "audit_diagnostic_error",
+                                {
+                                    "audit_attempt": audit_attempt,
+                                    "text": f"{type(exc).__name__}: {str(exc)[:300]}",
+                                },
+                            )
+                        else:
+                            _emit(
+                                "audit_diagnostic_answer",
+                                {
+                                    "audit_attempt": audit_attempt,
+                                    "text": diagnostic_answer,
+                                },
+                            )
+                        remaining_corrections = (
+                            correction_limit - correction_cycle
+                        )
+                        feedback_template = _context_message(
+                            "final_audit.feedback",
+                            {
+                                "verdict": audit_result.verdict,
+                                "reason": audit_result.reason,
+                                "violations_lines": violations,
+                                "required_action": (
+                                    audit_result.required_action
+                                ),
+                                "verifier_run_id": (
+                                    audit_result.verifier_run_id
+                                ),
+                                "check_type": audit_result.check_type,
+                                "correction_cycle": correction_cycle,
+                                "correction_limit": correction_limit,
+                                "remaining_corrections": (
+                                    remaining_corrections
+                                ),
+                            },
+                        )
+                        server_facts = {
+                            "event_id": "final_audit.feedback",
+                            "message_kind": (
+                                "SERVER_FINAL_VERIFIER_FEEDBACK"
+                            ),
+                            "is_new_user_task": False,
+                            "raw_task_authority": "SOURCE_OF_TRUTH",
+                            "decision": (
+                                "SUCCESS_BLOCKED_CORRECTION_REQUESTED"
+                            ),
+                            "run_id": run_id,
+                            "verifier_run_id": (
+                                audit_result.verifier_run_id
+                            ),
+                            "check_type": audit_result.check_type,
+                            "verdict": audit_result.verdict,
+                            "reason": audit_result.reason,
+                            "violations": list(audit_result.violations),
+                            "required_action": (
+                                audit_result.required_action
+                            ),
+                            "audit_attempt": audit_attempt,
+                            "semantic_fail_count": semantic_fail_count,
+                            "correction_count": correction_cycle,
+                            "correction_cycle": correction_cycle,
+                            "correction_limit": correction_limit,
+                            "remaining_corrections": (
+                                remaining_corrections
+                            ),
+                        }
+                        feedback_content = (
+                            feedback_template
+                            + "\n\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
+                            + json.dumps(
+                                server_facts,
+                                ensure_ascii=False,
+                                sort_keys=True,
+                            )
+                        )
+                        _emit(
+                            "final_audit_feedback_created",
+                            {
+                                "verifier_run_id": (
+                                    audit_result.verifier_run_id
+                                ),
+                                "check_type": audit_result.check_type,
+                                "audit_attempt": audit_attempt,
+                                "semantic_fail_count": semantic_fail_count,
+                                "correction_cycle": correction_cycle,
+                                "correction_limit": correction_limit,
+                                "remaining_corrections": (
+                                    remaining_corrections
+                                ),
+                                "feedback_chars": len(feedback_content),
+                                "violations_count": len(
+                                    audit_result.violations
+                                ),
+                            },
+                        )
+                        messages.append(
+                            {"role": "assistant", "content": content}
+                        )
+                        messages.append(
+                            {"role": "user", "content": feedback_content}
+                        )
+                        final_audit_retry_state["correction_count"] = (
+                            correction_cycle
+                        )
+                        _emit(
+                            "final_audit_feedback_delivered",
+                            {
+                                "verifier_run_id": (
+                                    audit_result.verifier_run_id
+                                ),
+                                "check_type": audit_result.check_type,
+                                "audit_attempt": audit_attempt,
+                                "semantic_fail_count": semantic_fail_count,
+                                "correction_count": correction_cycle,
+                                "correction_cycle": correction_cycle,
+                                "correction_limit": correction_limit,
+                                "remaining_corrections": (
+                                    remaining_corrections
+                                ),
+                                "feedback_chars": len(feedback_content),
+                                "violations_count": len(
+                                    audit_result.violations
+                                ),
+                            },
+                        )
+                        _emit(
+                            "final_audit_correction_started",
+                            {
+                                "verifier_run_id": (
+                                    audit_result.verifier_run_id
+                                ),
+                                "check_type": audit_result.check_type,
+                                "audit_attempt": audit_attempt,
+                                "semantic_fail_count": semantic_fail_count,
+                                "correction_count": correction_cycle,
+                                "correction_cycle": correction_cycle,
+                                "correction_limit": correction_limit,
+                                "remaining_corrections": (
+                                    remaining_corrections
+                                ),
+                            },
+                        )
+                        continue
+
+                if audit_result.verdict != "PASS":
+                    raise VerifierProtocolError(
+                        "Final Audit вернул неизвестный verdict: "
+                        f"{audit_result.verdict!r}."
+                    )
+
+                if lifecycle:
+                    current_evidence_snapshot_sha256 = (
+                        lifecycle.evidence_freshness_snapshot_sha256(
+                            consistency_tool_facts
+                        )
+                    )
+                    if (
+                        current_evidence_snapshot_sha256
+                        != final_audit_evidence_snapshot_sha256
+                    ):
+                        stale_stage_ids = (
+                            lifecycle.invalidate_stale_satisfied_evidence(
+                                consistency_tool_facts
+                            )
+                        )
+                        _emit(
+                            "final_audit_evidence_snapshot_stale",
+                            {
+                                **lifecycle.facts(),
+                                "stale_stage_ids": stale_stage_ids,
+                                "phase": "after_final_audit",
+                                "verifier_run_id": audit_result.verifier_run_id,
+                                "bound_snapshot_sha256": (
+                                    final_audit_evidence_snapshot_sha256
+                                ),
+                                "current_snapshot_sha256": (
+                                    current_evidence_snapshot_sha256
+                                ),
+                            },
+                        )
+                        if stale_stage_ids:
+                            stage_context(reset=True)
+                            continue
+                        lifecycle.assert_satisfied()
+                        raise FinalAuditEvidenceError(
+                            "Final Audit evidence snapshot changed without "
+                            "a resolvable current-stage freshness repair."
+                        )
+
+                _emit(
+                    "final_audit_passed",
+                    {
+                        "verifier_run_id": audit_result.verifier_run_id,
+                        "model_id": audit_result.model_id,
+                        "provider_model_id": audit_result.provider_model_id,
+                        "check_type": audit_result.check_type,
+                        "verdict": audit_result.verdict,
+                        "violations_count": len(audit_result.violations),
+                        "reason": audit_result.reason,
+                        "usage": audit_result.usage,
+                        "evidence_snapshot_sha256": (
+                            final_audit_evidence_snapshot_sha256
+                        ),
+                        "audit_attempt": audit_attempt,
+                        "semantic_fail_count": final_audit_retry_state[
+                            "semantic_fail_count"
+                        ],
+                        "correction_count": final_audit_retry_state[
+                            "correction_count"
+                        ],
+                        "correction_limit": final_audit_retry_state[
+                            "correction_limit"
+                        ],
+                        "duration": time.time() - final_audit_started_at,
+                    },
+                )
+            except LifecycleBlocked:
+                raise
+            except PlanInvalidated as exc:
+                if lifecycle:
+                    await lifecycle.replan(exc.fact)
+                    stage_context(reset=True)
+                    continue
+                raise
+            except FinalAuditSemanticError:
+                raise
+            except (FinalAuditEvidenceError, VerifierRuntimeError) as exc:
+                error_reason = (
+                    "final_audit_evidence_incomplete"
+                    if isinstance(exc, FinalAuditEvidenceError)
+                    else "final_audit_runtime_error"
+                )
+                _emit(
+                    "final_audit_error",
+                    {
+                        "model_id": verifier_model_id,
+                        "check_type": "FINAL",
+                        "error_type": type(exc).__name__,
+                        "reason": str(exc),
+                        "final_audit_attempt_count": (
+                            final_audit_retry_state[
+                                "final_audit_attempt_count"
+                            ]
+                        ),
+                        "duration": time.time() - final_audit_started_at,
+                    },
+                )
+                _emit(
+                    "run_failed",
+                    {
+                        "reason": error_reason,
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "error_type": type(exc).__name__,
+                        "error": str(exc),
+                        "final_audit_attempt_count": (
+                            final_audit_retry_state[
+                                "final_audit_attempt_count"
+                            ]
+                        ),
+                        "trace_path": str(runtime_log_path),
+                    },
+                )
+                raise RuntimeError(
+                    "FINAL AUDIT ERROR\n"
+                    f"Type: {type(exc).__name__}\n"
+                    f"Reason: {exc}"
+                ) from exc
+            except Exception as exc:
+                _emit(
+                    "final_audit_error",
+                    {
+                        "model_id": verifier_model_id,
+                        "check_type": "FINAL",
+                        "error_type": type(exc).__name__,
+                        "reason": str(exc),
+                        "final_audit_attempt_count": (
+                            final_audit_retry_state[
+                                "final_audit_attempt_count"
+                            ]
+                        ),
+                        "duration": time.time() - final_audit_started_at,
+                    },
+                )
+                _emit(
+                    "run_failed",
+                    {
+                        "reason": "final_audit_runtime_error",
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "error_type": type(exc).__name__,
+                        "error": str(exc),
+                        "final_audit_attempt_count": (
+                            final_audit_retry_state[
+                                "final_audit_attempt_count"
+                            ]
+                        ),
+                        "trace_path": str(runtime_log_path),
+                    },
+                )
+                raise RuntimeError(
+                    "FINAL AUDIT ERROR\n"
+                    f"Type: {type(exc).__name__}\n"
+                    f"Reason: {exc}"
+                ) from exc
+
+            if lifecycle:
+                stale_stage_ids = lifecycle.invalidate_stale_satisfied_evidence(
+                    consistency_tool_facts
+                )
+                if stale_stage_ids:
+                    _emit(
+                        "terminal_evidence_freshness_blocked",
+                        {
+                            **lifecycle.facts(),
+                            "stale_stage_ids": stale_stage_ids,
+                            "phase": "terminal_success_gate",
+                        },
+                    )
+                    stage_context(reset=True)
+                    continue
+                lifecycle.assert_satisfied()
+                lifecycle.complete_planner_session()
+            _emit("run_finished", {
+                "status": "SUCCESS",
+                "api_requests": api_request_count,
+                "tool_calls": tool_call_count,
+                "duration": time.time() - start_time,
+                "backup_path": (
+                    str(backup_session["backup_dir"])
+                    if backup_session is not None
+                    else None
+                ),
+                "verification_state": verification_state,
+            })
+            return content
+
+def _validate_text_file(path_text: str, *, must_exist: bool) -> Path:
+    path = Path(path_text).expanduser()
+
+    if not path.is_absolute():
+        raise ValueError(
+            "Путь должен быть абсолютным, например "
+            r"M:\GitHub\ag_llm\01_ULTRA_TASK.md"
+        )
+
+    if path.suffix.lower() not in ALLOWED_TEXT_SUFFIXES:
+        raise ValueError("Разрешены только текстовые файлы .md и .txt.")
+
+    if must_exist:
+        if not path.is_file():
+            raise FileNotFoundError(f"Файл задачи не найден: {path}")
+
+        size = path.stat().st_size
+        if size > MAX_TASK_FILE_BYTES:
+            raise ValueError(
+                f"Файл задачи слишком большой: {size} байт. "
+                f"Лимит: {MAX_TASK_FILE_BYTES} байт."
+            )
+
+    return path
+
+@mcp.tool()
+async def gigachat_ask(prompt: str) -> str:
+    """Передай текстовую задачу GigaChat 3 Ultra как независимому субагенту."""
+    return await ask_gigachat(prompt)
+
+@mcp.tool()
+async def gigachat_file_task(task_file: str, report_file: str) -> str:
+    """
+    Прочитай локальный файл задачи, передай его GigaChat Ultra,
+    полностью перезапиши файл отчёта и верни Codex только короткий статус.
+    """
+    task_path = _validate_text_file(task_file, must_exist=True)
+    report_path = _validate_text_file(report_file, must_exist=False)
+
+    if task_path.parent.resolve() != report_path.parent.resolve():
+        raise ValueError(
+            "Для безопасности task_file и report_file должны "
+            "находиться в одной папке."
+        )
+
+    task_text = task_path.read_text(encoding="utf-8-sig")
+
+    if not task_text.strip():
+        run_id = time.strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
+        log_dir = Path("logs") / "runs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / f"{run_id}.jsonl"
+        event = {
+            "event": "run_failed",
+            "run_id": run_id,
+            "timestamp": time.time(),
+            "reason": "empty_task_file",
+            "task_file": task_path.as_posix(),
+        }
+        try:
+            with log_path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(event, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+
+        raise ValueError("Файл задачи пуст.")
+
+    prompt = (
+        "Ты работаешь как самостоятельный инженерный субагент.\n"
+        "Ниже находится полное техническое задание из локального файла.\n"
+        "Выполни его самостоятельно.\n"
+        "Не обращайся к Codex за дополнительными рассуждениями, если задача "
+        "уже содержит достаточный контекст.\n"
+        "Ответ должен строго соответствовать формату, указанному "
+        "в техническом задании.\n\n"
+        "===== НАЧАЛО ЗАДАЧИ =====\n"
+        f"{task_text}\n"
+        "===== КОНЕЦ ЗАДАЧИ =====\n"
+    )
+
+    result = await ask_gigachat(prompt)
+
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(result, encoding="utf-8")
+
+    return (
+        "Готово. GigaChat Ultra прочитал файл задачи и записал полный отчёт: "
+        f"{report_path}"
+    )
+
+@mcp.tool()
+async def gigachat_agent_task(task: str, workspace_root: str) -> str:
+    """Запусти автономный GigaChat Ultra file-agent в указанной рабочей папке."""
+    return await run_agent_task(task, workspace_root)
+
+if __name__ == "__main__":
+    mcp.run(transport="stdio")

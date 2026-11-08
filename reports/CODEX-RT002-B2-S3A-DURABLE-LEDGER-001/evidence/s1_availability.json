@@ -1,0 +1,37 @@
+{
+  "selector": "standalone test_rt002_s1_routes.py",
+  "raw_read": false,
+  "pins": [
+    {
+      "fixture": "r031/executor.jsonl",
+      "available": true,
+      "expected_size": 723052
+    },
+    {
+      "fixture": "r031/server.jsonl",
+      "available": true,
+      "expected_size": 563926
+    },
+    {
+      "fixture": "r031/executor_base.json",
+      "available": true,
+      "expected_size": 35568
+    },
+    {
+      "fixture": "r031/summary.json",
+      "available": true,
+      "expected_size": 3468
+    },
+    {
+      "fixture": "r026/executor.jsonl",
+      "available": true,
+      "expected_size": 735033
+    },
+    {
+      "fixture": "r026/summary.json",
+      "available": true,
+      "expected_size": 3551
+    }
+  ],
+  "status": "NOT RUN / BLOCKED if any required RAW absent"
+}

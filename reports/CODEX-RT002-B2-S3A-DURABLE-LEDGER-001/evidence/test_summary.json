@@ -1,0 +1,57 @@
+{
+  "s3a": {
+    "cases": 35,
+    "pass": 35,
+    "fail": 0,
+    "error": 0,
+    "skip": 0
+  },
+  "run_store_regression": {
+    "cases": 51,
+    "pass": 51,
+    "scope": "subset of 85-test combined run before final invalid-root test; Run Store unchanged"
+  },
+  "s2": {
+    "cases": 73,
+    "pass": 73,
+    "exit": 0,
+    "guard": 0
+  },
+  "s1": {
+    "cases": 69,
+    "pass": 67,
+    "fail": 2,
+    "exit": 1,
+    "guard": 0
+  },
+  "negative_controls": {
+    "cases": 3,
+    "expected_nonzero": 3,
+    "actual_exit": [
+      1,
+      1,
+      1
+    ]
+  },
+  "network_guard": {
+    "expected_denials_control": 3,
+    "unexpected_test_denials": 0,
+    "unexpected_capture_denials": 0
+  },
+  "initial_s3a_runs": [
+    {
+      "cases": 29,
+      "pass": 13,
+      "fail": 16,
+      "exit": 1
+    },
+    {
+      "cases": 29,
+      "pass": 25,
+      "fail": 4,
+      "exit": 1
+    }
+  ],
+  "product_verdict": "PARTIAL / no S3b enforcement / S1 drift OPEN",
+  "python": "3.12.10"
+}

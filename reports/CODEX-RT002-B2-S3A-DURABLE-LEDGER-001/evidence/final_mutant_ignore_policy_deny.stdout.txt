@@ -1,0 +1,22 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_sent_timeout_unknown_late_usage_and_duplicate ______________
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000019750F90440>
+
+    def test_sent_timeout_unknown_late_usage_and_duplicate(ledger):
+        limited = policy(max_run_attempts=1)
+        held = reserve(ledger, raw=limited).record.reserved_liability_tokens
+        assert not ledger.mark_sent("pa_1").replayed
+        assert ledger.mark_sent("pa_1").replayed
+        assert ledger.terminal("pa_1", "timeout", None).record.liability_tokens == held
+        restarted = BudgetLedger(ledger.root, ledger.workspace_id)
+        assert restarted.recover().attempts[0].state == p.UNKNOWN_TERMINAL
+>       with pytest.raises(LedgerDenied, match="RUN_ATTEMPTS_EXCEEDED"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE LedgerDenied
+
+test_rt002_s3a_ledger.py:142: Failed
+=========================== short test summary info ===========================
+FAILED test_rt002_s3a_ledger.py::test_sent_timeout_unknown_late_usage_and_duplicate
+1 failed in 0.45s

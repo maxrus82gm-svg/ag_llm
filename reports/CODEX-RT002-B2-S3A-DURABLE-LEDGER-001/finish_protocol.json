@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "57fa4d0d9fa83ab49d0ea8684a5c5620d8885471d08e48e7702606fee4fa00c1",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 231,
+    "b11b": 237,
+    "b11e": 361
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-RT002-B2-S3A-DURABLE-LEDGER-001",
+    "problems": [],
+    "title": "Web Alarm Ultra — Stage 6A: долговременный журнал бюджетных резервов RT-002/B2 S3a",
+    "lines": 182
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+    "copy_sha256": "097c4fcc2774665f7b7d4458647ad155392a486080359a13c19e1a0e58be23f6",
+    "history_id": "H-CODEX-000022",
+    "history_record": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-RT002-B2-S3A-DURABLE-LEDGER-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "57fa4d0d9fa83ab49d0ea8684a5c5620d8885471d08e48e7702606fee4fa00c1",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+    "copy_sha256": "097c4fcc2774665f7b7d4458647ad155392a486080359a13c19e1a0e58be23f6",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/handoff_task.md",
+    "archive_sha256": "4ed0f540f8a0717bbfe2442f3c23203327c958a0577d72ea4912d9b77c87295b"
+   },
+   "history_id": "H-CODEX-000023",
+   "new_card_sha256": "4d302f59021a6c2c76ac83e97cff026479d0672bf470a33ff6028a43f3c58e29",
+   "copy_sha256_lf": "f37ae9093b86217baed7094e7bb157614ab6ea0b5ee7a4e786df5c67ba141427",
+   "copy_lines": 182,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-RT002-B2-S3A-DURABLE-LEDGER-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "57fa4d0d9fa83ab49d0ea8684a5c5620d8885471d08e48e7702606fee4fa00c1",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+    "copy_sha256": "097c4fcc2774665f7b7d4458647ad155392a486080359a13c19e1a0e58be23f6",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/handoff_task.md",
+    "archive_sha256": "4ed0f540f8a0717bbfe2442f3c23203327c958a0577d72ea4912d9b77c87295b"
+   },
+   "history_id": "H-CODEX-000023",
+   "new_card_sha256": "4d302f59021a6c2c76ac83e97cff026479d0672bf470a33ff6028a43f3c58e29",
+   "copy_sha256_lf": "f37ae9093b86217baed7094e7bb157614ab6ea0b5ee7a4e786df5c67ba141427",
+   "copy_lines": 182,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-RT002-B2-S3A-DURABLE-LEDGER-001",
+    "history_id": "H-CODEX-000023",
+    "record": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "252ada65d924520daf0f5e325c154bc980f70b66e8a5a414b00782a86fec6936",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "4d302f59021a6c2c76ac83e97cff026479d0672bf470a33ff6028a43f3c58e29",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 241
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-RT002-B2-S3A-DURABLE-LEDGER-001",
+    "copy_sha256": "f37ae9093b86217baed7094e7bb157614ab6ea0b5ee7a4e786df5c67ba141427",
+    "history_id": "H-CODEX-000023",
+    "history_record": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-RT002-B2-S3A-DURABLE-LEDGER-001",
+ "history": {
+  "id": "CODEX-RT002-B2-S3A-DURABLE-LEDGER-001",
+  "history_id": "H-CODEX-000023",
+  "record": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

@@ -1,0 +1,165 @@
+.FFF..................F......                                            [100%]
+================================== FAILURES ===================================
+_______________ test_two_processes_compete_for_last_reservation _______________
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000022D7FDB6090>
+tmp_path = WindowsPath('<USER_HOME>/AppData/Local/Temp/codex_s3a_suite_m3lmqqrr/cases/test_two_processes_compete_for0')
+
+    def test_two_processes_compete_for_last_reservation(ledger, tmp_path):
+        gate = tmp_path / "start"
+        commands = [[sys.executable, "-B", str(DRIVER), "--worker", "race", str(ledger.root), ledger.workspace_id, a, str(gate)] for a in ("pa_a", "pa_b")]
+        children = [subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) for cmd in commands]
+        try:
+            gate.write_text("go")
+            outputs = [c.communicate(timeout=15) for c in children]
+            assert [c.returncode for c in children] == [0, 0], outputs
+>           assert sorted(json.loads(out[0])["allowed"] for out in outputs) == [False, True]
+E           assert [False, False] == [False, True]
+E             
+E             At index 1 diff: False != True
+E             Use -v to get more diff
+
+test_rt002_s3a_ledger.py:104: AssertionError
+______ test_process_crash_no_false_zero_after_commit[crash_before-False] ______
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000022D7FDB49B0>
+mode = 'crash_before', committed = False
+
+    @pytest.mark.parametrize("mode,committed", [("crash_before", False), ("crash_after", True)])
+    def test_process_crash_no_false_zero_after_commit(ledger, mode, committed):
+        result = child(ledger, mode)
+>       assert result.returncode == 79, result.stderr
+E       AssertionError: b'Traceback (most recent call last):\r
+E           File "M:\\GitHub\\ag_llm\\ultra_budget_ledger.py", line 167, in _locked\r
+E          ... type(error).__name__) from error\r
+E         ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError\r
+E         '
+E       assert 1 == 79
+E        +  where 1 = CompletedProcess(args=['M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe', '-B', 'M:\\GitHub\\ag_llm\\reports\\CODEX-RT0...type(error).__name__) from error\r\nultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError\r\n').returncode
+
+test_rt002_s3a_ledger.py:116: AssertionError
+_______ test_process_crash_no_false_zero_after_commit[crash_after-True] _______
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000022D7FACF350>
+mode = 'crash_after', committed = True
+
+    @pytest.mark.parametrize("mode,committed", [("crash_before", False), ("crash_after", True)])
+    def test_process_crash_no_false_zero_after_commit(ledger, mode, committed):
+        result = child(ledger, mode)
+>       assert result.returncode == 79, result.stderr
+E       AssertionError: b'Traceback (most recent call last):\r
+E           File "M:\\GitHub\\ag_llm\\ultra_budget_ledger.py", line 167, in _locked\r
+E          ... type(error).__name__) from error\r
+E         ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError\r
+E         '
+E       assert 1 == 79
+E        +  where 1 = CompletedProcess(args=['M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe', '-B', 'M:\\GitHub\\ag_llm\\reports\\CODEX-RT0...type(error).__name__) from error\r\nultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError\r\n').returncode
+
+test_rt002_s3a_ledger.py:116: AssertionError
+_________________ test_generation_fallback_preserves_reserve __________________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000022D7FDBD8B0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:231: in _event
+    store._save_index(self.root, index)
+run_store.py:259: in _save_index
+    _atomic_json(generation, snapshot)
+run_store.py:145: in _atomic_json
+    _replace_with_retry(temporary, path)
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1139: in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1143: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1198: in _execute_mock_call
+    raise effect
+run_store.py:254: in _save_index
+    _atomic_json(canonical, snapshot, retry_replace=not fallback_active)
+run_store.py:145: in _atomic_json
+    _replace_with_retry(temporary, path)
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1139: in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1143: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <MagicMock name='_replace_with_retry' id='2394441892496'>
+args = (WindowsPath('<USER_HOME>/AppData/Local/Temp/codex_s3a_suite_m3lmqqrr/cases/test_generation_fallback_prese0/workspace.../AppData/Local/Temp/codex_s3a_suite_m3lmqqrr/cases/test_generation_fallback_prese0/workspace/.ultra/audit/index.json'))
+kwargs = {}
+
+    def _execute_mock_call(self, /, *args, **kwargs):
+        # separate from _increment_mock_call so that awaited functions are
+        # executed separately from their call, also AsyncMock overrides this method
+    
+        effect = self.side_effect
+        if effect is not None:
+            if _is_exception(effect):
+>               raise effect
+E               PermissionError: shared index busy
+
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1198: PermissionError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000022D7FDBD8B0>
+
+    def test_generation_fallback_preserves_reserve(ledger):
+        with patch.object(store, "_replace_with_retry", side_effect=PermissionError("shared index busy")):
+>           reserve(ledger)
+
+test_rt002_s3a_ledger.py:220: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000022D7FDBD8B0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PermissionError
+
+ultra_budget_ledger.py:172: LedgerDenied
+=========================== short test summary info ===========================
+FAILED test_rt002_s3a_ledger.py::test_two_processes_compete_for_last_reservation
+FAILED test_rt002_s3a_ledger.py::test_process_crash_no_false_zero_after_commit[crash_before-False]
+FAILED test_rt002_s3a_ledger.py::test_process_crash_no_false_zero_after_commit[crash_after-True]
+FAILED test_rt002_s3a_ledger.py::test_generation_fallback_preserves_reserve
+4 failed, 25 passed in 6.33s

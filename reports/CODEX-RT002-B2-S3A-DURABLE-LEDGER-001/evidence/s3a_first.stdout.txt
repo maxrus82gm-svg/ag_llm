@@ -1,0 +1,2713 @@
+FFFFFFFFFFFF.....F...FFF.....                                            [100%]
+================================== FAILURES ===================================
+________ test_durable_reservation_new_process_and_idempotent_identity _________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB2309EE0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB2309EE0>
+
+    def test_durable_reservation_new_process_and_idempotent_identity(ledger):
+>       first = reserve(ledger)
+                ^^^^^^^^^^^^^^^
+
+test_rt002_s3a_ledger.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB2309EE0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+_______________ test_two_processes_compete_for_last_reservation _______________
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549C650>
+tmp_path = WindowsPath('<USER_HOME>/AppData/Local/Temp/codex_s3a_suite_qo_nah49/cases/test_two_processes_compete_for0')
+
+    def test_two_processes_compete_for_last_reservation(ledger, tmp_path):
+        gate = tmp_path / "start"
+        commands = [[sys.executable, "-B", str(DRIVER), "--worker", "race", str(ledger.root), ledger.workspace_id, a, str(gate)] for a in ("pa_a", "pa_b")]
+        children = [subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) for cmd in commands]
+        try:
+            gate.write_text("go")
+            outputs = [c.communicate(timeout=15) for c in children]
+            assert [c.returncode for c in children] == [0, 0], outputs
+>           assert sorted(json.loads(out[0])["allowed"] for out in outputs) == [False, True]
+E           assert [False, False] == [False, True]
+E             
+E             At index 1 diff: False != True
+E             Use -v to get more diff
+
+test_rt002_s3a_ledger.py:104: AssertionError
+______ test_process_crash_no_false_zero_after_commit[crash_before-False] ______
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549DD90>
+mode = 'crash_before', committed = False
+
+    @pytest.mark.parametrize("mode,committed", [("crash_before", False), ("crash_after", True)])
+    def test_process_crash_no_false_zero_after_commit(ledger, mode, committed):
+        result = child(ledger, mode)
+>       assert result.returncode == 79, result.stderr
+E       AssertionError: b'Traceback (most recent call last):\r
+E           File "M:\\GitHub\\ag_llm\\ultra_budget_ledger.py", line 167, in _locked\r
+E          ... type(error).__name__) from error\r
+E         ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError\r
+E         '
+E       assert 1 == 79
+E        +  where 1 = CompletedProcess(args=['M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe', '-B', 'M:\\GitHub\\ag_llm\\reports\\CODEX-RT0...type(error).__name__) from error\r\nultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError\r\n').returncode
+
+test_rt002_s3a_ledger.py:116: AssertionError
+_______ test_process_crash_no_false_zero_after_commit[crash_after-True] _______
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549F680>
+mode = 'crash_after', committed = True
+
+    @pytest.mark.parametrize("mode,committed", [("crash_before", False), ("crash_after", True)])
+    def test_process_crash_no_false_zero_after_commit(ledger, mode, committed):
+        result = child(ledger, mode)
+>       assert result.returncode == 79, result.stderr
+E       AssertionError: b'Traceback (most recent call last):\r
+E           File "M:\\GitHub\\ag_llm\\ultra_budget_ledger.py", line 167, in _locked\r
+E          ... type(error).__name__) from error\r
+E         ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError\r
+E         '
+E       assert 1 == 79
+E        +  where 1 = CompletedProcess(args=['M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe', '-B', 'M:\\GitHub\\ag_llm\\reports\\CODEX-RT0...type(error).__name__) from error\r\nultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError\r\n').returncode
+
+test_rt002_s3a_ledger.py:116: AssertionError
+_____________ test_sent_timeout_unknown_late_usage_and_duplicate ______________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549EE10>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549EE10>
+
+    def test_sent_timeout_unknown_late_usage_and_duplicate(ledger):
+>       held = reserve(ledger).record.reserved_liability_tokens
+               ^^^^^^^^^^^^^^^
+
+test_rt002_s3a_ledger.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549EE10>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+__________ test_not_sent_requires_proof_and_never_frees_sent_attempt __________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB54A60C0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB54A60C0>
+
+    def test_not_sent_requires_proof_and_never_frees_sent_attempt(ledger):
+>       held = reserve(ledger).record.liability_tokens
+               ^^^^^^^^^^^^^^^
+
+test_rt002_s3a_ledger.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB54A60C0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+____________ test_corrupt_or_missing_ledger_fails_closed[bad_json] ____________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549D700>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549D700>
+change = 'bad_json'
+
+    @pytest.mark.parametrize("change", ["bad_json", "ledger_version", "bool_version", "missing_state", "checksum", "bad_event"])
+    def test_corrupt_or_missing_ledger_fails_closed(ledger, change):
+>       reserve(ledger)
+
+test_rt002_s3a_ledger.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549D700>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+_________ test_corrupt_or_missing_ledger_fails_closed[ledger_version] _________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549C560>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549C560>
+change = 'ledger_version'
+
+    @pytest.mark.parametrize("change", ["bad_json", "ledger_version", "bool_version", "missing_state", "checksum", "bad_event"])
+    def test_corrupt_or_missing_ledger_fails_closed(ledger, change):
+>       reserve(ledger)
+
+test_rt002_s3a_ledger.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549C560>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+__________ test_corrupt_or_missing_ledger_fails_closed[bool_version] __________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB2CB1B80>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB2CB1B80>
+change = 'bool_version'
+
+    @pytest.mark.parametrize("change", ["bad_json", "ledger_version", "bool_version", "missing_state", "checksum", "bad_event"])
+    def test_corrupt_or_missing_ledger_fails_closed(ledger, change):
+>       reserve(ledger)
+
+test_rt002_s3a_ledger.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB2CB1B80>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+_________ test_corrupt_or_missing_ledger_fails_closed[missing_state] __________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549E480>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549E480>
+change = 'missing_state'
+
+    @pytest.mark.parametrize("change", ["bad_json", "ledger_version", "bool_version", "missing_state", "checksum", "bad_event"])
+    def test_corrupt_or_missing_ledger_fails_closed(ledger, change):
+>       reserve(ledger)
+
+test_rt002_s3a_ledger.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB549E480>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+____________ test_corrupt_or_missing_ledger_fails_closed[checksum] ____________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB49F7FE0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB49F7FE0>
+change = 'checksum'
+
+    @pytest.mark.parametrize("change", ["bad_json", "ledger_version", "bool_version", "missing_state", "checksum", "bad_event"])
+    def test_corrupt_or_missing_ledger_fails_closed(ledger, change):
+>       reserve(ledger)
+
+test_rt002_s3a_ledger.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB49F7FE0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+___________ test_corrupt_or_missing_ledger_fails_closed[bad_event] ____________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB49F6FC0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB49F6FC0>
+change = 'bad_event'
+
+    @pytest.mark.parametrize("change", ["bad_json", "ledger_version", "bool_version", "missing_state", "checksum", "bad_event"])
+    def test_corrupt_or_missing_ledger_fails_closed(ledger, change):
+>       reserve(ledger)
+
+test_rt002_s3a_ledger.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB49F6FC0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+_ test_invalid_request_policy_and_scope_binding_deny_without_writes[policy_changed] _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB54A8FE0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB54A8FE0>
+field = 'policy_changed'
+
+    @pytest.mark.parametrize("field", ["missing_profile", "invalid_policy", "missing_max_tokens", "unknown_route", "wire_changed", "policy_changed"])
+    def test_invalid_request_policy_and_scope_binding_deny_without_writes(ledger, field):
+        raw = policy()
+>       if field == "policy_changed": reserve(ledger)
+                                      ^^^^^^^^^^^^^^^
+
+test_rt002_s3a_ledger.py:187: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB54A8FE0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+_ test_io_failure_never_returns_permit_and_keeps_committed_liability[after_commit] _
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB2AB4680>
+failure = 'after_commit'
+
+    @pytest.mark.parametrize("failure", ["fsync", "lock", "before_commit", "after_commit"])
+    def test_io_failure_never_returns_permit_and_keeps_committed_liability(ledger, failure):
+        if failure == "fsync": target, replacement = "os.fsync", lambda *a: (_ for _ in ()).throw(OSError("injected fsync"))
+        elif failure == "lock": target, replacement = "_index_lock", lambda *a: (_ for _ in ()).throw(core.WorkspaceBusyError("injected busy"))
+        else:
+            original = store._save_index
+            def replacement(*args):
+                if failure == "after_commit": original(*args)
+                raise OSError("injected commit boundary")
+            target = "_save_index"
+        with patch("run_store." + target, replacement), pytest.raises(LedgerDenied): reserve(ledger)
+        view = ledger.recover()
+>       assert len(view.attempts) == (1 if failure == "after_commit" else 0)
+E       AssertionError: assert 0 == 1
+E        +  where 0 = len(())
+E        +    where () = Recovered(workspace_id='ws_a4f0ada4d82644d0a07289873cd8b2a6', ledger_id='add3b9d4fb4741c8bf86cd5d650b5b9a', revision=1, event_count=0, attempts=()).attempts
+
+test_rt002_s3a_ledger.py:215: AssertionError
+_________________ test_generation_fallback_preserves_reserve __________________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB49AFE90>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB49AFE90>
+
+    def test_generation_fallback_preserves_reserve(ledger):
+        with patch.object(store, "_replace_with_retry", side_effect=PermissionError("shared index busy")):
+>           reserve(ledger)
+
+test_rt002_s3a_ledger.py:220: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB49AFE90>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+___________ test_move_identity_and_existing_run_store_compatibility ___________
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB54A62D0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+>               yield
+
+ultra_budget_ledger.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ultra_budget_ledger.py:228: in _event
+    _replay(candidate["events"])
+ultra_budget_ledger.py:92: in _replay
+    snapshot = policy.validate_policy(data["policy"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'compressor': {'mode': 'DENY'}, 'estimation': {'missing_profile': 'DENY', 'profiles': [{'bytes_per_token': 1.0, 'prof... 'provider_model_id': 'SYNTHETIC', 'samples': 10, ...}]}, 'mcp': {'mode': 'DENY'}, 'output_reserve': 'MAX_TOKENS', ...}
+
+    def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
+        """Strict validation; every problem is reported in human-readable form. No implicit defaults."""
+        problems: list[str] = []
+        top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
+                        "compressor", "mcp", "read"}
+        if not _check_keys(raw, "policy", top_required, set(), problems):
+            raise PolicyValidationError(problems)
+        if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
+            problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
+        label = raw.get("revision_label")
+        label_problem = _text_problem(label)
+        if label_problem:
+            problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
+    
+        run_raw = raw.get("run")
+        run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                    "max_verification_request_input_tokens_est", "max_run_liability_tokens",
+                    "max_run_attempts", "max_attempts_per_role", "verification_reserve_tokens",
+                    "verification_reserve_attempts"}
+        run = None
+        if _check_keys(run_raw, "policy.run", run_keys, set(), problems):
+            values = {
+                "max_request_bytes": _int_field(run_raw, "max_request_bytes", "policy.run", problems,
+                                                minimum=1, maximum=MAX_SANE_BYTES),
+                "max_request_input_tokens_est": _int_field(run_raw, "max_request_input_tokens_est", "policy.run",
+                                                           problems, minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_verification_request_bytes": _int_field(run_raw, "max_verification_request_bytes", "policy.run",
+                                                             problems, minimum=1, maximum=MAX_SANE_BYTES),
+                "max_verification_request_input_tokens_est": _int_field(
+                    run_raw, "max_verification_request_input_tokens_est", "policy.run", problems,
+                    minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_liability_tokens": _int_field(run_raw, "max_run_liability_tokens", "policy.run", problems,
+                                                       minimum=1, maximum=MAX_SANE_TOKENS),
+                "max_run_attempts": _int_field(run_raw, "max_run_attempts", "policy.run", problems,
+                                               minimum=1, maximum=MAX_SANE_ATTEMPTS),
+                "verification_reserve_tokens": _int_field(run_raw, "verification_reserve_tokens", "policy.run",
+                                                          problems, minimum=0, maximum=MAX_SANE_TOKENS),
+                "verification_reserve_attempts": _int_field(run_raw, "verification_reserve_attempts", "policy.run",
+                                                            problems, minimum=0, maximum=MAX_SANE_ATTEMPTS),
+            }
+            per_role_raw = run_raw.get("max_attempts_per_role")
+            per_role = {}
+            if _check_keys(per_role_raw, "policy.run.max_attempts_per_role", set(ROLES_WITH_ATTEMPT_CAPS), set(),
+                           problems):
+                for role in ROLES_WITH_ATTEMPT_CAPS:
+                    per_role[role] = _int_field(per_role_raw, role, "policy.run.max_attempts_per_role", problems,
+                                                minimum=1, maximum=MAX_SANE_ATTEMPTS, allow_none=True)
+            if None not in (values["max_run_liability_tokens"], values["verification_reserve_tokens"]) \
+                    and values["verification_reserve_tokens"] >= values["max_run_liability_tokens"]:
+                problems.append("policy.run.verification_reserve_tokens: резерв должен быть меньше лимита RUN, "
+                                "иначе на основную работу не остаётся бюджета")
+            if None not in (values["max_run_attempts"], values["verification_reserve_attempts"]) \
+                    and values["verification_reserve_attempts"] >= values["max_run_attempts"]:
+                problems.append("policy.run.verification_reserve_attempts: резерв попыток должен быть меньше лимита")
+            for key in ("max_request_input_tokens_est", "max_verification_request_input_tokens_est"):
+                if None not in (values[key], values["max_run_liability_tokens"]) \
+                        and values[key] > values["max_run_liability_tokens"]:
+                    problems.append(f"policy.run.{key}: не может превышать лимит RUN")
+            if not any(v is None for v in values.values()) and len(per_role) == len(ROLES_WITH_ATTEMPT_CAPS):
+                run = RunLimits(max_attempts_per_role=dict(per_role), **values)
+    
+        est_raw = raw.get("estimation")
+        profiles: list[TokenProfile] = []
+        missing_profile = None
+        if _check_keys(est_raw, "policy.estimation", {"profiles", "missing_profile"}, set(), problems):
+            missing_profile = est_raw.get("missing_profile")
+            if missing_profile not in MISSING_PROFILE_MODES:
+                problems.append(f"policy.estimation.missing_profile: одно из {MISSING_PROFILE_MODES}")
+            seen = set()
+            items = est_raw.get("profiles")
+            if not isinstance(items, list):
+                problems.append("policy.estimation.profiles: ожидается список")
+                items = []
+            for index, item in enumerate(items):
+                path = f"policy.estimation.profiles[{index}]"
+                if not _check_keys(item, path, {"provider_model_id", "profile_key", "bytes_per_token", "samples",
+                                                "source_sha256"}, set(), problems):
+                    continue
+                model, key = item.get("provider_model_id"), item.get("profile_key")
+                bpt = item.get("bytes_per_token")
+                ok = True
+                model_problem = _text_problem(model)
+                if model_problem:
+                    problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
+                    ok = False
+                if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                    problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
+                    ok = False
+                # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+                if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+                    problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
+                    ok = False
+                samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
+                sha = item.get("source_sha256")
+                if not _is_sha256_hex(sha):
+                    problems.append(f"{path}.source_sha256: 64 hex символа")
+                    ok = False
+                if ok and (model, key) in seen:
+                    problems.append(f"{path}: повторный профиль для ({model}, {key})")
+                    ok = False
+                if ok and samples is not None:
+                    seen.add((model, key))
+                    profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
+    
+        output_reserve = raw.get("output_reserve")
+        if output_reserve not in OUTPUT_RESERVE_MODES:
+            problems.append(f"policy.output_reserve: одно из {OUTPUT_RESERVE_MODES}")
+    
+        def scope(name: str):
+            scope_raw = raw.get(name)
+            keys = {"mode", "max_request_bytes", "max_request_input_tokens_est", "max_scope_liability_tokens",
+                    "max_scope_attempts"}
+            if not isinstance(scope_raw, Mapping):
+                problems.append(f"policy.{name}: ожидается объект")
+                return None
+            mode = scope_raw.get("mode")
+            if mode not in SCOPE_MODES:
+                problems.append(f"policy.{name}.mode: одно из {SCOPE_MODES}")
+                return None
+            if mode == "DENY":
+                _check_keys(scope_raw, f"policy.{name}", {"mode"}, set(), problems)
+                return ScopeLimits("DENY")
+            if not _check_keys(scope_raw, f"policy.{name}", keys, set(), problems):
+                return None
+            limits = ScopeLimits(
+                "BUDGET",
+                _int_field(scope_raw, "max_request_bytes", f"policy.{name}", problems, minimum=1, maximum=MAX_SANE_BYTES),
+                _int_field(scope_raw, "max_request_input_tokens_est", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_liability_tokens", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_TOKENS),
+                _int_field(scope_raw, "max_scope_attempts", f"policy.{name}", problems, minimum=1,
+                           maximum=MAX_SANE_ATTEMPTS),
+            )
+            return None if None in (limits.max_request_bytes, limits.max_request_input_tokens_est,
+                                    limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
+    
+        compressor, mcp = scope("compressor"), scope("mcp")
+        read_raw = raw.get("read")
+        max_read = None
+        if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
+            max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
+                                  maximum=MAX_SANE_BYTES)
+        if problems or run is None or compressor is None or mcp is None or max_read is None:
+>           raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E           ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+
+ultra_budget_policy.py:392: PolicyValidationError
+
+The above exception was the direct cause of the following exception:
+
+ledger = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB54A62D0>
+tmp_path = WindowsPath('<USER_HOME>/AppData/Local/Temp/codex_s3a_suite_qo_nah49/cases/test_move_identity_and_existin0')
+
+    def test_move_identity_and_existing_run_store_compatibility(ledger, tmp_path):
+>       first = reserve(ledger)
+                ^^^^^^^^^^^^^^^
+
+test_rt002_s3a_ledger.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_rt002_s3a_ledger.py:36: in reserve
+    return ledger.reserve(attempt, policy() if raw is None else raw, "executor", p.serialize_request_body(body),
+ultra_budget_ledger.py:243: in reserve
+    return self._event("reserve", provider_attempt_id, envelope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_ledger.py:217: in _event
+    with self._locked():
+         ^^^^^^^^^^^^^^
+<USER_HOME>\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ultra_budget_ledger.BudgetLedger object at 0x0000020AB54A62D0>
+enrollment = False
+
+    @contextmanager
+    def _locked(self, *, enrollment=False):
+        try:
+            self._identity()
+            if not enrollment and not os.path.lexists(self._marker()):
+                raise LedgerDenied("LEDGER_NOT_ENROLLED")
+            with store._index_lock(self.root):
+                self._identity()
+                yield
+        except LedgerDenied:
+            raise
+        except Exception as error:
+            # Failure never means an empty/affordable budget. No paths or request data leak.
+>           raise LedgerDenied("STORAGE_OR_INPUT_DENY:" + type(error).__name__) from error
+E           ultra_budget_ledger.LedgerDenied: STORAGE_OR_INPUT_DENY:PolicyValidationError
+
+ultra_budget_ledger.py:172: LedgerDenied
+=========================== short test summary info ===========================
+FAILED test_rt002_s3a_ledger.py::test_durable_reservation_new_process_and_idempotent_identity
+FAILED test_rt002_s3a_ledger.py::test_two_processes_compete_for_last_reservation
+FAILED test_rt002_s3a_ledger.py::test_process_crash_no_false_zero_after_commit[crash_before-False]
+FAILED test_rt002_s3a_ledger.py::test_process_crash_no_false_zero_after_commit[crash_after-True]
+FAILED test_rt002_s3a_ledger.py::test_sent_timeout_unknown_late_usage_and_duplicate
+FAILED test_rt002_s3a_ledger.py::test_not_sent_requires_proof_and_never_frees_sent_attempt
+FAILED test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[bad_json]
+FAILED test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[ledger_version]
+FAILED test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[bool_version]
+FAILED test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[missing_state]
+FAILED test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[checksum]
+FAILED test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[bad_event]
+FAILED test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[policy_changed]
+FAILED test_rt002_s3a_ledger.py::test_io_failure_never_returns_permit_and_keeps_committed_liability[after_commit]
+FAILED test_rt002_s3a_ledger.py::test_generation_fallback_preserves_reserve
+FAILED test_rt002_s3a_ledger.py::test_move_identity_and_existing_run_store_compatibility
+16 failed, 13 passed in 5.57s
