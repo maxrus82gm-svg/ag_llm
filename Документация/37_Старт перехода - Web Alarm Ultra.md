@@ -239,6 +239,8 @@ Tkinter сохраняется до доказанного соответств�
 
 ### Этап 6. Общая защита расходов
 
+**Фактический срез 08.11.2026 / WEB25:** первая OFFLINE подзадача S3a `H-CODEX-000023` опубликована №539. Автор 35 ledger/51 Run Store/73 S2 PASS; S1 67 PASS / 2 FAIL. Независимая source/evidence оценка **PARTIAL/BOUNDED**, independent runtime S3a NOT RUN. Пока **нет** обязательной independent S3a acceptance для начала S3b; Ordinary Chat policy, перенос старых reserves, live protections и approval ещё открыты. Сохраняются все зависимости №20 §5а, Stage6 NOT DONE, Stage7 HOLD. Review `reports/CHATGPT-WEB25-CODEX-RT002-S3A-REVIEW-20261108/review.md`.
+
 **Зачем:** новый веб-вход не должен обходить защиту, которую строит программа RT-002/B2.
 
 **Что делаем.** В отдельно согласованном дополнении B2 явно описываем Ordinary Chat: маршрут S1, входы и границы политики S2, durable ledger S3a, защиту каждой физической отправки S3b, учёт попыток S9. Обычный диалог не маскируется под `executor` или `mcp_chat`. Название роли/маршрута окончательно утверждается в общем контракте, затем поддерживается Run Store без потери summary.

@@ -244,26 +244,30 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 
 Постоянный архив — №001 Codex и адресные `reports/<TASK-ID>/task_record.json`.
 
-- **04.11 / `CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001` / `H-CODEX-000012`:** опубликованное исправление audit path, same-RUN writer и explicit recovery; WEB23 bounded source+author-evidence PASS, independent Windows/CI NOT RUN; author 389 PASS/5 SKIP, Stage3 HOLD.
-- **04.11 / `CODEX-WUA-CHAT-S3-TURN-RECOVERY-001`:** diagnostic PARTIAL / прежние Run Store RED, WEB22 bounded diagnostic review.
-- **04.11 / `CODEX-WUA-CHAT-UX-LIVE-FIX-001` AMENDMENT 01:** WEB22 bounded source+evidence PASS, user first/next Chat GUI accepted; independent runtime NOT RUN.
-- **04.11 / `CODEX-WUA-CHAT-UI-INTEGRATION-001`:** WEB21 bounded UI source/evidence PASS, separate GUI/CI gates OPEN.
-- **02.11 / `CODEX-WUA-LOCAL-LLM-DISCOVERY-001`:** bounded diagnostic PARTIAL; Colibri and adapter OPEN.
+- **08.11 / H-CODEX-000023 / `CODEX-RT002-B2-S3A-DURABLE-LEDGER-001`:** S3a OFFLINE ledger, 35/35 author PASS, Run Store 51, S2 73; S1 67/69 (2 FAIL). WEB25 PARTIAL/BOUNDED source-review, independent runtime NOT RUN; S3b HOLD.
+- **07.11 / H-CODEX-000022 / `CODEX-WUA-S5-TURN-UX-RECOVERY-001`:** Turn UX recovery, bounded USER GUI smoke PASS; cancellation/RAW, Tcl and 480px residual OPEN.
+- **07.11 / H-CODEX-000021 / `CODEX-WUA-S5-TURN-CHECK-DIAG-001`:** Turn diagnostic PARTIAL, historical RAW/F5 loss root-cause OPEN.
+- **07.11 / H-CODEX-000020 / `CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001`:** Stage5 fake Web/Tk accepted bounded; independent Windows CI 387 PASS, live NOT RUN.
+- **06.11 / H-CODEX-000019 / `CODEX-WUA-CHAT-S4-CANCEL-SUPPRESSED-REPAIR-001`:** Stage4 offline cancellation bounded PASS, no production/live GO.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **`CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001`:** native finish ROTATED/exit0, H-CODEX-000012; author RED 1 PASS/2 FAIL → 3 PASS; 62 Run Store + 166 Python + 158 JS PASS / 5 SKIP. WEB23 bounded source/evidence PASS, exact published test `test_run_store_v2.py` has one EOL-only hash delta; independent runtime/CI NOT RUN. Stage3 NOT IMPLEMENTED / HOLD.
-- **`CODEX-WUA-CHAT-S3-TURN-RECOVERY-001`:** Stage3 prerequisites diagnostic, authored RED for path/writer now addressed in successor bounded scope, Stage3 Turn still NOT IMPLEMENTED.
-- **`CODEX-WUA-CHAT-UX-LIVE-FIX-001`:** first-chat consent/Workspace UX accepted by user for Windows happy path, other negative gates OPEN.
-- **`CODEX-WUA-CHAT-UI-INTEGRATION-001`:** registration UI and catalog refresh bounded accepted, GUI/runtime gates OPEN.
-- **`CODEX-WUA-LOCAL-LLM-DISCOVERY-001`:** Colibri/adapter unverified and not implemented.
+- **H23 S3a:** `ultra_budget_ledger.py`/35 new tests; shared Run Store index lock; documented ledger readback/replay, UNKNOWN/late, synthetic race/crash. WEB25 checked published source/hashes, independent runtime NOT RUN. S1 2 FAIL; historical adoption, policy, RAW retention, fencing OPEN; S3b blocked.
+- **H22 Stage5:** WEB25 USER Windows TEST confirmed fake reply, Turn check, independent Chat 01/02 and F5; bounded only.
+- **H21 Stage5:** diagnostic PARTIAL, source/author evidence; historical canceled RAW disappearance not conclusively recovered.
+- **H20 Stage5:** author OFFLINE E2E implementation + independent Windows 387 PASS; no real paid provider or clean-Windows portability.
+- **H19 Stage4:** guarded cancellation/deadline bounded repair; no blanket live authorization.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
+
+## WEB25 / 08.11.2026 — H-CODEX-000023 — RT-002/B2 S3a OFFLINE PARTIAL
+
+Source main@`53d7ce91` №539; Codex finish ROTATED exit0, БЛОК1 WAITING, БЛОК1.1 H23 без вмешательства verifier. Новые два исходника + author evidence: S3a 35 PASS, Run Store 51, S2 73, mutants 3/3 red; S1 67 PASS / **2 FAIL** source inventory. WEB25 проверил 16 источников включая пять CRLF→LF Git normalizations, source state machine, lock and error paths; **NO independent S3a runtime**. **Verdict: PARTIAL / BOUNDED SOURCE+AUTHOR EVIDENCE**, не independent S3a acceptance или S3b readiness. Ordinary Chat policy, historical adoption, RAW wire retention, 4096-events cap, power-loss/fencing и S1 repair OPEN. Review `reports/CHATGPT-WEB25-CODEX-RT002-S3A-REVIEW-20261108/review.md`. Next только отдельная S1 reconcile/independent S3a gate по USER GO; live/paid/Colibri/MCP HOLD.
 
 ## WEB23 / 05.11.2026 — H-CODEX-000013 — Stage3 TEST PARTIAL
 

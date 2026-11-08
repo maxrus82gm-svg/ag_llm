@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Web Alarm Ultra — Stage 6A: долговременный журнал бюджетных резервов RT-002/B2 S3a",
   "date": "2026-11-08",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC ITERATION CLOSED / S3a OFFLINE PARTIAL; independent S3a gate OPEN; Stage6 HOLD",
+  "review": "PARTIAL / BOUNDED SOURCE+AUTHOR EVIDENCE WEB25; S3a runtime NOT RUN; S1 2 FAIL; S3b BLOCKED",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/handoff_task.md",
@@ -15,7 +15,32 @@
     "report": {
       "path": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/report.md",
       "sha256": "a2ff5bf69b35e7f98ca1fadedd863ba09bcd870fda8ed0ad3bc73f5ab0d1a86f"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB25-CODEX-RT002-S3A-REVIEW-20261108/review.md",
+      "sha256": "fa88244a1f4ac527f4261fd4a00d6f8c21a42452f8390f9907f78784c3836bab"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-RT002-B2-S3A-DURABLE-LEDGER-001",
+      "history_id": "H-CODEX-000023",
+      "agent": "codex",
+      "title": "Web Alarm Ultra — Stage 6A: долговременный журнал бюджетных резервов RT-002/B2 S3a",
+      "date": "2026-11-08",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/handoff_task.md",
+          "sha256": "252ada65d924520daf0f5e325c154bc980f70b66e8a5a414b00782a86fec6936"
+        },
+        "report": {
+          "path": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/report.md",
+          "sha256": "a2ff5bf69b35e7f98ca1fadedd863ba09bcd870fda8ed0ad3bc73f5ab0d1a86f"
+        }
+      }
+    }
+  ]
 }

@@ -1,5 +1,11 @@
 # Оперативная память проекта — №34
 
+## CURRENT WEB25 / 08.11.2026 — H23 S3a OFFLINE PARTIAL, Stage6 S3b HOLD
+
+**CURRENT / WEB25 / 08.11.2026 / S3a H-CODEX-000023:** №539 `53d7ce91` опубликовал отдельный OFFLINE durable ledger (`ultra_budget_ledger.py`) и 35 tests. Author S3a 35 PASS, Run Store 51 PASS, S2 73 PASS, mutation negative 3/3 expected red; S1 **67 PASS / 2 FAIL** (source inventory for Web Alarm launcher, ordinary transport, model cards). WEB25 `PARTIAL / BOUNDED SOURCE+AUTHOR EVIDENCE`, exact 16 focused SHA checks, independent Python/CI **NOT RUN**. Это не обязательная `independently ACCEPTED S3a` для S3b и не Stage6 DONE. S1 reconcile, user Ordinary Chat policy decision, historical ledger adoption, RAW wire retention, durability/fencing и full runtime OPEN. Подробнее №21/№05, review `reports/CHATGPT-WEB25-CODEX-RT002-S3A-REVIEW-20261108/review.md`. S3b/paid/live запрещены до отдельных gates.
+
+ **Слот Codex:** БЛОК 1 WAITING, БЛОК 1.1 H-CODEX-000023 (finish ROTATED exit0). SOURCE: две новые рабочие Python files, `.obsidian/workspace.json` динамический пользовательский tracking file в №539 — не инженерное изменение, не править. Непроверенное: hardware power-loss, cross-host cloned Workspace, full independent S3a Windows/runtime, migration старого audit, ещё нет production S3b/S9. **NEXT SAFE:** пользователь отдельно разрешает адресный S1 inventory AMENDMENT либо отдельную проверку S3a; не запускать их автоматически. Stage5 остатки сохраняются, настоящий GigaChat, paid/Colibri/MCP HOLD.
+
 ## CURRENT WEB25 / 08.11.2026 — Stage5 OFFLINE BOUNDED USER SMOKE CLOSED
 
 **WEB25 / USER GUI 08.11.2026 — Stage5 OFFLINE завершён документально, BOUNDED ACCEPTED.** H21 диагностика PARTIAL; H22 (№536) PARTIAL / bounded source+author evidence, author 52 JS/63 web Python/2 отдельные Tk PASS; WEB25 проверил опубликованные исходники/hash, независимый повтор runtime NOT RUN. Пользователь: fake response «Ответ на: привет тест», Turn check с явным результатом, Enter, два изолированных Chat «01» и «02», F5 сохранил выбор и историю. Не проверены целиком cancel/retry/models, 480px/a11y, clean Windows, Tcl combined; историческая отмена/RAW причина OPEN. Review `reports/CHATGPT-WEB25-S5-CLOSEOUT-20261108/review.md`. NEXT №37 Stage6 RT-002/B2 отдельная TASK; Stage7 OAuth/live только отдельно.
