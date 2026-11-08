@@ -95,8 +95,14 @@ def hashes():
     return {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in SOURCES}
 
 before = hashes()
-if any(before[name] != pin for name, pin in PINNED.items()):
-    raise SystemExit("SOURCE_DRIFT: independent baseline hashes do not match approved ledger/test")
+# GitHub Windows checkout may convert LF to CRLF. Compare only exact bytes or
+# a CRLF->LF normalization of those SAME bytes; no whitespace/code normalization.
+canonical = {name: hashlib.sha256((ROOT / name).read_bytes().replace(b"\\r\\n", b"\\n")).hexdigest()
+             for name in PINNED}
+if any(before[name] != pin and canonical[name] != pin for name, pin in PINNED.items()):
+    print(json.dumps({"source_drift": True, "raw_sha256": {name: before[name] for name in PINNED},
+                      "lf_sha256": canonical, "approved_sha256": PINNED}))
+    raise SystemExit("SOURCE_DRIFT: neither raw nor CRLF-only normalized SHA matched")
 if MODE == "mutant-policy-deny":
     import ultra_budget_policy as policy
     original = policy.evaluate_request
