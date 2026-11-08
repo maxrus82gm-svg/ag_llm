@@ -1,5 +1,11 @@
 # Оперативная память проекта — №34
 
+## CURRENT WEB25 / 08.11.2026 — Stage5 OFFLINE BOUNDED USER SMOKE CLOSED
+
+**WEB25 / USER GUI 08.11.2026 — Stage5 OFFLINE завершён документально, BOUNDED ACCEPTED.** H21 диагностика PARTIAL; H22 (№536) PARTIAL / bounded source+author evidence, author 52 JS/63 web Python/2 отдельные Tk PASS; WEB25 проверил опубликованные исходники/hash, независимый повтор runtime NOT RUN. Пользователь: fake response «Ответ на: привет тест», Turn check с явным результатом, Enter, два изолированных Chat «01» и «02», F5 сохранил выбор и историю. Не проверены целиком cancel/retry/models, 480px/a11y, clean Windows, Tcl combined; историческая отмена/RAW причина OPEN. Review `reports/CHATGPT-WEB25-S5-CLOSEOUT-20261108/review.md`. NEXT №37 Stage6 RT-002/B2 отдельная TASK; Stage7 OAuth/live только отдельно.
+
+**OPEN:** `FOLLOWUP-WUA-S5-FINAL-BROWSER-001` PARTIAL (cancel/retry/models/a11y); историческая RAW loss после F5, 480px, Tcl combined process, clean Windows §2.4 и writer-busy остаются. FUTURE per-message Turn check `FOLLOWUP-WUA-S5-TURN-PER-MESSAGE-UX-001` NON-BLOCKING; Turn check проверяет исход запроса, а не membership RAW в контексте LLM. Obsidian `.obsidian/workspace.json` не изменять. Codex БЛОК 1 WAITING, 1.1 H22. Два фиксированных CMD `Start_WebAlarm_Standard.cmd` и `Start_WebAlarm_Test.cmd`; TEST — disposable fixture, не реальный Workspace picker. Stage6 new assignment USER GO, Stage7/live/paid HOLD.
+
 ## OWNER DIRECTION 08.11.2026 — Web Alarm Ultra, локальные LLM и агентная перспектива (NO NEW TASK)
 
 **Окончательная роль, исправленная владельцем:** **Web Alarm Ultra** управляет агентами и Blueprint-процессами: формирует промпты/контексты, выбирает исполнителей и разрешённые MCP-инструменты, сохраняет память и промежуточные checkpoint, контролирует Turn/RUN, проверяет результаты и отвечает за восстановление. **Colibrì** — движок локального инференса/API, не главный координатор и не постоянная память агента. **Ultra LLM** — отдельная серверная инфраструктура моделей/профилей/запуска/диагностики; не создавать в нём второе агентное ядро.
@@ -16,7 +22,7 @@
 
 Решение пользователя: две постоянные пользовательские точки Web Alarm Ultra — `Start_WebAlarm_Standard.cmd` и `Start_WebAlarm_Test.cmd`; на будущих этапах изменяется внутренний TEST-профиль, не CMD/ярлыки. USER Windows GUI smoke: STANDARD открыл историю Workspace на localhost:8765, одновременно TEST Stage5 OFFLINE показал пустой тестовый профиль на localhost:51238. Это не доказательство полного разъединения storage/cleanup и не финальный браузерный PASS. `Start_WebAlarm.bat` пуст в опубликованном №531 (`main@740ec44`); локальное обнуление предшествовало новым CMD, автор/причина UNKNOWN, новые CMD его не используют, восстанавливать третью точку не требуется. `Start_WebAlarm_Demo.cmd` — прежний отдельный синтетический WA4-O fixture, удаление только после проверки зависимостей; `Start_Ultra.cmd` — сохранённый отдельный Tkinter, freeze. В №531 в main также попали восемь посторонних отслеживаемых файлов (пять непустых `Test_Chat_02/.ultra` данных, два writer.lock и `dir`); **OPEN REPOSITORY HYGIENE / PRIVACY**, ничего не удалять и не читать переписки ради изменения правил.
 
-**NEXT:** пользователь начинает финальную визуальную проверку Stage 5 OFFLINE через `Start_WebAlarm_Test.cmd`, синтетический Workspace: два чата, mock replies, модели, F5, отмена/повтор; `FOLLOWUP-WUA-S5-FINAL-BROWSER-001` OPEN до результатов. Standard не трогать. Stage6 RT-002/B2 по №37 — следующая отдельная инженерная TASK; paid/live/Colibri/MCP не разрешены. Нормы №08, `DOC-WUA-LAUNCH-01`; USER smoke не закрывает `FOLLOWUP-WUA-S5-CLEAN-WINDOWS-001` или writer-busy.
+**Исторический NEXT 07.11:** начатый браузерный TEST частично принят 08.11; актуальные результаты и остаточные OPEN — в CURRENT WEB25 выше. Standard не трогать. Stage6 RT-002/B2 по №37 — следующая отдельная инженерная TASK; paid/live/Colibri/MCP не разрешены. Нормы №08, `DOC-WUA-LAUNCH-01`; USER smoke не закрывает `FOLLOWUP-WUA-S5-CLEAN-WINDOWS-001` или writer-busy.
 
 ## USER GO 04.11.2026 — история по ID и автоматическая сдача
 

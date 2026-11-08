@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Web Alarm Ultra — Stage 5 OFFLINE: исправление отображения Turn, проверки состояния и восстановления после отмены",
   "date": "2026-11-07",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / STAGE5 OFFLINE BOUNDED USER SMOKE; Stage6 next separate TASK",
+  "review": "PARTIAL / BOUNDED SOURCE+AUTHOR EVIDENCE WEB25; USER WINDOWS STAGE5 SMOKE PASS; RAW/480px/Tcl OPEN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/handoff_task.md",
@@ -15,7 +15,32 @@
     "report": {
       "path": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/report.md",
       "sha256": "f55b44d0e51ec3bf29cc9f77f9800a0dbb04128545bd6999e5842a1d7a90ec58"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB25-S5-CLOSEOUT-20261108/review.md",
+      "sha256": "2147c2be6d8468f4fc890b440f9390c6b59e86f9d6940b04b081553225f78c6e"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-S5-TURN-UX-RECOVERY-001",
+      "history_id": "H-CODEX-000022",
+      "agent": "codex",
+      "title": "Web Alarm Ultra — Stage 5 OFFLINE: исправление отображения Turn, проверки состояния и восстановления после отмены",
+      "date": "2026-11-07",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/handoff_task.md",
+          "sha256": "4ed0f540f8a0717bbfe2442f3c23203327c958a0577d72ea4912d9b77c87295b"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-S5-TURN-UX-RECOVERY-001/report.md",
+          "sha256": "f55b44d0e51ec3bf29cc9f77f9800a0dbb04128545bd6999e5842a1d7a90ec58"
+        }
+      }
+    }
+  ]
 }
