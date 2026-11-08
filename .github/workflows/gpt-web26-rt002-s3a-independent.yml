@@ -1,0 +1,75 @@
+name: WEB26 RT-002 S3a independent OFFLINE CI
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-web26-rt002-s3a-independent.yml
+      - reports/CHATGPT-WEB26-RT002-S3A-GITHUB-CI-20261108/ci_replay.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  s3a-offline-windows:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      WEB26_EVIDENCE_DIR: ${{ runner.temp }}/web26-rt002-s3a
+    steps:
+      - name: Checkout only reviewed source and guard (no persisted credentials)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*.py
+            /reports/CHATGPT-WEB26-RT002-S3A-GITHUB-CI-20261108/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/guard/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test-only dependency
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check pytest==9.1.1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Prove OFFLINE guard before tests
+        shell: pwsh
+        run: |
+          python -B -X utf8 reports/CHATGPT-WEB26-RT002-S3A-GITHUB-CI-20261108/ci_replay.py guard-proof
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Independent S3a 35-test suite and source-hash gate
+        shell: pwsh
+        run: |
+          python -B -X utf8 reports/CHATGPT-WEB26-RT002-S3A-GITHUB-CI-20261108/ci_replay.py s3a
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Independent Run Store V2 51-test regression
+        shell: pwsh
+        run: |
+          python -B -X utf8 reports/CHATGPT-WEB26-RT002-S3A-GITHUB-CI-20261108/ci_replay.py runstore
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Negative oracle - bypass budget DENY must turn RED
+        shell: pwsh
+        run: |
+          python -B -X utf8 reports/CHATGPT-WEB26-RT002-S3A-GITHUB-CI-20261108/ci_replay.py mutant-policy-deny
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Negative oracle - free UNKNOWN liability must turn RED
+        shell: pwsh
+        run: |
+          python -B -X utf8 reports/CHATGPT-WEB26-RT002-S3A-GITHUB-CI-20261108/ci_replay.py mutant-unknown-liability
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Negative oracle - bypass checksum must turn RED
+        shell: pwsh
+        run: |
+          python -B -X utf8 reports/CHATGPT-WEB26-RT002-S3A-GITHUB-CI-20261108/ci_replay.py mutant-checksum
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Save independent JUnit, hashes and guard evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web26-s3a-offline-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/web26-rt002-s3a/
+          if-no-files-found: error
+          retention-days: 14
