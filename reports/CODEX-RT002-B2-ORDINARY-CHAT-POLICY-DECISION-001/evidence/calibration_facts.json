@@ -1,0 +1,192 @@
+{
+  "method": "AST extraction + arithmetic; no policy/test module execution",
+  "source_sha256": "a7fa9b5d2bcf56dc8f037dd726679a8439c4b1f3135de969b9084bf8d3870d2c",
+  "dataset_sha256": "8a3ea10b75280ece550138af9a912b161997e17f5f3f17c894686961babf90ce",
+  "rows": 342,
+  "known_prompt_rows": 340,
+  "run_locators": 42,
+  "models_in_rows": {
+    "GigaChat-3-Ultra": 341,
+    "GigaChat-3-Pro": 1
+  },
+  "ordinary_chat_rows": 0,
+  "groups": [
+    {
+      "provider_model_id": "GigaChat-3-Pro",
+      "profile_key": "compressor",
+      "samples": 1,
+      "unknown_precached_samples": 0,
+      "min_bytes_per_processed_input": 6.13215859030837,
+      "median_bytes_per_processed_input": 6.13215859030837,
+      "legacy_divisors": {
+        "0.0": 6.1321,
+        "0.1": 5.5746,
+        "0.2": 5.1101
+      },
+      "ordinary_chat_samples": 0,
+      "note": "S2 calibration denominator uses precached or 0; not an Ordinary Chat profile"
+    },
+    {
+      "provider_model_id": "GigaChat-3-Ultra",
+      "profile_key": "dredd",
+      "samples": 37,
+      "unknown_precached_samples": 0,
+      "min_bytes_per_processed_input": 2.4771525124889804,
+      "median_bytes_per_processed_input": 3.215551064082749,
+      "legacy_divisors": {
+        "0.0": 2.4771,
+        "0.1": 2.2519,
+        "0.2": 2.0642
+      },
+      "ordinary_chat_samples": 0,
+      "note": "S2 calibration denominator uses precached or 0; not an Ordinary Chat profile"
+    },
+    {
+      "provider_model_id": "GigaChat-3-Ultra",
+      "profile_key": "executor",
+      "samples": 203,
+      "unknown_precached_samples": 0,
+      "min_bytes_per_processed_input": 4.5184347207399504,
+      "median_bytes_per_processed_input": 7.363475177304965,
+      "legacy_divisors": {
+        "0.0": 4.5184,
+        "0.1": 4.1076,
+        "0.2": 3.7653
+      },
+      "ordinary_chat_samples": 0,
+      "note": "S2 calibration denominator uses precached or 0; not an Ordinary Chat profile"
+    },
+    {
+      "provider_model_id": "GigaChat-3-Ultra",
+      "profile_key": "planner",
+      "samples": 99,
+      "unknown_precached_samples": 0,
+      "min_bytes_per_processed_input": 4.442618534482759,
+      "median_bytes_per_processed_input": 4.711756373937677,
+      "legacy_divisors": {
+        "0.0": 4.4426,
+        "0.1": 4.0387,
+        "0.2": 3.7021
+      },
+      "ordinary_chat_samples": 0,
+      "note": "S2 calibration denominator uses precached or 0; not an Ordinary Chat profile"
+    }
+  ],
+  "historical_author_observations_not_rerun": {
+    "bytes_div_4": {
+      "underestimates": {
+        "dredd": 24
+      },
+      "worst_actual_over_estimate": 1.6147
+    },
+    "leave_one_out": {
+      "0.0/planner": [
+        1,
+        1.06
+      ],
+      "0.0/executor": [
+        1,
+        1.63
+      ],
+      "0.0/dredd": [
+        1,
+        1.3
+      ],
+      "0.1/planner": [
+        0,
+        1.17
+      ],
+      "0.1/executor": [
+        0,
+        1.79
+      ],
+      "0.1/dredd": [
+        0,
+        1.43
+      ],
+      "0.2/planner": [
+        0,
+        1.27
+      ],
+      "0.2/executor": [
+        0,
+        1.96
+      ],
+      "0.2/dredd": [
+        0,
+        1.56
+      ]
+    },
+    "candidate_blocks": {
+      "A": {
+        "R-025": 3,
+        "R-026": 3,
+        "R-027": 3,
+        "R-031": 9
+      },
+      "B": {
+        "R-025": 4,
+        "R-026": 4,
+        "R-027": 4,
+        "R-031": 10
+      },
+      "C": {
+        "R-026": 8,
+        "R-027": 10,
+        "R-031": 13
+      }
+    }
+  },
+  "large_final_audits": [
+    {
+      "run": "R-029",
+      "wire_bytes": 165539,
+      "legacy_input_estimate": 73511,
+      "output_reserve": 2048,
+      "liability_estimate": 75559,
+      "role": "dredd",
+      "not_ordinary_chat": true
+    },
+    {
+      "run": "R-030",
+      "wire_bytes": 171511,
+      "legacy_input_estimate": 76163,
+      "output_reserve": 2048,
+      "liability_estimate": 78211,
+      "role": "dredd",
+      "not_ordinary_chat": true
+    }
+  ],
+  "legacy_candidates_NOT_DEFAULTS": {
+    "A": {
+      "max_request_bytes": 262144,
+      "max_request_input_tokens_est": 48000,
+      "max_run_liability_tokens": 160000,
+      "max_run_attempts": 24,
+      "verification_reserve_tokens": 40000,
+      "verification_reserve_attempts": 2,
+      "max_verification_request_bytes": 1114112,
+      "max_verification_request_input_tokens_est": 120000
+    },
+    "B": {
+      "max_request_bytes": 524288,
+      "max_request_input_tokens_est": 96000,
+      "max_run_liability_tokens": 240000,
+      "max_run_attempts": 32,
+      "verification_reserve_tokens": 48000,
+      "verification_reserve_attempts": 2,
+      "max_verification_request_bytes": 1114112,
+      "max_verification_request_input_tokens_est": 160000
+    },
+    "C": {
+      "max_request_bytes": 1048576,
+      "max_request_input_tokens_est": 200000,
+      "max_run_liability_tokens": 480000,
+      "max_run_attempts": 48,
+      "verification_reserve_tokens": 64000,
+      "verification_reserve_attempts": 3,
+      "max_verification_request_bytes": 1114112,
+      "max_verification_request_input_tokens_est": 240000
+    }
+  }
+}

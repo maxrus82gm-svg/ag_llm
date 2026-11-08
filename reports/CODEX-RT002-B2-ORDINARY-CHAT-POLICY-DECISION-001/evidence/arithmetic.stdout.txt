@@ -1,0 +1,121 @@
+{
+  "dataset_rows": 342,
+  "ordinary_chat_rows": 0,
+  "groups": [
+    {
+      "provider_model_id": "GigaChat-3-Pro",
+      "profile_key": "compressor",
+      "samples": 1,
+      "unknown_precached_samples": 0,
+      "min_bytes_per_processed_input": 6.13215859030837,
+      "median_bytes_per_processed_input": 6.13215859030837,
+      "legacy_divisors": {
+        "0.0": 6.1321,
+        "0.1": 5.5746,
+        "0.2": 5.1101
+      },
+      "ordinary_chat_samples": 0,
+      "note": "S2 calibration denominator uses precached or 0; not an Ordinary Chat profile"
+    },
+    {
+      "provider_model_id": "GigaChat-3-Ultra",
+      "profile_key": "dredd",
+      "samples": 37,
+      "unknown_precached_samples": 0,
+      "min_bytes_per_processed_input": 2.4771525124889804,
+      "median_bytes_per_processed_input": 3.215551064082749,
+      "legacy_divisors": {
+        "0.0": 2.4771,
+        "0.1": 2.2519,
+        "0.2": 2.0642
+      },
+      "ordinary_chat_samples": 0,
+      "note": "S2 calibration denominator uses precached or 0; not an Ordinary Chat profile"
+    },
+    {
+      "provider_model_id": "GigaChat-3-Ultra",
+      "profile_key": "executor",
+      "samples": 203,
+      "unknown_precached_samples": 0,
+      "min_bytes_per_processed_input": 4.5184347207399504,
+      "median_bytes_per_processed_input": 7.363475177304965,
+      "legacy_divisors": {
+        "0.0": 4.5184,
+        "0.1": 4.1076,
+        "0.2": 3.7653
+      },
+      "ordinary_chat_samples": 0,
+      "note": "S2 calibration denominator uses precached or 0; not an Ordinary Chat profile"
+    },
+    {
+      "provider_model_id": "GigaChat-3-Ultra",
+      "profile_key": "planner",
+      "samples": 99,
+      "unknown_precached_samples": 0,
+      "min_bytes_per_processed_input": 4.442618534482759,
+      "median_bytes_per_processed_input": 4.711756373937677,
+      "legacy_divisors": {
+        "0.0": 4.4426,
+        "0.1": 4.0387,
+        "0.2": 3.7021
+      },
+      "ordinary_chat_samples": 0,
+      "note": "S2 calibration denominator uses precached or 0; not an Ordinary Chat profile"
+    }
+  ],
+  "audits": [
+    {
+      "run": "R-029",
+      "wire_bytes": 165539,
+      "legacy_input_estimate": 73511,
+      "output_reserve": 2048,
+      "liability_estimate": 75559,
+      "role": "dredd",
+      "not_ordinary_chat": true
+    },
+    {
+      "run": "R-030",
+      "wire_bytes": 171511,
+      "legacy_input_estimate": 76163,
+      "output_reserve": 2048,
+      "liability_estimate": 78211,
+      "role": "dredd",
+      "not_ordinary_chat": true
+    }
+  ],
+  "candidate_caps": {
+    "A": {
+      "max_request_bytes": 65536,
+      "max_request_input_tokens_est": 16000,
+      "max_output_tokens": 1024,
+      "output_reserve": "EXACT_REQUEST_MAX_TOKENS",
+      "max_session_liability_tokens": 80000,
+      "max_session_attempts": 12,
+      "max_workspace_ordinary_liability_tokens": 80000,
+      "max_workspace_ordinary_attempts": 12,
+      "max_inflight_per_chat": 1
+    },
+    "B": {
+      "max_request_bytes": 131072,
+      "max_request_input_tokens_est": 32000,
+      "max_output_tokens": 2048,
+      "output_reserve": "EXACT_REQUEST_MAX_TOKENS",
+      "max_session_liability_tokens": 120000,
+      "max_session_attempts": 16,
+      "max_workspace_ordinary_liability_tokens": 120000,
+      "max_workspace_ordinary_attempts": 16,
+      "max_inflight_per_chat": 1
+    },
+    "C": {
+      "max_request_bytes": 262144,
+      "max_request_input_tokens_est": 64000,
+      "max_output_tokens": 4096,
+      "output_reserve": "EXACT_REQUEST_MAX_TOKENS",
+      "max_session_liability_tokens": 240000,
+      "max_session_attempts": 24,
+      "max_workspace_ordinary_liability_tokens": 240000,
+      "max_workspace_ordinary_attempts": 24,
+      "max_inflight_per_chat": 1
+    }
+  }
+}

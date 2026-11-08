@@ -1,0 +1,23 @@
+{
+  "argv": [
+    ".venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001",
+    "--chat-amendment",
+    "reports\\CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001\\chat_amendment_01.md",
+    "--headless",
+    "--date",
+    "2026-11-08",
+    "--expected-card-sha256",
+    "afc6fe469ac31cb0e62d1fb1bc4dd69e37e51836a5ef436bcfd5eb62c4da87dd",
+    "--apply"
+  ],
+  "exit_code": 0
+}

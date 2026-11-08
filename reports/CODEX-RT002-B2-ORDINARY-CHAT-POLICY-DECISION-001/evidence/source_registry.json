@@ -1,0 +1,589 @@
+{
+  "task_id": "CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001",
+  "method": "local addressed source reads, no Git/GitHub/network",
+  "sources": [
+    {
+      "id": "S01",
+      "title": "Approved B2 graph and accounting owner",
+      "path": "Документация/20_Программа качественного перехода - оптимизация runtime, контекстов и памяти.md",
+      "sha256": "b2012e8f848dc2d79e82269ff6b54057a493ffd1880c1f77ce3b969bf0168b93",
+      "size": 53964,
+      "locators": [
+        {
+          "needle": "## 5а.",
+          "line": 142
+        },
+        {
+          "needle": "| **S3b**",
+          "line": 176
+        },
+        {
+          "needle": "| **S9**",
+          "line": 182
+        },
+        {
+          "needle": "## 14.",
+          "line": 380
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Current journal: later S3a execution supersedes older OPEN",
+      "path": "Документация/21_Журнал качественного перехода - решения, метрики и аудит.md",
+      "sha256": "369d84f45ad545a65850209e1e89f1a51ccd8d70023fd20826d3b0d0e57dc28a",
+      "size": 68840,
+      "locators": [
+        {
+          "needle": "independent GitHub Actions BOUNDED PASS",
+          "line": 17
+        },
+        {
+          "needle": "S2 H-CODEX-000025",
+          "line": 21
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Stage6/7 and shared budget architecture",
+      "path": "Документация/37_Старт перехода - Web Alarm Ultra.md",
+      "sha256": "d2984f42156083618f4107f01019d8ee3f8607455d5d7ceb57964df1471e47b1",
+      "size": 99590,
+      "locators": [
+        {
+          "needle": "### Этап 6",
+          "line": 240
+        },
+        {
+          "needle": "### Этап 7",
+          "line": 266
+        },
+        {
+          "needle": "## 4.",
+          "line": 282
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Independent S1 69+23",
+      "path": "reports/CHATGPT-WEB25-CODEX-RT002-S1-REVIEW-20261108/review.md",
+      "sha256": "5a4e6946ead1c8b893494b883189499eaeb5f6297cd66ef69211d48afe60c690",
+      "size": 6260,
+      "locators": [
+        {
+          "needle": "**Verdict:",
+          "line": 5
+        },
+        {
+          "needle": "## Actual independent",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "Independent S2 73 and bounded static import oracle",
+      "path": "reports/CHATGPT-WEB26-CODEX-RT002-S2-REVIEW-20261108/review.md",
+      "sha256": "507a3734f2babdca10d600837e294034a4f9797cfe75619e418088487191ceb2",
+      "size": 4136,
+      "locators": [
+        {
+          "needle": "**VERDICT:",
+          "line": 5
+        },
+        {
+          "needle": "## Инженерный",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "id": "S06",
+      "title": "Independent OFFLINE S3a/Run Store/guards",
+      "path": "reports/CHATGPT-WEB26-RT002-S3A-REVIEW-20261108/review.md",
+      "sha256": "19b2d364d4b1fddb2e713ee574daf3870bb8b360089e49d9cfb942082cbe0a13",
+      "size": 3159,
+      "locators": [
+        {
+          "needle": "**Verdict:",
+          "line": 4
+        },
+        {
+          "needle": "## Executable",
+          "line": 6
+        },
+        {
+          "needle": "## Engineering",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "id": "S07",
+      "title": "Durable independent CI summary, artifact provenance",
+      "path": "reports/CHATGPT-WEB26-RT002-S3A-REVIEW-20261108/independent_runs.json",
+      "sha256": "2a9050dec8534060cdd573bd4fb2f7566eb1cf8a3cd4bf0912133be9d66a6fd6",
+      "size": 1474,
+      "locators": [
+        {
+          "needle": "\"run_id\"",
+          "line": 2
+        },
+        {
+          "needle": "\"artifact_expires\"",
+          "line": 10
+        },
+        {
+          "needle": "\"offline_guard\"",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "id": "S08",
+      "title": "Current pure policy implementation",
+      "path": "ultra_budget_policy.py",
+      "sha256": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13",
+      "size": 55417,
+      "locators": [
+        {
+          "needle": "ROUTES:",
+          "line": 54
+        },
+        {
+          "needle": "class ScopeLimits",
+          "line": 166
+        },
+        {
+          "needle": "class PolicySnapshot",
+          "line": 175
+        },
+        {
+          "needle": "def validate_policy",
+          "line": 248
+        },
+        {
+          "needle": "def estimate_input_tokens",
+          "line": 416
+        },
+        {
+          "needle": "def calibrate_profiles",
+          "line": 487
+        },
+        {
+          "needle": "class AttemptRecord",
+          "line": 582
+        },
+        {
+          "needle": "def budget_view",
+          "line": 792
+        },
+        {
+          "needle": "def evaluate_request",
+          "line": 878
+        }
+      ]
+    },
+    {
+      "id": "S09",
+      "title": "342-row derived calibration and legacy A/B/C proposals",
+      "path": "test_rt002_s2_budget_policy.py",
+      "sha256": "a7fa9b5d2bcf56dc8f037dd726679a8439c4b1f3135de969b9084bf8d3870d2c",
+      "size": 149228,
+      "locators": [
+        {
+          "needle": "DATASET_SHA256 =",
+          "line": 69
+        },
+        {
+          "needle": "ROWS =",
+          "line": 70
+        },
+        {
+          "needle": "CANDIDATES =",
+          "line": 584
+        },
+        {
+          "needle": "def test_calibrated_lower_envelopes",
+          "line": 833
+        },
+        {
+          "needle": "def test_leave_one_out",
+          "line": 856
+        },
+        {
+          "needle": "def test_candidate_reserves_cover",
+          "line": 1522
+        }
+      ]
+    },
+    {
+      "id": "S10",
+      "title": "S3a durable storage, engine/scope pins, marker",
+      "path": "ultra_budget_ledger.py",
+      "sha256": "3d64c3024bfc42957c3c0612b33c228ce0beea3e9b790fc97a5b1bbfe2aaf220",
+      "size": 12509,
+      "locators": [
+        {
+          "needle": "MAX_EVENTS =",
+          "line": 30
+        },
+        {
+          "needle": "def _replay",
+          "line": 82
+        },
+        {
+          "needle": "pin = (",
+          "line": 118
+        },
+        {
+          "needle": "def _load",
+          "line": 183
+        },
+        {
+          "needle": "def initialize",
+          "line": 202
+        },
+        {
+          "needle": "def reserve",
+          "line": 249
+        },
+        {
+          "needle": "def mark_not_sent",
+          "line": 264
+        }
+      ]
+    },
+    {
+      "id": "S11",
+      "title": "Shared index lock/atomic write/capacity",
+      "path": "run_store.py",
+      "sha256": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e",
+      "size": 38605,
+      "locators": [
+        {
+          "needle": "_MAX_AUDIT_BYTES =",
+          "line": 29
+        },
+        {
+          "needle": "def _index_lock",
+          "line": 155
+        },
+        {
+          "needle": "def _atomic_json",
+          "line": 127
+        },
+        {
+          "needle": "def _save_index",
+          "line": 245
+        }
+      ]
+    },
+    {
+      "id": "S12",
+      "title": "Ordinary shared text core and injection boundary",
+      "path": "ordinary_chat_service.py",
+      "sha256": "0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843",
+      "size": 14446,
+      "locators": [
+        {
+          "needle": "class RequestLimits",
+          "line": 31
+        },
+        {
+          "needle": "class PreparedRequest",
+          "line": 63
+        },
+        {
+          "needle": "class ChatTransport",
+          "line": 274
+        },
+        {
+          "needle": "async def execute_request",
+          "line": 289
+        }
+      ]
+    },
+    {
+      "id": "S13",
+      "title": "Existing fake-only shared adapter",
+      "path": "web_alarm/ordinary_chat_test_adapter.py",
+      "sha256": "fa62abf7268e9e60696d5d6ce85fe2ad4031f4ff884e0ecc83f75650024428f0",
+      "size": 2794,
+      "locators": [
+        {
+          "needle": "class _FixtureTransport",
+          "line": 9
+        },
+        {
+          "needle": "class OfflineTestAdapter",
+          "line": 17
+        },
+        {
+          "needle": "def execute",
+          "line": 56
+        }
+      ]
+    },
+    {
+      "id": "S14",
+      "title": "Current OFFLINE Web request caps, Turn integration",
+      "path": "web_alarm/ultra_chat.py",
+      "sha256": "91917a43846fa9f7830cdaaf8464e6d8473d10deae4629d582a0ccbe477fb825",
+      "size": 43971,
+      "locators": [
+        {
+          "needle": "def _fixture_turns",
+          "line": 506
+        },
+        {
+          "needle": "limits=RequestLimits",
+          "line": 512
+        },
+        {
+          "needle": "def _context",
+          "line": 533
+        }
+      ]
+    },
+    {
+      "id": "S15",
+      "title": "Model aliases and effective provider identities",
+      "path": "model_registry.py",
+      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+      "size": 2519,
+      "locators": [
+        {
+          "needle": "_MODEL_REGISTRY =",
+          "line": 18
+        },
+        {
+          "needle": "def get_model_spec",
+          "line": 73
+        }
+      ]
+    },
+    {
+      "id": "S16",
+      "title": "H23 historical Ordinary proposal, not current acceptance status",
+      "path": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/ordinary_chat_contract.md",
+      "sha256": "e3a7488cff1946b9f9bacdc4aee3210c568e560af81f6f4c92040a9293debac6",
+      "size": 7745,
+      "locators": [
+        {
+          "needle": "## Что требует",
+          "line": 6
+        },
+        {
+          "needle": "## Узлы",
+          "line": 63
+        },
+        {
+          "needle": "## Отмена",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "id": "S17",
+      "title": "Current reviewed S1 physical/potential boundaries",
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/route_reconciliation.md",
+      "sha256": "3e2457ae71b8c5f499240b888c72c7c42e62367d83ff52c43e4b1da44a608fe2",
+      "size": 10133,
+      "locators": [
+        {
+          "needle": "## Launcher",
+          "line": 31
+        },
+        {
+          "needle": "## Ordinary",
+          "line": 59
+        },
+        {
+          "needle": "## Metadata",
+          "line": 75
+        }
+      ]
+    },
+    {
+      "id": "S18",
+      "title": "Saved H25 author calibration observations; not rerun here",
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/evidence/s2.result.json",
+      "sha256": "4c48b4724efa099ee3ae45b49e9e71b6b0ccb875e0735d06ec8d0af45fe7db12",
+      "size": 25670,
+      "locators": [
+        {
+          "needle": "\"calibration_report_margin_0\"",
+          "line": 51
+        },
+        {
+          "needle": "\"leave_one_out\"",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "id": "S19",
+      "title": "Coordination and freezes, latest S3a status",
+      "path": "Документация/40_Оперативная координация направлений.md",
+      "sha256": "a74d1fc526bc19ab0013c82cab9eec8c2cc98da3d5ea65081beaaff2115655ff",
+      "size": 38011,
+      "locators": [
+        {
+          "needle": "**CURRENT WEB26",
+          "line": 3
+        },
+        {
+          "needle": "Colibri",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "id": "S20",
+      "title": "Tactical context and precedence",
+      "path": "Документация/34_TACTICAL_CONTEXT.md",
+      "sha256": "67355ca49bcf59bf7cce02ff4186bfbbfb2e5055d88800ab1ff553297b43188f",
+      "size": 71532,
+      "locators": [
+        {
+          "needle": "CURRENT",
+          "line": 3
+        },
+        {
+          "needle": "S3a",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "id": "S21",
+      "title": "Open decisions and risks index",
+      "path": "Документация/05_Реестр задач.md",
+      "sha256": "c7f1bcce5219468090f5f040bfacdbacf17ab9db95e6b4f3b75dc94662f2da67",
+      "size": 43580,
+      "locators": [
+        {
+          "needle": "`ORDINARY-CHAT-POLICY`",
+          "line": 53
+        },
+        {
+          "needle": "`S2-STATIC-IMPORT-COVERAGE`",
+          "line": 60
+        }
+      ]
+    },
+    {
+      "id": "S22",
+      "title": "Testing/evidence rules",
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "sha256": "8e581be24b927dba339409f42148a70a92fdbdd761764a0333a2197d9be7e6b3",
+      "size": 31210,
+      "locators": [
+        {
+          "needle": "## TEST-ENG-01",
+          "line": 36
+        },
+        {
+          "needle": "## TEST-EVID-01",
+          "line": 121
+        },
+        {
+          "needle": "## TEST-SCOPE-01",
+          "line": 167
+        }
+      ]
+    },
+    {
+      "id": "S23",
+      "title": "Exact profile selectors, no need for regression on doc-only task",
+      "path": "Документация/36.3_Профиль тестирования Ultra.md",
+      "sha256": "3b32947ce6753d8b8e66b66a70d7f7cd566e5280f01cf485da91db63aec52fb7",
+      "size": 18279,
+      "locators": [
+        {
+          "needle": "## 2.",
+          "line": 31
+        },
+        {
+          "needle": "## 3.",
+          "line": 45
+        }
+      ]
+    },
+    {
+      "id": "S24",
+      "title": "Entry/scope/finish rules",
+      "path": "Документация/08_Старт.md",
+      "sha256": "644b35b1995a458d06780a8f5fe184792866ed432a73a121569fdb086ed85291",
+      "size": 20293,
+      "locators": [
+        {
+          "needle": "## Две постоянные",
+          "line": 28
+        },
+        {
+          "needle": "## Как теперь",
+          "line": 34
+        },
+        {
+          "needle": "## Обязательные границы",
+          "line": 75
+        }
+      ]
+    },
+    {
+      "id": "S25",
+      "title": "H23 author architecture/limits",
+      "path": "reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/report.md",
+      "sha256": "a2ff5bf69b35e7f98ca1fadedd863ba09bcd870fda8ed0ad3bc73f5ab0d1a86f",
+      "size": 20461,
+      "locators": [
+        {
+          "needle": "## MANUAL",
+          "line": 142
+        },
+        {
+          "needle": "## NOT RUN",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "id": "S26",
+      "title": "H24 author scope/negative evidence",
+      "path": "reports/CODEX-RT002-B2-S1-INVENTORY-RECON-001/report.md",
+      "sha256": "c997f7f7e23c92eaede26d64e944384cc916a049067cc2095741fb73e0e600a1",
+      "size": 18907,
+      "locators": [
+        {
+          "needle": "## Причина",
+          "line": 11
+        },
+        {
+          "needle": "## Оставшийся",
+          "line": 134
+        }
+      ]
+    },
+    {
+      "id": "S27",
+      "title": "H25 author scope/negative evidence",
+      "path": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/report.md",
+      "sha256": "1cc7929df5ab41cf0735313ec201ae223dbf46634afda97016060bdba1b92c3b",
+      "size": 16142,
+      "locators": [
+        {
+          "needle": "## Причина",
+          "line": 11
+        },
+        {
+          "needle": "### MANUAL",
+          "line": 111
+        }
+      ]
+    }
+  ]
+}

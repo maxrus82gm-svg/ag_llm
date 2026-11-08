@@ -54,162 +54,163 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 # БЛОК 1.1 — ПОСЛЕДНЯЯ СДАННАЯ ЗАДАЧА
 
 ###### ▼ НАЧАЛО КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:BEGIN
-**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001` · перенесено 2026-11-08 · SHA-256 копии `37aa98e28f268540a02d78275a3f623b5727950adf68b6f0a4dc9b7faf00cf87` · CHAT-ONLY AMENDMENT: нет · снимок `reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/handoff_task.md` · отчёт `reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/report.md` · HISTORY ID `H-CODEX-000025` · запись `reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/task_record.json`
+**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001` · перенесено 2026-11-08 · SHA-256 копии `df9c20a360d8fcdf1fc85b895d4a648668bb7c79563aa95c35e98aaa87e9ed5f` · CHAT-ONLY AMENDMENT: 1 в снимке · снимок `reports/CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001/handoff_task.md` · отчёт `reports/CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001/report.md` · HISTORY ID `H-CODEX-000026` · запись `reports/CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001/task_record.json`
 
-**TASK ID:** `CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001`
+# Web Alarm Ultra — RT-002/B2: согласование политики бюджета Ordinary Chat
 
-# Web Alarm Ultra — RT-002/B2 S2: исправление isolation oracle для OFFLINE ledger
+**TASK ID:** `CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001`
 
 **Исполнитель:** Codex 007  
-**Координатор / независимый verifier:** ChatGPT WEB26  
+**Координатор:** ChatGPT WEB26  
+**Статус:** USER ASSIGNED / READY  
 **Приоритет:** HIGH  
-**ARCH CLASS:** Ultra Runtime / RT-002 B2 / S2 Policy Isolation  
-**Режим:** STRICT OFFLINE / LOCAL ONLY  
-**Тип:** узкая корректирующая TASK  
-**Исходная версия:** `main@0ee846a1159c690d2bc29eab46fca807e4027541`  
-**Предыдущая TASK:** `CODEX-RT002-B2-S1-INVENTORY-RECON-001` / `H-CODEX-000024`
+**Тип:** ANALYSIS / POLICY DECISION PACKET  
+**Режим:** STRICT OFFLINE / READ-ONLY ENGINEERING  
+**База:** `main@90ecf12e76bb48ff7fe1e08cc94d4b764f8d8858`
 
-## 1. Основание
+## 1. Цель
 
-WEB25 независимо принял исправление S1:
+Подготовить проверяемый пакет решений по бюджетной политике Ordinary Chat для последующего включения RT-002/B2 S3b.
 
-- S1: 69/69 PASS, guarded, exit 0.
-- Дополнительные reconciliation checks: 23/23 PASS, включая 18 мутаций.
-- S2: 72/73 PASS, один подтверждённый FAIL.
-- S3a: авторские 35 PASS, независимый runtime ещё не выполнен.
+Не реализовывать HTTP guard, не подключать провайдеров и не менять действующие параметры. Предложить решения владельцу проекта с доказательствами, альтернативами и последствиями выбора.
 
-Оставшийся FAIL:
+**Исходное состояние:**
 
-`IsolationTests.test_no_production_module_imports_the_policy_yet`
+- S1 — 69/69 + 23/23 independent PASS.
+- S2 — 73/73 independent PASS; pure policy, не production enforcement.
+- S3a — independent GitHub Actions 42498405794: 35/35 ledger, 51/51 Run Store, три expected RED, guard 6/6.
+- `ORDINARY-CHAT-POLICY` — OPEN / USER DECISION.
+- S3b/S3c/S9, real provider calls и Stage7 — HOLD.
 
-Текущий S2 oracle использует `s1._production_modules()`, который включает standalone OFFLINE `ultra_budget_ledger.py`. Этот ledger намеренно импортирует чистую `ultra_budget_policy.py`, хотя подключение бюджетной политики к рабочим физическим маршрутам отправки ещё не выполнено.
+## 2. Обязательные источники
 
-Тест смешивает наличие модуля в инвентаризации S1 и фактическое использование политики производственным runtime.
+Прочитать адресно:
 
-**Цель:** исправить классификацию в S2 oracle, сохранив запрет на преждевременное production enforcement до принятия S3b.
-
-## 2. READ / WRITE scope
-
-**READ разрешён:**
-
-- `test_rt002_s2_budget_policy.py`
-- `test_rt002_s1_routes.py`
-- `test_rt002_s3a_ledger.py`
-- `ultra_budget_policy.py`
-- `ultra_budget_ledger.py`
-- Production-модули, относящиеся к import closure и использованию политики.
-- №08, №20 §5а, №21, №34, №37, №36.1/36.3.
-- Отчёт и review H24, `amendment_request_s2.md`, действующие FOLLOWUP.
-
-**WRITE разрешён:**
-
-- `test_rt002_s2_budget_policy.py`
-- Новые адресные тесты, helpers, report, manifest и evidence только внутри `reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/`.
-- Штатное механическое завершение собственного БЛОКА 1 через `finish`.
-
-**WRITE запрещён:**
-
+- №08, действующую часть №000, №34, №40, №05 OPEN/FOLLOWUP.
+- №20 §5а, №21, №37 Stage6, №36.1 и №36.3.
 - `ultra_budget_policy.py`, `ultra_budget_ledger.py`.
-- `test_rt002_s1_routes.py`, `test_rt002_s3a_ledger.py`.
-- Production runtime, transport, launcher, UI, Run Store.
-- №05/06/20/21/34/37, другие общие документы, чужие TASK и БЛОКИ 2–4.
-- STANDARD/TEST CMD, параметры сети, реальные Workspace и секреты.
+- `reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/ordinary_chat_contract.md`.
+- H23/H24/H25 reports и соответствующие независимые review.
+- Существующие S2-калибровки, профильные ограничения, кандидаты политик и относящиеся к ним тестовые данные.
+- Действующие Ordinary Chat transport/route definitions только в объёме, необходимом для подтверждения физических границ.
 
-Git и GitHub, включая чтение через Git-инструменты, запрещены без отдельного USER GO.
+Не читать архив целиком. Не подменять отсутствующие данные предположениями.
 
-При локальном расхождении обязательных исходников с опубликованной базой — STOP и точный отчёт о drift. Не откатывать пользовательские изменения.
+## 3. Обязательные вопросы для анализа
 
-## 3. Реализация
+### A. Маршрут и идентичность
 
-1. Воспроизвести исходный S2 FAIL полным guarded selector. Сохранить первичный RED и исходные хеши до исправления.
-2. Изучить AST/import graph, используя фактические production entrypoints и runtime-зависимости.
-3. Различить standalone OFFLINE helper, допустимо импортирующий чистую policy library, и производственный runtime, прямо либо косвенно получающий доступ к ней до S3b.
-4. Исправить S2 oracle минимальным изменением, не ослабляя S1 inventory и не отключая fail-closed поведение.
-5. Учитывать транзитивные импорты: production → ledger → policy нельзя автоматически считать безопасным.
-6. Проверять прямые `import` и `from ... import`, aliases, новые модули и другие варианты, которые могут обходить oracle.
-7. Сохранить полный S2 core MANIFEST из 73 тестов; новые adversarial quality tests разместить отдельно в task-local пакете, если это не требует изменения действующего MANIFEST.
+Проанализировать отдельный маршрут `ordinary_chat`, роль `ordinary_chat` и scope `ORDINARY_CHAT_SESSION`.
 
-Не применять blanket allowlist по имени `ultra_budget_ledger.py`, игнорирование UNKNOWN, широкие исключения модулей или отключение проверки production imports.
+Подтвердить необходимость независимости от `executor`, `mcp_chat`, `planner` и других зарегистрированных ролей. Проверить соответствие обоих интерфейсов Web/Tk единому budget owner.
 
-Способ реализации выбрать после самостоятельного анализа исходников; не считать предложенную гипотезу причиной без проверки.
+Предложить точные правила:
 
-## 4. Обязательные отрицательные проверки
+- Workspace/Chat/Turn/session identity.
+- Сохранение бюджета после F5/reopen/retry.
+- Lifetime, expiration, rollover, reset.
+- Изоляция между разными Chat и Workspace.
+- Отдельная физическая попытка при retry, запрет двойного использования receipt.
 
-Тесты на синтетических исходниках должны подтверждать:
+### B. Бюджетные пределы
 
-- Прямой production import policy → RED.
-- Транзитивный production → ledger → policy → RED.
-- Импорт через `from ... import` и aliases → RED.
-- Неизвестный или новый production consumer → RED либо явно обоснованный безопасный результат.
-- Самостоятельное использование policy разрешённым OFFLINE ledger без production reachability → PASS.
-- Изменение допустимой import closure, из-за которого policy становится достижима из production, → RED.
-- Отключение или ослабление самого oracle должно обнаруживаться quality control.
+Подготовить **не менее трёх сопоставимых кандидатов**: консервативный, сбалансированный и исследовательский. Использовать имеющиеся S2-калибровки; не придумывать подтверждённые цифры.
 
-Сохранять фактические результаты каждого negative oracle, а не только итоговые заявления PASS.
+Рассмотреть:
 
-## 5. Регрессия и качество
+- Максимальные bytes и оценку входных токенов одного запроса.
+- `max_tokens` и обязательный output reserve.
+- Общий session liability, число физических attempts.
+- Обработку UNKNOWN, timeout, cancel, lost response, late usage.
+- Недоступный или неизвестный model/profile.
+- `bytes_per_token`, margin, min_samples, calibration fallback.
+- Изменение политики при уже существующей сессии.
+- Разницу между оценкой токенов и фактическими денежными расходами.
 
-Обязателен защищённый OFFLINE-прогон:
+Для каждого числового предложения указать источник, расчёт, запас безопасности и уровень доверия. Если данных недостаточно — `USER DECISION REQUIRED / UNCALIBRATED`, а не условный production default.
 
-| Набор | Критерий |
-|---|---|
-| S2 core | 73 PASS, exit 0 |
-| S1 exact guarded | 69 PASS, exit 0 |
-| S1 extra reconciliation | 23 PASS |
-| S3a ledger | 35 PASS |
-| Новые негативные оракулы | Все ожидаемые RED обнаружены |
-| Source/guard | 0 нарушений изоляции |
+### C. Согласование с общей архитектурой
 
-Использовать существующие штатные selectors и guard. При необходимости создать task-local wrapper только для фиксации результатов, не меняя содержание тестов и не перезаписывая evidence H24.
+Проверить, что Ordinary Chat не обходит существующие ограничения Planner/Executor/Verifier/Final Audit.
 
-Не суммировать пересекающиеся прогоны в выдуманный счёт уникальных тестов.
+Отдельно описать взаимодействие с MCP, Compressor, Full Read, model switching, будущими локальными LLM и accounting. Не изменять контракты этих компонентов.
 
-Сохранить команды, Python/OS, exit-коды, counts, оригинальный RED, stdout/stderr, source SHA-256 и точную классификацию каждого отклонения.
+### D. Риски хранения и развёртывания
 
-**Запрещены:** real HTTP, OAuth, paid API, production storage writes, network access, real model inference, несанкционированные Git-операции.
+Разобрать открытые вопросы S3a:
 
-## 6. Критерии завершения
+- RAW `wire_utf8`: содержание, размер, доступ, диагностика, backup и retention.
+- Исторический audit и переход существующих Workspace без обнуления обязательств.
+- Recovery и corrupted/missing ledger.
+- Single-owner и cloned Workspace/fencing.
+- Capacity 4096 events, компакция и будущая миграция формата.
+- Trusted `NOT_SENT`, SENT/UNKNOWN и недопустимость освобождения резерва по одной отмене UI.
 
-Задача готова к сдаче, когда:
+Определить, какие решения обязательны **до S3b**, какие до production/live rollout и какие допустимо оставить отдельными FOLLOWUP.
 
-1. Причина исходного S2 FAIL документирована и подтверждена.
-2. S2 73/73 PASS без ослабления isolation oracle.
-3. Негативные сценарии подтверждают запрет раннего production import.
-4. S1 и S3a сохраняют соответствующие PASS либо любое отклонение честно зафиксировано.
-5. Изменения находятся строго в WRITE scope.
-6. В report перечислены все OPEN, ограничения, риски и NEXT.
-7. Manifest, исходные и итоговые evidence готовы к readback.
+## 4. Требуемый результат
 
-**Не считать результатом задачи:**
+Подготовить один основной документ:
 
-- Независимую приёмку S3a.
-- Разрешение S3b.
-- Реальную защиту HTTP-запросов бюджетным ledger.
-- Принятие числовой политики Ordinary Chat.
-- Готовность Stage6/Stage7 к live.
+`reports/CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001/policy_decision_packet.md`
 
-При недоказанной безопасности, повторяющемся FAIL или необходимости изменить production — STOP / PARTIAL или BLOCKED, без расширения полномочий.
+Обязательная структура:
 
-## 7. Сдача
+1. Подтверждённое текущее состояние.
+2. Evidence и ссылки на точные источники.
+3. Матрица решений с вариантами A/B/C, последствиями и рекомендацией исполнителя.
+4. Предлагаемый route/scope/session contract.
+5. Предлагаемые budget profiles с происхождением чисел.
+6. Fail-closed правила и отрицательные сценарии.
+7. Список **USER APPROVAL REQUIRED** — короткие вопросы владельцу, для каждого рекомендуемый вариант.
+8. `S3b READINESS`: что готово, что блокирует, что нужно проверить.
+9. OPEN/NEXT и адреса будущих задач.
 
-Создать:
+Дополнительно создать:
 
-`reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/`
+- `report.md` — краткий итог.
+- `manifest.json` — адреса/хеши и список материалов.
+- `followups.json` — только реальные незакрытые вопросы.
+- При необходимости `policy_candidates.json` — **непроизводственный proposal**, не активная конфигурация.
 
-Внутри сохранить `report.md`, `manifest.json`, необходимый task-local test/evidence пакет и `followups.json`.
+## 5. READ/WRITE и запреты
 
-После окончательной проверки выполнить штатный `tools/task_slot_rotate.py finish` с точным TASK ID, получить постоянный HISTORY ID и подтвердить readback.
+**WRITE:** только собственная папка отчёта и штатная механическая сдача БЛОКА 1 через `finish`.
 
-Ожидаемое состояние после успешной механической сдачи:
+**НЕЛЬЗЯ:**
 
-- БЛОК 1 — WAITING.
-- БЛОК 1.1 — сохранённая новая TASK.
-- БЛОКИ 2–4 неизменны.
-- Никакой автоматической независимой приёмки.
+- Менять `ultra_budget_policy.py`, ledger, transport, Run Store, UI или тесты.
+- Включать реальные LLM, HTTP, OAuth, paid API.
+- Менять production budget defaults и регистрировать новые маршруты.
+- Менять нормативные №05/20/21/34/37 или чужие карточки.
+- Выполнять Git/GitHub-операции без отдельного разрешения.
+- Самостоятельно утверждать решения пользователя.
+- Начинать S3b или использовать этот анализ как разрешение Stage7.
 
-Публикацию одним атомарным нумерованным коммитом выполняет пользователь по действующему `DOC-COMMIT-01`, после проверки пакета. Исполнитель Git не использует.
+## 6. Критерии приёмки
 
-**В итоговом сообщении Codex:** TASK ID, RESULT READY/PARTIAL/BLOCKED, изменённые файлы, исходный и итоговый S2, S1/S3a regression, quality negatives, NOT RUN, OPEN/NEXT, HISTORY ID и путь полного отчёта.
+Задача принимается, если:
+
+- Все предложенные параметры привязаны к проверяемым фактам либо честно помечены как гипотезы.
+- Отдельный Ordinary Chat scope не использует чужие роли для обхода бюджетов.
+- Состояния UNKNOWN/SENT/NOT_SENT рассмотрены без оптимистичного списания.
+- Разделены блокеры S3b и риски будущего production rollout.
+- Предложения не меняют действующую систему.
+- Пользователь получает понятный небольшой список решений, а координатор — достаточно информации для следующей точной инженерной TASK.
+
+Полный технический regression необязателен для документационной задачи без изменений кода. Проверить структуру, источники, manifest и отсутствие изменений вне scope. Все NOT RUN указать явно.
+
+## 7. Завершение
+
+После создания полного пакета выполнить штатную последовательность `task_slot_rotate.py`:
+
+`check → dry-run → finish/apply → readback`.
+
+Получить новый HISTORY ID автоматически. Не переиспользовать H25 и не редактировать вручную БЛОК 1.1. При ошибке ротации остановиться, не обходить её.
+
+В финальном сообщении указать TASK ID, результат READY/PARTIAL/BLOCKED, файлы, матрицу USER DECISION, OPEN/NEXT, HISTORY ID и путь отчёта.
+
+**Результат передаётся ChatGPT WEB26 для независимого source/evidence review. Только пользователь утверждает будущую политику и дальнейший S3b.**
 ###### ▲ КОНЕЦ КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:END
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)

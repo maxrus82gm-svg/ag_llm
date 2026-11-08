@@ -1,0 +1,188 @@
+{
+  "document_type": "NON_PRODUCTION_POLICY_PROPOSAL",
+  "active": false,
+  "user_approved": false,
+  "approval_status": "PARTIAL DESIGN APPROVAL ONLY; numeric candidate PENDING",
+  "approved_design_constraints": [
+    {
+      "id": "CHAT-A01",
+      "topic": "workspace_ordinary_envelope_equals_selected_session_limits",
+      "status": "USER APPROVED",
+      "source": "chat_amendment_01.md",
+      "implementation_authorized": false
+    }
+  ],
+  "task_id": "CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001",
+  "route_proposed": "ordinary_chat",
+  "role_proposed": "ordinary_chat",
+  "scope_proposed": "ORDINARY_CHAT_SESSION",
+  "recommendation": "B for discussion; activation HOLD until approval and accepted implementation/calibration",
+  "accepted_by_current_policy_schema": false,
+  "price_or_currency_budget": null,
+  "calibration_proposed": {
+    "bytes_per_token": null,
+    "ordinary_chat_samples_available": 0,
+    "margin": 0.2,
+    "min_samples": 20,
+    "missing_profile": "DENY",
+    "fallback": "NONE by default; HARD_BOUND only by separate explicit approval, conditional not guaranteed",
+    "origin": "margin 0.2 tested by legacy S2 LOO; min_samples20 = 4 * legacy analysis5, a design choice not a confidence guarantee",
+    "require_complete_cached_usage": true,
+    "allow_legacy_role_profile_alias": false
+  },
+  "candidates": {
+    "A": {
+      "name": "Консервативный",
+      "limits_proposed": {
+        "max_request_bytes": 65536,
+        "max_request_input_tokens_est": 16000,
+        "max_output_tokens": 1024,
+        "output_reserve": "EXACT_REQUEST_MAX_TOKENS",
+        "max_session_liability_tokens": 80000,
+        "max_session_attempts": 12,
+        "max_workspace_ordinary_liability_tokens": 80000,
+        "max_workspace_ordinary_attempts": 12,
+        "max_inflight_per_chat": 1
+      },
+      "status": "USER_DECISION_REQUIRED / UNCALIBRATED / NOT_ACTIVE",
+      "numeric_origin": {
+        "bytes": "legacy S2 candidate A max_request_bytes / 4; design downscale, not observed optimum",
+        "input_tokens": "legacy A 48000 / 3",
+        "output": "1/2 * existing verifier_final max_tokens 2048; UX hypothesis, no ordinary output evidence",
+        "session_liability": "legacy A max_run_liability_tokens / 2; separate grant, no transfer from RUN reserve",
+        "session_attempts": "legacy A max_run_attempts / 2; proposal only",
+        "workspace": "same cap as session, shared across ALL Ordinary Chat sessions in this Workspace epoch; no new-chat multiplier",
+        "inflight": "one outstanding physical call per Chat: serialization proposal, not benchmark-derived"
+      },
+      "confidence": "high arithmetic/provenance; low Ordinary Chat suitability; no production calibration",
+      "illustrations_only": {
+        "reserve_at_full_input_and_output": 17024,
+        "worst_full_UNKNOWNs_fitting_session_liability": 4,
+        "typical_events_at_attempt_cap": 36,
+        "sum_raw_wire_bytes_at_attempt_cap": 786432,
+        "divisor_scenarios": [
+          {
+            "illustrative_divisor_NOT_PROFILE": 1.0,
+            "input_estimate_at_bytes_cap": 65536,
+            "request_allowed_by_input_cap_alone": false,
+            "effective_wire_bytes_under_both_caps": 16000
+          },
+          {
+            "illustrative_divisor_NOT_PROFILE": 2.4,
+            "input_estimate_at_bytes_cap": 27307,
+            "request_allowed_by_input_cap_alone": false,
+            "effective_wire_bytes_under_both_caps": 38399
+          },
+          {
+            "illustrative_divisor_NOT_PROFILE": 4.1076,
+            "input_estimate_at_bytes_cap": 15955,
+            "request_allowed_by_input_cap_alone": true,
+            "effective_wire_bytes_under_both_caps": 65536
+          }
+        ]
+      }
+    },
+    "B": {
+      "name": "Сбалансированный",
+      "limits_proposed": {
+        "max_request_bytes": 131072,
+        "max_request_input_tokens_est": 32000,
+        "max_output_tokens": 2048,
+        "output_reserve": "EXACT_REQUEST_MAX_TOKENS",
+        "max_session_liability_tokens": 120000,
+        "max_session_attempts": 16,
+        "max_workspace_ordinary_liability_tokens": 120000,
+        "max_workspace_ordinary_attempts": 16,
+        "max_inflight_per_chat": 1
+      },
+      "status": "USER_DECISION_REQUIRED / UNCALIBRATED / NOT_ACTIVE",
+      "numeric_origin": {
+        "bytes": "legacy S2 candidate B max_request_bytes / 4; design downscale, not observed optimum",
+        "input_tokens": "legacy B 96000 / 3",
+        "output": "1 * existing verifier_final max_tokens 2048; UX hypothesis, no ordinary output evidence",
+        "session_liability": "legacy B max_run_liability_tokens / 2; separate grant, no transfer from RUN reserve",
+        "session_attempts": "legacy B max_run_attempts / 2; proposal only",
+        "workspace": "same cap as session, shared across ALL Ordinary Chat sessions in this Workspace epoch; no new-chat multiplier",
+        "inflight": "one outstanding physical call per Chat: serialization proposal, not benchmark-derived"
+      },
+      "confidence": "high arithmetic/provenance; low Ordinary Chat suitability; no production calibration",
+      "illustrations_only": {
+        "reserve_at_full_input_and_output": 34048,
+        "worst_full_UNKNOWNs_fitting_session_liability": 3,
+        "typical_events_at_attempt_cap": 48,
+        "sum_raw_wire_bytes_at_attempt_cap": 2097152,
+        "divisor_scenarios": [
+          {
+            "illustrative_divisor_NOT_PROFILE": 1.0,
+            "input_estimate_at_bytes_cap": 131072,
+            "request_allowed_by_input_cap_alone": false,
+            "effective_wire_bytes_under_both_caps": 32000
+          },
+          {
+            "illustrative_divisor_NOT_PROFILE": 2.4,
+            "input_estimate_at_bytes_cap": 54614,
+            "request_allowed_by_input_cap_alone": false,
+            "effective_wire_bytes_under_both_caps": 76799
+          },
+          {
+            "illustrative_divisor_NOT_PROFILE": 4.1076,
+            "input_estimate_at_bytes_cap": 31910,
+            "request_allowed_by_input_cap_alone": true,
+            "effective_wire_bytes_under_both_caps": 131072
+          }
+        ]
+      }
+    },
+    "C": {
+      "name": "Исследовательский",
+      "limits_proposed": {
+        "max_request_bytes": 262144,
+        "max_request_input_tokens_est": 64000,
+        "max_output_tokens": 4096,
+        "output_reserve": "EXACT_REQUEST_MAX_TOKENS",
+        "max_session_liability_tokens": 240000,
+        "max_session_attempts": 24,
+        "max_workspace_ordinary_liability_tokens": 240000,
+        "max_workspace_ordinary_attempts": 24,
+        "max_inflight_per_chat": 1
+      },
+      "status": "USER_DECISION_REQUIRED / UNCALIBRATED / NOT_ACTIVE",
+      "numeric_origin": {
+        "bytes": "legacy S2 candidate C max_request_bytes / 4; design downscale, not observed optimum",
+        "input_tokens": "2 * proposed B 32000; below legacy C 200000/3",
+        "output": "2 * existing verifier_final max_tokens 2048; UX hypothesis, no ordinary output evidence",
+        "session_liability": "legacy C max_run_liability_tokens / 2; separate grant, no transfer from RUN reserve",
+        "session_attempts": "legacy C max_run_attempts / 2; proposal only",
+        "workspace": "same cap as session, shared across ALL Ordinary Chat sessions in this Workspace epoch; no new-chat multiplier",
+        "inflight": "one outstanding physical call per Chat: serialization proposal, not benchmark-derived"
+      },
+      "confidence": "high arithmetic/provenance; low Ordinary Chat suitability; no production calibration",
+      "illustrations_only": {
+        "reserve_at_full_input_and_output": 68096,
+        "worst_full_UNKNOWNs_fitting_session_liability": 3,
+        "typical_events_at_attempt_cap": 72,
+        "sum_raw_wire_bytes_at_attempt_cap": 6291456,
+        "divisor_scenarios": [
+          {
+            "illustrative_divisor_NOT_PROFILE": 1.0,
+            "input_estimate_at_bytes_cap": 262144,
+            "request_allowed_by_input_cap_alone": false,
+            "effective_wire_bytes_under_both_caps": 64000
+          },
+          {
+            "illustrative_divisor_NOT_PROFILE": 2.4,
+            "input_estimate_at_bytes_cap": 109227,
+            "request_allowed_by_input_cap_alone": false,
+            "effective_wire_bytes_under_both_caps": 153599
+          },
+          {
+            "illustrative_divisor_NOT_PROFILE": 4.1076,
+            "input_estimate_at_bytes_cap": 63820,
+            "request_allowed_by_input_cap_alone": true,
+            "effective_wire_bytes_under_both_caps": 262144
+          }
+        ]
+      }
+    }
+  }
+}
