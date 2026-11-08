@@ -33,6 +33,7 @@ for key in ("TEMP", "TMP", "LOCALAPPDATA", "APPDATA"):
     target = TASK_TMP / key.lower()
     target.mkdir(exist_ok=True)
     os.environ[key] = str(target)
+(TASK_TMP / "temp").mkdir(exist_ok=True)
 tempfile.tempdir = str(TASK_TMP / "temp")
 for key in ("GIGACHAT_CREDENTIALS", "GIGACHAT_SCOPE", "GIGACHAT_ACCESS_TOKEN",
             "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
@@ -97,7 +98,7 @@ def hashes():
 before = hashes()
 # GitHub Windows checkout may convert LF to CRLF. Compare only exact bytes or
 # a CRLF->LF normalization of those SAME bytes; no whitespace/code normalization.
-canonical = {name: hashlib.sha256((ROOT / name).read_bytes().replace(b"\\r\\n", b"\\n")).hexdigest()
+canonical = {name: hashlib.sha256((ROOT / name).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
              for name in PINNED}
 if any(before[name] != pin and canonical[name] != pin for name, pin in PINNED.items()):
     print(json.dumps({"source_drift": True, "raw_sha256": {name: before[name] for name in PINNED},
