@@ -1,0 +1,82 @@
+{
+  "review_id": "CHATGPT-WEB26-H26-ORDINARY-POLICY-20261108",
+  "task_id": "CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001",
+  "history_id": "H-CODEX-000026",
+  "user_commit": "7eea28e24a51d95e81bf592166ae4da6ba357e2d",
+  "verdict": "PASS / BOUNDED INDEPENDENT DOCUMENT+SOURCE REVIEW",
+  "author_package": {
+    "report_files_committed": 38,
+    "manifest_listed": 36,
+    "source_registry_entries": 27,
+    "baseline_controlled_files_author_only": 223,
+    "source_files_modified": 0
+  },
+  "independent": {
+    "checked_metadata": [
+      "task_record.json",
+      "finish_protocol.json",
+      "handoff_task.md via card/record",
+      "report.md",
+      "policy_decision_packet.md",
+      "route_scope_contract.md",
+      "policy_candidates.json",
+      "manifest.json",
+      "followups.json",
+      "chat_amendment_01.md",
+      "source_preflight.json",
+      "calibration_facts.json"
+    ],
+    "numerical_scenarios": [
+      {
+        "label": "A",
+        "bytes": 65536,
+        "input_tokens": 16000,
+        "output_tokens": 1024,
+        "liability": 80000,
+        "attempts": 12,
+        "full_unknown_reserve": 17024,
+        "max_full_unknown": 4
+      },
+      {
+        "label": "B",
+        "bytes": 131072,
+        "input_tokens": 32000,
+        "output_tokens": 2048,
+        "liability": 120000,
+        "attempts": 16,
+        "full_unknown_reserve": 34048,
+        "max_full_unknown": 3
+      },
+      {
+        "label": "C",
+        "bytes": 262144,
+        "input_tokens": 64000,
+        "output_tokens": 4096,
+        "liability": 240000,
+        "attempts": 24,
+        "full_unknown_reserve": 68096,
+        "max_full_unknown": 3
+      }
+    ],
+    "s2_unknown_scope_fallback": "current evaluate_request uses compressor scope else MCP for non-RUN; future explicit ordinary dispatch required",
+    "chat_a01_origin": "author stored chat_amendment_01.md; original other-chat turn not independently fetched"
+  },
+  "not_run": [
+    "Full independent 223 SHA baseline",
+    "Full 27-source SHA confirmation",
+    "All 36 report manifest file digests independently",
+    "Runtime regression / CI for this analysis task",
+    "Real provider/tokenizer/price/model calibration",
+    "Production/live/migration/storage/power-loss tests"
+  ],
+  "open_approval": [
+    "U1",
+    "U2",
+    "U3",
+    "U4",
+    "U5",
+    "U6"
+  ],
+  "approved_numeric_defaults": false,
+  "s3b_authorized": false
+}

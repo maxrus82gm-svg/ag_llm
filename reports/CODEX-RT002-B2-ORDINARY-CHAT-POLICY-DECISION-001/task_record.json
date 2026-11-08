@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Web Alarm Ultra — RT-002/B2: согласование политики бюджета Ordinary Chat",
   "date": "2026-11-08",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / POLICY DECISION PACKET BOUNDED INDEPENDENT PASS; U1–U6 OWNER PENDING; S3b HOLD",
+  "review": "PASS / WEB26 SOURCE+DOCUMENT REVIEW: 3 proposal arithmetic verified, route/scope gaps identified; A/B/C NOT APPROVED, NO LIVE",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001/handoff_task.md",
@@ -15,7 +15,32 @@
     "report": {
       "path": "reports/CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001/report.md",
       "sha256": "37a859f80c6609934f8f402a3abb888eae0552d21b4d1d7f5033272531d4b4da"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB26-CODEX-RT002-ORDINARY-POLICY-REVIEW-20261108/review.md",
+      "sha256": "20e5f5d44c0621f558d04721c6cea73251645bf7b7e160411d0b069b6eb455f4"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001",
+      "history_id": "H-CODEX-000026",
+      "agent": "codex",
+      "title": "Web Alarm Ultra — RT-002/B2: согласование политики бюджета Ordinary Chat",
+      "date": "2026-11-08",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001/handoff_task.md",
+          "sha256": "efc9a10de970185a9b7e36042302967aa25ee3b56bb43a3eccfb1310f5df4e73"
+        },
+        "report": {
+          "path": "reports/CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001/report.md",
+          "sha256": "37a859f80c6609934f8f402a3abb888eae0552d21b4d1d7f5033272531d4b4da"
+        }
+      }
+    }
+  ]
 }
