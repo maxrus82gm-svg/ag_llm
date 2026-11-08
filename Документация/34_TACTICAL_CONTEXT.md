@@ -1,6 +1,16 @@
 # Оперативная память проекта — №34
 
-## CURRENT WEB26 / 08.11.2026 — USER H26 approval: 3-layer pre-send and continuation budget protection (design only)
+## CURRENT / USER 09.11.2026 — решения U1–U6, разграничение контекста и расходов
+
+**Принято в обсуждении:** шесть пользовательских пунктов U1–U6 закрыты **как требования**, но не как S2/S3a/S3b implementation/acceptance. 250 000 токенов — изменяемый в UI **каждого чата порог запуска сжатия рабочего контекста**, а не потраченный или выделенный бюджет Workspace и не обещание, что выбранная модель вместит столько. Ответ — 10 000 токенов по умолчанию; 20 000 расширенная настраиваемая опция (в пределах модели). Отдельного фиксированного числа сообщений в Chat пока нет; защитные лимиты попыток/повторов и pre-send ceiling остаются обязательными. Расходные числовые максимумы сессии/Workspace, валидность provider caps и модельная калибровка **OPEN**. H26 A/B/C и примеры 300k/350k не утверждены как defaults. Сохраняются CHAT-A01 (один агрегатный расходный контур Workspace) и одно ядро; статистика входа/ответа/reasoning без двойного счёта, Unknown не превращать в 0; смена модели/рестарт/сжатие не сбрасывают расход.
+
+**Сжатие:** в прежней Ultra показана работа с отдельным сообщением, ID, файлом оригинала, моделью сжатия и дополнительной проверкой; в Web Alarm Ultra переносить поэтапно. Дополнительно требуется отдельная кнопка сжатия **всего чата**: разбивка длинной истории на блоки, поэтапная сводка, защита значимых решений, сохранение полного исходника и восстановление по ID. При достижении 250k запускается управляемый сценарий сжатия; при меньшем окне модели может потребоваться раннее действие. Никакого невосстановимого или незаметного сжатия и никаких сбросов счётчиков.
+
+**U5:** локальные логи вне Workspace/GitHub при любом режиме публикации; маскируются секретные части **отдельных строк**, ID позволяет связать событие с журналом. Идея хранить полную секретную строку в ином шифрованном месте **отложена**, автоматический такой дубль не санкционирован до политики шифрования/доступа/сроков. RAW сообщения чата — отдельный вопрос конфиденциальности. **U6:** после реального подключения — короткие пробные обращения с видимым учётом, но только когда Stage6/S3b и независимая проверка пройдены, есть отдельное USER GO с лимитами.
+
+**Фактическая стадия №37:** Stage5 OFFLINE **BOUNDED ACCEPTED**, Stage6 RT-002/B2 **IN PROGRESS / NOT DONE**, S1/S2/S3a имеют ограниченные положительные проверки, **S3b/Stage7/paid/live HOLD**. Следующее действие — оформить версионный technical contract Ordinary Chat с учетом решения U1–U6, проверить провайдерские возможности и независимые safety-gates, затем по отдельному пользовательскому назначению реализовать. Документальный срез 08.11 ниже сохраняется как исторический; его пометки «U1–U6 OPEN» означают статус **на тот день**, не отменяют сегодняшние решения. №37 — программа/UX, №20 §5а — владелец B2, №34 — оперативная навигация. Не присваивать новой coding TASK и не запускать платные запросы из этой записи.
+
+## HISTORICAL WEB26 / 08.11.2026 — USER H26 approval: 3-layer pre-send and continuation budget protection (design only)
 
 **Owner decision / explicit «Конечно» + «Да, фиксиру» after spoken discussion:** Adopt the **principle** of three complementary safety gates for Ultra LLM execution; this is an architectural H26 policy decision, **not yet code, S3b acceptance, numeric budget approval, paid/live authorization or a new Codex TASK**.
 
@@ -14,11 +24,11 @@
 
 **Status:** H26 U2 A/B/C remains DEFERRED pending matched calibration, U3 precise profile corpus/rules still OPEN, U4–U6 OPEN. The three-layer safety **principle** is USER-APPROVED; concrete GigaChat Ultra capabilities, bound arithmetic, telemetry and implementation require separate proof and independent tests. S3b/Stage6, paid/live and real provider requests **HOLD**.
 
-## CURRENT WEB26 / 08.11.2026 — owner decision H26 U2: numeric A/B/C deferred pending model-specific rule and calibration
+## HISTORICAL WEB26 / 08.11.2026 — owner decision H26 U2: numeric A/B/C deferred pending model-specific rule and calibration
 
 **Confirmed owner choice, H26 U2 (reply «Ну да» to explicit A/B/C deferral question):** **Do not approve or activate A/B/C nominal Ordinary Chat budgets (A L80k, B L120k, C L240k) yet**. First define separate, configurable and safely enforced policy dimensions for (a) model-specific actual next-request context fit (including Workspace selected memory, system/template overhead and output reserve), (b) request/attempt output/input and repeat bounds, and (c) durable session and aggregate Workspace spending liability; then calibrate numerical thresholds against matched model/provider/ordinary-chat observations and owner approval. A large supported model context must not be silently conflated with a small arbitrary input estimate ceiling; no data storage/token budget conflation. The historical proposal A/B/C stays as unapproved comparison only. CHAT-A01 (shared workspace spending ceiling, not chat-history storage ceiling) remains agreed as previously scoped; owner has not selected new absolute values or reset rules. **U3–U6 still unresolved.** Ordinary sample count remains zero; S3b/Stage6/paid/live HOLD. This is a documented decision, not a new Codex TASK or engineering GO.
 
-## CURRENT WEB26 / 08.11.2026 — OWNER-APPROVED FUTURE DIRECTION: LLM STATIST / empirical context-capability telemetry
+## HISTORICAL WEB26 / 08.11.2026 — OWNER-APPROVED FUTURE DIRECTION: LLM STATIST / empirical context-capability telemetry
 
 **User decision (08.11.2026):** Mandatory future development direction, **not merely a suggestion**: build a reusable *LLM Statist* capability in the existing Ultra core, available to future Web Alarm Ultra and Blueprint LLM blocks. Its purpose is to measure how a specific LLM/provider/configuration actually performs as active context increases, distinguish the manufacturer's advertised context window from the observed practically usable window, and support informed user-adjustable working limits. Owner's motivating example: advertised 250k context, but response/work initiation becomes unacceptably slow around 150k; these are illustrative values, **not verified measurements or a default policy**.
 
@@ -28,13 +38,13 @@
 
 **Separate concerns / order:** (1) Model context-window hard/working fit for the *next* request; (2) Ordinary Chat durable per-session and aggregate Workspace token-spend budget; (3) global/execution route limits; (4) empirical responsiveness/statist per LLM. Asking an LLM to be concise is advisory only, never a spending safety boundary. Enforce hard quotas pre-physical-send via separately accepted S2/S3a/S3b gates. Future Blueprint Statist and context-compression blocks follow stable provider connectivity and the approved implementation roadmap. H26 U2–U6 numeric choices, S3b and live/paid remain unapproved/HOLD. **This entry records a firm future requirement, not permission to start implementation or change the existing code.**
 
-## CURRENT WEB26 / 08.11.2026 — existing Ultra token accounting shown in owner GUI screenshots
+## HISTORICAL WEB26 / 08.11.2026 — existing Ultra token accounting shown in owner GUI screenshots
 
 **OWNER DEMONSTRATION / UI OBSERVATION:** The existing Ultra legacy interface already shows per-role token statistics in its execution-inspection panel: `PLANNER`, `EXECUTOR`, `DREDD`, `TOTAL`, with detailed execution events/logging and context/answer views. In one screenshot the displayed example is Planner **7,367**, Executor **23,671**, Dredd **8,511**, Total **39,549** tokens (role sum matches total). These are example observed spent-token counters for a past agent run, **not** Ordinary Chat real consumption data, model context-window size, a provider quota, or proof of pre-send budget denial. The visible `tools limit 20` is a tool-count setting, not a token quota.
 
 **DECISION / NEXT:** Reuse the existing Ultra core accounting/event evidence where compatible, rather than rebuild a separate role-token telemetry engine. Map future Ordinary Chat UI accounting and model/profile context-window reporting separately; source-code audit must establish exact reusable APIs and persistence semantics. H26 U1 concerns a typed Ordinary budget route and attribution, while S2/S3a/S3b will additionally need reliable *pre-physical-send admission and durable quota enforcement*, not merely end-of-run statistics. CHAT-A01 aggregate Workspace envelope and U2–U6 remain OPEN; S3b/paid/live HOLD. Legacy GUI shown solely as historical evidence; do not reopen its development. No runtime/code/GUI changes authorized by this note.
 
-## CURRENT WEB26 / 08.11.2026 — owner clarification: web-only UI; Ordinary budget vs model context
+## HISTORICAL WEB26 / 08.11.2026 — owner clarification: web-only UI; Ordinary budget vs model context
 
 **USER UI DECISION:** Legacy desktop GUI is frozen/untouched, remains as-is, and is excluded from future planning/discussion unless the owner explicitly reopens it. All new UI development targets Web Alarm Ultra. Preserve the existing Ultra core; no second engine. This does not authorize removal/refactoring of legacy code.
 
@@ -42,7 +52,7 @@
 
 **CONTEXT DESIGN NOTE / FUTURE, not H26 budget policy:** Model profile should expose supported context-window and configurable working cap; before model switch compare estimated actual next-request context + system/tool/template overhead + output reserve against effective model window. Prefer optional, explicit, reviewed compression using existing Ultra core facilities where confirmed. Preserve original messages/ID-linked archive and offer recovery; do not silently irreversibly compress, nor equate historical spend with current prompt size. Blueprint compression/context blocks are later work. Prioritize provider integrations (GigaChat and local models) after required safety gates; S3b/live/paid remain HOLD. No code/GUI changes authorized by this note.
 
-## CURRENT WEB26 / 08.11.2026 — H26 POLICY PACKET INDEPENDENT BOUNDED PASS; U1–U6 WAIT USER; S3b HOLD
+## HISTORICAL WEB26 / 08.11.2026 — H26 POLICY PACKET INDEPENDENT BOUNDED PASS; U1–U6 WAIT USER; S3b HOLD
 
 **User #551 `7eea28e24a51` / Codex H26 `CODEX-RT002-B2-ORDINARY-CHAT-POLICY-DECISION-001`:** packet for Ordinary Chat route/scope/session and A/B/C provisional budget envelopes published; Codex finish ROTATED/readback, B1 WAITING, B1.1 H26. WEB26 independently checked authored document and direct S2 code, arithmetic: A 64KiB/16k+1024/L80k/N12 (max full UNKNOWN 4), B 128KiB/32k+2048/L120k/N16 (3), C 256KiB/64k+4096/L240k/N24 (3); **PASS / DOCUMENT-AND-SOURCE ONLY**, no code or test changes. **All A/B/C UNCALIBRATED / NOT ACTIVE; Ordinary samples 0.** CHAT-A01 equality of Workspace/session quota is recorded by Codex as author-saved user amendment (original other-chat turn not independently fetched); numerical approval is absent. **OPEN U1–U6** (distinct route and owner, A/B/C choice, calibrate+DENY, immutable carry/no reset, RAW data limits, fresh single-owner synthetic rollout). **S3b/S3c/S9/Stage6/paid/live HOLD**. S1/S2/S3a previous bounded PASS remain. Review `reports/CHATGPT-WEB26-CODEX-RT002-ORDINARY-POLICY-REVIEW-20261108/review.md`. Next: ask user policy decisions before next assigned code TASK; separate versioned S2/S3a hierarchical-budget contract before S3b. No manual script or Desktop Commander changes.
 
@@ -68,7 +78,7 @@ H25 user main №544 `f52363a1bd15`, Codex `CODEX-RT002-B2-S2-ISOLATION-ORACLE-R
 
  **Слот Codex:** БЛОК 1 WAITING, БЛОК 1.1 H-CODEX-000023 (finish ROTATED exit0). SOURCE: две новые рабочие Python files, `.obsidian/workspace.json` динамический пользовательский tracking file в №539 — не инженерное изменение, не править. Непроверенное: hardware power-loss, cross-host cloned Workspace, full independent S3a Windows/runtime, migration старого audit, ещё нет production S3b/S9. **NEXT SAFE:** пользователь отдельно разрешает адресный S1 inventory AMENDMENT либо отдельную проверку S3a; не запускать их автоматически. Stage5 остатки сохраняются, настоящий GigaChat, paid/Colibri/MCP HOLD.
 
-## CURRENT WEB25 / 08.11.2026 — Stage5 OFFLINE BOUNDED USER SMOKE CLOSED
+## HISTORICAL WEB25 / 08.11.2026 — Stage5 OFFLINE BOUNDED USER SMOKE CLOSED
 
 **WEB25 / USER GUI 08.11.2026 — Stage5 OFFLINE завершён документально, BOUNDED ACCEPTED.** H21 диагностика PARTIAL; H22 (№536) PARTIAL / bounded source+author evidence, author 52 JS/63 web Python/2 отдельные Tk PASS; WEB25 проверил опубликованные исходники/hash, независимый повтор runtime NOT RUN. Пользователь: fake response «Ответ на: привет тест», Turn check с явным результатом, Enter, два изолированных Chat «01» и «02», F5 сохранил выбор и историю. Не проверены целиком cancel/retry/models, 480px/a11y, clean Windows, Tcl combined; историческая отмена/RAW причина OPEN. Review `reports/CHATGPT-WEB25-S5-CLOSEOUT-20261108/review.md`. NEXT №37 Stage6 RT-002/B2 отдельная TASK; Stage7 OAuth/live только отдельно.
 
