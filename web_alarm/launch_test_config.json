@@ -1,8 +1,13 @@
 {
-  "_comment": "Постоянная конфигурация Start_WebAlarm_Test.cmd. Stage 5 запускается только в браузере через --web; Tkinter не развивается. При смене тестового этапа обновляется профиль здесь; имена файлов запуска сохраняются. Штатный запуск эту конфигурацию не читает.",
+  "_comment": "Постоянный TEST: Ordinary Core bridge, только Web и fake transport. Возврат к старому тесту: active=stage5-offline. STANDARD эту конфигурацию не читает.",
   "schema_version": 1,
-  "active": "stage5-offline",
+  "active": "ordinary-core-offline",
   "test_profiles": {
+    "ordinary-core-offline": {
+      "title": "Ordinary Core Chat · OFFLINE TEST",
+      "kind": "python_script",
+      "script": "web_alarm/ordinary_test_fixture.py"
+    },
     "stage5-offline": {
       "title": "Stage 5 · OFFLINE TEST",
       "kind": "python_script",

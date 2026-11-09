@@ -1,0 +1,20 @@
+test_active_profile_uses_bridge_and_old_stage5_is_available (test_web_alarm_ordinary_test_activation.ActivationTests.test_active_profile_uses_bridge_and_old_stage5_is_available) ... ok
+test_missing_test_config_cannot_fall_back_to_standard (test_web_alarm_ordinary_test_activation.ActivationTests.test_missing_test_config_cannot_fall_back_to_standard) ... ok
+test_permanent_cmd_chat_flow_and_cleanup (test_web_alarm_ordinary_test_activation.ActivationTests.test_permanent_cmd_chat_flow_and_cleanup) ... ERROR
+
+======================================================================
+ERROR: test_permanent_cmd_chat_flow_and_cleanup (test_web_alarm_ordinary_test_activation.ActivationTests.test_permanent_cmd_chat_flow_and_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ordinary_test_activation.py", line 93, in test_permanent_cmd_chat_flow_and_cleanup
+    _, capability = http("GET", "/ui/ultra-chat/capability")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_web_alarm_ordinary_test_activation.py", line 84, in http
+    conn = http.client.HTTPConnection("127.0.0.1", port, timeout=8)
+           ^^^^^^^^^^^
+AttributeError: 'function' object has no attribute 'client'
+
+----------------------------------------------------------------------
+Ran 3 tests in 6.153s
+
+FAILED (errors=1)

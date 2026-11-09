@@ -1,0 +1,137 @@
+{
+  "command": "finish",
+  "card": "Документация/000_Задачи Codex.md",
+  "steps": [
+    {
+      "command": "check",
+      "card_sha256": "d4611c344c403e7625abbfb4a5726452d7ed41854284073e9ff64ceedeffe23f",
+      "eol": "CRLF",
+      "marker_lines": {
+        "b1b": 48,
+        "b1e": 181,
+        "b11b": 187,
+        "b11e": 397
+      },
+      "block1": {
+        "state": "TASK",
+        "task_id": "CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001",
+        "problems": [],
+        "title": "CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001",
+        "lines": 132
+      },
+      "block1_1": {
+        "state": "FILLED",
+        "task_id": "CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001",
+        "copy_sha256": "ee53e9fd806dc6b0e5dc36c6aad861a157974dc9eda9767a4e85c0849233c24f",
+        "history_id": "H-CODEX-000027",
+        "history_record": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/task_record.json",
+        "problems": []
+      },
+      "problems": [],
+      "result": "OK"
+    },
+    {
+      "command": "dry-run",
+      "mode": "dry-run",
+      "task_id": "CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "old_card_sha256": "d4611c344c403e7625abbfb4a5726452d7ed41854284073e9ff64ceedeffe23f",
+      "previous_slot": {
+        "state": "FILLED",
+        "task_id": "CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001",
+        "copy_sha256": "ee53e9fd806dc6b0e5dc36c6aad861a157974dc9eda9767a4e85c0849233c24f",
+        "publication": "NOT VERIFIED",
+        "archived": "IN_SNAPSHOT",
+        "action": "REUSED",
+        "locator": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/handoff_task.md",
+        "archive_sha256": "d39cc115f39a6d9d17e93d97397d0dbdab747a868a614841bc8922b56f5c1b44"
+      },
+      "history_id": "H-CODEX-000028",
+      "new_card_sha256": "025ff1a588cc78f3f36f3fe31c828827b787125a084474e7eadd99a43499b7bb",
+      "copy_sha256_lf": "09704a717715cce5b7c6eb97005e21d057c633f02d810fc4db22b747e3844772",
+      "copy_lines": 132,
+      "copied_exact": true,
+      "outside_slots_unchanged": true,
+      "block1_after": "WAITING",
+      "eol": "CRLF",
+      "snapshot": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/handoff_task.md",
+      "snapshot_state": "NEW",
+      "chat_amendments": 0,
+      "result": "DRY RUN OK",
+      "planned_action": "ROTATED"
+    },
+    {
+      "command": "apply",
+      "mode": "apply",
+      "task_id": "CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "old_card_sha256": "d4611c344c403e7625abbfb4a5726452d7ed41854284073e9ff64ceedeffe23f",
+      "previous_slot": {
+        "state": "FILLED",
+        "task_id": "CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001",
+        "copy_sha256": "ee53e9fd806dc6b0e5dc36c6aad861a157974dc9eda9767a4e85c0849233c24f",
+        "publication": "NOT VERIFIED",
+        "archived": "IN_SNAPSHOT",
+        "action": "REUSED",
+        "locator": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/handoff_task.md",
+        "archive_sha256": "d39cc115f39a6d9d17e93d97397d0dbdab747a868a614841bc8922b56f5c1b44"
+      },
+      "history_id": "H-CODEX-000028",
+      "new_card_sha256": "025ff1a588cc78f3f36f3fe31c828827b787125a084474e7eadd99a43499b7bb",
+      "copy_sha256_lf": "09704a717715cce5b7c6eb97005e21d057c633f02d810fc4db22b747e3844772",
+      "copy_lines": 132,
+      "copied_exact": true,
+      "outside_slots_unchanged": true,
+      "block1_after": "WAITING",
+      "eol": "CRLF",
+      "snapshot": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/handoff_task.md",
+      "snapshot_state": "NEW",
+      "chat_amendments": 0,
+      "history": {
+        "id": "CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001",
+        "history_id": "H-CODEX-000028",
+        "record": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/task_record.json",
+        "status": "SUBMITTED / REVIEW PENDING",
+        "review": "NOT VERIFIED"
+      },
+      "snapshot_sha256": "bf204a65e4482ed0bd18b8453e6155ff78904534eab37d56d14132c607ec6de0",
+      "result": "ROTATED",
+      "card_unchanged": false
+    },
+    {
+      "command": "readback",
+      "card_sha256": "025ff1a588cc78f3f36f3fe31c828827b787125a084474e7eadd99a43499b7bb",
+      "eol": "CRLF",
+      "marker_lines": {
+        "b1b": 48,
+        "b1e": 50,
+        "b11b": 56,
+        "b11e": 191
+      },
+      "block1": {
+        "state": "WAITING",
+        "problems": [],
+        "lines": 1
+      },
+      "block1_1": {
+        "state": "FILLED",
+        "task_id": "CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001",
+        "copy_sha256": "09704a717715cce5b7c6eb97005e21d057c633f02d810fc4db22b747e3844772",
+        "history_id": "H-CODEX-000028",
+        "history_record": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/task_record.json",
+        "problems": []
+      },
+      "problems": [],
+      "result": "OK"
+    }
+  ],
+  "result": "ROTATED",
+  "task_id": "CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001",
+  "history": {
+    "id": "CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001",
+    "history_id": "H-CODEX-000028",
+    "record": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+  }
+}
