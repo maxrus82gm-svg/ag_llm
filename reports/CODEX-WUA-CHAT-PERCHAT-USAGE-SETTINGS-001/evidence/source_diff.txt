@@ -1,0 +1,278 @@
+--- before/web_alarm/ultra_chat.py
++++ web_alarm/ultra_chat.py
+@@ -646,7 +646,109 @@
+ 
+     def capability(self):
+         return {**super().capability(), "core_bridge": True, "real_available": False,
+-                "real_denial_reason": "provider_admission_required"}
++                "real_denial_reason": "provider_admission_required", "chat_preferences": True}
++
++    @staticmethod
++    def _settings_path(path):
++        parts = path.split("/")[1:]
++        return (len(parts) == 7 and parts[:3] == ["ultra", "chat", "workspaces"]
++                and parts[4] == "chats" and parts[6] == "settings")
++
++    @staticmethod
++    def is_write_path(path):
++        return OrdinaryCoreChatService._settings_path(path) or OfflineUltraChatService.is_write_path(path)
++
++    def _settings_route(self, path, query):
++        parse_query(query, frozenset())
++        parts = path.split("/")[1:]
++        if not _CHAT_ID_RE.fullmatch(parts[5]):
++            raise UltraChatError(400, "invalid_ultra_chat_request", "Invalid chat_id")
++        return _wa_id(parts[3]), parts[5]
++
++    def route(self, path, raw_query):
++        if self._settings_path(path):
++            ws, chat = self._settings_route(path, raw_query)
++            return lambda: self.chat_preferences(ws, chat)
++        return super().route(path, raw_query)
++
++    def write_route(self, path, raw_query):
++        if self._settings_path(path):
++            ws, chat = self._settings_route(path, raw_query)
++            return lambda body: (200, self.chat_preferences(ws, chat, body))
++        return super().write_route(path, raw_query)
++
++    def chat_preferences(self, wa_workspace_id, chat_id, update=...):
++        defaults = {"compression_threshold_tokens": 250000, "answer_tokens": 10000}
++        valid = lambda value: (type(value) is dict and set(value) == set(defaults)
++                              and all(type(n) is int and 0 < n <= 9007199254740991 for n in value.values()))
++        if update is not ... and not valid(update):
++            raise UltraChatError(400, "invalid_chat_settings", "Use positive integer token preferences")
++        core = _core()
++        root, workspace_id = self._writable_workspace(core, wa_workspace_id)
++        try:
++            with core._existing_workspace_writer(root, workspace_id) as writer:
++                parts, metadata = core._require_chat_for_write(writer, chat_id)
++                settings = metadata.get("ordinary_chat_settings", defaults)
++                if not valid(settings):
++                    raise UltraChatError(503, "chat_settings_damaged", "Chat preferences could not be verified")
++                if update is not ... and (update != settings or "ordinary_chat_settings" not in metadata):
++                    core._replace_verified(writer.anchor, parts + ("metadata.json",),
++                        core._json_bytes({**metadata, "ordinary_chat_settings": dict(update)}))
++                    settings = update
++                return {"settings": dict(settings), "applied_to_provider": False, "automatic_compression": False}
++        except (core.ChatNotFoundError, core.StorageWriteError, ValueError, OSError) as error:
++            raise _write_error(core, error) from None
++
++    def messages(self, wa_workspace_id, chat_id, before, limit):
++        page = super().messages(wa_workspace_id, chat_id, before, limit)
++        try:
++            page["usage_summary"] = self.chat_usage(wa_workspace_id, chat_id)
++        except (UltraChatError, OSError, ValueError, KeyError, TypeError):
++            # Optional display projection is not authority and never replaces
++            # missing/corrupt accounting with a fabricated zero.
++            page["usage_summary"] = {"available": False, "synthetic": True}
++        return page
++
++    def chat_usage(self, wa_workspace_id, chat_id):
++        """Read existing durable attempts once each; no ledger or stored totals."""
++        import run_store
++        from .turn_service import TURN
++        root, workspace_id = self._writable_workspace(_core(), wa_workspace_id)
++        turns = self._turns_for(root, workspace_id, chat_id)
++        keys = ("prompt_tokens", "completion_tokens", "reasoning_tokens", "total_tokens")
++        known, missing = dict.fromkeys(keys, 0), dict.fromkeys(keys, 0)
++        last, seen = None, set()
++        with turns._session(root, workspace_id, chat_id):
++            index = run_store.load_workspace_run_index(root)
++            entries = [(int(entry["display_id"].split("-")[-1]), run_id)
++                       for run_id, entry in index["runs"].items()
++                       if entry.get("chat_id") == chat_id and TURN.fullmatch(run_id)]
++            if len(entries) > 512:
++                raise ValueError("Usage projection exceeds bounded read")
++            for _, run_id in sorted(entries):
++                turn = turns._load(root, workspace_id, chat_id, run_id)
++                records = turns._records(root, turn)
++                view = turns._view(root, turn, records=records)
++                if not any(r["event"] == "turn_started" for r in records):
++                    continue  # READY/cancel-before-start is not a provider attempt
++                if any(r["event"] == "turn_failed" and r["payload"].get("execution") == "not_started"
++                       for r in records):
++                    continue  # a trusted preflight refusal proves no execution
++                attempt = view["attempt_id"]
++                if attempt in seen:
++                    raise ValueError("Duplicate attempt identity")
++                seen.add(attempt)
++                usage = view.get("usage") or {}
++                for key in keys:
++                    value = usage.get(key)
++                    if value is None:
++                        missing[key] += 1
++                    else:
++                        known[key] += value
++                last = {"turn_id": run_id, "state": view["state"], "usage": usage}
++        return {"available": True, "synthetic": True, "attempts": len(seen),
++                "known": known, "missing": missing, "complete": missing["total_tokens"] == 0,
++                "last": last}
+ 
+     def _context(self, root, workspace_id, chat_id, turns):
+         # Actual projection happens in adapter.freeze under Turn's shared writer
+--- before/web_alarm/ui.py
++++ web_alarm/ui.py
+@@ -337,6 +337,13 @@
+ <div id="chatNotice" class="notice" role="status" hidden></div>
+ <button type="button" id="chatOlder" hidden>Показать ранее</button>
+ <ol id="chatHistory" class="chat-history" aria-label="История диалога"></ol>
++<p id="chatUsage" class="muted" role="status" aria-live="polite" hidden></p>
++<details id="chatPreferences" hidden><summary>Настройки этого чата</summary>
++<label>Порог предложения сжатия, токенов <input id="chatContextTokens" type="number" min="1" step="1"></label>
++<label>Предпочтительный максимум ответа, токенов <input id="chatAnswerTokens" type="number" min="1" step="1"></label>
++<button id="chatAnswerExtended" type="button">20 000 (расширенный)</button> <button id="chatPreferencesSave" type="button">Сохранить</button>
++<p class="muted">Предпочтения этого чата. Порог сжатия не равен окну модели. Автосжатие выключено. Применение к провайдеру не подтверждено; TEST использует прежние пределы, REAL закрыт до S3b.</p>
++<p id="chatPreferencesStatus" role="status" aria-live="polite"></p></details>
+ <div id="chatTurnControls" class="chat-request-status" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button><p id="chatTurnCheckResult" class="muted" role="status" aria-live="polite"></p></div>
+ <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
+ <label for="chatInput">Сообщение</label>
+@@ -1916,6 +1923,49 @@
+ function turnPending(){try{return JSON.parse(localStorage.getItem(turnScope())||'null')}catch(_){return null}}
+ function testChatSelection(){try{return JSON.parse(localStorage.getItem('webAlarm.testChatSelection')||'null')}catch(_){return null}}
+ function turnBase(){return '/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats/'+encodeURIComponent(chat.chat)+'/turns'}
++function renderChatUsage(summary){
++  const target=$('chatUsage');target.hidden=!stage5Offline||!chat.workspace||!chat.chat;
++  const fields=[['prompt_tokens','Вход'],['completion_tokens','Выход'],['reasoning_tokens','Рассуждения (внутри выхода)'],['total_tokens','Всего']];
++  const count=n=>Number.isSafeInteger(n)&&n>=0?String(n):'UNKNOWN';
++  if(!summary?.available){target.textContent='TEST · синтетические токены: UNKNOWN';return}
++  if(!summary.attempts){target.textContent='TEST · синтетические токены: попыток ещё нет';return}
++  const last=fields.map(([k,label])=>label+': '+count(summary.last?.usage?.[k])).join(' · ');
++  const total=fields.map(([k,label])=>label+': '+(summary.missing?.[k]===summary.attempts?'UNKNOWN':
++    (summary.missing?.[k]?'≥ ':'')+count(summary.known?.[k]))).join(' · ');
++  target.textContent='TEST · синтетические токены. Последняя попытка — '+last+'. Чат: известный расход — '+total+
++    (summary.complete?'.':'. Общий расход известен не полностью.');
++}
++let chatPreferencesRevision=0,chatPreferencesLoadedFor=null;
++function preferencesBase(){return turnBase().replace(/\/turns$/,'/settings')}
++function preferencesBusy(value){for(const id of ['chatContextTokens','chatAnswerTokens','chatAnswerExtended','chatPreferencesSave'])$(id).disabled=value}
++async function loadChatPreferences(){
++  $('chatPreferences').hidden=!chatTurn.preferencesEnabled||!chat.workspace||!chat.chat;
++  if($('chatPreferences').hidden)return;
++  const epoch=chat.epoch,revision=++chatPreferencesRevision;preferencesBusy(true);
++  try{
++    const result=await chatGet(preferencesBase());
++    if(epoch!==chat.epoch||revision!==chatPreferencesRevision)return;
++    $('chatContextTokens').value=String(result.settings.compression_threshold_tokens);
++    $('chatAnswerTokens').value=String(result.settings.answer_tokens);
++    chatPreferencesLoadedFor=turnScope();
++    text('chatPreferencesStatus','Предпочтения загружены; к провайдеру не применены.');
++  }catch(_){if(epoch===chat.epoch&&revision===chatPreferencesRevision)text('chatPreferencesStatus','Настройки не загружены. Сохранение недоступно.');return}
++  finally{if(epoch===chat.epoch&&revision===chatPreferencesRevision)preferencesBusy(true)}
++  if(epoch===chat.epoch&&revision===chatPreferencesRevision)preferencesBusy(false);
++}
++async function saveChatPreferences(){
++  if(!chatTurn.preferencesEnabled||!chat.workspace||!chat.chat||$('chatPreferencesSave').disabled)return;
++  const values=[$('chatContextTokens').value,$('chatAnswerTokens').value];
++  if(values.some(s=>!/^\d+$/.test(s)||!Number.isSafeInteger(Number(s))||Number(s)<=0)){
++    text('chatPreferencesStatus','Введите положительные целые числа.');return
++  }
++  const epoch=chat.epoch,revision=++chatPreferencesRevision;preferencesBusy(true);
++  try{
++    await chatPost(preferencesBase(),{compression_threshold_tokens:Number(values[0]),answer_tokens:Number(values[1])});
++    if(epoch===chat.epoch&&revision===chatPreferencesRevision)text('chatPreferencesStatus','Сохранено для этого чата. К провайдеру не применено.');
++  }catch(_){if(epoch===chat.epoch&&revision===chatPreferencesRevision)text('chatPreferencesStatus','Сохранение не подтверждено. Проверьте настройки повторным открытием.');}
++  finally{if(epoch===chat.epoch&&revision===chatPreferencesRevision)preferencesBusy(false)}
++}
+ function renderTurnComposer(){
+   const enabled=chatTurn.available&&!!chat.workspace&&!!chat.chat;
+   const pending=turnPending();
+@@ -2028,6 +2078,7 @@
+ async function loadChatAccess(){
+   const access=await api('/ui/ultra-chat/capability'),c=access?.ultra_chat;
+   chatTurn.available=access?.turn_test?.available===true&&access.turn_test.mode===(stage5Offline?'TEST_OFFLINE':'TEST');
++  chatTurn.preferencesEnabled=stage5Offline&&access?.turn_test?.chat_preferences===true;
+   if(stage5Offline){
+     chatTurn.models=chatTurn.available&&Array.isArray(access.turn_test.models)?access.turn_test.models:[];
+     if(!chatTurn.models.some(m=>m.model_id===chatTurn.model))chatTurn.model=chatTurn.models[0]?.model_id??null;
+@@ -2150,7 +2201,8 @@
+     $('chatTurnNew').hidden=true;
+     $('chatInput').value=turnPending()?.text??'';
+   }
+-  text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true;text('chatTurnStatus','');renderTurnComposer()
++  text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true;text('chatTurnStatus','');renderChatUsage(null);
++  chatPreferencesRevision++;chatPreferencesLoadedFor=null;$('chatPreferences').hidden=true;preferencesBusy(true);text('chatPreferencesStatus','');renderTurnComposer()
+ }
+ function chatMessage(m){
+   const li=element('li',null,'msg'),failed=m.outcome==='failed',meta=element('div',null,'msg-meta');
+@@ -2304,7 +2356,7 @@
+     if(epoch!==chat.epoch||request!==chat.historyRevision)return;
+     if(!validChatHistory(data))throw Error('Некорректный ответ сервера об истории диалога');
+     notice('chatError','');chat.messages=older?[...data.messages,...chat.messages]:data.messages;chat.page=data.page;
+-    renderChatHistory(data,older)
++    renderChatHistory(data,older);renderChatUsage(data.usage_summary);if(!older&&chatPreferencesLoadedFor!==turnScope())await loadChatPreferences()
+   }catch(e){if(epoch===chat.epoch&&request===chat.historyRevision)chatFailure(e)}
+   finally{if(older&&epoch===chat.epoch&&request===chat.historyRevision){chat.olderBusy=false;$('chatOlder').disabled=false}}
+ }
+@@ -2464,6 +2516,8 @@
+   localStorage.removeItem(turnScope());$('chatInput').value='';text('chatTurnStatus','Новый запрос. Прежний исход остаётся неизвестным.');renderTurnComposer()
+ }};
+ $('chatModelPick').onclick=()=>openPicker();
++$('chatPreferencesSave').onclick=()=>saveChatPreferences();
++$('chatAnswerExtended').onclick=()=>{$('chatAnswerTokens').value='20000'};
+ try{
+   const saved=JSON.parse(localStorage.getItem('webAlarm.selection')||'{}');
+   if(typeof saved.workspace==='string')view.workspace=saved.workspace;
+--- before/test_web_alarm_ultra_chat_ui.js
++++ test_web_alarm_ultra_chat_ui.js
+@@ -1225,3 +1225,60 @@
+   assert.equal(h.el('chatNameForm').hidden, true);
+   assert.equal(h.el('chatError').hidden, true);
+ });
++
++
++test('per-chat usage: nested reasoning is displayed separately from total and marked synthetic', () => {
++  const h=harness({offline:true});h.run("chat.workspace='ws_a';chat.chat='chat_a'");
++  const u={available:true,synthetic:true,attempts:1,complete:true,known:{prompt_tokens:7,completion_tokens:5,reasoning_tokens:3,total_tokens:12},missing:{prompt_tokens:0,completion_tokens:0,reasoning_tokens:0,total_tokens:0},last:{usage:{prompt_tokens:7,completion_tokens:5,reasoning_tokens:3,total_tokens:12}}};
++  h.run('renderChatUsage('+JSON.stringify(u)+')');
++  assert.match(h.el('chatUsage').textContent,/синтетические/);assert.match(h.el('chatUsage').textContent,/Вход: 7/);
++  assert.match(h.el('chatUsage').textContent,/Выход: 5/);assert.match(h.el('chatUsage').textContent,/внутри выхода.*3/);
++  assert.match(h.el('chatUsage').textContent,/Всего: 12/);assert.doesNotMatch(h.el('chatUsage').textContent,/Всего: 15/);
++});
++test('per-chat usage: missing stays UNKNOWN and clearing selection removes prior totals', () => {
++  const h=harness({offline:true});h.run("chat.workspace='ws_a';chat.chat='chat_a'");
++  h.run('renderChatUsage({available:true,attempts:1,complete:false,known:{total_tokens:0},missing:{total_tokens:1},last:{usage:{}}})');
++  assert.match(h.el('chatUsage').textContent,/Всего: UNKNOWN/);assert.match(h.el('chatUsage').textContent,/не полностью/);
++  h.run("chat.chat='chat_b';clearChatHistory('B')");assert.doesNotMatch(h.el('chatUsage').textContent,/Всего: 0/);
++  assert.match(h.el('chatUsage').textContent,/UNKNOWN/);
++});
++
++
++function preferencesHarness(store,extra={}){
++  const settings='/ultra/chat/workspaces/ws_a/chats/chat_a/settings';
++  const routes=offlineRoutes({
++    '/ui/ultra-chat/capability':()=>({...cap(),turn_test:{available:true,mode:'TEST_OFFLINE',chat_preferences:true,models:[{model_id:'gigachat_2_pro',display_name:'TEST Pro'}]}}),
++    [settings]:opts=>{if(opts.method==='POST')store.value=JSON.parse(opts.body);return {settings:store.value,applied_to_provider:false,automatic_compression:false}},...extra});
++  const h=harness({offline:true,routes});h.run("chat.workspace='ws_a';chat.chat='chat_a';chatTurn.preferencesEnabled=true");return h;
++}
++test('per-chat preferences: save/reopen and model switch retain values without applying provider caps',async()=>{
++ const store={value:{compression_threshold_tokens:250000,answer_tokens:10000}};
++ const h=preferencesHarness(store);await h.run('loadChatPreferences()');
++ assert.equal(h.el('chatContextTokens').value,'250000');assert.equal(h.el('chatAnswerTokens').value,'10000');
++ h.el('chatContextTokens').value='123456';h.el('chatAnswerExtended').onclick();await h.el('chatPreferencesSave').onclick();
++ assert.deepEqual(store.value,{compression_threshold_tokens:123456,answer_tokens:20000});
++ h.run("chatTurn.model='gigachat_ultra';renderTurnComposer()");assert.equal(h.el('chatAnswerTokens').value,'20000');
++ const reopened=preferencesHarness(store);await reopened.run('loadChatPreferences()');assert.equal(reopened.el('chatContextTokens').value,'123456');
++ assert.match(reopened.el('chatPreferencesStatus').textContent,/не применены/);
++ const posts=h.calls.filter(c=>c.method==='POST').length;assert.ok(posts>0);
++ h.el('chatAnswerTokens').value='0';await h.el('chatPreferencesSave').onclick();assert.match(h.el('chatPreferencesStatus').textContent,/положительные/);
++ assert.equal(h.calls.filter(c=>c.method==='POST').length,posts);
++ assert.equal(store.value.answer_tokens,20000);
++});
++test('per-chat preferences: delayed response from old chat cannot overwrite new chat inputs',async()=>{
++ let release;const late=new Promise(resolve=>release=resolve);
++ const store={value:{compression_threshold_tokens:250000,answer_tokens:10000}};
++ const h=preferencesHarness(store,{'/ultra/chat/workspaces/ws_a/chats/chat_a/settings':()=>late,
++ '/ultra/chat/workspaces/ws_a/chats/chat_b/settings':()=>({settings:{compression_threshold_tokens:987,answer_tokens:654}})});
++ const old=h.run('loadChatPreferences()');await settle();h.run("chat.epoch++;chat.chat='chat_b';clearChatHistory('B')");
++ await h.run('loadChatPreferences()');release({settings:store.value});await old;
++ assert.equal(h.el('chatContextTokens').value,'987');assert.equal(h.el('chatAnswerTokens').value,'654');
++});
++
++test('per-chat preferences: ordinary history refresh preserves unsaved preference edits',async()=>{
++ const store={value:{compression_threshold_tokens:250000,answer_tokens:10000}};
++ const h=preferencesHarness(store,{[MESSAGES_A]:()=>page([])});await h.run('loadChatPreferences()');
++ h.el('chatAnswerTokens').value='9876';await h.run('loadChatHistory(false)');
++ assert.equal(h.el('chatAnswerTokens').value,'9876');
++ assert.equal(h.calls.filter(c=>c.url==='/ultra/chat/workspaces/ws_a/chats/chat_a/settings'&&c.method==='GET').length,1);
++});

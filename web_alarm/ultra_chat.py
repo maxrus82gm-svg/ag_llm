@@ -646,7 +646,109 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
 
     def capability(self):
         return {**super().capability(), "core_bridge": True, "real_available": False,
-                "real_denial_reason": "provider_admission_required"}
+                "real_denial_reason": "provider_admission_required", "chat_preferences": True}
+
+    @staticmethod
+    def _settings_path(path):
+        parts = path.split("/")[1:]
+        return (len(parts) == 7 and parts[:3] == ["ultra", "chat", "workspaces"]
+                and parts[4] == "chats" and parts[6] == "settings")
+
+    @staticmethod
+    def is_write_path(path):
+        return OrdinaryCoreChatService._settings_path(path) or OfflineUltraChatService.is_write_path(path)
+
+    def _settings_route(self, path, query):
+        parse_query(query, frozenset())
+        parts = path.split("/")[1:]
+        if not _CHAT_ID_RE.fullmatch(parts[5]):
+            raise UltraChatError(400, "invalid_ultra_chat_request", "Invalid chat_id")
+        return _wa_id(parts[3]), parts[5]
+
+    def route(self, path, raw_query):
+        if self._settings_path(path):
+            ws, chat = self._settings_route(path, raw_query)
+            return lambda: self.chat_preferences(ws, chat)
+        return super().route(path, raw_query)
+
+    def write_route(self, path, raw_query):
+        if self._settings_path(path):
+            ws, chat = self._settings_route(path, raw_query)
+            return lambda body: (200, self.chat_preferences(ws, chat, body))
+        return super().write_route(path, raw_query)
+
+    def chat_preferences(self, wa_workspace_id, chat_id, update=...):
+        defaults = {"compression_threshold_tokens": 250000, "answer_tokens": 10000}
+        valid = lambda value: (type(value) is dict and set(value) == set(defaults)
+                              and all(type(n) is int and 0 < n <= 9007199254740991 for n in value.values()))
+        if update is not ... and not valid(update):
+            raise UltraChatError(400, "invalid_chat_settings", "Use positive integer token preferences")
+        core = _core()
+        root, workspace_id = self._writable_workspace(core, wa_workspace_id)
+        try:
+            with core._existing_workspace_writer(root, workspace_id) as writer:
+                parts, metadata = core._require_chat_for_write(writer, chat_id)
+                settings = metadata.get("ordinary_chat_settings", defaults)
+                if not valid(settings):
+                    raise UltraChatError(503, "chat_settings_damaged", "Chat preferences could not be verified")
+                if update is not ... and (update != settings or "ordinary_chat_settings" not in metadata):
+                    core._replace_verified(writer.anchor, parts + ("metadata.json",),
+                        core._json_bytes({**metadata, "ordinary_chat_settings": dict(update)}))
+                    settings = update
+                return {"settings": dict(settings), "applied_to_provider": False, "automatic_compression": False}
+        except (core.ChatNotFoundError, core.StorageWriteError, ValueError, OSError) as error:
+            raise _write_error(core, error) from None
+
+    def messages(self, wa_workspace_id, chat_id, before, limit):
+        page = super().messages(wa_workspace_id, chat_id, before, limit)
+        try:
+            page["usage_summary"] = self.chat_usage(wa_workspace_id, chat_id)
+        except (UltraChatError, OSError, ValueError, KeyError, TypeError):
+            # Optional display projection is not authority and never replaces
+            # missing/corrupt accounting with a fabricated zero.
+            page["usage_summary"] = {"available": False, "synthetic": True}
+        return page
+
+    def chat_usage(self, wa_workspace_id, chat_id):
+        """Read existing durable attempts once each; no ledger or stored totals."""
+        import run_store
+        from .turn_service import TURN
+        root, workspace_id = self._writable_workspace(_core(), wa_workspace_id)
+        turns = self._turns_for(root, workspace_id, chat_id)
+        keys = ("prompt_tokens", "completion_tokens", "reasoning_tokens", "total_tokens")
+        known, missing = dict.fromkeys(keys, 0), dict.fromkeys(keys, 0)
+        last, seen = None, set()
+        with turns._session(root, workspace_id, chat_id):
+            index = run_store.load_workspace_run_index(root)
+            entries = [(int(entry["display_id"].split("-")[-1]), run_id)
+                       for run_id, entry in index["runs"].items()
+                       if entry.get("chat_id") == chat_id and TURN.fullmatch(run_id)]
+            if len(entries) > 512:
+                raise ValueError("Usage projection exceeds bounded read")
+            for _, run_id in sorted(entries):
+                turn = turns._load(root, workspace_id, chat_id, run_id)
+                records = turns._records(root, turn)
+                view = turns._view(root, turn, records=records)
+                if not any(r["event"] == "turn_started" for r in records):
+                    continue  # READY/cancel-before-start is not a provider attempt
+                if any(r["event"] == "turn_failed" and r["payload"].get("execution") == "not_started"
+                       for r in records):
+                    continue  # a trusted preflight refusal proves no execution
+                attempt = view["attempt_id"]
+                if attempt in seen:
+                    raise ValueError("Duplicate attempt identity")
+                seen.add(attempt)
+                usage = view.get("usage") or {}
+                for key in keys:
+                    value = usage.get(key)
+                    if value is None:
+                        missing[key] += 1
+                    else:
+                        known[key] += value
+                last = {"turn_id": run_id, "state": view["state"], "usage": usage}
+        return {"available": True, "synthetic": True, "attempts": len(seen),
+                "known": known, "missing": missing, "complete": missing["total_tokens"] == 0,
+                "last": last}
 
     def _context(self, root, workspace_id, chat_id, turns):
         # Actual projection happens in adapter.freeze under Turn's shared writer

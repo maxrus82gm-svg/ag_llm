@@ -1225,3 +1225,60 @@ test('AMENDMENT first chat: a lost reply keeps the pending id and consent; retry
   assert.equal(h.el('chatNameForm').hidden, true);
   assert.equal(h.el('chatError').hidden, true);
 });
+
+
+test('per-chat usage: nested reasoning is displayed separately from total and marked synthetic', () => {
+  const h=harness({offline:true});h.run("chat.workspace='ws_a';chat.chat='chat_a'");
+  const u={available:true,synthetic:true,attempts:1,complete:true,known:{prompt_tokens:7,completion_tokens:5,reasoning_tokens:3,total_tokens:12},missing:{prompt_tokens:0,completion_tokens:0,reasoning_tokens:0,total_tokens:0},last:{usage:{prompt_tokens:7,completion_tokens:5,reasoning_tokens:3,total_tokens:12}}};
+  h.run('renderChatUsage('+JSON.stringify(u)+')');
+  assert.match(h.el('chatUsage').textContent,/синтетические/);assert.match(h.el('chatUsage').textContent,/Вход: 7/);
+  assert.match(h.el('chatUsage').textContent,/Выход: 5/);assert.match(h.el('chatUsage').textContent,/внутри выхода.*3/);
+  assert.match(h.el('chatUsage').textContent,/Всего: 12/);assert.doesNotMatch(h.el('chatUsage').textContent,/Всего: 15/);
+});
+test('per-chat usage: missing stays UNKNOWN and clearing selection removes prior totals', () => {
+  const h=harness({offline:true});h.run("chat.workspace='ws_a';chat.chat='chat_a'");
+  h.run('renderChatUsage({available:true,attempts:1,complete:false,known:{total_tokens:0},missing:{total_tokens:1},last:{usage:{}}})');
+  assert.match(h.el('chatUsage').textContent,/Всего: UNKNOWN/);assert.match(h.el('chatUsage').textContent,/не полностью/);
+  h.run("chat.chat='chat_b';clearChatHistory('B')");assert.doesNotMatch(h.el('chatUsage').textContent,/Всего: 0/);
+  assert.match(h.el('chatUsage').textContent,/UNKNOWN/);
+});
+
+
+function preferencesHarness(store,extra={}){
+  const settings='/ultra/chat/workspaces/ws_a/chats/chat_a/settings';
+  const routes=offlineRoutes({
+    '/ui/ultra-chat/capability':()=>({...cap(),turn_test:{available:true,mode:'TEST_OFFLINE',chat_preferences:true,models:[{model_id:'gigachat_2_pro',display_name:'TEST Pro'}]}}),
+    [settings]:opts=>{if(opts.method==='POST')store.value=JSON.parse(opts.body);return {settings:store.value,applied_to_provider:false,automatic_compression:false}},...extra});
+  const h=harness({offline:true,routes});h.run("chat.workspace='ws_a';chat.chat='chat_a';chatTurn.preferencesEnabled=true");return h;
+}
+test('per-chat preferences: save/reopen and model switch retain values without applying provider caps',async()=>{
+ const store={value:{compression_threshold_tokens:250000,answer_tokens:10000}};
+ const h=preferencesHarness(store);await h.run('loadChatPreferences()');
+ assert.equal(h.el('chatContextTokens').value,'250000');assert.equal(h.el('chatAnswerTokens').value,'10000');
+ h.el('chatContextTokens').value='123456';h.el('chatAnswerExtended').onclick();await h.el('chatPreferencesSave').onclick();
+ assert.deepEqual(store.value,{compression_threshold_tokens:123456,answer_tokens:20000});
+ h.run("chatTurn.model='gigachat_ultra';renderTurnComposer()");assert.equal(h.el('chatAnswerTokens').value,'20000');
+ const reopened=preferencesHarness(store);await reopened.run('loadChatPreferences()');assert.equal(reopened.el('chatContextTokens').value,'123456');
+ assert.match(reopened.el('chatPreferencesStatus').textContent,/не применены/);
+ const posts=h.calls.filter(c=>c.method==='POST').length;assert.ok(posts>0);
+ h.el('chatAnswerTokens').value='0';await h.el('chatPreferencesSave').onclick();assert.match(h.el('chatPreferencesStatus').textContent,/положительные/);
+ assert.equal(h.calls.filter(c=>c.method==='POST').length,posts);
+ assert.equal(store.value.answer_tokens,20000);
+});
+test('per-chat preferences: delayed response from old chat cannot overwrite new chat inputs',async()=>{
+ let release;const late=new Promise(resolve=>release=resolve);
+ const store={value:{compression_threshold_tokens:250000,answer_tokens:10000}};
+ const h=preferencesHarness(store,{'/ultra/chat/workspaces/ws_a/chats/chat_a/settings':()=>late,
+ '/ultra/chat/workspaces/ws_a/chats/chat_b/settings':()=>({settings:{compression_threshold_tokens:987,answer_tokens:654}})});
+ const old=h.run('loadChatPreferences()');await settle();h.run("chat.epoch++;chat.chat='chat_b';clearChatHistory('B')");
+ await h.run('loadChatPreferences()');release({settings:store.value});await old;
+ assert.equal(h.el('chatContextTokens').value,'987');assert.equal(h.el('chatAnswerTokens').value,'654');
+});
+
+test('per-chat preferences: ordinary history refresh preserves unsaved preference edits',async()=>{
+ const store={value:{compression_threshold_tokens:250000,answer_tokens:10000}};
+ const h=preferencesHarness(store,{[MESSAGES_A]:()=>page([])});await h.run('loadChatPreferences()');
+ h.el('chatAnswerTokens').value='9876';await h.run('loadChatHistory(false)');
+ assert.equal(h.el('chatAnswerTokens').value,'9876');
+ assert.equal(h.calls.filter(c=>c.url==='/ultra/chat/workspaces/ws_a/chats/chat_a/settings'&&c.method==='GET').length,1);
+});

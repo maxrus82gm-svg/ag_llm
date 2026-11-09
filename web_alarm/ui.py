@@ -337,6 +337,13 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div id="chatNotice" class="notice" role="status" hidden></div>
 <button type="button" id="chatOlder" hidden>Показать ранее</button>
 <ol id="chatHistory" class="chat-history" aria-label="История диалога"></ol>
+<p id="chatUsage" class="muted" role="status" aria-live="polite" hidden></p>
+<details id="chatPreferences" hidden><summary>Настройки этого чата</summary>
+<label>Порог предложения сжатия, токенов <input id="chatContextTokens" type="number" min="1" step="1"></label>
+<label>Предпочтительный максимум ответа, токенов <input id="chatAnswerTokens" type="number" min="1" step="1"></label>
+<button id="chatAnswerExtended" type="button">20 000 (расширенный)</button> <button id="chatPreferencesSave" type="button">Сохранить</button>
+<p class="muted">Предпочтения этого чата. Порог сжатия не равен окну модели. Автосжатие выключено. Применение к провайдеру не подтверждено; TEST использует прежние пределы, REAL закрыт до S3b.</p>
+<p id="chatPreferencesStatus" role="status" aria-live="polite"></p></details>
 <div id="chatTurnControls" class="chat-request-status" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button><p id="chatTurnCheckResult" class="muted" role="status" aria-live="polite"></p></div>
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
 <label for="chatInput">Сообщение</label>
@@ -1916,6 +1923,49 @@ function turnScope(){return chat.workspace&&chat.chat?'webAlarm.testTurn.'+chat.
 function turnPending(){try{return JSON.parse(localStorage.getItem(turnScope())||'null')}catch(_){return null}}
 function testChatSelection(){try{return JSON.parse(localStorage.getItem('webAlarm.testChatSelection')||'null')}catch(_){return null}}
 function turnBase(){return '/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats/'+encodeURIComponent(chat.chat)+'/turns'}
+function renderChatUsage(summary){
+  const target=$('chatUsage');target.hidden=!stage5Offline||!chat.workspace||!chat.chat;
+  const fields=[['prompt_tokens','Вход'],['completion_tokens','Выход'],['reasoning_tokens','Рассуждения (внутри выхода)'],['total_tokens','Всего']];
+  const count=n=>Number.isSafeInteger(n)&&n>=0?String(n):'UNKNOWN';
+  if(!summary?.available){target.textContent='TEST · синтетические токены: UNKNOWN';return}
+  if(!summary.attempts){target.textContent='TEST · синтетические токены: попыток ещё нет';return}
+  const last=fields.map(([k,label])=>label+': '+count(summary.last?.usage?.[k])).join(' · ');
+  const total=fields.map(([k,label])=>label+': '+(summary.missing?.[k]===summary.attempts?'UNKNOWN':
+    (summary.missing?.[k]?'≥ ':'')+count(summary.known?.[k]))).join(' · ');
+  target.textContent='TEST · синтетические токены. Последняя попытка — '+last+'. Чат: известный расход — '+total+
+    (summary.complete?'.':'. Общий расход известен не полностью.');
+}
+let chatPreferencesRevision=0,chatPreferencesLoadedFor=null;
+function preferencesBase(){return turnBase().replace(/\/turns$/,'/settings')}
+function preferencesBusy(value){for(const id of ['chatContextTokens','chatAnswerTokens','chatAnswerExtended','chatPreferencesSave'])$(id).disabled=value}
+async function loadChatPreferences(){
+  $('chatPreferences').hidden=!chatTurn.preferencesEnabled||!chat.workspace||!chat.chat;
+  if($('chatPreferences').hidden)return;
+  const epoch=chat.epoch,revision=++chatPreferencesRevision;preferencesBusy(true);
+  try{
+    const result=await chatGet(preferencesBase());
+    if(epoch!==chat.epoch||revision!==chatPreferencesRevision)return;
+    $('chatContextTokens').value=String(result.settings.compression_threshold_tokens);
+    $('chatAnswerTokens').value=String(result.settings.answer_tokens);
+    chatPreferencesLoadedFor=turnScope();
+    text('chatPreferencesStatus','Предпочтения загружены; к провайдеру не применены.');
+  }catch(_){if(epoch===chat.epoch&&revision===chatPreferencesRevision)text('chatPreferencesStatus','Настройки не загружены. Сохранение недоступно.');return}
+  finally{if(epoch===chat.epoch&&revision===chatPreferencesRevision)preferencesBusy(true)}
+  if(epoch===chat.epoch&&revision===chatPreferencesRevision)preferencesBusy(false);
+}
+async function saveChatPreferences(){
+  if(!chatTurn.preferencesEnabled||!chat.workspace||!chat.chat||$('chatPreferencesSave').disabled)return;
+  const values=[$('chatContextTokens').value,$('chatAnswerTokens').value];
+  if(values.some(s=>!/^\d+$/.test(s)||!Number.isSafeInteger(Number(s))||Number(s)<=0)){
+    text('chatPreferencesStatus','Введите положительные целые числа.');return
+  }
+  const epoch=chat.epoch,revision=++chatPreferencesRevision;preferencesBusy(true);
+  try{
+    await chatPost(preferencesBase(),{compression_threshold_tokens:Number(values[0]),answer_tokens:Number(values[1])});
+    if(epoch===chat.epoch&&revision===chatPreferencesRevision)text('chatPreferencesStatus','Сохранено для этого чата. К провайдеру не применено.');
+  }catch(_){if(epoch===chat.epoch&&revision===chatPreferencesRevision)text('chatPreferencesStatus','Сохранение не подтверждено. Проверьте настройки повторным открытием.');}
+  finally{if(epoch===chat.epoch&&revision===chatPreferencesRevision)preferencesBusy(false)}
+}
 function renderTurnComposer(){
   const enabled=chatTurn.available&&!!chat.workspace&&!!chat.chat;
   const pending=turnPending();
@@ -2028,6 +2078,7 @@ function chatCount(map){return Object.values(map||{}).reduce((sum,n)=>sum+(Numbe
 async function loadChatAccess(){
   const access=await api('/ui/ultra-chat/capability'),c=access?.ultra_chat;
   chatTurn.available=access?.turn_test?.available===true&&access.turn_test.mode===(stage5Offline?'TEST_OFFLINE':'TEST');
+  chatTurn.preferencesEnabled=stage5Offline&&access?.turn_test?.chat_preferences===true;
   if(stage5Offline){
     chatTurn.models=chatTurn.available&&Array.isArray(access.turn_test.models)?access.turn_test.models:[];
     if(!chatTurn.models.some(m=>m.model_id===chatTurn.model))chatTurn.model=chatTurn.models[0]?.model_id??null;
@@ -2150,7 +2201,8 @@ function clearChatHistory(title){
     $('chatTurnNew').hidden=true;
     $('chatInput').value=turnPending()?.text??'';
   }
-  text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true;text('chatTurnStatus','');renderTurnComposer()
+  text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true;text('chatTurnStatus','');renderChatUsage(null);
+  chatPreferencesRevision++;chatPreferencesLoadedFor=null;$('chatPreferences').hidden=true;preferencesBusy(true);text('chatPreferencesStatus','');renderTurnComposer()
 }
 function chatMessage(m){
   const li=element('li',null,'msg'),failed=m.outcome==='failed',meta=element('div',null,'msg-meta');
@@ -2304,7 +2356,7 @@ async function loadChatHistory(older){
     if(epoch!==chat.epoch||request!==chat.historyRevision)return;
     if(!validChatHistory(data))throw Error('Некорректный ответ сервера об истории диалога');
     notice('chatError','');chat.messages=older?[...data.messages,...chat.messages]:data.messages;chat.page=data.page;
-    renderChatHistory(data,older)
+    renderChatHistory(data,older);renderChatUsage(data.usage_summary);if(!older&&chatPreferencesLoadedFor!==turnScope())await loadChatPreferences()
   }catch(e){if(epoch===chat.epoch&&request===chat.historyRevision)chatFailure(e)}
   finally{if(older&&epoch===chat.epoch&&request===chat.historyRevision){chat.olderBusy=false;$('chatOlder').disabled=false}}
 }
@@ -2464,6 +2516,8 @@ $('chatTurnNew').onclick=()=>{if(chatTurn.state==='UNKNOWN'&&(!stage5Offline||!c
   localStorage.removeItem(turnScope());$('chatInput').value='';text('chatTurnStatus','Новый запрос. Прежний исход остаётся неизвестным.');renderTurnComposer()
 }};
 $('chatModelPick').onclick=()=>openPicker();
+$('chatPreferencesSave').onclick=()=>saveChatPreferences();
+$('chatAnswerExtended').onclick=()=>{$('chatAnswerTokens').value='20000'};
 try{
   const saved=JSON.parse(localStorage.getItem('webAlarm.selection')||'{}');
   if(typeof saved.workspace==='string')view.workspace=saved.workspace;

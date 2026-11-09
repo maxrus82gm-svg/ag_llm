@@ -1,0 +1,403 @@
+# Рабочая карточка исполнителя — Codex 007
+
+**USER GO 04.11.2026 / история по ID:** порядок общего №000 и нового №18 имеет приоритет над старыми указаниями о полном №001. После итогового пакета исполнитель или пользователь запускает штатный `finish`: сохранение источников и HISTORY ID → проверка → перенос БЛОК 1 в 1.1. Номер и адрес записи видны в 1.1/протоколе; повтор не создаёт новый номер. Веб-координатор проверяет запись по этому ID и ведёт короткие индексы №001/05. Полные постановки в №001 больше не вставлять; последние десять строк не заменяют очередь всех OPEN. Для старой 1.1 без H-номера использовать точный TASK ID и протокол, не переписывать постановку.
+
+**Назначение:** персональная TASK и factual результаты Codex 007. Текущее состояние определяется только фактическими БЛОКАМИ1/1.1 ниже и штатной проверкой скрипта; пролог не дублирует статус. БЛОКИ2–4 содержат историю и независимые verdict. Правила скриптовой сдачи уточнены USER GO 2026-11-04; новых implementation GO этот пролог не даёт.
+
+## Рабочий порядок
+
+1. Действовать по конкретной утверждённой TASK/прямому поручению пользователя в разрешённом scope. Обычное новое назначение пользователь помещает в БЛОК 1; адресное поручение текущего чата не требует искусственного повторного GO. Старый NEXT не является запуском новой задачи. Уточнения привязывать к TASK/версии как AMENDMENT, не подменять исходную постановку.
+2. Читать собственные Правила, относящиеся БЛОКИ 1/4; применимые разделы №08/34/профиля и тестовых контрактов по read matrix. Нормы №18 получать адресно со всеми requires при пробеле/конфликте. Общий №000 и весь №18/05 не загружать механически; архивы №001 не читать/искать рекурсивно. INDEPENDENT_PLAN сохраняет BLIND-START.
+3. Git/GitHub запрещены без отдельного явного разрешения на операции и scope, включая чтение через CLI/UI/API/скрипты. Работать с локальными исходниками. Не менять чужие scope, live-storage, права, секреты, runtime/CI вне назначения. Публикация обычно за пользователем. Подробно: №18 → DOC-GIT-01/DOC-PARALLEL-01.
+4. Исследовать причины и существующие механизмы; самостоятельно проверить релевантные edge cases и соседние инварианты. Исправлять подтверждённое внутри scope; находки вне scope сохранять с evidence и предложением. Не повторять одинаковые неудачные действия без новой диагностики. Проверки по риску и профилю №36.1/36.2/36.3; для чистой документации — смысл/сохранность/адреса/граф.
+5. По каждой TASK, включая исследование/PARTIAL/FAIL/BLOCKED, сохранить внутри разрешённой публикуемой части проекта полный report, manifest и безопасные evidence. Указать версии, изменения, команды/exit/counts, исходные FAIL, NOT RUN, риски и DOC IMPACT. Не оставлять результат только в TEMP/переписке. Перед RESULT READY закончить обязательные проверки; незаконченный отчёт явно DRAFT.
+6. Исполнитель не ротирует БЛОКИ 2–4 и не пишет №001 или общую документацию. Только исключение DOC-BLOCK1-SLOT-01@2 позволяет после финальной сдачи локально и дословно перенести свою завершённую TASK из БЛОКА 1 в один БЛОК 1.1 без Git, при подтверждённой сохранности старого слота. После пользовательской публикации ChatGPT независимо проверяет, сохраняет историю/readback и закрывает TASK. БЛОК 4 READ-ONLY для автора результата; self-PASS не является VERIFIED. Обнаруженный риск передать по форме №07; не объявлять его закрытым собственным предположением.
+7. Для каждой технической TASK проверить launcher: один Start_WebAlarm.bat, штатный STANDARD; разрешённый TEST с TASK ID/целью; автор переключения возвращает STANDARD. При недоказанном восстановлении RESTORE_BLOCKED, без ложного зелёного. Не ослаблять backup/rollback или безопасность данных. №18 → DOC-WUA-LAUNCH-01.
+8. Финал в чате — один самодостаточный копируемый text-блок: TASK, статус, изменения, проверки/NOT RUN, риски, DOC IMPACT, NEXT и отчётный путь. Полный фактический пакет остаётся в проекте. Прямая отправка другому чату/агенту требует разрешения на эту передачу; старый транспортный smoke не даёт постоянного права.
+
+Локальный исполнитель не создаёт Remote-continuity сессии Alarm/ALARM_TASK_SESSION и пооперационные INTENT/DONE-журналы по привычке. Специальный аудит/защита — только если отдельно предусмотрены задачей; штатные runtime backup/rollback и существующая история при этом сохраняются.
+
+**Обязательная сдача слота / №18 → DOC-BLOCK1-SLOT-01@2:** после финального пакета запустить одну команду:
+
+```powershell
+python -B tools/task_slot_rotate.py finish --card "Документация/000_Задачи Codex.md" --task-id TASK-ID --no-chat-amendment --apply
+```
+
+При отдельных поправках вместо --no-chat-amendment передать --chat-amendment FILE для каждой. Скрипт сам делает check/dry-run/apply/readback, находит точный предыдущий снимок по ссылке в 1.1, переиспользует его или сначала сохраняет отсутствующую копию. Прежние snapshots не перезаписываются. Утраченные поправки, разные тексты одного ID, конфликт/ошибка записи — NO ROTATE. Никаких ручных переносов/очистки. JSON и handoff_task.md сохранить в пакете, затем актуализировать manifest. ALREADY_ROTATED — успешный повтор без записи; ожидание никогда не переносится в 1.1. Локальное сохранение не доказывает публикацию/независимую приёмку.
+
+Окно: tools/task_slot_debug.json, enabled true/false; --monitor на один запуск, --headless без окна. Ярлык «Карточка Codex — статус» открывает наблюдение, обновление30 минут/по кнопке. Пользователь может завершить TASK через finish либо назначить новую через «Новая задача…» справа вверху, только когда БЛОК1 WAITING; форма запускает проверенный assign и не запускает агента автоматически. Только пользователь назначает следующую TASK между постоянными маркерами БЛОКА1. БЛОК1.1 заполняет только скрипт; БЛОКИ2–4/001 не затрагивать.
+
+**Канон сопровождения:** №18 → DOC-CONTEXT-OPS-01, DOC-TASK-CLOSEOUT-OWNER-01, DOC-LOCAL-REPORT-HANDOFF-01, DOC-HISTORY-ACCESS-01, DOC-VERIFIER-BLOCK4-01@2 и DOC-TEST-LIFECYCLE-01. Формы — №07. Новый координационный порядок не меняет технические статусы, B2/WA4-R/EVM/live/paid/MCP freeze и права предыдущих TASK.
+
+# Задачи Codex
+
+Действующие общие правила — раздел «Рабочий порядок» выше и №18 → DOC-CONTEXT-OPS-01.
+
+## Правила
+
+Действующие общие правила — раздел «Рабочий порядок» выше и №18 → DOC-CONTEXT-OPS-01.
+
+[[000_Задачи для агента]]
+
+[[001_История выполненных задач Codex]]
+
+**USER GO 2026-11-04 / обязательный автоматизм:** после финального пакета запускать `tools/task_slot_rotate.py finish` (check→dry-run→apply→readback). Ручной перенос и очистка БЛОКОВ1/1.1 запрещены. Канон @2 разрешает скрипту сначала создать/проверить отсутствующий локальный снимок прежнего 1.1, не объявляя публикацию. Старые требования опубликованного snapshot/ручного previous-archive ниже уступают @2. Повторный запуск не переносит ожидание и не дублирует сданную TASK. Watch/ярлык открывает локальное наблюдение, обновление каждые30 минут; отдельные кнопки запускают finish/назначение пользователем через assign. Новая TASK допускается только в WAITING, без замены занятого слота.
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+###### ▼ НАЧАЛО ЗАДАЧИ — строку-маркер не удалять · TASK-SLOT:BLOCK-1:BEGIN
+# CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001
+
+**TASK ID:** `CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001`
+
+**Исполнитель:** Codex 007  
+**Тип:** IMPLEMENTATION + FOCUSED OFFLINE TESTS  
+**Приоритет:** HIGH — CHAT FIRST  
+**База:** `main@3f160dde42c697cfe6eb437e99e1eda61e6bc8c4`, коммит №569  
+**Предыдущая задача:** `H-CODEX-000028`, P0/P1 INDEPENDENT OFFLINE PASS  
+**Режим:** STRICT OFFLINE / NO LIVE LLM
+
+## 1. Цель
+
+Реализовать отображение токенов и пользовательские настройки отдельного чата в Web Alarm Ultra.
+
+Использовать уже работающий маршрут:
+
+`Web Chat → OrdinaryCoreChatService → Turn → Usage → Ultra Storage`
+
+Не создавать новую систему подсчёта токенов. Максимально переиспользовать существующую Ultra.
+
+## 2. Обязательный вход
+
+Прочитать №08, актуальные №000, №34, №40, №37 §3а, №20 §5а, относящиеся OPEN/FOLLOWUP из №05, регламент тестирования №36.3 и отчёты H-CODEX-000027/000028.
+
+Учесть:
+
+`FOLLOWUP-WUA-ORDINARY-CORE-BRIDGE-ACTIVATION-001`
+
+Перед работой проверить актуальный HEAD и соответствие локальных исходников. При конфликте — STOP.
+
+## 3. P0 — счётчики токенов
+
+Подключить к веб-интерфейсу существующую информацию о расходе Turn.
+
+Отображать:
+
+- Input tokens.
+- Output tokens.
+- Reasoning tokens — только если источник их действительно предоставляет.
+- Total tokens без двойного подсчёта reasoning.
+- UNKNOWN, если достоверных данных нет.
+
+**Обязательно:** показывать статистику текущего чата, не смешивая её с другими чатами или Workspace.
+
+Желательно сделать компактное представление:
+
+- Расход последнего ответа.
+- Суммарный известный расход текущего чата.
+
+Использовать уже сохранённые события Turn и usage. Не создавать второй ledger и не пересчитывать повторные попытки как новые ответы.
+
+При неполной статистике явно показывать, что общий расход известен не полностью.
+
+В TEST-режиме подписывать данные как синтетические, чтобы пользователь не принимал их за реальные расходы GigaChat.
+
+## 4. P1 — настройки каждого чата
+
+Добавить в интерфейс компактные настройки:
+
+**Контекст:**
+- Значение по умолчанию: 250 000 токенов.
+- Пользователь может изменить число для конкретного чата.
+- Это порог будущего управляемого сжатия, а не гарантированный размер контекстного окна модели.
+- Автоматическое сжатие сейчас НЕ включать.
+
+**Ответ:**
+- Значение по умолчанию: 10 000 токенов.
+- Расширенное рекомендуемое значение: 20 000.
+- Разрешить пользовательское изменение с проверкой положительного целого значения.
+- Не объявлять число реальным ограничением провайдера, пока возможности выбранной модели не подтверждены.
+
+Настройки сохранять в существующем хранилище соответствующего чата.
+
+Проверить, что настройки:
+
+1. Сохраняются после F5.
+2. Не распространяются на другой чат.
+3. Не сбрасываются при смене выбранной модели без предусмотренного предупреждения.
+4. Не обходят ограничения и защиту настоящих запросов.
+
+Если применение числового ограничения требует ещё не реализованной S3b-защиты, сохранять его как пользовательское предпочтение, но не объявлять применённым к физическому LLM-вызову.
+
+## 5. Ограничения
+
+Строго запрещено:
+
+- Выполнять настоящие GigaChat/OAuth/платные запросы.
+- Открывать REAL или обходить S3b.
+- Переделывать ядро Ordinary Chat.
+- Создавать глобальный бюджет Workspace.
+- Переписывать Model Registry или действующее хранение Ultra.
+- Изменять STANDARD, Tkinter Ultra, Blueprint, MCP, Colibri.
+- Создавать новые ярлыки либо изменять имена двух постоянных CMD.
+
+Все изменения проверять через существующий `Start_WebAlarm_Test.cmd` и изолированные тестовые данные.
+
+## 6. Испытания
+
+Провести небольшой адресный офлайн-набор:
+
+| Сценарий | Критерий |
+|---|---|
+| Ответ с известным usage | Правильные input/output/total |
+| Ответ с reasoning | Нет двойного начисления |
+| Usage отсутствует | UNKNOWN, а не ноль |
+| Несколько Turn | Итог чата без дублирования |
+| Два разных чата | Независимые счётчики и настройки |
+| Изменение лимитов | Сохранение после F5/reopen |
+| Повтор/ошибка/отмена | Нет ложного начисления или успеха |
+| REAL без S3b | Гарантированный отказ без внешнего API |
+
+Добавить профильные Python/JS проверки. Повторить только затронутые существующие регрессии.
+
+Результаты тестирования сохранять с точным PASS/FAIL/SKIP и NOT RUN.
+
+## 7. Экономия оставшегося лимита
+
+У Codex осталось около 5% недельного бюджета.
+
+Приоритет исполнения:
+
+**P0 — обязательно:** правильное отображение usage отдельного чата, восстановление, тесты.
+
+**P1 — следом:** сохраняемые настройки контекста и ответа.
+
+**P2 — только при наличии ресурса:** дополнительная полировка интерфейса и необязательные улучшения.
+
+После P0 сделать промежуточный checkpoint. Не проводить крупный рефакторинг или несвязанные регрессии.
+
+Если лимит заканчивается, сохранить сделанное, перечень оставшегося и честный PARTIAL. Не объявлять незавершённый P1 принятым.
+
+## 8. Результат и сдача
+
+Создать:
+
+`reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/`
+
+Подготовить `report.md`, `manifest.json`, evidence тестов, checkpoint и короткую инструкцию пользовательской проверки.
+
+Зафиксировать:
+- Что уже было в Ultra.
+- Что именно подключено в Web.
+- Какие значения действительно сохраняются.
+- Что является синтетическими данными.
+- Какие функции ещё не готовы к реальному GigaChat.
+- Какие OPEN остаются до S3b.
+
+Штатная сдача через `tools/task_slot_rotate.py finish` только после подготовки достоверного пакета. HISTORY ID выдаётся скриптом.
+
+Не изменять нормативную документацию и карточки других исполнителей. Локальный Git/GitHub без отдельного разрешения пользователя запрещён.
+
+**Критерий успеха:** пользователь открывает обычный TEST-чат, видит его токены, может изменить настройки конкретного чата и после F5 получает сохранённые значения. Никакой внешний LLM-запрос невозможен.
+###### ▲ КОНЕЦ ЗАДАЧИ — строку-маркер не удалять · TASK-SLOT:BLOCK-1:END
+
+---
+
+# БЛОК 1.1 — ПОСЛЕДНЯЯ СДАННАЯ ЗАДАЧА
+
+###### ▼ НАЧАЛО КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:BEGIN
+**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001` · перенесено 2026-11-09 · SHA-256 копии `09704a717715cce5b7c6eb97005e21d057c633f02d810fc4db22b747e3844772` · CHAT-ONLY AMENDMENT: нет · снимок `reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/handoff_task.md` · отчёт `reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/report.md` · HISTORY ID `H-CODEX-000028` · запись `reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/task_record.json`
+
+# CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001
+
+**TASK ID:** `CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001`
+
+**Исполнитель:** Codex 007  
+**Тип:** IMPLEMENTATION + FOCUSED OFFLINE TESTS  
+**Приоритет:** HIGH — CHAT FIRST  
+**База:** main №567, `e9f6fd2e1dfb1a00cf029f98aa1473201f27e8f6`  
+**Предыдущая задача:** `H-CODEX-000027` — BOUNDED INDEPENDENT OFFLINE PASS
+
+## 1. Цель
+
+Подключить реализованный в предыдущей задаче `OrdinaryCoreChatService` к постоянному TEST-профилю Web Alarm Ultra.
+
+**Итог:** пользователь запускает `Start_WebAlarm_Test.cmd` и получает веб-чат, который действительно проходит через существующее Ordinary Chat Core, а не прежний Stage5-имитатор.
+
+Настоящий внешний провайдер пока не используется.
+
+## 2. Обязательный вход
+
+Прочитать актуальные №08, №000, №34, №40, №37 §3а, №20 §5а и адресный FOLLOWUP №05:
+
+`FOLLOWUP-WUA-ORDINARY-CORE-BRIDGE-ACTIVATION-001`
+
+Изучить результаты `H-CODEX-000027`, особенно:
+
+- `web_alarm/ordinary_chat_bridge.py`
+- `web_alarm/ultra_chat.py`
+- `web_alarm/turn_service.py`
+- `web_alarm/server.py`
+- `web_alarm/launcher.py`
+- `web_alarm/launch_test_config.json`
+
+Сверить текущие исходники с `main`. Если появились новые изменения, сначала проверить пересечения и сообщить о конфликте.
+
+## 3. Что реализовать
+
+### A. Постоянный запуск
+
+Добавить новый TEST-профиль Ordinary Core Chat и сделать его активным для `Start_WebAlarm_Test.cmd`.
+
+Сохранить:
+
+- существующее имя CMD;
+- предупреждение о тестовом режиме;
+- запуск браузера;
+- изолированное временное хранилище;
+- очистку тестовых данных после закрытия;
+- старый Stage5-профиль как доступный вариант отката.
+
+`Start_WebAlarm_Standard.cmd` не изменять.
+
+### B. Работа веб-чата
+
+Через новый TEST-профиль должны работать:
+
+1. Создание Workspace и отдельных чатов.
+2. Выбор доступной тестовой модели.
+3. Отправка сообщения через Ordinary Chat Core.
+4. Получение ответа через fake transport.
+5. Сохранение истории и состояния Turn.
+6. Восстановление после F5.
+7. Изоляция контекста между двумя чатами.
+
+Не создавать второй механизм истории, Turn или Model Registry.
+
+### C. Минимальный учёт токенов
+
+Если существующий интерфейс уже умеет показывать usage, связать его с результатом Ordinary Core.
+
+Проверить корректное отображение input/output/known reasoning и UNKNOWN без двойного подсчёта.
+
+**Не разрабатывать сейчас:** глобальные бюджеты Workspace, финансовую аналитику, полноценный Статист, большие панели настройки токенов.
+
+Настраиваемые лимиты 250k/10k/20k остаются следующим отдельным этапом, если не поддерживаются существующим кодом.
+
+## 4. Жёсткие ограничения
+
+- STRICT OFFLINE: никаких GigaChat, OAuth, внешних API и платных запросов.
+- STANDARD остаётся неизменным и не получает возможность физической LLM-отправки.
+- S3b не обходить и не объявлять выполненным.
+- Не изменять Tkinter Ultra, Blueprint, MCP, Colibri и чужие направления.
+- Никаких новых общих подсистем бюджета Workspace.
+- Никаких изменений Git/GitHub со стороны локального исполнителя без отдельного разрешения пользователя.
+
+## 5. Минимальные проверки
+
+Проверить адресно:
+
+- Новый профиль действительно выбирается постоянным TEST-лаунчером.
+- Два чата работают независимо.
+- Два последовательных сообщения сохраняют правильный контекст.
+- F5 не теряет историю.
+- Повтор Turn не вызывает дублирования.
+- Закрытие тестового запуска удаляет только временные данные.
+- STANDARD не затронут.
+- REAL без S3b гарантированно отклоняется.
+
+Не запускать несвязанные большие тестовые наборы. Сохранить команды, результаты PASS/FAIL/SKIP и ограничения проверки.
+
+## 6. Работа при заканчивающемся лимите
+
+**Режим экономного выполнения.**
+
+Приоритет P0 — подключить существующий мост к постоянному TEST-профилю и сохранить работоспособность старого Stage5-профиля.
+
+Приоритет P1 — адресные регрессионные тесты, изоляция, сохранение, запрет REAL.
+
+Приоритет P2 — минимальное отображение usage, только если хватает ресурсов и не требуется переработка UI.
+
+После каждого законченного этапа сохранить небольшой checkpoint: сделанные изменения, выполненные тесты, оставшиеся вопросы.
+
+Если лимит заканчивается:
+
+- Не начинать большой дополнительный этап.
+- Не заявлять незавершённое успешным.
+- Сохранить промежуточный отчёт и список следующих действий.
+- Не запускать автоматические длительные повторы.
+
+Частичный результат допустим. Штатный `finish` выполнять только после подготовки достоверного отчёта, проверки сохранности результата и выполнения условий протокола сдачи; при необходимости указать PARTIAL.
+
+## 7. Отчёт
+
+`reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/`
+
+Подготовить `report.md`, манифест, evidence тестов и список оставшихся работ.
+
+По возможности добавить краткую инструкцию пользовательского TEST-smoke на Windows: что открыть, что отправить и как проверить F5.
+
+Использовать штатную процедуру сдачи и HISTORY ID. Пользователь самостоятельно публикует результаты в GitHub.
+
+**Критерий успеха:** пользователь запускает постоянный TEST CMD и видит работающий Ordinary Core Chat через веб-интерфейс, при этом ни один внешний LLM-запрос технически недоступен.
+###### ▲ КОНЕЦ КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:END
+
+# БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
+
+Постоянный архив — №001 Codex и адресные `reports/<TASK-ID>/task_record.json`.
+
+- **08.11 / H-CODEX-000024 / `CODEX-RT002-B2-S1-INVENTORY-RECON-001`:** independent Windows S1 69 PASS + 23 extra PASS/18 mutations; separate S2 72 PASS/1 FAIL; task PARTIAL, S1 bounded PASS, S3b HOLD.
+- **08.11 / H-CODEX-000023 / `CODEX-RT002-B2-S3A-DURABLE-LEDGER-001`:** S3a ledger 35/35 author PASS, Run Store 51; independent S3a runtime NOT RUN, privacy/fencing OPEN.
+- **07.11 / H-CODEX-000022 / `CODEX-WUA-S5-TURN-UX-RECOVERY-001`:** bounded Windows GUI smoke PASS; RAW cancel, Tcl, 480px residual OPEN.
+- **07.11 / H-CODEX-000021 / `CODEX-WUA-S5-TURN-CHECK-DIAG-001`:** Turn diagnostic PARTIAL, historical cancellation RAW cause OPEN.
+- **07.11 / H-CODEX-000020 / `CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001`:** Stage5 fake UI+Turn, independent Windows 387 PASS, live NOT RUN.
+
+---
+
+# БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
+
+- **H24 S1:** changed only `test_rt002_s1_routes.py`; initial 67/69 RED, author+independent 69/69 PASS, 23/23 guarded negative/fake checks PASS, full 18 source mutations detected. Independent S2 exact 72/73 FAIL: old isolation test includes OFFLINE S3a ledger. No real provider / full repo CI.
+- **H23 S3a:** Offline durable ledger and 35 authored PASS; independent runtime gate still OPEN; historical adoption, privacy/RAW, durability/fencing require separate actions.
+- **H22 Stage5:** Windows user F5, Turn check and two independent Chat histories bounded PASS, residual OPEN.
+- **H21 Stage5:** Turn check diagnosis PARTIAL; original canceled RAW issue unproven.
+- **H20 Stage5:** independent Windows fake UI 387 PASS, no real GigaChat or clean portability proof.
+
+---
+
+# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
+---
+
+## WEB25 / 08.11.2026 — H-CODEX-000024 — S1 inventory OFFLINE independent PASS / product PARTIAL
+
+Source main@`a455d97f` №542, Codex H24/finish ROTATED exit0, B1 WAITING and B1.1 H24 untouched. Independent Remote Desktop Windows SHA matched exact `test_rt002_s1_routes.py`; guarded **S1 69/69 PASS** (exit0 guard0) and **23/23 extra PASS**, 18 in-memory mutation cases. Independent **S2 72/73 (1 FAIL)** due old `test_no_production_module_imports_the_policy_yet` discovering intentionally standalone `ultra_budget_ledger.py`; source-level mismatch, not evidence of live HTTP dispatch. S3a independent test NOT RUN; three author weakening controls not independently replayed. **Verdict S1 TARGETED INDEPENDENT OFFLINE PASS; H24 OVERALL PARTIAL**, S2 remedy separately authorized; S3b/Stage6/Stage7 live HOLD. Report `reports/CHATGPT-WEB25-CODEX-RT002-S1-REVIEW-20261108/review.md`.
+
+## WEB25 / 08.11.2026 — H-CODEX-000023 — RT-002/B2 S3a OFFLINE PARTIAL
+
+Source main@`53d7ce91` №539; Codex finish ROTATED exit0, БЛОК1 WAITING, БЛОК1.1 H23 без вмешательства verifier. Новые два исходника + author evidence: S3a 35 PASS, Run Store 51, S2 73, mutants 3/3 red; S1 67 PASS / **2 FAIL** source inventory. WEB25 проверил 16 источников включая пять CRLF→LF Git normalizations, source state machine, lock and error paths; **NO independent S3a runtime**. **Verdict: PARTIAL / BOUNDED SOURCE+AUTHOR EVIDENCE**, не independent S3a acceptance или S3b readiness. Ordinary Chat policy, historical adoption, RAW wire retention, 4096-events cap, power-loss/fencing и S1 repair OPEN. Review `reports/CHATGPT-WEB25-CODEX-RT002-S3A-REVIEW-20261108/review.md`. Next только отдельная S1 reconcile/independent S3a gate по USER GO; live/paid/Colibri/MCP HOLD.
+
+## WEB23 / 05.11.2026 — H-CODEX-000013 — Stage3 TEST PARTIAL
+
+`CODEX-WUA-CHAT-S3-TURN-IMPLEMENTATION-001` published main@a3b44c6, author finish ROTATED (B1 WAITING/B1.1 exact). Independently Windows CI: 30 Turn/HTTP/prerequisites, 53 Run Store, 171 Python, 161 JS PASS at least once; repeated full Python **1/171 FAIL** `WorkspaceBusyError` in legacy two-process writer test, exact isolated replay **5/5 PASS**, still OPEN. **Verdict PARTIAL / TEST functional**, user GUI not yet run; no real LLM/Stage4 GO. Evidence `reports/CHATGPT-WEB23-CODEX-S3-TURN-REVIEW-20261105/review.md`, №05 `FOLLOWUP-WUA-S3-WS-WRITER-BUSY-001`, event `EVT-WEB23-CODEX-S3-TURN-REVIEW-20261105`. B1/B1.1 not changed by verifier.
+
+
+## WEB23 / 04.11.2026 — H-CODEX-000012 — independent Windows CI 56 PASS
+
+Independent GitHub Actions run `41885808568` (https://github.com/maxrus82gm-svg/ag_llm/actions/runs/41885808568), source GPT@e14222fb523acc558e57e31eebd1425829fc8651 (product inherited unchanged from main@e3253b4): **53 Run Store/audit + 3 original Stage3 oracles PASS, 0 FAIL/SKIP**. Verifier inspected decoded runner logs and completed job conclusion SUCCESS; verdict **PASS / TARGETED INDEPENDENT WINDOWS CI**. Full regression/real Workspace/picker NOT RUN; residual FOLLOWUP OPEN, separate Stage3 USER GO required. B1/B1.1 were not edited. Event `EVT-WEB23-RUNSTORE-S3-WINDOWS-CI-20261104` in №06.
+
+## Previous — WEB23 / 04.11.2026 — H-CODEX-000012 — bounded source/author evidence
+
+**Verifier:** ChatGPT WEB23. **Source:** main@e3253b41502ac2d76c61c0faf7a5b660e2cc7eb9, `reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/`. Independently inspected source, negative/positive author oracles, logs, manifest, history and finish. **Verdict: PASS / BOUNDED SOURCE + AUTHOR EVIDENCE** for audit-path refusal, writer-lock serialization and explicit recovery; independent Windows/CI/restart runtime **NOT RUN**. Author 389 PASS/5 SKIP; WinError 10053 initial run remains unresolved despite successful retry. One `test_run_store_v2.py` source SHA mismatch traced exactly to single CRLF→LF at line 479 during publication; no semantic change, strict full-manifest SHA PASS not asserted.
+
+**SLOT:** author finish ROTATED exit0, B1 WAITING, B1.1 exact assigned task and H-CODEX-000012; verifier did not alter either slot. **OPEN:** independent P9/Stage3 Windows regression, existing picker, Stage3 Turn not implemented, staging/Tk/portability and other FOLLOWUP. No Stage3/live/paid/Blueprint/Colibri/MCP GO. Full review `reports/CHATGPT-WEB23-CODEX-RUNSTORE-S3-GATE-REVIEW-20261104/review.md`, №06 `EVT-WEB23-RUNSTORE-S3-GATE-REVIEW-20261104`. Proposed GPT doc commit awaiting user merge.
+
+## Previous — WEB22 / 04.11.2026 — Stage3 prerequisite diagnosis
+
+`CODEX-WUA-CHAT-S3-TURN-RECOVERY-001`: source+author-evidence diagnostic PASS, product Stage3 PARTIAL/NOT IMPLEMENTED; original RED 1 PASS/2 FAIL, bounded source review, independent runtime NOT RUN. Permanent review `reports/CHATGPT-WEB22-CODEX-S3-PREREQ-REVIEW-20261104/review.md`, event `EVT-WEB22-CODEX-S3-PREREQ-20261104`.
+
+## Previous — WEB22 / 04.11.2026 — Workspace/Chat UX
+
+`CODEX-WUA-CHAT-UX-LIVE-FIX-001` AMENDMENT 01: source+author-evidence PASS bounded, user accepted Windows GUI first/following chats; full independent runtime/negative GUI NOT RUN. Review `reports/CHATGPT-WEB22-CODEX-UX-LIVE-FIX-REVIEW-20261104/review.md`, event `EVT-WEB22-CODEX-UX-LIVE-FIX-20261104`. Earlier WEB21/LLM15 verdicts remain in exact published `main@e3253b4` card snapshot, their reports and №06; not deleted from history.
+
+---
+
+**CURRENT WEB23:** Run Store repair source+author-evidence bounded PASS; independent pinned Windows/CI NOT RUN. Stage3 Turn NOT IMPLEMENTED; user GO needed. B1 WAITING, B1.1 H-CODEX-000012.

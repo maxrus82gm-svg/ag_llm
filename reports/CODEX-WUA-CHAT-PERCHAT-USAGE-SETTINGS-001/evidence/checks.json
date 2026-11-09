@@ -1,0 +1,18 @@
+{
+  "source_scope": "PASS",
+  "changed_existing": [
+    "web_alarm/ultra_chat.py",
+    "web_alarm/ui.py",
+    "test_web_alarm_ultra_chat_ui.js"
+  ],
+  "syntax": "3 Python PASS; embedded JS parsed by Node tests",
+  "tested_source_pins": "MATCH (final_python + ui_final_js)",
+  "core_registry_raw_run_turn_transport_and_cmd": "UNCHANGED",
+  "tests": {
+    "python": 8,
+    "javascript": 57,
+    "permanent_cmd_smoke": 1
+  },
+  "git": "NOT USED",
+  "visual_F5_new_UI": "NOT RUN"
+}

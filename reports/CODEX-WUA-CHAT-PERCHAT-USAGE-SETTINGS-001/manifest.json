@@ -1,0 +1,253 @@
+{
+  "task_id": "CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001",
+  "status": "RESULT READY / BOUNDED OFFLINE PASS P0 P1",
+  "assigned_base": "main@3f160dde42c697cfe6eb437e99e1eda61e6bc8c4 №569",
+  "tests": {
+    "python": 8,
+    "js": 57,
+    "permanent_cmd_smoke": 1
+  },
+  "files": [
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "bytes": 54086,
+      "sha256": "f1d42f1ae95f30c38e00360616c65adb294eb9ba05b2c576a5278a0f7eaa66c8"
+    },
+    {
+      "path": "web_alarm/ui.py",
+      "bytes": 206839,
+      "sha256": "5462536f78b1df5aff22fe751ddd5774315a881c49035a4724007514c3a0b7cf"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_ui.js",
+      "bytes": 85192,
+      "sha256": "82e11639ffc838e78cbb9b6a278d7a899cead20fcd0bd4243bed538f3f69ee27"
+    },
+    {
+      "path": "test_web_alarm_perchat_usage_settings.py",
+      "bytes": 9106,
+      "sha256": "87f9aae8121dcf130e66c70d6ed1c78df6d94fa3e314455ae9fc33bc1ea97592"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/assignment_source.txt",
+      "bytes": 9492,
+      "sha256": "a4322b974103f767c5487830278b30ba98ad77af593213bac66aa3085717ee31"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/before/test_web_alarm_ultra_chat_ui.js.txt",
+      "bytes": 80264,
+      "sha256": "97c37ee6e7c8ce53e50b2d25046408ea2e44b1b64828a58eaf5ecc9c10d24ed7"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/before/web_alarm__ui.py.txt",
+      "bytes": 201601,
+      "sha256": "3b640ca58d062cce518d91169560c87f3756530963e4f01ffccbaa8797fa010b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/before/web_alarm__ultra_chat.py.txt",
+      "bytes": 48369,
+      "sha256": "7c5f88c35b53f89735fabebacddd900eda1539e01e3add3f35af4ecf7984df6b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/before/Документация__000_Задачи Codex.md.txt",
+      "bytes": 37860,
+      "sha256": "40a9659c7f8e7d2a9e8286c6c852e7cc5614ebc03dd089994c3b52fc6e43e782"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/checkpoint.json",
+      "bytes": 420,
+      "sha256": "3c394e6a19b26f54dde7e377e72bbbaaecc9e2376335fa3dc73bd84df84f7b7d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/checkpoint_p0.json",
+      "bytes": 440,
+      "sha256": "423ecea3759ac88a1472c5ed24495a97c97824e617edb3359cbd512b0cb539d9"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/closeout.json",
+      "bytes": 527,
+      "sha256": "7f890510b53e66a5865fde0d4386dbcdd53967bae26a1b74b77393a97dfbd776"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/baseline.json",
+      "bytes": 2548,
+      "sha256": "1013f844d8cb6cb36bba63e56a9750b67e759be578e54d1a9c6273d38a6d71e8"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/checks.json",
+      "bytes": 494,
+      "sha256": "13e6935ceee4be5b873d2602fa38de7c70bed24040a2f5d0795f672b78b84233"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/final_js.result.json",
+      "bytes": 583,
+      "sha256": "06d471e959db4170ab1bd3dff0461236163e81c1543f3e1a5a3c3fdcd0dbf89c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/final_js.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/final_js.stdout.txt",
+      "bytes": 14011,
+      "sha256": "e5bc3639bd9e3f88ad752f2028cc6d8f26ed58f278c81f11a2f5ba2d0476325e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/final_python.result.json",
+      "bytes": 703,
+      "sha256": "e11449886ad26bb7870d86a95a6c3965ae25999f01ee04e2526ab27bd5b38d65"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/final_python.stderr.txt",
+      "bytes": 1629,
+      "sha256": "fc5d9f94d9b22aa5898274c19df928bd943551b52e5625074bf995f6fa4df22a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/final_python.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/finish.result.json",
+      "bytes": 463,
+      "sha256": "454a1b4cae7923d0c2568db9147149e56d1286a464df8e06015bad37b118b6a5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/finish.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/finish.stdout.txt",
+      "bytes": 4920,
+      "sha256": "0e0b40d56fd3d3dfb94aaecbb0205065cd96b5e0f5d129dced4505b438283b1a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p0_js.result.json",
+      "bytes": 597,
+      "sha256": "c06ca135185b2a0ceb2aeabf3fbe2526a97156af692e2505b7024805e4ec88ed"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p0_js.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p0_js.stdout.txt",
+      "bytes": 13508,
+      "sha256": "dd2154615a9129ec9be8ecad21c4ac14d16092bbefb97d677e82cfc5f4002bbf"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p0_python.result.json",
+      "bytes": 703,
+      "sha256": "8441237c2fa3da200dcdf5774e9859c13db16384e03ca3e887e5dce8a7193876"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p0_python.stderr.txt",
+      "bytes": 869,
+      "sha256": "618d263e53cfebbda6f90e3b66fbd655b0218541e540252d04bb8af18c5b505c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p0_python.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p1_js.result.json",
+      "bytes": 597,
+      "sha256": "c209499750e4152d1feb0b46b9bac5c3cf6ba6a9b844d2acbb54ef655e6ac402"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p1_js.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p1_js.stdout.txt",
+      "bytes": 14005,
+      "sha256": "3bfb997bbd12b6b945848998f6a885491dc6158a397edc2cf97e60c6f61dea06"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p1_python.result.json",
+      "bytes": 703,
+      "sha256": "8ebf983c145ec5998be1a00fe23b2ebc8fb109611b5579f8e0cdb6a77b86b40e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p1_python.stderr.txt",
+      "bytes": 1456,
+      "sha256": "43581676dc658f341a812151601918237594b25143dfacc53d1bfd3994861bb8"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/p1_python.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/physical.result.json",
+      "bytes": 394,
+      "sha256": "aa41285c2fd641f8a6dc44481e1f5adf45bd9811be3b13244979d9fe9f0a5176"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/physical.stdout.txt",
+      "bytes": 1920,
+      "sha256": "75ed5bb8142b93c5f1c159eb0daa602adc0994566db7d86985b13fef30025011"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/source_diff.txt",
+      "bytes": 20752,
+      "sha256": "654c06dd9ca02902929864d12a5dd86aa79f17ddcd685fabc896123e33432248"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/ui_final_js.result.json",
+      "bytes": 597,
+      "sha256": "dc0a8b91557fdd303974ec0ab4412ba0396830f460371f3717edf9d504fb526a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/ui_final_js.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/evidence/ui_final_js.stdout.txt",
+      "bytes": 14247,
+      "sha256": "54f96d7f7f3c8008ccb7578a24f56344c422408505e9647b73695d9fd9c228f6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/finish_receipt.json",
+      "bytes": 5343,
+      "sha256": "868e98600ab9742538d3f285a2cf7cd78bb8dc11badbc3c44e243abdf64bfb95"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/handoff_task.md",
+      "bytes": 10547,
+      "sha256": "77e9cb24509925f3b4e7bd96c8f3b0a21b5717e8dd7ed484c24222893acadc4c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/physical_smoke.py",
+      "bytes": 4596,
+      "sha256": "8d0784a1d5b33e5f448c2242b1b28e28e54b81c9a43d904c4d9ee9b228d78adc"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/report.md",
+      "bytes": 16389,
+      "sha256": "80be4eae58caf856e135b089be72f75fee049e03bc3a965225ebb843fbe63411"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/run_checks.py",
+      "bytes": 1850,
+      "sha256": "c76ef0f5202b6fd4e033b86654606396420819a5ab8cd08afbf79bcc99e3a7f8"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/task_record.json",
+      "bytes": 688,
+      "sha256": "3eada9d8fb969c40d558cb9887c030fcad09806857336cc8f1d46153a5fff53a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/user-smoke.md",
+      "bytes": 1813,
+      "sha256": "0770f1c13fa3c8f7d5d594949942101f6879a61e009aef8f34a739782b82f502"
+    }
+  ],
+  "history_id": "H-CODEX-000029"
+}

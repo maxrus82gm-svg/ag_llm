@@ -1,0 +1,13 @@
+test_settings_http_requires_write_capability_and_is_reopenable (test_web_alarm_perchat_usage_settings.PerChatHttpTests.test_settings_http_requires_write_capability_and_is_reopenable) ... ok
+test_error_is_unknown_not_zero_and_cancel_before_start_costs_no_attempt (test_web_alarm_perchat_usage_settings.PerChatTests.test_error_is_unknown_not_zero_and_cancel_before_start_costs_no_attempt) ... ok
+test_invalid_settings_do_not_write_or_reset_existing_values (test_web_alarm_perchat_usage_settings.PerChatTests.test_invalid_settings_do_not_write_or_reset_existing_values) ... ok
+test_known_nested_usage_replay_reopen_and_chat_isolation (test_web_alarm_perchat_usage_settings.PerChatTests.test_known_nested_usage_replay_reopen_and_chat_isolation) ... ok
+test_late_cancel_preserves_known_usage_without_success_or_double_count (test_web_alarm_perchat_usage_settings.PerChatTests.test_late_cancel_preserves_known_usage_without_success_or_double_count) ... ok
+test_missing_usage_stays_unknown_and_partial_sum_is_explicit (test_web_alarm_perchat_usage_settings.PerChatTests.test_missing_usage_stays_unknown_and_partial_sum_is_explicit) ... ok
+test_preferences_persist_in_existing_chat_metadata_and_are_not_provider_caps (test_web_alarm_perchat_usage_settings.PerChatTests.test_preferences_persist_in_existing_chat_metadata_and_are_not_provider_caps) ... ok
+test_preflight_rejection_is_not_an_unknown_paid_attempt (test_web_alarm_perchat_usage_settings.PerChatTests.test_preflight_rejection_is_not_an_unknown_paid_attempt) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 7.069s
+
+OK
