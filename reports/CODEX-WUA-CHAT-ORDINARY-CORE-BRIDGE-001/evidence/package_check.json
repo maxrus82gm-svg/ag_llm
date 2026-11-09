@@ -1,0 +1,19 @@
+{
+  "source_scope": "PASS",
+  "changed_existing": [
+    "web_alarm/server.py",
+    "web_alarm/turn_service.py",
+    "web_alarm/ultra_chat.py",
+    "Документация/000_Задачи Codex.md"
+  ],
+  "new_code": [
+    "web_alarm/ordinary_chat_bridge.py",
+    "test_web_alarm_ordinary_core_bridge.py"
+  ],
+  "regression_source_pins": "PASS",
+  "collection_count": 109,
+  "card_blocks_2_to_4_unchanged": true,
+  "git": "NOT USED",
+  "launcher_validation": "SOURCE ONLY; real STANDARD/TEST launch NOT RUN",
+  "ignore_check": "Root .gitignore has no matching new task exclusion; authoritative Git check deferred to user (Git forbidden)."
+}

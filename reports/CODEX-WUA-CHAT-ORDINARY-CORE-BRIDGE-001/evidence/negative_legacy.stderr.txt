@@ -1,0 +1,23 @@
+test_complete_history_and_system_context_use_existing_core (test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_complete_history_and_system_context_use_existing_core) ... FAIL
+
+======================================================================
+FAIL: test_complete_history_and_system_context_use_existing_core (test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_complete_history_and_system_context_use_existing_core)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ordinary_core_bridge.py", line 53, in test_complete_history_and_system_context_use_existing_core
+    self.assertEqual([m["role"] for m in wires[-1]["messages"]],
+AssertionError: Lists differ: ['system', 'user', 'assistant', 'user'] != ['system', 'user', 'assistant', 'user', 'assistant', 'user']
+
+Second list contains 2 additional elements.
+First extra element 4:
+'assistant'
+
+- ['system', 'user', 'assistant', 'user']
++ ['system', 'user', 'assistant', 'user', 'assistant', 'user']
+?                                 +++++++++++++++++++++
+
+
+----------------------------------------------------------------------
+Ran 1 test in 2.154s
+
+FAILED (failures=1)

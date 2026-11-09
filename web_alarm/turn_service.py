@@ -52,8 +52,9 @@ class TurnService:
         self.test_roots = frozenset(Path(p).resolve() for p in test_roots)
         if offline_adapter is not None:
             from .ordinary_chat_test_adapter import OfflineTestAdapter
+            from .ordinary_chat_bridge import OrdinaryCoreAdapter
             temp_root = Path(tempfile.gettempdir()).resolve()
-            if (type(offline_adapter) is not OfflineTestAdapter or not self.test_roots
+            if (type(offline_adapter) not in (OfflineTestAdapter, OrdinaryCoreAdapter) or not self.test_roots
                     or any(temp_root not in p.parents for p in self.test_roots)):
                 raise ValueError('Offline adapter requires explicit temporary Workspace roots')
         self._offline_adapter = offline_adapter
@@ -218,8 +219,12 @@ class TurnService:
     @staticmethod
     def _check_usage(usage):
         keys = ('prompt_tokens', 'completion_tokens', 'total_tokens')
-        if type(usage) is not dict or set(usage) != {'status', *keys}:
+        if type(usage) is not dict or set(usage) not in ({'status', *keys}, {'status', *keys, 'reasoning_tokens'}):
             raise ValueError('Invalid offline usage')
+        reasoning = usage.get('reasoning_tokens')
+        if reasoning is not None and (type(reasoning) is not int or reasoning < 0
+                or type(usage.get('completion_tokens')) is not int or reasoning > usage['completion_tokens']):
+            raise ValueError('Invalid nested reasoning usage')
         counts = [usage[key] for key in keys]
         if any(n is not None and (type(n) is not int or n < 0) for n in counts):
             raise ValueError('Invalid offline usage counts')

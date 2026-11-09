@@ -637,6 +637,82 @@ class OfflineUltraChatService(UltraChatService):
 
 
 # Safe text for every refusal of the shared writer; the core's own message (which may name a path) is never sent.
+class OrdinaryCoreChatService(OfflineUltraChatService):
+    """Full selected-Chat projection through the existing Turn/Core, fake only.
+
+    Deliberately inherits the disposable storage and capability boundaries of
+    Stage5. STANDARD remains disabled. The original Stage5 class is unchanged.
+    """
+
+    def capability(self):
+        return {**super().capability(), "core_bridge": True, "real_available": False,
+                "real_denial_reason": "provider_admission_required"}
+
+    def _context(self, root, workspace_id, chat_id, turns):
+        # Actual projection happens in adapter.freeze under Turn's shared writer
+        # lock. A context assembled here could become stale before acceptance.
+        return ()
+
+    def _fixture_turns(self, root, context=(), context_ref="offline-read:v1", response_text="TEST"):
+        from .ordinary_chat_bridge import OrdinaryCoreAdapter
+        from .turn_service import TurnService
+        loader = None
+        if context_ref.startswith("stage5:"):
+            chat_id = context_ref.removeprefix("stage5:")
+            if not _CHAT_ID_RE.fullmatch(chat_id):
+                raise UltraChatError(400, "invalid_context_ref", "Invalid Chat context")
+            loader = lambda: self._chat_context(root, chat_id)
+        adapter = OrdinaryCoreAdapter(context_ref=context_ref, context_loader=loader,
+            response={"choices": [{"message": {"role": "assistant", "content": response_text}}]})
+        return TurnService(test_roots=[root], offline_adapter=adapter)
+
+    def _chat_context(self, root, chat_id):
+        core = _core()
+        # Use the existing bounded/no-follow storage reader for PROJECT CONTEXT.
+        anchor, identity = core._open_workspace_bounded(root, core.DEFAULT_READ_LIMITS)
+        try:
+            system = core._read_file_bounded(anchor, (core.ULTRA_DIRNAME, core.PROJECT_CONTEXT_NAME), 2048).decode("utf-8")
+        except core.StorageReadError as error:
+            if error.code != "missing":
+                raise
+            system = ""
+        history = core.read_chat_history_bounded(root, chat_id,
+            limits=core.ReadLimits(max_message_files=256, max_history_bytes=512 * 1024, max_message_bytes=32768))
+        if history["excluded"]:
+            raise UltraChatError(503, "offline_history_invalid", "Chat context contains unreadable records")
+        context = [{"role": "system", "content": system}] if system.strip() else []
+        messages = history["messages"]
+        by_id = {m["message_id"]: m for m in messages}
+        turns = self._fixture_turns(root)
+        included = set()
+        for user in messages:
+            if user["role"] != "user":
+                continue
+            producer = user.get("producer", {})
+            if producer.get("kind") != "offline_chat_fixture":
+                # Legacy/manual history needs explicit provenance selection;
+                # never guess that an old failure or agent result is context.
+                raise UltraChatError(409, "context_source_unsupported", "Select a supported Ordinary Chat history")
+            turn = turns.get(root, identity["workspace_id"], chat_id, producer.get("run_id"))
+            stored = turns._load(root, identity["workspace_id"], chat_id, turn["turn_id"])
+            if turn["user_message_id"] != user["message_id"]:
+                raise ValueError("Chat user does not match its Turn")
+            if stored["state"] in {"ACCEPTING", "READY", "ATTEMPTING"}:
+                raise UltraChatError(409, "test_chat_busy", "Wait for the active Chat Turn")
+            if turn["state"] != "SUCCEEDED":
+                continue  # failed/cancelled/UNKNOWN user requests are not model context
+            assistant = by_id.get(turn["assistant_message_id"])
+            if not assistant or assistant["role"] != "assistant" or assistant["text"] != turn["answer"]:
+                raise ValueError("Chat answer does not match its Turn")
+            included.add(assistant["message_id"])
+            context.extend({"role": m["role"], "content": m["text"]} for m in (user, assistant))
+        if any(m["role"] == "assistant" and m["message_id"] not in included for m in messages):
+            raise ValueError("Unverified assistant context")
+        # prepare_request enforces the complete aggregate limits. No last-pair
+        # projection or silent truncation is allowed on this bridge.
+        return context
+
+
 _WRITE_REFUSALS = {
     "title_changed": (409, "The chat was renamed elsewhere meanwhile"),
     "chat_id_conflict": (409, "This chat ID is already used differently"),

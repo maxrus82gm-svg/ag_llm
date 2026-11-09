@@ -1,0 +1,14 @@
+...F.......
+======================================================================
+FAIL: test_context_limit_refuses_whole_request_without_silent_truncation (test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_context_limit_refuses_whole_request_without_silent_truncation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ordinary_core_bridge.py", line 180, in test_context_limit_refuses_whole_request_without_silent_truncation
+    with patch.object(_FixtureTransport, "send") as send, self.assertRaises(UltraChatError):
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UltraChatError not raised
+
+----------------------------------------------------------------------
+Ran 11 tests in 15.711s
+
+FAILED (failures=1)

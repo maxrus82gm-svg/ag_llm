@@ -1,0 +1,131 @@
+--- before/web_alarm/ultra_chat.py
++++ web_alarm/ultra_chat.py
+@@ -637,6 +637,82 @@
+ 
+ 
+ # Safe text for every refusal of the shared writer; the core's own message (which may name a path) is never sent.
++class OrdinaryCoreChatService(OfflineUltraChatService):
++    """Full selected-Chat projection through the existing Turn/Core, fake only.
++
++    Deliberately inherits the disposable storage and capability boundaries of
++    Stage5. STANDARD remains disabled. The original Stage5 class is unchanged.
++    """
++
++    def capability(self):
++        return {**super().capability(), "core_bridge": True, "real_available": False,
++                "real_denial_reason": "provider_admission_required"}
++
++    def _context(self, root, workspace_id, chat_id, turns):
++        # Actual projection happens in adapter.freeze under Turn's shared writer
++        # lock. A context assembled here could become stale before acceptance.
++        return ()
++
++    def _fixture_turns(self, root, context=(), context_ref="offline-read:v1", response_text="TEST"):
++        from .ordinary_chat_bridge import OrdinaryCoreAdapter
++        from .turn_service import TurnService
++        loader = None
++        if context_ref.startswith("stage5:"):
++            chat_id = context_ref.removeprefix("stage5:")
++            if not _CHAT_ID_RE.fullmatch(chat_id):
++                raise UltraChatError(400, "invalid_context_ref", "Invalid Chat context")
++            loader = lambda: self._chat_context(root, chat_id)
++        adapter = OrdinaryCoreAdapter(context_ref=context_ref, context_loader=loader,
++            response={"choices": [{"message": {"role": "assistant", "content": response_text}}]})
++        return TurnService(test_roots=[root], offline_adapter=adapter)
++
++    def _chat_context(self, root, chat_id):
++        core = _core()
++        # Use the existing bounded/no-follow storage reader for PROJECT CONTEXT.
++        anchor, identity = core._open_workspace_bounded(root, core.DEFAULT_READ_LIMITS)
++        try:
++            system = core._read_file_bounded(anchor, (core.ULTRA_DIRNAME, core.PROJECT_CONTEXT_NAME), 2048).decode("utf-8")
++        except core.StorageReadError as error:
++            if error.code != "missing":
++                raise
++            system = ""
++        history = core.read_chat_history_bounded(root, chat_id,
++            limits=core.ReadLimits(max_message_files=256, max_history_bytes=512 * 1024, max_message_bytes=32768))
++        if history["excluded"]:
++            raise UltraChatError(503, "offline_history_invalid", "Chat context contains unreadable records")
++        context = [{"role": "system", "content": system}] if system.strip() else []
++        messages = history["messages"]
++        by_id = {m["message_id"]: m for m in messages}
++        turns = self._fixture_turns(root)
++        included = set()
++        for user in messages:
++            if user["role"] != "user":
++                continue
++            producer = user.get("producer", {})
++            if producer.get("kind") != "offline_chat_fixture":
++                # Legacy/manual history needs explicit provenance selection;
++                # never guess that an old failure or agent result is context.
++                raise UltraChatError(409, "context_source_unsupported", "Select a supported Ordinary Chat history")
++            turn = turns.get(root, identity["workspace_id"], chat_id, producer.get("run_id"))
++            stored = turns._load(root, identity["workspace_id"], chat_id, turn["turn_id"])
++            if turn["user_message_id"] != user["message_id"]:
++                raise ValueError("Chat user does not match its Turn")
++            if stored["state"] in {"ACCEPTING", "READY", "ATTEMPTING"}:
++                raise UltraChatError(409, "test_chat_busy", "Wait for the active Chat Turn")
++            if turn["state"] != "SUCCEEDED":
++                continue  # failed/cancelled/UNKNOWN user requests are not model context
++            assistant = by_id.get(turn["assistant_message_id"])
++            if not assistant or assistant["role"] != "assistant" or assistant["text"] != turn["answer"]:
++                raise ValueError("Chat answer does not match its Turn")
++            included.add(assistant["message_id"])
++            context.extend({"role": m["role"], "content": m["text"]} for m in (user, assistant))
++        if any(m["role"] == "assistant" and m["message_id"] not in included for m in messages):
++            raise ValueError("Unverified assistant context")
++        # prepare_request enforces the complete aggregate limits. No last-pair
++        # projection or silent truncation is allowed on this bridge.
++        return context
++
++
+ _WRITE_REFUSALS = {
+     "title_changed": (409, "The chat was renamed elsewhere meanwhile"),
+     "chat_id_conflict": (409, "This chat ID is already used differently"),
+--- before/web_alarm/turn_service.py
++++ web_alarm/turn_service.py
+@@ -52,8 +52,9 @@
+         self.test_roots = frozenset(Path(p).resolve() for p in test_roots)
+         if offline_adapter is not None:
+             from .ordinary_chat_test_adapter import OfflineTestAdapter
++            from .ordinary_chat_bridge import OrdinaryCoreAdapter
+             temp_root = Path(tempfile.gettempdir()).resolve()
+-            if (type(offline_adapter) is not OfflineTestAdapter or not self.test_roots
++            if (type(offline_adapter) not in (OfflineTestAdapter, OrdinaryCoreAdapter) or not self.test_roots
+                     or any(temp_root not in p.parents for p in self.test_roots)):
+                 raise ValueError('Offline adapter requires explicit temporary Workspace roots')
+         self._offline_adapter = offline_adapter
+@@ -218,8 +219,12 @@
+     @staticmethod
+     def _check_usage(usage):
+         keys = ('prompt_tokens', 'completion_tokens', 'total_tokens')
+-        if type(usage) is not dict or set(usage) != {'status', *keys}:
++        if type(usage) is not dict or set(usage) not in ({'status', *keys}, {'status', *keys, 'reasoning_tokens'}):
+             raise ValueError('Invalid offline usage')
++        reasoning = usage.get('reasoning_tokens')
++        if reasoning is not None and (type(reasoning) is not int or reasoning < 0
++                or type(usage.get('completion_tokens')) is not int or reasoning > usage['completion_tokens']):
++            raise ValueError('Invalid nested reasoning usage')
+         counts = [usage[key] for key in keys]
+         if any(n is not None and (type(n) is not int or n < 0) for n in counts):
+             raise ValueError('Invalid offline usage counts')
+--- before/web_alarm/server.py
++++ web_alarm/server.py
+@@ -78,6 +78,7 @@
+     ULTRA_CHAT_CAPABILITY_PATH,
+     ULTRA_CHAT_WRITE_CAPABILITY_PATH,
+     OfflineUltraChatService,
++    OrdinaryCoreChatService,
+     UltraChatAccess,
+     UltraChatError,
+     UltraChatService,
+@@ -1453,7 +1454,7 @@
+             "non-loopback bind is disabled by default; use allow_non_loopback=True explicitly"
+         )
+     if offline_chat is not None:
+-        if (type(offline_chat) is not OfflineUltraChatService or offline_chat.registry is not api.registry
++        if (type(offline_chat) not in (OfflineUltraChatService, OrdinaryCoreChatService) or offline_chat.registry is not api.registry
+                 or api.storage_root != offline_chat.root / "registry" or host not in LOOPBACK_HOSTS
+                 or allow_non_loopback or not enable_ultra_chat or not enable_ultra_chat_write
+                 or test_turn_roots or enable_folder_picker):

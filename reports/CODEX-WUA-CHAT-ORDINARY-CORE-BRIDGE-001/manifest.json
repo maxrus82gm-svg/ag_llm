@@ -1,0 +1,334 @@
+{
+  "task_id": "CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "assigned_base": "main@c9fe58e87a64d553a527f510c34405eef4bfcacd",
+  "git_used": false,
+  "history_id_source": "task_record.json after official finish",
+  "tests": {
+    "python": 109,
+    "javascript": 52,
+    "syntax": 5,
+    "guard_probes": 6,
+    "negative_control_expected_failures": 1
+  },
+  "files": [
+    {
+      "path": "web_alarm/ordinary_chat_bridge.py",
+      "bytes": 3397,
+      "sha256": "baf3f04b6afcbcf4432c127715ff96d9689c4f8fc2bf3eaa7b21aa3f234b4ab2"
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "bytes": 48369,
+      "sha256": "7c5f88c35b53f89735fabebacddd900eda1539e01e3add3f35af4ecf7984df6b"
+    },
+    {
+      "path": "web_alarm/turn_service.py",
+      "bytes": 29866,
+      "sha256": "06a7b42c117c7083280afbe27306a4ff1dfa474f29ffb2e83913d3d21da7c2b2"
+    },
+    {
+      "path": "web_alarm/server.py",
+      "bytes": 77174,
+      "sha256": "6e1764ad7fae92b831ef2fc03eb308ea774120007062c3d320e722423c7ebece"
+    },
+    {
+      "path": "test_web_alarm_ordinary_core_bridge.py",
+      "bytes": 15249,
+      "sha256": "c0439774f8268a9903607dcb41d24df9795bb6340c9833dd47ea348e6015931f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/assignment_source.txt",
+      "bytes": 15165,
+      "sha256": "a64c0b201d91fb8d59f8ee5e795e9c1099c0ada87bf3012823105d9927afaf85"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/before/ordinary_chat_service.py.txt",
+      "bytes": 14446,
+      "sha256": "0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/before/web_alarm__ordinary_chat_test_adapter.py.txt",
+      "bytes": 2794,
+      "sha256": "fa62abf7268e9e60696d5d6ce85fe2ad4031f4ff884e0ecc83f75650024428f0"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/before/web_alarm__server.py.txt",
+      "bytes": 77117,
+      "sha256": "c826936a957cf89b2b2c44628fdda5228a2fac1ed75eb5a404a24ad5db3e34be"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/before/web_alarm__turn_service.py.txt",
+      "bytes": 29426,
+      "sha256": "66dbb1c74983efa2bc38aa8c11ddd834a84f009de9eda7e1c24e0a9689294805"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/before/web_alarm__ultra_chat.py.txt",
+      "bytes": 43971,
+      "sha256": "91917a43846fa9f7830cdaaf8464e6d8473d10deae4629d582a0ccbe477fb825"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/before/Документация__000_Задачи Codex.md.txt",
+      "bytes": 46169,
+      "sha256": "abbf71176075b5183b1255197013578cebc90eb848df20ba7bfd40842b219dc2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/closeout.json",
+      "bytes": 490,
+      "sha256": "35adda553a86a9f831154b9d9148a2eef64140b262890f3eb2e1979786f2a35c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/compile_check.py",
+      "bytes": 395,
+      "sha256": "3f5d8680d64435de512ce15721c6b25a91585c414b0b86161c18d4127889bf85"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/baseline.guard.jsonl",
+      "bytes": 574,
+      "sha256": "15a1e4aad868ca67512ea3fe1475be3380ff1bb8bfd1e7a24b840d914725c576"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/baseline.json",
+      "bytes": 35910,
+      "sha256": "1b589021b5fd21c5b2f3af3ba50aec4c2021a1d7034c933bcdeb100cd4b24c2d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/baseline.result.json",
+      "bytes": 2212,
+      "sha256": "bb8d01cfeb57d4e755d62eeb5bd28885f2ef3aea05866b7088a7f6cf2ec0daf7"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/baseline.stderr.txt",
+      "bytes": 1473,
+      "sha256": "228ba6c804347a5d777707dd0f4c9372035ddee98334366d2cd5d417c34757a8"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/baseline.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/bridge_final.result.json",
+      "bytes": 2355,
+      "sha256": "d9531a81d1cdb3979f7478ec606b726569c2f189fadde1c95712690635d36ec5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/bridge_final.stderr.txt",
+      "bytes": 116,
+      "sha256": "2458af6ae56131f4b692fa6c32708b879818fe52c2f9eaf80fd6a6d0cccce6e2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/bridge_final.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/bridge_first.result.json",
+      "bytes": 2398,
+      "sha256": "35118ddf7ecaf6e11eaa42c539e4a1bbe8760dded8817f2380baa183051168b0"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/bridge_first.stderr.txt",
+      "bytes": 189,
+      "sha256": "b1eb25bc79469163617fb68c8368d9f9ab4fb2cc880ba5e5f10efab56cfb62d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/bridge_first.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/bridge_second.result.json",
+      "bytes": 2355,
+      "sha256": "54f1de6cda31571bdc7eac2257915fcc75144a45a74592166b70c9cce2972ab5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/bridge_second.stderr.txt",
+      "bytes": 887,
+      "sha256": "036fa48537224e98cfc4c119ade4fb31f0afe27509d6f57fe9bfb329b6352a37"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/bridge_second.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/collection.json",
+      "bytes": 11259,
+      "sha256": "8af252e18b8e976492ea9507a2ff711e14911d600cfce07cce6aa444f8d382de"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/finish.result.json",
+      "bytes": 427,
+      "sha256": "325abaab80a2145ac8f5789df213a7db333c2ebcfb740db03436ddddb86ce323"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/finish.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/finish.stdout.txt",
+      "bytes": 4924,
+      "sha256": "011d06294a42409e6ec7be6fb41f574a16324c64e84268d7bfc2679c29ebc56a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/guard_probes.guard.jsonl",
+      "bytes": 568,
+      "sha256": "7259f00fae2228027a861bab484b5a3ed8a3a9c65b78aa21550731b6a45ef259"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/guard_probes.result.json",
+      "bytes": 2351,
+      "sha256": "24ae3580a2934e8d3efbd171c1b79fd85dc21baa49aff68b2b4057046bb45fee"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/guard_probes.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/guard_probes.stdout.txt",
+      "bytes": 135,
+      "sha256": "3325ab44c17d2f2bd27fdaf027acaa3124b1649e3b10004f058095880f56c8f2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/js_final.result.json",
+      "bytes": 435,
+      "sha256": "8a57359123cd6b1065295338f952b8f14de9e67f976af9428e5af1cd4f966e34"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/js_final.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/js_final.stdout.txt",
+      "bytes": 13032,
+      "sha256": "8a2b2f3821f9a7dc0251856a110105b3ed059d050f20842ccd0b985cf681ea41"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/launcher_source.json",
+      "bytes": 3391,
+      "sha256": "edfb6505d54de92a01228f06693b2d718d286046876e9658b0286743412d1af5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/negative_legacy.result.json",
+      "bytes": 2354,
+      "sha256": "a4145751b2ebc7d149b69185e4d87078389b9e5ad95ae3e9debfda46aff6d7b8"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/negative_legacy.stderr.txt",
+      "bytes": 1253,
+      "sha256": "815f5d1679ee839eb30986d430d5d1f66cfe9fdb715df69e1d21ccf686ddb8d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/negative_legacy.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/package_check.json",
+      "bytes": 660,
+      "sha256": "c5ad4022aaef1d403bf08a9eb740dddce65cbf9bf0521d3227df5bb231392b20"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/regression.guard.jsonl",
+      "bytes": 574,
+      "sha256": "834e0447e925c23d6ad520a76f7c7088d416ba99b00db8d02c7f724170ffe134"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/regression.result.json",
+      "bytes": 2800,
+      "sha256": "46272a8a7c5f8198d19ea30ad02b44b1b9fa87f59977c552b18ffa1153a9cadc"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/regression.stderr.txt",
+      "bytes": 1520,
+      "sha256": "35ffd55a60c23d4d31bfb7c63536bd68f114d56c9c6fa225605eb5d0ae445321"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/regression.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/source_diff.txt",
+      "bytes": 7631,
+      "sha256": "4cafa410e8d0b5529549628fd706bed7ea339c520b4e71ee8d2d62616b39556e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/syntax.result.json",
+      "bytes": 2353,
+      "sha256": "611a0f23afdd88b7f84cadea42bbf8d4780b1b782c1d8ae3754c5b9ed6e5c401"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/syntax.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/evidence/syntax.stdout.txt",
+      "bytes": 29,
+      "sha256": "9ea0b8aab20c342e076340a96b84acb7861f69071f29a9bade0660546a5c3350"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/finish_receipt.json",
+      "bytes": 5347,
+      "sha256": "86ffc1721852f6c459abbfb9d582c172a7a35f9581fb9f9aad279d2f2750e4f6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/sitecustomize.py",
+      "bytes": 4147,
+      "sha256": "408f9cb95d9f780985784c48349d35ef9cc3a042168d61d92bd39a2608966c26"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard_probes.py",
+      "bytes": 830,
+      "sha256": "86ccf427ab2a68407ec030a613fff4c74a18d516b5c588d26ae60bb7938c8688"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/handoff_task.md",
+      "bytes": 16160,
+      "sha256": "d39cc115f39a6d9d17e93d97397d0dbdab747a868a614841bc8922b56f5c1b44"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/negative_control.py",
+      "bytes": 588,
+      "sha256": "22be618f3636c768aee6bb5f5cd9c199913963b6f26c4f5b8c0e8858454ae3b4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/next-task-proposal.md",
+      "bytes": 2310,
+      "sha256": "4d2bb8d9c8fda84b7374d1a9da8c1b34ab8eec0753961a140e505f5ce6850a68"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/node_check.py",
+      "bytes": 1412,
+      "sha256": "a7ac36076ac1086931be04e14f24c1c78730ef5b0659cd02f7a61a27024de2dd"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/package_check.py",
+      "bytes": 3362,
+      "sha256": "010b77bc239d1bd6e6fea8d7f5cfbab08788eb06ff9f458e044f460e774bb464"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/report.md",
+      "bytes": 19995,
+      "sha256": "0e5340e255e582241f893f86d0e1fa86f40122f10f5a493765bbc9cb0b728c97"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/run_check.py",
+      "bytes": 3140,
+      "sha256": "b27cea85d3f7f4e61334db5fc92b97c6e62742232d3030780783086db4503b69"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/task_record.json",
+      "bytes": 680,
+      "sha256": "bba02a19cb5d715c6fe14f8b74ec138bda3ca89cd9667fc612b6c43e616504cb"
+    }
+  ],
+  "note": "Manifest itself excluded from recursive hash. After finish update generated-artifact entries; report remains immutable.",
+  "history_id": "H-CODEX-000027",
+  "closure": "ROTATED / readback checked"
+}

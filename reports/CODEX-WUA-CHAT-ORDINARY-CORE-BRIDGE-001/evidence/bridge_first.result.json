@@ -1,0 +1,40 @@
+{
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "--network",
+    "loopback",
+    "--",
+    "-m",
+    "unittest",
+    "test_web_alarm_ordinary_core_bridge"
+  ],
+  "cwd": "M:\\GitHub\\ag_llm",
+  "utc": "2026-11-09T16:04:00.576854+00:00",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "windows": "Windows-11-10.0.26200-SP0",
+  "network": "none",
+  "exit_code": 2,
+  "elapsed_seconds": 0.10899999999674037,
+  "source_sha256": {
+    "ordinary_chat_service.py": "0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843",
+    "test_ordinary_chat_service.py": "9a3d95470c78a93daff07535320a63b72806ef9186c3adfa7bb945bb5adfde74",
+    "web_alarm\\ordinary_chat_bridge.py": "4c87d760a166295ae9df54caea0bcecc166cd254424078fa6f37fd03957d917f",
+    "test_web_alarm_ordinary_core_bridge.py": "3d5fc02ba705f4cc14800691a6de27ee570582ecd964c4295747c9a3c59dfff5",
+    "web_alarm\\turn_service.py": "06a7b42c117c7083280afbe27306a4ff1dfa474f29ffb2e83913d3d21da7c2b2",
+    "web_alarm\\ordinary_chat_test_adapter.py": "fa62abf7268e9e60696d5d6ce85fe2ad4031f4ff884e0ecc83f75650024428f0",
+    "test_web_alarm_ultra_chat_turn_s4b.py": "c7d3257f24cbd6c6b158b2639abb0137984fd3dcac526e21f9c3d1de6b2e05ed",
+    "run_store.py": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e",
+    "context_storage.py": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64",
+    "web_alarm\\ultra_chat.py": "7c5f88c35b53f89735fabebacddd900eda1539e01e3add3f35af4ecf7984df6b",
+    "web_alarm\\server.py": "6e1764ad7fae92b831ef2fc03eb308ea774120007062c3d320e722423c7ebece",
+    "web_alarm\\ui.py": "3b640ca58d062cce518d91169560c87f3756530963e4f01ffccbaa8797fa010b",
+    "ultra_ui.py": "9b0b7fa52b82e9612f181ce4ec0620c1e6d37376bbe8f9e7ee92728875cb9033",
+    "test_web_alarm_ultra_chat_s5.py": "7750574867f8947e063b1b9ab0edccbe0820e14ddd2dc05ec9d721857a52fa14",
+    "test_web_alarm_ultra_chat_ui.js": "97c37ee6e7c8ce53e50b2d25046408ea2e44b1b64828a58eaf5ecc9c10d24ed7",
+    "reports\\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\\guard\\sitecustomize.py": "dbb9b6322a66434f0ed034bf4603e2bba19f85381a86d3d35ad545fb314a9ebe",
+    "reports\\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\\run_check.py": "b27cea85d3f7f4e61334db5fc92b97c6e62742232d3030780783086db4503b69"
+  }
+}

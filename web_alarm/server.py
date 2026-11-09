@@ -78,6 +78,7 @@ from .ultra_chat import (
     ULTRA_CHAT_CAPABILITY_PATH,
     ULTRA_CHAT_WRITE_CAPABILITY_PATH,
     OfflineUltraChatService,
+    OrdinaryCoreChatService,
     UltraChatAccess,
     UltraChatError,
     UltraChatService,
@@ -1453,7 +1454,7 @@ def create_server(
             "non-loopback bind is disabled by default; use allow_non_loopback=True explicitly"
         )
     if offline_chat is not None:
-        if (type(offline_chat) is not OfflineUltraChatService or offline_chat.registry is not api.registry
+        if (type(offline_chat) not in (OfflineUltraChatService, OrdinaryCoreChatService) or offline_chat.registry is not api.registry
                 or api.storage_root != offline_chat.root / "registry" or host not in LOOPBACK_HOSTS
                 or allow_non_loopback or not enable_ultra_chat or not enable_ultra_chat_write
                 or test_turn_roots or enable_folder_picker):
