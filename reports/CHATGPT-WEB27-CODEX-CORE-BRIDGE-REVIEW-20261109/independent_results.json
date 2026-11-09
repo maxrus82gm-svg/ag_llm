@@ -1,0 +1,19 @@
+{
+  "task_id": "CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001",
+  "history_id": "H-CODEX-000027",
+  "date": "2026-11-09",
+  "source_sha": "80e6a0ff14755b4aba48cc1e037e00f852a990ce",
+  "source_hashes": "5/5 SHA256 MATCH",
+  "windows_python": "109/109 PASS; exit 0; 62.932 seconds; early offline guard, loopback fixtures only",
+  "js": "52/52 PASS; exit 0",
+  "guards": "6/6 BLOCKED/PASS; external socket,dns,credentials,dotenv,live storage,external process",
+  "not_run": [
+    "full CI",
+    "browser GUI",
+    "native Tk",
+    "clean Windows",
+    "real LLM/OAuth/paid",
+    "S3b"
+  ],
+  "verdict": "BOUNDED INDEPENDENT OFFLINE PASS; REAL HOLD"
+}
