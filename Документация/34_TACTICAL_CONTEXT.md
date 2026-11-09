@@ -1,5 +1,11 @@
 # Оперативная память проекта — №34
 
+## CURRENT / WEB28 10.11.2026 — H29 per-chat usage/settings принято в OFFLINE
+
+Пользовательский `main` №570 (`0aa3846e`) содержит `CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001` / `H-CODEX-000029`. Автор: Python 8 PASS + JS 57 PASS + TEST CMD smoke PASS; предыдущая независимая Windows-проверка 65/65 PASS (по отчёту в диалоге). **USER GUI PASS 10.11:** два Workspace, четыре чата; `01_01` после сохранения/F5 удержал `150000/15000`, остальные три — свои `250000/10000`; история и переключение на месте. TEST usage при отсутствии данных показывает честное `UNKNOWN`, не нулевые расходы. **DOC CLOSED / P0+P1 BOUNDED OFFLINE PASS** в этом scope. Ручная проверка действия кнопки 20k и широкий browser/a11y/full CI/clean Windows остаются за пределами проверенного. Review: `reports/CHATGPT-WEB28-H29-PERCHAT-REVIEW-20261110/review.md`.
+
+**NEXT:** №37 §3а шаг 3 — отдельная задача S3b/pre-send/retry/cancel/crash/reopen на основе существующего Ultra core по REUSE-FIRST; №20 §5а обязателен, реальные GigaChat/OAuth/paid и Stage7 **HOLD до отдельного USER GO**. `250000/10000/20000` — сохраняемые **предпочтения**, не применённые model/provider caps. Общий Workspace budget по решению пользователя DEFERRED. Codex БЛОК 1 не переназначать без USER GO; публикация документации за пользователем.
+
 ## CURRENT / USER 09.11.2026 — CHAT FIRST / пять практических шагов №37
 
 **Приоритет пользователя после рецензии Астры и уточнения с ней:** не строить на этом этапе общий агрегат расходов Workspace. Главная цель — **настоящий веб-чат через существующее ядро Ultra**, с подключением других LLM по мере готовности. Старые 12 пакетов `RM37-01…RM37-12` остаются исторической декомпозицией (№37@коммит 562), **НЕ** текущей очередью инженерных TASK. Текущий маршрут — №37 §3а: **(1)** Web Chat ↔ Ultra core (Turn, GigaChat transport, registry, RAW/history, много чатов); **(2)** настройки и счётчики каждого отдельного чата, input/output/known reasoning/UNKNOWN, порог контекста 250k и output default 10k / 20k расширенный при поддержке модели; **(3)** адресные pre-send/retry/crash/reopen и независимые offline gates; **(4)** первый короткий реальный GigaChat после USER GO; **(5)** перенос сжатия, памяти, дополнительных провайдеров, затем Blueprint/Статист.

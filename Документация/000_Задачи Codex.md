@@ -236,6 +236,11 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
 
+## WEB28 / 10.11.2026 — H-CODEX-000029 — per-chat usage/settings BOUNDED OFFLINE + USER GUI PASS
+
+`CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001`, main №570 `0aa3846e`; авторские 8 Python + 57 JS PASS, TEST CMD PASS, ранее независимые Windows 65/65 PASS по сохранённому контексту. Пользовательский GUI/F5: 2 Workspace/4 чата; `01_01` сохраняет 150000/15000, другие — 250000/10000. TEST `UNKNOWN` корректен при отсутствующем fake usage. **VERDICT: DOC CLOSED / P0+P1 BOUNDED OFFLINE PASS**, без реального provider cap и live. Не подтверждены реальный usage/20k-кнопка отдельным GUI тестом, broad CI/clean Windows. S3b/Stage7/paid HOLD. Review: `reports/CHATGPT-WEB28-H29-PERCHAT-REVIEW-20261110/review.md`. БЛОК 1 и БЛОК 1.1 не изменять.
+
+
 ## WEB25 / 08.11.2026 — H-CODEX-000024 — S1 inventory OFFLINE independent PASS / product PARTIAL
 
 Source main@`a455d97f` №542, Codex H24/finish ROTATED exit0, B1 WAITING and B1.1 H24 untouched. Independent Remote Desktop Windows SHA matched exact `test_rt002_s1_routes.py`; guarded **S1 69/69 PASS** (exit0 guard0) and **23/23 extra PASS**, 18 in-memory mutation cases. Independent **S2 72/73 (1 FAIL)** due old `test_no_production_module_imports_the_policy_yet` discovering intentionally standalone `ultra_budget_ledger.py`; source-level mismatch, not evidence of live HTTP dispatch. S3a independent test NOT RUN; three author weakening controls not independently replayed. **Verdict S1 TARGETED INDEPENDENT OFFLINE PASS; H24 OVERALL PARTIAL**, S2 remedy separately authorized; S3b/Stage6/Stage7 live HOLD. Report `reports/CHATGPT-WEB25-CODEX-RT002-S1-REVIEW-20261108/review.md`.

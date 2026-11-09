@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001",
   "date": "2026-11-10",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / P0+P1 BOUNDED OFFLINE PASS; S3b/REAL HOLD",
+  "review": "PASS / P0+P1 bounded OFFLINE; previous independent Windows 65/65; user TEST GUI F5 4 chats PASS; REAL/S3b NOT RUN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/handoff_task.md",
@@ -15,7 +15,32 @@
     "report": {
       "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/report.md",
       "sha256": "80be4eae58caf856e135b089be72f75fee049e03bc3a965225ebb843fbe63411"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB28-H29-PERCHAT-REVIEW-20261110/review.md",
+      "sha256": "de84163ee939c3ec34544e20c50612f0d7154f49b51541b8314a950d219ed9e2"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001",
+      "history_id": "H-CODEX-000029",
+      "agent": "codex",
+      "title": "CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001",
+      "date": "2026-11-10",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/handoff_task.md",
+          "sha256": "77e9cb24509925f3b4e7bd96c8f3b0a21b5717e8dd7ed484c24222893acadc4c"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001/report.md",
+          "sha256": "80be4eae58caf856e135b089be72f75fee049e03bc3a965225ebb843fbe63411"
+        }
+      }
+    }
+  ]
 }
