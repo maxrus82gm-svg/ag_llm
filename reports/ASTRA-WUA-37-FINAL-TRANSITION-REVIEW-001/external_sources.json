@@ -1,0 +1,44 @@
+{
+  "checked_date": "2026-11-09",
+  "method": "Public documentation GET only; no inference/OAuth/account credentials",
+  "sources": [
+    {
+      "id": "E1",
+      "url": "https://developers.sber.ru/docs/ru/gigachat/guides/counting-tokens",
+      "page_date": "2026-07-17",
+      "observations": [
+        "prompt excludes precached in documented usage",
+        "completion is generated tokens",
+        "total is billable token count",
+        "tokens/count does not predict output or whole attachment/template overhead"
+      ],
+      "limitations": "No account/API experiment; no tariff inference"
+    },
+    {
+      "id": "E2",
+      "url": "https://developers.sber.ru/docs/ru/gigachat/models/gigachat-2-lite",
+      "observations": [
+        "Declared context window 128000 tokens"
+      ],
+      "limitations": "Specific model page; not universal and not account runtime verification"
+    },
+    {
+      "id": "E3",
+      "url": "https://developers.sber.ru/docs/ru/gigachat/api/reference/rest/post-chat",
+      "page_date": "2026-10-07",
+      "schema_url": "https://developers.sber.ru/docs/files/openapi/gigachat/api.yml",
+      "schema_sha256": "5e28e6da25aaf8004aafc51240754e0591570ca9a52aa1525d0a494d86976f6b",
+      "schema_bytes": 180296,
+      "max_tokens_field_lines": [
+        2152,
+        2787
+      ],
+      "reasoning_tokens_field_found": false,
+      "observations": [
+        "Schema describes max_tokens as generation limit",
+        "Schema evidence does not establish per-model runtime enforcement or all billed reasoning limits"
+      ],
+      "limitations": "Web viewer YAML unsupported; read using urllib public GET; no actual provider calls"
+    }
+  ]
+}
