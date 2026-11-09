@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-09",
+  "task_id": "CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001",
+  "history_id": "H-CODEX-000028",
+  "published_commit": "78a8f5f0277f35228c66d4f199dc2024562fc1a9",
+  "source_identity": "SHA-256 matches published manifest for 3 changed files and unchanged launcher; two CMD unchanged",
+  "independent_windows": {
+    "python": "3.12.10",
+    "test_suites": [
+      "test_web_alarm_ordinary_test_activation.ActivationTests",
+      "test_web_alarm_launcher.StableEntryTests"
+    ],
+    "run_count": 7,
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "elapsed_seconds": 11.168,
+    "exit_code": 0,
+    "artifact_output": "TemporaryDirectory, did not overwrite Codex evidence"
+  },
+  "not_run": [
+    "visual GUI/F5",
+    "real LLM/OAuth",
+    "full CI",
+    "native Tk",
+    "clean install",
+    "force-kill"
+  ],
+  "verdict": "BOUNDED INDEPENDENT OFFLINE PASS P0+P1, P2 OPEN, S3b LIVE HOLD"
+}
