@@ -1,0 +1,19 @@
+{
+  "command": [
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-WUA-CHAT-S3B-PRESEND-PREFLIGHT-001",
+    "--date",
+    "2026-11-10",
+    "--no-chat-amendment",
+    "--headless",
+    "--expected-card-sha256",
+    "7abf593cd28098fc994d499c445c208b122440a9a02e3a7116986292eaf5dfa3",
+    "--apply"
+  ],
+  "guard_installed_before_tool": true,
+  "exit_code": 0
+}

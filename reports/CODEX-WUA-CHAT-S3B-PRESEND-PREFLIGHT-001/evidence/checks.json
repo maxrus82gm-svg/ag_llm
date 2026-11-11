@@ -1,0 +1,14 @@
+{
+  "before_finish": true,
+  "pinned_files_checked": 30,
+  "changed_existing_files": {},
+  "production_changes": 0,
+  "existing_test_changes": 0,
+  "new_tests": 0,
+  "syntax_check": "run_checks.py AST PASS",
+  "backup_readback": "PASS",
+  "findings": {
+    "F-01": "SOURCE CONFIRMED / no alternative script execution"
+  },
+  "decision": "PARTIAL: bridge deny verified, launcher arbitrary-configuration offline property not established"
+}

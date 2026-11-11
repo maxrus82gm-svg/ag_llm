@@ -1,0 +1,6 @@
+{
+  "exit_code": 1,
+  "reason": "Verifier helper attempted JSON parse of entire task_history read stdout; tool prepends a text header. task_history read itself exited 0.",
+  "correction": "Retained stdout as .txt; parsed JSON after header; record and source hashes verified without re-running finish.",
+  "product_or_test_failure": false
+}

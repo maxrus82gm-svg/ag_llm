@@ -1,0 +1,19 @@
+{
+  "id": "F-01",
+  "status": "OPEN / SOURCE CONFIRMED; alternative launcher dispatch NOT RUN",
+  "boundary": "Start_WebAlarm_Test.cmd -> --require-test -> launcher._profile / run_script",
+  "current_profile": "ordinary-core-offline / web_alarm/ordinary_test_fixture.py",
+  "observation": "python_script accepts any existing .py inside repository and string args, sets standard=False; --require-test checks standard only; run_script executes the configured script. Guard is installed inside ordinary_test_fixture, not by run_script. Therefore arbitrary launcher configuration is trusted code selection, not a strict offline boundary.",
+  "example_source_only": "probe_gigachat_models.py would call get_access_token and external models GET when executed; not imported or executed here. No successful REAL chat or paid send is claimed.",
+  "recommendation": "Separate targeted fix: fail closed for unapproved script/args under --require-test while preserving the two approved offline profiles; no Standard/OAuth/provider changes.",
+  "source_sha256": {
+    "web_alarm/ordinary_chat_bridge.py": "baf3f04b6afcbcf4432c127715ff96d9689c4f8fc2bf3eaa7b21aa3f234b4ab2",
+    "ordinary_chat_service.py": "0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843",
+    "web_alarm/turn_service.py": "06a7b42c117c7083280afbe27306a4ff1dfa474f29ffb2e83913d3d21da7c2b2",
+    "ultra_budget_policy.py": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13",
+    "ultra_budget_ledger.py": "3d64c3024bfc42957c3c0612b33c228ce0beea3e9b790fc97a5b1bbfe2aaf220",
+    "web_alarm/launcher.py": "94b4f48e79a658ecb2a0f42c7f52be2bf32f708740778768f82cd42fb9d5b42e",
+    "web_alarm/ordinary_test_fixture.py": "0b59f70121f8e68a24c00c47b4115266542e4a604e04bbe82a77064e89bc39c8",
+    "probe_gigachat_models.py": "1925a22f1d4806da397128cee846bd742cffbc79cc6c67910c70f50e3c512f36"
+  }
+}

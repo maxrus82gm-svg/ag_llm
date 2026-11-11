@@ -1,0 +1,26 @@
+{
+  "guard_installed": true,
+  "tests_run": 4,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-S3B-PRESEND-PREFLIGHT-001\\run_checks.py",
+    "--guarded"
+  ],
+  "selected_tests": [
+    "test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_real_transport_object_is_never_dispatched",
+    "test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_bad_ids_model_and_config_cannot_read_or_send",
+    "test_web_alarm_perchat_usage_settings.PerChatTests.test_preflight_rejection_is_not_an_unknown_paid_attempt",
+    "test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_transport_failure_does_not_replay_or_enter_next_context"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 3.186999999998079,
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "network_mode": "deny (stdlib asyncio self-pipe only)",
+  "guard_violations": 0
+}

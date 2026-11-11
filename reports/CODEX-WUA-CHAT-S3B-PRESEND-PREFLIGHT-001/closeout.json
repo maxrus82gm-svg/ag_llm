@@ -1,0 +1,41 @@
+{
+  "task_id": "CODEX-WUA-CHAT-S3B-PRESEND-PREFLIGHT-001",
+  "history_id": "H-CODEX-000030",
+  "result": "PARTIAL / READ-ONLY PREFLIGHT WITH F-01 OPEN",
+  "submission_status": "SUBMITTED / REVIEW PENDING",
+  "independent_review": "NOT VERIFIED",
+  "finish": "ROTATED / check + dry-run + apply + readback PASS",
+  "history_read_command": [
+    "tools/task_history.py",
+    "--max-tokens",
+    "2000",
+    "read",
+    "--id",
+    "H-CODEX-000030"
+  ],
+  "history_read_exit": 0,
+  "protected_files_unchanged": 29,
+  "blocks_2_4_unchanged": true,
+  "report_and_assignment_hashes": "PASS",
+  "guard_violations": 0,
+  "backup_status": "RETAINED / CLEANUP PENDING UNTIL INDEPENDENT ACCEPTANCE",
+  "backup_path": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wua-s3b-presend-backup-3h_6pzlf",
+  "production_changes": 0,
+  "tests": {
+    "run": 4,
+    "pass": 4,
+    "fail": 0,
+    "error": 0,
+    "skip": 0
+  },
+  "not_run": [
+    "LLM/OAuth/paid",
+    "alternative launcher script dispatch",
+    "full CI",
+    "Git publication",
+    "full S3b",
+    "independent acceptance"
+  ],
+  "next": "Independent review; separate targeted F-01 launcher configuration fix; then Ordinary fake pre-send binding using existing S2/S3a/Turn",
+  "closeout_helper_correction": "Documented in evidence/closeout_check_initial.json; final check PASS"
+}

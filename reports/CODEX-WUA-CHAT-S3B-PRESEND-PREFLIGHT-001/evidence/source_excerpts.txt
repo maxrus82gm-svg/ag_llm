@@ -1,0 +1,390 @@
+
+FILE web_alarm/ordinary_chat_bridge.py SHA256 baf3f04b6afcbcf4432c127715ff96d9689c4f8fc2bf3eaa7b21aa3f234b4ab2
+31:     def __init__(self, *, context_ref, response, context_loader=None):
+32:         super().__init__(context=(), context_ref=context_ref,
+33:                          limits=chat.RequestLimits(32, 2048, 8192, 8192, 128, 8),
+34:                          response=response)
+35:         self._context_loader = context_loader
+36: 
+37:     def freeze(self, body):
+38:         if body["context_ref"] != self._context_ref:
+39:             raise chat.PreparationError("invalid_context_ref")
+40:         if self._context_loader is not None:
+41:             self._context = self._context_loader()
+42:         return super().freeze(body)
+43: 
+44:     def execute(self, prepared):
+45:         # No Boolean, config_ref or injected object can activate a real sender.
+46:         if type(self._transport) is not _FixtureTransport:
+47:             return chat.ChatResult(chat.Outcome.REJECTED, chat.Execution.NOT_STARTED,
+48:                                    prepared.model, prepared.request_ref,
+49:                                    error_code="provider_admission_required")
+50:         capture = _UsageCapture(self._transport)
+51:         result = asyncio.run(chat.execute_request(prepared, transport=capture))
+
+FILE ordinary_chat_service.py SHA256 0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843
+70:     @property
+71:     def payload(self) -> dict:
+72:         """A fresh wire object: adapter mutation cannot change the snapshot."""
+73:         return {"model": self.model.provider_model_id, "stream": False,
+74:                 "max_tokens": self.limits.max_output_tokens,
+75:                 "messages": [{"role": m.role, "content": m.content} for m in self.messages]}
+140:     prepared = PreparedRequest(model, tuple(messages), context_ref, limits, "")
+141:     payload_text = canonical_json_text(prepared.payload)
+142:     if len(payload_text.encode("utf-8")) > limits.max_request_bytes:
+143:         raise PreparationError("limit_exceeded")
+144:     # Bind provenance and limits too; this is a deterministic content reference,
+145:     # not a Turn ID, idempotency key, authorization capability or deduplication.
+146:     binding = {"payload": prepared.payload, "context_ref": context_ref,
+147:                "model": vars(model), "limits": vars(limits)}
+148:     ref = "sha256:" + hashlib.sha256(canonical_json_text(binding).encode("utf-8")).hexdigest()
+149:     return PreparedRequest(model, prepared.messages, context_ref, limits, ref)
+289: async def execute_request(request: PreparedRequest, *, transport: ChatTransport,
+290:                           cancelled: Callable[[], bool] | None = None) -> ChatResult:
+291:     """One injected invocation, no retries. Caller owns durable accounting/Turn.
+292: 
+293:     The predicate is checked before and after the call, not a background watcher.
+294:     Task cancellation and deadline after invocation are conservative UNKNOWN.
+295:     Adapters must cooperate with cancellation. A fired deadline remains expired
+296:     even when the adapter suppresses cancellation and returns a response.
+297:     """
+298:     if type(request) is not PreparedRequest:
+299:         raise PreparationError("invalid_prepared_request")
+300:     try:
+301:         rebuilt = prepare_request(model_id=request.model.model_id,
+302:                                   context=[{"role": m.role, "content": m.content}
+303:                                            for m in request.messages[:-1]],
+304:                                   user_text=request.messages[-1].content,
+305:                                   context_ref=request.context_ref, limits=request.limits)
+306:         if rebuilt != request:
+307:             raise PreparationError("stale_or_invalid_request")
+308:         if not callable(getattr(transport, "send", None)):
+309:             raise PreparationError("transport_required")
+310:         if _cancelled(cancelled):
+311:             return _result(request, Outcome.CANCELLED_BEFORE_START, Execution.NOT_STARTED,
+312:                            code="cancelled_before_start")
+313:     except Exception:
+314:         return _result(request, Outcome.REJECTED, Execution.NOT_STARTED, code="preflight_rejected")
+315:     loop = asyncio.get_running_loop()
+316:     timeout_seconds = request.limits.timeout_seconds
+317:     deadline = loop.time() + timeout_seconds
+318:     timer = asyncio.timeout_at(deadline)
+319: 
+320:     async def send():
+321:         # Close the timer in the transport task as soon as the reply arrives.
+322:         async with timer:
+323:             return await transport.send(request.payload, timeout_seconds=timeout_seconds)
+324: 
+325:     owner = asyncio.current_task()
+326:     cancel_count = owner.cancelling()
+327:     try:
+328:         # Direct await forwards cancellation. The child can only uncancel
+329:         # itself, so the owner's count still records the external request.
+330:         response = await asyncio.create_task(send())
+331:     except (TimeoutError, asyncio.CancelledError):
+332:         return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.MAY_HAVE_EXECUTED,
+333:                        code="cancelled_or_timed_out_after_start")
+334:     except Exception:
+335:         return _result(request, Outcome.TRANSPORT_ERROR, Execution.MAY_HAVE_EXECUTED,
+
+FILE web_alarm/turn_service.py SHA256 06a7b42c117c7083280afbe27306a4ff1dfa474f29ffb2e83913d3d21da7c2b2
+367:     def submit(self, root, workspace_id, chat_id, body):
+368:         body = self._body(body)
+369:         ids = identities(workspace_id, chat_id, body['idempotency_key'])
+370:         offline = body['config_ref'] == OFFLINE_REF
+371:         with self._session(root, workspace_id, chat_id):
+372:             summary = runs.load_run_summary(root, ids['run_id'], chat_id)
+373:             if summary is not None and not isinstance(summary, dict):
+374:                 raise ValueError('Damaged RUN summary')
+375:             snapshot = None
+376:             if offline and (summary is None or summary.get('turn') is None):
+377:                 try:
+378:                     snapshot = self._offline_adapter.freeze(body)
+379:                 except ValueError:
+380:                     raise UltraChatError(400, 'invalid_offline_request', 'Offline request could not be prepared') from None
+381:             if summary is None:
+382:                 # A crash here has accepted no body/RAW yet; a retry can finish the empty reservation.
+383:                 runs.create_run_summary(root, workspace_id, chat_id, ids['task_block_id'], ids['run_id'])
+384:             else:
+385:                 if summary.get('workspace_id') != workspace_id: raise ValueError('Foreign RUN')
+386:             summary = runs.load_run_summary(root, ids['run_id'], chat_id)
+387:             if summary.get('turn') is None:
+388:                 turn = dict(schema_version=1,workspace_id=workspace_id,chat_id=chat_id,**ids,
+389:                             idempotency_key=body['idempotency_key'],request_sha256=_digest(body),
+390:                             references=dict(REFERENCES),state='ACCEPTING',cancel_requested=False)
+391:                 if offline:
+392:                     turn.update(schema_version=2, prepared=snapshot, references={k: body[k] for k in REFERENCES})
+393:                     turn['binding_sha256'] = self._binding(turn)
+394:                 self._save(root,turn)
+395:             turn = self._load(root,workspace_id,chat_id,ids['turn_id'])
+396:             if turn['request_sha256'] != _digest(body):
+397:                 raise UltraChatError(409,'idempotency_conflict','This key already belongs to different content')
+398:             # This explicit repeat may repair an interrupted append, never execute a started attempt again.
+399:             runs.recover_run_records(root,turn['run_id'])
+400:             if turn['state'] == 'ACCEPTING':
+401:                 if offline:
+402:                     self._view(root, turn)
+403:                 self._commit(root,turn,'user',body['text'])
+404:                 turn['state']='READY'; self._save(root,turn)
+405:             if turn['state'] == 'ATTEMPTING':
+406:                 if offline:
+407:                     return self._settle_offline(root, turn)
+408:                 if not turn['cancel_requested'] and self._result(root,turn):
+409:                     self._commit(root,turn,'assistant',ANSWER)
+410:                     turn['state']='SUCCEEDED'; self._save(root,turn)
+411:                 return self._view(root,turn)
+412:             if turn['state'] != 'READY': return self._view(root,turn)
+413:         return self._execute(root,workspace_id,chat_id,ids['turn_id'])
+420:     def _execute(self, root, workspace_id, chat_id, turn_id):
+421:         active_key = (str(Path(root).resolve()),turn_id)
+422:         with self._session(root,workspace_id,chat_id):
+423:             turn = self._load(root,workspace_id,chat_id,turn_id)
+424:             if turn['state'] != 'READY': return self._view(root,turn)
+425:             self._view(root,turn)  # validate the accepted RAW again immediately before reserving execution
+426:             offline = turn['schema_version'] == 2
+427:             prepared = (self._offline_adapter.restore(turn['prepared'], turn['references'],
+428:                        self._raw(root, turn, 'user')['original_text']) if offline else None)
+429:             turn['state']='ATTEMPTING'; self._save(root,turn)
+430:             start = self._started(turn)
+431:             self._event(root,turn,'turn_started',start)
+432:             with self._active_lock: self._active.add(active_key)
+433:         try:
+434:             if offline:
+435:                 return self._execute_offline(root, workspace_id, chat_id, turn_id, start, prepared)
+458:     def _execute_offline(self, root, workspace_id, chat_id, turn_id, start, prepared):
+459:         try:
+460:             result = self._offline_adapter.execute(prepared)
+461:         except Exception:
+462:             # An adapter exception cannot prove that execution never happened.
+463:             result = None
+464:         with self._session(root, workspace_id, chat_id):
+465:             turn = self._load(root, workspace_id, chat_id, turn_id)
+466:             records = self._records(root, turn)
+467:             self._view(root, turn, records=records)
+468:             if (self._started(turn) != start or not records or records[0]['event'] != 'turn_started'
+469:                     or records[0]['payload'] != start):
+470:                 raise ValueError('Offline request changed during execution')
+471:             if result is None:
+472:                 outcome, execution, answer = 'transport_error', 'may_have_executed', None
+473:                 usage = dict(status='missing', prompt_tokens=None, completion_tokens=None, total_tokens=None)
+474:             else:
+475:                 if result.request_ref != prepared.request_ref or result.model != prepared.model:
+476:                     raise ValueError('Offline adapter result identity mismatch')
+477:                 outcome, execution, answer = result.outcome.value, result.execution.value, result.text
+478:                 usage = asdict(result.usage)
+479:             self._check_usage(usage)
+480:             if turn['cancel_requested']:
+481:                 event, payload = 'turn_result_discarded', {**start, 'usage': usage}
+482:                 self._offline_evidence(turn, [*records, {'event': event, 'payload': payload}])
+483:                 self._event(root, turn, event, payload)
+484:                 return self._view(root, turn)
+485:             if turn['state'] != 'ATTEMPTING':
+486:                 raise ValueError('Offline attempt no longer owns the Turn')
+487:             mapped = OFFLINE_OUTCOMES.get((outcome, execution))
+488:             if mapped is None:
+489:                 raise ValueError('Unexpected offline adapter outcome')
+490:             event = mapped[0]
+491:             payload = {**start, 'outcome': outcome, 'execution': execution, 'answer': answer, 'usage': usage}
+492:             self._offline_evidence(turn, [*records, {'event': event, 'payload': payload}])
+493:             self._event(root, turn, event, payload)
+494:             return self._settle_offline(root, turn)
+
+FILE ultra_budget_policy.py SHA256 bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13
+54: ROUTES: Mapping[str, RouteSpec] = {
+55:     spec.route_id: spec for spec in (
+56:         RouteSpec("executor", "executor", SCOPE_RUN, CLASS_WORK, "ACTIVE"),
+57:         RouteSpec("audit_diagnostic", "executor", SCOPE_RUN, CLASS_OPTIONAL_DIAGNOSTIC, "ACTIVE"),
+58:         RouteSpec("planner_session", "planner", SCOPE_RUN, CLASS_WORK, "ACTIVE"),
+59:         RouteSpec("planner_direct", "planner", SCOPE_RUN, CLASS_WORK, "UNREACHABLE_PROVEN"),
+60:         RouteSpec("verifier_final", "dredd", SCOPE_RUN, CLASS_MANDATORY_VERIFICATION, "ACTIVE"),
+61:         RouteSpec("verifier_permission", "dredd", SCOPE_RUN, CLASS_WORK, "ACTIVE"),
+62:         RouteSpec("planner_review", "dredd", SCOPE_RUN, CLASS_WORK, "ACTIVE"),
+63:         RouteSpec("compressor", "compressor", SCOPE_COMPRESSOR, CLASS_WORK, "ACTIVE"),
+64:         RouteSpec("mcp_chat", "mcp", SCOPE_MCP, CLASS_WORK, "LEGACY_REACHABLE"),
+65:         RouteSpec("oauth", "auth", SCOPE_NONE, CLASS_AUTH, "ACTIVE"),
+66:     )
+67: }
+74: def serialize_request_body(body: Mapping[str, Any]) -> bytes:
+75:     """Exactly the bytes httpx 0.28.x sends for `json=body` (S1: wire != sorted snapshot).
+76: 
+77:     S3b must send these bytes (content=...) so that measurement, hash and wire are one object.
+78:     """
+79:     return json.dumps(body, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
+80: 
+81: 
+82: @dataclass(frozen=True)
+83: class RequestMeasure:
+84:     route_id: str
+85:     provider_model_id: str
+86:     wire_bytes: int                 # exact
+87:     wire_sha256: str                # exact, of the bytes that will be sent
+88:     output_reserve_tokens: int      # body max_tokens (exact request parameter)
+89: 
+90: 
+91: def measure_request(route_id: str, body: Mapping[str, Any]) -> RequestMeasure:
+92:     if not isinstance(body, Mapping):
+93:         raise PolicyInputError("body must be a JSON object")
+94:     try:
+95:         data = serialize_request_body(body)
+96:     except (TypeError, ValueError) as exc:   # NaN/inf, non-JSON values, lone surrogates (UnicodeEncodeError)
+97:         raise PolicyInputError(f"body cannot be serialized as the sent JSON ({type(exc).__name__})") from exc
+98:     max_tokens = body.get("max_tokens")
+99:     if not _is_int(max_tokens) or not 1 <= max_tokens <= MAX_SANE_TOKENS:
+100:         raise PolicyInputError("max_tokens must be a positive integer to reserve output tokens")
+101:     if _text_problem(body.get("model")):
+102:         raise PolicyInputError("model must be a non-empty provider model id")
+103:     return RequestMeasure(route_id, body["model"], len(data), hashlib.sha256(data).hexdigest(), max_tokens)
+878: def evaluate_request(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord], measure: RequestMeasure,
+879:                      context: RunContext) -> Decision:
+880:     """Pure pre-send decision for ONE physical attempt. S3b must call it with the exact wire measure."""
+881:     attempts = list(attempts)
+882:     spec = ROUTES.get(measure.route_id) if isinstance(measure.route_id, str) else None   # a list is unhashable
+883:     if spec is None:
+884:         return Decision(DENY, (_reason("UNKNOWN_ROUTE", f"маршрут {_show(measure.route_id)} не инвентаризирован"),),
+885:                         measure.route_id)
+886:     if spec.scope == SCOPE_NONE:
+887:         return Decision(NOT_APPLICABLE, (_reason("NOT_LLM_TRAFFIC", "OAuth не расходует токены модели"),),
+888:                         measure.route_id)
+
+FILE ultra_budget_ledger.py SHA256 3d64c3024bfc42957c3c0612b33c228ce0beea3e9b790fc97a5b1bbfe2aaf220
+202:     def initialize(self):
+203:         """Explicit fresh enrollment. Existing audit facts need approved adoption, never zero."""
+204:         with self._locked(enrollment=True):
+205:             if os.path.lexists(self._marker()):
+206:                 index, value, records, _ = self._load()
+207:             else:
+208:                 audit = store._checked_path(self.root / ".ultra/audit", directory=True)
+209:                 if any(audit.iterdir()):
+210:                     raise LedgerDenied("EXISTING_AUDIT_REQUIRES_MIGRATION")
+211:                 index = store.load_workspace_run_index(self.root)
+212:                 marker = {"schema_version": SCHEMA_VERSION, "workspace_id": self.workspace_id, "ledger_id": uuid.uuid4().hex,
+213:                           "policy_engine_sha256": _engine_id()}
+214:                 # Marker-first crash may block enrollment, never silently bootstrap zero again.
+215:                 store._atomic_json(self._marker(), marker)
+216:                 value = {**marker, "events": [], "events_sha256": _hash([])}
+217:                 index[INDEX_KEY] = value
+218:                 store._save_index(self.root, index)
+219:                 index, value, records, _ = self._load()
+220:             return Recovered(self.workspace_id, value["ledger_id"], index["revision"], len(value["events"]), tuple(records.values()))
+228:     def _event(self, op, attempt, data):
+229:         with self._locked():
+230:             attempt = _text(attempt)
+231:             event = _copy({"op": op, "provider_attempt_id": attempt, "data": data})
+232:             index, value, records, envelopes = self._load()
+233:             if op == "reserve" and attempt in envelopes:
+234:                 if event["data"] != envelopes[attempt]:
+235:                     raise LedgerDenied("ATTEMPT_ID_CONFLICT")
+236:                 return Receipt(records[attempt], True, index["revision"])
+237:             if event in value["events"]:
+238:                 return Receipt(records[attempt], True, index["revision"])
+239:             candidate = {**value, "events": [*value["events"], event]}
+240:             _replay(candidate["events"])
+241:             candidate["events_sha256"] = _hash(candidate["events"])
+242:             index[INDEX_KEY] = candidate
+243:             store._save_index(self.root, index)
+244:             loaded, saved, records, _ = self._load()
+245:             if saved != candidate:
+246:                 raise LedgerDenied("COMMIT_READBACK_MISMATCH")
+247:             return Receipt(records[attempt], False, loaded["revision"])
+248: 
+249:     def reserve(self, provider_attempt_id, raw_policy, route_id, final_wire_body, context, binding):
+250:         try:
+251:             if type(final_wire_body) is not bytes or type(context) is not policy.RunContext:
+252:                 raise LedgerDenied("INVALID_REQUEST_INPUT")
+253:             envelope = {"policy": raw_policy, "route_id": route_id, "wire_utf8": final_wire_body.decode("utf-8"),
+254:                         "context": asdict(context), "binding": binding}
+255:             return self._event("reserve", provider_attempt_id, envelope)
+256:         except LedgerDenied:
+257:             raise
+258:         except Exception as error:
+259:             raise LedgerDenied("INPUT_DENY:" + type(error).__name__) from error
+260: 
+261:     def mark_sent(self, provider_attempt_id):
+262:         return self._event("mark_sent", provider_attempt_id, {})
+263: 
+264:     def mark_not_sent(self, provider_attempt_id, proof=None):
+265:         return self._event("mark_not_sent", provider_attempt_id, proof)
+266: 
+267:     def terminal(self, provider_attempt_id, outcome, usage):
+268:         return self._event("terminal", provider_attempt_id, {"outcome": outcome, "usage": usage})
+
+FILE web_alarm/launcher.py SHA256 94b4f48e79a658ecb2a0f42c7f52be2bf32f708740778768f82cd42fb9d5b42e
+109:     if kind == "python_script":
+110:         script = raw.get("script")
+111:         args = raw.get("args", [])
+112:         if not isinstance(script, str) or not script.endswith(".py") or "\\" in script or script.startswith("/"):
+113:             raise LaunchConfigError(f"Профиль {name!r}: script — путь .py внутри проекта через \"/\".")
+114:         target = (REPO / script).resolve()
+115:         if REPO not in target.parents or not target.is_file():
+116:             raise LaunchConfigError(f"Профиль {name!r}: скрипт {script!r} не найден внутри проекта.")
+117:         if not isinstance(args, list) or not all(isinstance(item, str) for item in args):
+118:             raise LaunchConfigError(f"Профиль {name!r}: args — список строк.")
+119:         return Launch(name=name, title=title.strip(), standard=False, kind=kind, storage="script",
+120:                       port=0, script=script, args=tuple(args))
+403: def run_script(launch: Launch, *, out: TextIO, colors: bool, sleep: Callable[[float], None] = time.sleep) -> int:
+404:     set_console_title(f"[ТЕСТ] {launch.name} — " + TEST_TEXT)
+405:     out.write(banner(launch, "-", "-", colors))
+406:     for left in range(TEST_WARNING_SECONDS, 0, -1):
+407:         out.write(f"Тестовый скрипт запустится через {left} с.\n")
+408:         out.flush()
+409:         sleep(1)
+410:     _stop_on_break()
+411:     try:
+412:         return subprocess.call([sys.executable, "-B", "-X", "utf8", launch.script, *launch.args], cwd=REPO)
+413:     except KeyboardInterrupt:
+414:         return 0
+428:     try:
+429:         launch = standard_launch() if args.standard else load_launch(args.config)
+430:         if args.require_test and launch.standard:
+431:             raise LaunchConfigError("Тестовый запуск требует явно выбранного TEST-профиля. "
+432:                                     "Файл отсутствует или выбран standard; запуск штатных данных запрещён.")
+433:     except LaunchConfigError as exc:
+434:         out.write("\n" + paint("ЗАПУСК ОСТАНОВЛЕН: конфигурация запуска не принята", 41, colors) + "\n" + str(exc) + "\n")
+435:         return 2
+436:     if launch.kind == "python_script":
+437:         if args.self_test is not None:
+438:             out.write("Самопроверка для тестового скрипта не поддерживается.\n")
+439:             return 2
+440:         return run_script(launch, out=out, colors=colors)
+441:     return run_web_alarm(launch, out=out, colors=colors, open_browser=not args.no_browser, self_test=args.self_test)
+
+FILE web_alarm/ordinary_test_fixture.py SHA256 0b59f70121f8e68a24c00c47b4115266542e4a604e04bbe82a77064e89bc39c8
+23:     with tempfile.TemporaryDirectory(prefix="ordinary_core_TEST_") as directory:
+24:         root = Path(directory).resolve()
+25:         # Install the already reviewed guard even if a caller supplied similarly
+26:         # named environment variables. A missing guard fails before core imports.
+27:         os.environ.update(ORDINARY_GUARD_LOG=str(root / "guard.jsonl"),
+28:                           ORDINARY_GUARD_NETWORK="loopback", ORDINARY_GUARD_ROOT=str(ROOT))
+29:         runpy.run_path(str(ROOT / "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/sitecustomize.py"))
+30:         from web_alarm.server import WebAlarmApi, create_server
+31:         from web_alarm.ultra_chat import OrdinaryCoreChatService
+32: 
+33:         api = WebAlarmApi(root / "registry")
+34:         chat = OrdinaryCoreChatService(api.registry, root)
+35:         server = create_server(api, port=0, offline_chat=chat)
+
+FILE probe_gigachat_models.py SHA256 1925a22f1d4806da397128cee846bd742cffbc79cc6c67910c70f50e3c512f36
+1: import asyncio
+2: import json
+3: 
+4: import httpx
+5: 
+6: from server import CHAT_URL, get_access_token
+7: 
+8: 
+9: MODELS_URL = CHAT_URL.rsplit("/", 2)[0] + "/models"
+10: 
+11: 
+12: async def main() -> None:
+13:     token = await get_access_token()
+14: 
+15:     headers = {
+16:         "Authorization": f"Bearer {token}",
+17:         "Accept": "application/json",
+18:     }
+19: 
+20:     async with httpx.AsyncClient(timeout=30.0) as client:
+21:         response = await client.get(
+22:             MODELS_URL,
+23:             headers=headers,
+24:         )
