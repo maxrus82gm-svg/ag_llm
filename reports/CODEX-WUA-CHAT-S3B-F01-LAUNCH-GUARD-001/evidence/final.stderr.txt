@@ -1,0 +1,31 @@
+test_l1_the_shipped_configuration_is_the_standard_launch (test_web_alarm_launcher.ConfigTests.test_l1_the_shipped_configuration_is_the_standard_launch) ... ok
+test_l2_missing_file_is_standard_and_every_shipped_profile_is_valid_and_non_standard (test_web_alarm_launcher.ConfigTests.test_l2_missing_file_is_standard_and_every_shipped_profile_is_valid_and_non_standard) ... ok
+test_l3_unsafe_or_broken_configurations_are_refused (test_web_alarm_launcher.ConfigTests.test_l3_unsafe_or_broken_configurations_are_refused) ... ok
+test_l4_machine_port_binding_moves_the_standard_port_and_stays_visible (test_web_alarm_launcher.ConfigTests.test_l4_machine_port_binding_moves_the_standard_port_and_stays_visible) ... ok
+test_b1_standard_banner_is_green_and_test_banner_is_red_with_the_profile_name (test_web_alarm_launcher.BannerAndPageTests.test_b1_standard_banner_is_green_and_test_banner_is_red_with_the_profile_name) ... ok
+test_b2_standard_page_is_unchanged_and_test_page_is_marked (test_web_alarm_launcher.BannerAndPageTests.test_b2_standard_page_is_unchanged_and_test_page_is_marked) ... ok
+test_explicit_standard_and_config_cannot_be_combined (test_web_alarm_launcher.StableEntryTests.test_explicit_standard_and_config_cannot_be_combined) ... ok
+test_explicit_standard_ignores_the_selected_test_configuration (test_web_alarm_launcher.StableEntryTests.test_explicit_standard_ignores_the_selected_test_configuration) ... ok
+test_generic_launcher_still_accepts_other_repository_scripts (test_web_alarm_launcher.StableEntryTests.test_generic_launcher_still_accepts_other_repository_scripts) ... ok
+test_require_test_accepts_only_both_approved_dispatches (test_web_alarm_launcher.StableEntryTests.test_require_test_accepts_only_both_approved_dispatches) ... ok
+test_require_test_denies_corrupt_json_without_any_dispatch (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_corrupt_json_without_any_dispatch) ... ok
+test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) ... ok
+test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting (test_web_alarm_launcher.StableEntryTests.test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting) ... ok
+test_test_entry_uses_the_existing_stage5_script_dispatch (test_web_alarm_launcher.StableEntryTests.test_test_entry_uses_the_existing_stage5_script_dispatch) ... FAIL
+test_r7_script_profile_warns_then_runs_the_script_and_cannot_self_test (test_web_alarm_launcher.RunTests.test_r7_script_profile_warns_then_runs_the_script_and_cannot_self_test) ... ok
+test_r8_a_refused_configuration_stops_with_a_red_message_and_nothing_starts (test_web_alarm_launcher.RunTests.test_r8_a_refused_configuration_stops_with_a_red_message_and_nothing_starts) ... ok
+test_active_profile_uses_bridge_and_old_stage5_is_available (test_web_alarm_ordinary_test_activation.ActivationTests.test_active_profile_uses_bridge_and_old_stage5_is_available) ... ok
+test_missing_test_config_cannot_fall_back_to_standard (test_web_alarm_ordinary_test_activation.ActivationTests.test_missing_test_config_cannot_fall_back_to_standard) ... ok
+
+======================================================================
+FAIL: test_test_entry_uses_the_existing_stage5_script_dispatch (test_web_alarm_launcher.StableEntryTests.test_test_entry_uses_the_existing_stage5_script_dispatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 414, in test_test_entry_uses_the_existing_stage5_script_dispatch
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=io.StringIO()), 7)
+AssertionError: 2 != 7
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.666s
+
+FAILED (failures=1)

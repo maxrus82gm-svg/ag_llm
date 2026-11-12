@@ -50,6 +50,12 @@ RETURN_HINT = 'Вернуть стандартный запуск: в web_alarm\
 _CONFIG_KEYS = {"_comment", "schema_version", "active", "test_profiles"}
 _WEB_KEYS = {"title", "kind", "storage", "port", "folder_picker", "ultra_chat", "note"}
 _SCRIPT_KEYS = {"title", "kind", "script", "args", "note"}
+# Trusted admission for the permanent TEST entry; JSON cannot extend it.
+_OFFLINE_TEST_PROFILES = frozenset({
+    ("ordinary-core-offline", "python_script", "web_alarm/ordinary_test_fixture.py", ()),
+    ("stage5-offline", "python_script",
+     "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/review_fixture.py", ("--web",)),
+})
 
 
 class LaunchConfigError(Exception):
@@ -156,6 +162,12 @@ def load_launch(config_path: Path = CONFIG_PATH) -> Launch:
     if not isinstance(active, str) or active not in profiles:
         raise LaunchConfigError(f"launch_config.json: профиль {active!r} не найден. " + RETURN_HINT)
     return _profile(active, profiles[active])
+
+
+def _require_offline_test(launch: Launch) -> None:
+    if launch.standard or (launch.name, launch.kind, launch.script, launch.args) not in _OFFLINE_TEST_PROFILES:
+        raise LaunchConfigError("TEST допускает только утверждённые offline-профили ordinary-core-offline "
+                                "и stage5-offline с исходными скриптами и аргументами. Запуск запрещён.")
 
 
 # --- console -------------------------------------------------------------------------------------------------
@@ -427,9 +439,8 @@ def main(argv: list[str] | None = None, out: TextIO | None = None) -> int:
     colors = enable_colors(out)
     try:
         launch = standard_launch() if args.standard else load_launch(args.config)
-        if args.require_test and launch.standard:
-            raise LaunchConfigError("Тестовый запуск требует явно выбранного TEST-профиля. "
-                                    "Файл отсутствует или выбран standard; запуск штатных данных запрещён.")
+        if args.require_test:
+            _require_offline_test(launch)
     except LaunchConfigError as exc:
         out.write("\n" + paint("ЗАПУСК ОСТАНОВЛЕН: конфигурация запуска не принята", 41, colors) + "\n" + str(exc) + "\n")
         return 2

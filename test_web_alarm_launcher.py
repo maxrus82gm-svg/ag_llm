@@ -312,6 +312,77 @@ class RunTests(Base):
 
 
 class StableEntryTests(Base):
+    def offline_config(self, active="ordinary-core-offline", **changes):
+        data = json.loads((REPO / "web_alarm/launch_test_config.json").read_text(encoding="utf-8"))
+        data["active"] = active
+        data["test_profiles"].setdefault(active, {}).update(changes)
+        path = self.base / "offline.json"
+        path.write_text(json.dumps(data), encoding="utf-8")
+        return path
+
+    def test_require_test_accepts_only_both_approved_dispatches(self):
+        for name, script, args in (
+            ("ordinary-core-offline", "web_alarm/ordinary_test_fixture.py", ()),
+            ("stage5-offline", "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/review_fixture.py", ("--web",)),
+        ):
+            with self.subTest(name=name), patch.object(launcher, "TEST_WARNING_SECONDS", 0), \
+                    patch.object(launcher, "set_console_title"), patch.object(launcher, "_stop_on_break"), \
+                    patch.object(launcher.subprocess, "call", return_value=7) as child, \
+                    patch.object(launcher, "run_web_alarm") as web:
+                path = self.offline_config(name)
+                self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=io.StringIO()), 7)
+                child.assert_called_once_with([sys.executable, "-B", "-X", "utf8", script, *args], cwd=REPO)
+                web.assert_not_called()
+
+    def test_require_test_denies_script_args_name_kind_and_path_substitutions(self):
+        ordinary = "web_alarm/ordinary_test_fixture.py"
+        stage5 = "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/review_fixture.py"
+        cases = [
+            ("ordinary-core-offline", dict(script="probe_gigachat_models.py")),
+            ("stage5-offline", dict(script="probe_gigachat_models.py")),
+            ("ordinary-core-offline", dict(script=stage5, args=["--web"])),
+            ("stage5-offline", dict(script=ordinary, args=[])),
+            ("ordinary-core-offline", dict(args=["--no-browser"])),
+            ("stage5-offline", dict(args=[])),
+            ("stage5-offline", dict(args=["--web", "--other"])),
+            ("other-offline", dict(title="Unapproved", kind="python_script", script=ordinary, args=[])),
+            ("ordinary-core-offline", dict(kind="web_alarm", storage="temp", port=8766)),
+            ("ordinary-core-offline", dict(script="web_alarm/../web_alarm/ordinary_test_fixture.py")),
+            ("ordinary-core-offline", dict(script=str(REPO / ordinary))),
+        ]
+        for name, changes in cases:
+            path = self.offline_config(name, **changes)
+            # A valid alternative web profile must reach the new admission check.
+            if changes.get("kind") == "web_alarm":
+                raw = json.loads(path.read_text()); raw["test_profiles"][name].pop("script")
+                path.write_text(json.dumps(raw), encoding="utf-8")
+            with self.subTest(name=name, changes=changes), \
+                    patch.object(launcher.subprocess, "call") as child, \
+                    patch.object(launcher.subprocess, "Popen") as popen, \
+                    patch.object(launcher, "run_script") as script, \
+                    patch.object(launcher, "run_web_alarm") as web:
+                out = io.StringIO()
+                self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+                self.assertIn("ЗАПУСК ОСТАНОВЛЕН", out.getvalue())
+                for target in (child, popen, script, web): target.assert_not_called()
+
+    def test_require_test_denies_corrupt_json_without_any_dispatch(self):
+        for text in ("{", "[]", '{"schema_version":1,"active":"ordinary-core-offline","active":"stage5-offline"}',
+                     '{"schema_version":1,"active":"ordinary-core-offline","allow_scripts":["probe_gigachat_models.py"]}'):
+            path = self.base / "broken.json"; path.write_text(text, encoding="utf-8")
+            with self.subTest(text=text), patch.object(launcher.subprocess, "call") as child, \
+                    patch.object(launcher.subprocess, "Popen") as popen, \
+                    patch.object(launcher, "run_script") as script, patch.object(launcher, "run_web_alarm") as web:
+                self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=io.StringIO()), 2)
+                for target in (child, popen, script, web): target.assert_not_called()
+
+    def test_generic_launcher_still_accepts_other_repository_scripts(self):
+        path = self.offline_config(script="probe_gigachat_models.py", args=["arbitrary"])
+        with patch.object(launcher, "run_script", return_value=9) as run:
+            self.assertEqual(launcher.main(["--config", str(path)], out=io.StringIO()), 9)
+        self.assertEqual((run.call_args.args[0].script, run.call_args.args[0].args),
+                         ("probe_gigachat_models.py", ("arbitrary",)))
+
     def test_explicit_standard_ignores_the_selected_test_configuration(self):
         with patch.object(launcher, "load_launch", side_effect=AssertionError("must not read active config")), \
                 patch.object(launcher, "run_web_alarm", return_value=0) as run:
@@ -325,14 +396,19 @@ class StableEntryTests(Base):
         broken.write_text("{", encoding="utf-8")
         for path in (self.base / "missing.json", standard, broken):
             with self.subTest(path=path.name), \
+                    patch.object(launcher.subprocess, "call") as child, \
+                    patch.object(launcher.subprocess, "Popen") as popen, \
                     patch.object(launcher, "run_web_alarm", side_effect=AssertionError("must not start")), \
                     patch.object(launcher, "run_script", side_effect=AssertionError("must not start")):
                 out = io.StringIO()
                 self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
                 self.assertIn("ЗАПУСК ОСТАНОВЛЕН", out.getvalue())
+                child.assert_not_called()
+                popen.assert_not_called()
 
     def test_test_entry_uses_the_existing_stage5_script_dispatch(self):
-        path = REPO / "reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/launch_stage5.json"
+        # The permanent rollback is Web-only; the archived Web+Tk config has no --web.
+        path = self.offline_config("stage5-offline")
         expected = launcher.load_launch(path)
         with patch.object(launcher, "run_script", return_value=7) as run, \
                 patch.object(launcher, "run_web_alarm", side_effect=AssertionError("must not start standard")):

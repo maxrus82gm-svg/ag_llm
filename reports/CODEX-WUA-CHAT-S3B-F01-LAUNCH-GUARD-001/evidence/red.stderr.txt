@@ -1,0 +1,96 @@
+test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) ... 
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'script': 'probe_gigachat_models.py'}) ... FAIL
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='stage5-offline', changes={'script': 'probe_gigachat_models.py'}) ... FAIL
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'script': 'reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/review_fixture.py', 'args': ['--web']}) ... FAIL
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='stage5-offline', changes={'script': 'web_alarm/ordinary_test_fixture.py', 'args': []}) ... FAIL
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'args': ['--no-browser']}) ... FAIL
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='stage5-offline', changes={'args': []}) ... FAIL
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='stage5-offline', changes={'args': ['--web', '--other']}) ... FAIL
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='other-offline', changes={'title': 'Unapproved', 'kind': 'python_script', 'script': 'web_alarm/ordinary_test_fixture.py', 'args': []}) ... FAIL
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'kind': 'web_alarm', 'storage': 'temp', 'port': 8766}) ... FAIL
+  test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'script': 'web_alarm/../web_alarm/ordinary_test_fixture.py'}) ... FAIL
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'script': 'probe_gigachat_models.py'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_script()' id='1499361121328'> != 2
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='stage5-offline', changes={'script': 'probe_gigachat_models.py'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_script()' id='1499324218448'> != 2
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'script': 'reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/review_fixture.py', 'args': ['--web']})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_script()' id='1499323118464'> != 2
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='stage5-offline', changes={'script': 'web_alarm/ordinary_test_fixture.py', 'args': []})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_script()' id='1499361203824'> != 2
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'args': ['--no-browser']})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_script()' id='1499323118704'> != 2
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='stage5-offline', changes={'args': []})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_script()' id='1499362403360'> != 2
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='stage5-offline', changes={'args': ['--web', '--other']})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_script()' id='1499361339984'> != 2
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='other-offline', changes={'title': 'Unapproved', 'kind': 'python_script', 'script': 'web_alarm/ordinary_test_fixture.py', 'args': []})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_script()' id='1499361326000'> != 2
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'kind': 'web_alarm', 'storage': 'temp', 'port': 8766})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_web_alarm()' id='1499361283968'> != 2
+
+======================================================================
+FAIL: test_require_test_denies_script_args_name_kind_and_path_substitutions (test_web_alarm_launcher.StableEntryTests.test_require_test_denies_script_args_name_kind_and_path_substitutions) (name='ordinary-core-offline', changes={'script': 'web_alarm/../web_alarm/ordinary_test_fixture.py'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_launcher.py", line 365, in test_require_test_denies_script_args_name_kind_and_path_substitutions
+    self.assertEqual(launcher.main(["--config", str(path), "--require-test"], out=out), 2)
+AssertionError: <MagicMock name='run_script()' id='1499361283440'> != 2
+
+----------------------------------------------------------------------
+Ran 1 test in 0.138s
+
+FAILED (failures=10)

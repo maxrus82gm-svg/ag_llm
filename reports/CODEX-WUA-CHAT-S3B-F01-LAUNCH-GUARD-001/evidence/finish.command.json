@@ -1,0 +1,19 @@
+{
+  "command": [
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-WUA-CHAT-S3B-F01-LAUNCH-GUARD-001",
+    "--date",
+    "2026-11-12",
+    "--no-chat-amendment",
+    "--headless",
+    "--expected-card-sha256",
+    "41895d77e2e48215ab493a9055e5a63b2a5a6e8646b66d28908ce18b680bfb72",
+    "--apply"
+  ],
+  "exit_code": 0,
+  "guard_installed": true
+}
