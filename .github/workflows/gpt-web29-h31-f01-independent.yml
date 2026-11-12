@@ -28,6 +28,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /Start_WebAlarm.bat
+            /Start_WebAlarm_Test.cmd
+            /Start_WebAlarm_Standard.cmd
+            /reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/tools/demo_ultra_chat.py
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/review_fixture.py
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CHATGPT-WEB29-H31-F01-CI-20261112/
+          sparse-checkout-cone-mode: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
