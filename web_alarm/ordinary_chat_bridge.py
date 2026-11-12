@@ -6,10 +6,39 @@ execute, and TurnService additionally requires explicitly isolated TEMP roots.
 Adding a provider requires a separately accepted S3b path, not a config flag.
 """
 import asyncio
+from contextvars import ContextVar
 from dataclasses import dataclass, replace
+import hashlib
 
 import ordinary_chat_service as chat
+import ultra_budget_policy as policy
 from .ordinary_chat_test_adapter import OfflineTestAdapter, _FixtureTransport
+
+FIXTURE_ENDPOINT = "fixture://ordinary/v1"
+_ADMISSION = ContextVar("ordinary_fake_admission", default=None)
+
+
+def offline_policy():
+    """Explicit synthetic caps ONLY. No empirical/real model calibration claim."""
+    return dict(schema_version=1, revision_label="H32 SYNTHETIC OFFLINE ONLY",
+        run=dict(max_request_bytes=8192, max_request_input_tokens_est=8192,
+                 max_verification_request_bytes=8192, max_verification_request_input_tokens_est=8192,
+                 max_run_liability_tokens=8320, max_run_attempts=1,
+                 max_attempts_per_role={"planner": None, "executor": None, "dredd": None},
+                 verification_reserve_tokens=0, verification_reserve_attempts=0),
+        estimation={"profiles": [], "missing_profile": "HARD_BOUND"}, output_reserve="MAX_TOKENS",
+        compressor={"mode": "DENY"}, mcp={"mode": "DENY"}, read={"max_full_read_bytes": 2048},
+        ordinary=dict(mode="BUDGET", max_request_bytes=8192, max_request_input_tokens_est=8192,
+                      max_scope_liability_tokens=8320, max_scope_attempts=1))
+
+
+def admission_snapshot(prepared):
+    wire = policy.serialize_request_body(prepared.payload)
+    raw = offline_policy()
+    snapshot = policy.validate_policy(raw)
+    return dict(endpoint=FIXTURE_ENDPOINT, wire_bytes=len(wire),
+                wire_sha256=hashlib.sha256(wire).hexdigest(), policy=raw,
+                policy_sha256=snapshot.revision_sha256)
 
 
 @dataclass(frozen=True)
@@ -47,7 +76,11 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
             return chat.ChatResult(chat.Outcome.REJECTED, chat.Execution.NOT_STARTED,
                                    prepared.model, prepared.request_ref,
                                    error_code="provider_admission_required")
-        capture = _UsageCapture(self._transport)
+        guard = _ADMISSION.get()
+        if guard is None:
+            return chat.ChatResult(chat.Outcome.REJECTED, chat.Execution.NOT_STARTED,
+                                   prepared.model, prepared.request_ref, error_code="turn_admission_required")
+        capture = _UsageCapture(self, guard)
         result = asyncio.run(chat.execute_request(prepared, transport=capture))
         reasoning = capture.reasoning
         if (result.usage.status == "invalid" or result.usage.completion_tokens is None
@@ -55,15 +88,33 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
             reasoning = None
         return replace(result, usage=BridgeUsage(**vars(result.usage), reasoning_tokens=reasoning))
 
+    def execute_turn(self, prepared, guard):
+        # Thread/task-local binding; concurrent Turns never share mutable callbacks.
+        token = _ADMISSION.set(guard)
+        try:
+            return self.execute(prepared)
+        finally:
+            _ADMISSION.reset(token)
+
 
 class _UsageCapture:
     """Extract only an explicitly nested numeric metric, never retain raw data."""
-    def __init__(self, transport):
-        self.transport = transport
+    def __init__(self, adapter, guard):
+        self.adapter = adapter
+        self.transport = adapter._transport
+        self.guard = guard
+        self.used = False
         self.reasoning = None
 
     async def send(self, payload, *, timeout_seconds):
-        response = await self.transport.send(payload, timeout_seconds=timeout_seconds)
+        if self.used or type(self.transport) is not _FixtureTransport:
+            raise chat.PreSendDenied("fixture_admission_required")
+        self.used = True
+        wire = policy.serialize_request_body(payload)
+        self.guard(wire)
+        if self.adapter._transport is not self.transport or type(self.transport) is not _FixtureTransport:
+            raise chat.PreSendDenied("fixture_transport_changed")
+        response = await self.transport.send_bytes(wire, timeout_seconds=timeout_seconds)
         if type(response) is dict and type(response.get("usage")) is dict:
             details = response["usage"].get("completion_tokens_details")
             value = details.get("reasoning_tokens") if type(details) is dict else None

@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "workspaces": 2,
+  "chats": 4,
+  "physical_fake_calls": 4,
+  "replays_added_calls": 0,
+  "real_body_status": 400,
+  "per_chat": [
+    {
+      "attempts": 2,
+      "total": 14,
+      "reasoning": 4
+    },
+    {
+      "attempts": 1,
+      "total": 7,
+      "reasoning": 2
+    },
+    {
+      "attempts": 1,
+      "total": 7,
+      "reasoning": 2
+    },
+    {
+      "attempts": 0,
+      "total": 0,
+      "reasoning": 0
+    }
+  ],
+  "trace": [
+    {
+      "wire_sha256": "5de0a4aa1b801e94fab9b1c3bd40503891d780898f9d9028a2e43b4231ab20a5",
+      "wire_bytes": 722,
+      "binding": {
+        "chat_id": "chat_9ac06aefd87f4d1688544f1c1bd50a53",
+        "logical_call_id": "ordinary:630a374483ee6ff15977585ecf8d1e7110304ac20c0c2586612cbdd1608824bf",
+        "run_id": "turn_72cf3a4f657c39be75cef3a98a99d72959d592c430481cc0cb08364c069bc9de",
+        "turn_id": "turn_72cf3a4f657c39be75cef3a98a99d72959d592c430481cc0cb08364c069bc9de"
+      },
+      "ledger_state_at_send": "SENT"
+    },
+    {
+      "wire_sha256": "037d04495661449f55d27bd995032df474e0afa464db5455990b88042b0217a8",
+      "wire_bytes": 722,
+      "binding": {
+        "chat_id": "chat_1e44242998824ba0af1138a818ece28f",
+        "logical_call_id": "ordinary:ffdd1e57ef187ef0a496ce0807380b0966159d5c3c8cdebf403533caad9522b4",
+        "run_id": "turn_d3b4b59fd7b2808b2038de64e44a2550734ee5e583a211a05c9d79452ab9c8c6",
+        "turn_id": "turn_d3b4b59fd7b2808b2038de64e44a2550734ee5e583a211a05c9d79452ab9c8c6"
+      },
+      "ledger_state_at_send": "SENT"
+    },
+    {
+      "wire_sha256": "10242817f928eaefa3ae912d5761c2050b69679bc5bf2d923db4087a31e4a631",
+      "wire_bytes": 817,
+      "binding": {
+        "chat_id": "chat_9ac06aefd87f4d1688544f1c1bd50a53",
+        "logical_call_id": "ordinary:69012b8c920553b352dfc8e832795b4dc690f1081e366c99a59121d7b8383cf7",
+        "run_id": "turn_74fd233527bff20179fbe0c49537a05a13fd70b43cdff61fc5f6376fc4af6a06",
+        "turn_id": "turn_74fd233527bff20179fbe0c49537a05a13fd70b43cdff61fc5f6376fc4af6a06"
+      },
+      "ledger_state_at_send": "SENT"
+    },
+    {
+      "wire_sha256": "356b2b06529f59c5dc3dd451bab3ff0790406ac68409908738a5c8693bfa3702",
+      "wire_bytes": 722,
+      "binding": {
+        "chat_id": "chat_c16c5e9b539642eb93b932249e8b5d41",
+        "logical_call_id": "ordinary:a752f8910e00db2f5ce72bffcb35c847a57bfa34bc987823064b424c41ceaf4d",
+        "run_id": "turn_699d9b586f38c5f5b3229ea65bed16559db6486eb22e734213dcdc9eb1f0283d",
+        "turn_id": "turn_699d9b586f38c5f5b3229ea65bed16559db6486eb22e734213dcdc9eb1f0283d"
+      },
+      "ledger_state_at_send": "SENT"
+    }
+  ],
+  "browser_visual": "NOT RUN",
+  "external_requests": 0
+}

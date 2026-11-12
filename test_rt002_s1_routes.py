@@ -81,6 +81,9 @@ RECONCILED_ADDITIONAL_SITES = {
     ("launcher.py", "_get", "urlopen", "LOCAL_HTTP_ORIGIN"): 1,
     ("ordinary_chat_service.py", "execute_request", "getattr.send", "CAPABILITY_CHECK"): 1,
     ("ordinary_chat_service.py", "execute_request", "dynamic.send", "POTENTIAL_LLM"): 1,
+    # H32 sealed in-memory fixture byte entry delegates to the existing fake send.
+    # Keep conservative UNKNOWN classification; never count it as a new accepted HTTP route.
+    ("ordinary_chat_test_adapter.py", "_FixtureTransport.send_bytes", "dynamic.send", "UNKNOWN"): 1,
 }
 EXPECTED_PRODUCTION_SITES = {**EXPECTED_SEND_SITES, **RECONCILED_ADDITIONAL_SITES}
 # Modules outside the Ultra production send set; production modules must not import them.
@@ -1000,9 +1003,12 @@ RECON_PINS = {'launcher.py': {'HOST': '7c633fca520e5ff51d812e2327fc4e006fd6cb51b
                  'standard_launch': '94cc4fa1a6ff996c2169b49eed3d0a773e773f03f808abcafdfbf5783e5ac0cf',
                  '_profile': '211c49182f6b11fc35bb45a5f24159b3a8524330a564790099402135ffad8b51',
                  'load_launch': '028ef20016c91faa3650c84fc36241a2e5454a5e90c3dbe02abc9835e77b5c7b',
-                 'main': 'cddb27458e20f1c6b3f5f6ddcf0f4f25135200a4ce05ca72d292167f8f897238'},
+                 'main': '7c135a144637a3f29dd7639bd02714d379bcde433d14f8768150a37ea429a545',
+                  '_require_offline_test': '53cf61c93ede45948cd292a5a9baaa909c9e54e55bb424138c77527cfe397532',
+                  '_OFFLINE_TEST_PROFILES': 'fefb1fb5af333f3cac9a16faa52047f12f6d2c2a3fc088defe487946528721c3',
+                 },
  'ordinary_chat_service.py': {'ChatTransport': '187a6a36bb86916f4dfa3da4bea9ad33ac9d666c638278eed25ec69673737162',
-                              'execute_request': '556454958b12f6bc6dd209e123409bbb52ba06ca581e30075b599d46d7455129'},
+                              'execute_request': 'c674b375d01430e6bd15de8a061ed2f880ec1bbe27f8b84ab13de37b23caa02f'},
  'model_cards.py': {'Provider': '3d0e1706696a0a6fa9f834c7cbaee18a750e16c0ef4bf7fa55e31accb3ed6fbb',
                     'BUILTIN_PROVIDERS': '68c85f1d931b3ec76b9dbbed0b86a420f1c742ce9def6b1f99f42cee117d6a9b',
                     'LiveCheckNotAuthorized': '461979486038caa49c60b9332555312754bc3a1adab15ad94a9f8c3d1f3e33c9',
@@ -1010,13 +1016,15 @@ RECON_PINS = {'launcher.py': {'HOST': '7c633fca520e5ff51d812e2327fc4e006fd6cb51b
                     'ModelCards.run_check': 'ec82680003a2fd037a62c9fe901040bdbd2de4769b3f5e8069c73232a8303a4f',
                     'ModelCards._settings_version': '3e86553b206a99f7db28f74f580f7ff7815cb2833c8d28eede7155b98e140b83',
                     'ModelCards.catalog': '3879cc458697eefce244ffa1bbe58d6c191ab2306a13fe4408cb68f9d45b0497'},
- 'ordinary_chat_test_adapter.py': {'_FixtureTransport': 'e092e4b473c6967868f80adc8bb53d9b55d69f23c1334f6ca6b2317145b98700',
+ 'ordinary_chat_test_adapter.py': {'_FixtureTransport': '6336ff1d3d29155f33823a19c49de1deb9bf2314ed210285c4f21c393c9a4aca',
                                    'OfflineTestAdapter.__init__': '42a521d669cf25f5b9b5a40b6c5ff1f291a2bb4aa9fff8f1c70b61e79f233c8d',
-                                   'OfflineTestAdapter.execute': 'cb457ecae9f740e72e24fccf6a155d3167a77188b2d15a55e3b4a90507391c81'}}
+                                   'OfflineTestAdapter.execute': 'cb457ecae9f740e72e24fccf6a155d3167a77188b2d15a55e3b4a90507391c81'},
+ 'ordinary_chat_bridge.py': {'OrdinaryCoreAdapter': '4556c0365eb952e442219ca3d869e1b7cf3fb869eeb02dbd129785dfbad39909', '_UsageCapture': 'bcd76dd34432a374e16207cf49fa18b538860bf7799b0d5dedcb6ca447015069', 'offline_policy': '7fcc4593b411d2dd7e04e59792c6628cec7cdf039e94e496c914cd634d58ac90', 'admission_snapshot': '2954d9d014909c5c2e8c680cd5603405f0687b293fa6e8875cf0286ed975311a', 'FIXTURE_ENDPOINT': 'b403ecd484783ae6681f878a32e02e2098fa5ba6addc77158191ee17e870ab7b'}}
 RECON_REFERENCES = {'launcher.py': '4f4f60619368656989a3c750c60da2168ec18d776d5303daa36d3ec06a1cd0ae',
  'ordinary_chat_service.py': '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945',
  'model_cards.py': '84bd9a33d00a64020534df64f250eb1461cd122e5562da91d3747da9b1758243',
- 'ordinary_chat_test_adapter.py': '1d5ff808d35be09490e20b71681faf7b4b949b94bfe3d5e7edc9bd71865a6c04'}
+ 'ordinary_chat_test_adapter.py': '1d5ff808d35be09490e20b71681faf7b4b949b94bfe3d5e7edc9bd71865a6c04',
+ 'ordinary_chat_bridge.py': '3b5abf8d7e78f3311f02edb3e2fbd1180636385259cdb37fe813f30061b5c06a'}
 RECON_SYMBOLS = frozenset({"_get", "_already_running", "_self_test", "run_web_alarm", "execute_request"})
 METADATA_FIELDS = frozenset({"api_url", "oauth_url"})
 

@@ -1,0 +1,20 @@
+.....FF.............................................                [100%]
+================================== FAILURES ===================================
+______ ImportIsolationQualityTests.test_collector_fromlist_benign_child _______
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:114: in test_collector_fromlist_benign_child
+    self.collected_case("collector_fromlist_benign_child", "import json\n", "PASS")
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:93: in collected_case
+    base = SANDBOX / label
+           ^^^^^^^
+E   NameError: name 'SANDBOX' is not defined
+______ ImportIsolationQualityTests.test_collector_fromlist_nested_policy ______
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:111: in test_collector_fromlist_nested_policy
+    self.collected_case("collector_fromlist_nested_policy", "import ultra_budget_policy\n", "RED")
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:93: in collected_case
+    base = SANDBOX / label
+           ^^^^^^^
+E   NameError: name 'SANDBOX' is not defined
+=========================== short test summary info ===========================
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_collector_fromlist_benign_child
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_collector_fromlist_nested_policy
+2 failed, 50 passed, 5 subtests passed in 57.55s

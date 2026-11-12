@@ -1,0 +1,29 @@
+{
+  "reason": "Explicit H32 byte fake admission; no new HTTP endpoint, pins reviewed not disabled",
+  "changes": {
+    "ordinary_chat_service.py:execute_request": {
+      "before": "556454958b12f6bc6dd209e123409bbb52ba06ca581e30075b599d46d7455129",
+      "after": "e3d18c24977a1ca8322a3db810b9d62f2dfc4c277bb263aba09b7ab04b5d1207"
+    },
+    "web_alarm/ordinary_chat_test_adapter.py:_FixtureTransport": {
+      "before": "e092e4b473c6967868f80adc8bb53d9b55d69f23c1334f6ca6b2317145b98700",
+      "after": "e90d93e0c91c32a1b653a079c8d035873f03b3d53ac6e8b1770b8caa31237589"
+    },
+    "ultra_budget_ledger.py": {
+      "before": "4ec4bc2a511477366ee9e71a7aae7dbf79e259f34f1e0dd018147c2faabfc1fb",
+      "after": "1f209e5e69f47c72ed3f97a62c7737795ee21e6181a82aa864662b406cfcca56"
+    },
+    "web_alarm/ordinary_chat_bridge.py": {
+      "before": "H32_BRIDGE_PIN",
+      "after": "df4b609281287ccf847e90e285253d02fbad8a21dc084f957063a0a265c01c51"
+    },
+    "web_alarm/turn_service.py": {
+      "before": "H32_TURN_PIN",
+      "after": "e73a7e63fe63803cf8025b5e2577e7d747c943208ab24de0ef68f55105e075b6"
+    },
+    "web_alarm/ultra_chat.py": {
+      "before": "H32_SHELL_PIN",
+      "after": "6b805f54d29be9a4083dd3395ccf10d6578d246960338c4e2d2fda05682aecb8"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "task_id": "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
+  "history_id": "H-CODEX-000032",
+  "result": "AUTHOR P0 P1 BOUNDED OFFLINE PASS",
+  "submission_status": "SUBMITTED / REVIEW PENDING",
+  "independent_review": "NOT VERIFIED",
+  "finish": "ROTATED / CHECK DRY-RUN APPLY READBACK PASS",
+  "history_read_command": [
+    "tools/task_history.py",
+    "--max-tokens",
+    "2000",
+    "read",
+    "--id",
+    "H-CODEX-000032"
+  ],
+  "history_read_exit": 0,
+  "snapshot_and_report_sha": "PASS",
+  "protected_unchanged": 88,
+  "blocks_2_4_unchanged": true,
+  "backup": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-h32-backup-jvprazgr",
+  "backup_sha_readback": "PASS / RETAINED UNTIL INDEPENDENT ACCEPTANCE",
+  "H30_H31_TEMP": "NOT TOUCHED",
+  "real_oauth_paid_external_calls": 0,
+  "unexpected_guard_denials": 0,
+  "expected_guard_probe_denials_per_full_run": 9,
+  "tests": {
+    "combined": 235,
+    "combined_subtests": 220,
+    "post_review": 74,
+    "post_review_subtests": 32,
+    "S1": 69,
+    "S2": 73,
+    "isolation_quality": 52,
+    "JS_UI": 57,
+    "weakening_controls_expected_RED": 2,
+    "loopback_http_fake_calls": 4,
+    "loopback_http_replay_added_calls": 0
+  },
+  "not_run": [
+    "REAL GigaChat/OAuth/paid",
+    "full physical S3b/S3c/S9/S13a",
+    "physical CMD/browser/F5",
+    "full CI",
+    "historical adoption/migration",
+    "Git publication"
+  ],
+  "next": "Independent pinned OFFLINE review; separate attested REAL endpoint/model caps, enrollment and applicable B2 gates; separate USER GO before live"
+}

@@ -1,0 +1,26 @@
+{
+  "status": "PASS: both weakening controls expected RED",
+  "cases": [
+    {
+      "mutation": "s2_deny_bypassed",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "expected": "RED",
+      "observed": "RED"
+    },
+    {
+      "mutation": "terminal_verification_bypassed",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "expected": "RED",
+      "observed": "RED"
+    }
+  ],
+  "source_files_unchanged": {
+    "ultra_budget_policy.py": "faac0de9c9af5bae7430c750141cc5ddedd70981c4f262911510c9994b5dbdf4",
+    "web_alarm/turn_service.py": "3c3da789e9b7a18fd08b17e372e2088c4636752281db368ca214f87db906c6c6",
+    "web_alarm/launcher.py": "f70a511fc1db51e36a3c7869e44956ac465d7e143aec5a3b5083d2020289beaf"
+  }
+}

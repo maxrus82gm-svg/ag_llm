@@ -1,5 +1,6 @@
 """Explicit S4B fixture adapter. Its only transport returns in-memory data."""
 import asyncio
+import json
 from copy import deepcopy
 from dataclasses import asdict
 
@@ -12,6 +13,12 @@ class _FixtureTransport:
 
     async def send(self, payload, *, timeout_seconds):
         return deepcopy(self.response)
+
+    async def send_bytes(self, wire, *, timeout_seconds):
+        """H32 physical fake boundary: exact immutable admitted UTF-8 bytes."""
+        if type(wire) is not bytes:
+            raise ValueError("Fixture requires immutable wire bytes")
+        return await self.send(json.loads(wire), timeout_seconds=timeout_seconds)
 
 
 class OfflineTestAdapter:

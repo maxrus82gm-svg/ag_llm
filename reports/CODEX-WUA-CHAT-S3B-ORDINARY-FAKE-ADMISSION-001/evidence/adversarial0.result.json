@@ -1,0 +1,177 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "passed": 29,
+    "failed": 2
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "failed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_commit_then_io_error_is_unknown_without_send_or_release",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_exact_bytes_receipts_binding_usage_replay_and_reopen",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_fake_transport_timeout_and_missing_usage_keep_unknown_liability",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_foreign_owner_same_key_competes_for_one_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_historical_audit_requires_explicit_migration",
+      "phase": "call",
+      "outcome": "failed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_old_policy_has_no_implicit_ordinary_admission",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_request_and_output_reserve_exceeding_synthetic_cap_deny",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_s2_deny_is_zero_send_failed_zero_usage_attempts",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_s2a_enrollment_failure_is_not_implicitly_repaired",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_terminal_failure_cannot_publish_success_or_drop_sent_liability",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed"
+    }
+  ],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001\\run_checks.py",
+    "--child",
+    "test_web_alarm_ordinary_admission.py",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h32_rqmyizgt\\p"
+  ],
+  "elapsed_seconds": 24.21799999999348,
+  "guard_violations": 0
+}

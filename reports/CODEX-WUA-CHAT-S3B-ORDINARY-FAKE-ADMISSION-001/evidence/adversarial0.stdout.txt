@@ -1,0 +1,15 @@
+.......F.......                                          [100%]
+================================== FAILURES ===================================
+_ AdmissionTests.test_cancel_before_admission_and_late_known_answer (late=True) _
+test_web_alarm_ordinary_admission.py:253: in test_cancel_before_admission_and_late_known_answer
+    self.assertEqual(result['usage']['total_tokens'],5)
+E   AssertionError: None != 5
+______ AdmissionTests.test_historical_audit_requires_explicit_migration _______
+test_web_alarm_ordinary_admission.py:270: in test_historical_audit_requires_explicit_migration
+    self.assertEqual(self.service.latest_turn(wa,cid)['state'],'FAILED')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'state'
+=========================== short test summary info ===========================
+SUBFAILED(late=True) test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer
+FAILED test_web_alarm_ordinary_admission.py::AdmissionTests::test_historical_audit_requires_explicit_migration
+2 failed, 14 passed, 15 subtests passed in 23.64s

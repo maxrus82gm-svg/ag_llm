@@ -1,0 +1,49 @@
+{
+  "task": "CLAUDE-RT002-S1-REPAIR-001",
+  "sandbox": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-5hcj3gbh",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "FAILURES:1"
+    ]
+  },
+  "counts": {
+    "run": 69,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 69,
+  "failures": [
+    "__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity"
+  ],
+  "errors": [],
+  "skipped": [],
+  "isolation_violations": [],
+  "evidence_root": "M:\\GitHub\\ag_llm",
+  "evidence_problems": [],
+  "selected": null,
+  "elapsed_seconds": 38.697,
+  "log": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-5hcj3gbh\\unittest.log",
+  "log_sha256": "ef4e23c31401a2108d4695991168066b3de1a656dccfdba3779bfc810c96198f"
+}
+
+FAIL: test_production_send_sites_match_inventory_with_multiplicity (__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1390, in test_production_send_sites_match_inventory_with_multiplicity
+    sites = _module_sites(production)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1382, in _module_sites
+    raise AssertionError(analysis["reconciliation_issues"])
+AssertionError: [('ordinary_chat_bridge.py', 'unreviewed reconciliation reference/caller')]
+
+----------------------------------------------------------------------
+Ran 69 tests in 38.696s
+
+FAILED (failures=1)
+

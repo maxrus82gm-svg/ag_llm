@@ -1,0 +1,30 @@
+{
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "reason": "Recompute on acceptance Python 3.12; host Python 3.13 omits empty AST fields differently",
+  "pins": {
+    "ordinary_chat_service.py:execute_request": {
+      "old": "e3d18c24977a1ca8322a3db810b9d62f2dfc4c277bb263aba09b7ab04b5d1207",
+      "new": "c674b375d01430e6bd15de8a061ed2f880ec1bbe27f8b84ab13de37b23caa02f"
+    },
+    "ordinary_chat_test_adapter.py:_FixtureTransport": {
+      "old": "e90d93e0c91c32a1b653a079c8d035873f03b3d53ac6e8b1770b8caa31237589",
+      "new": "6336ff1d3d29155f33823a19c49de1deb9bf2314ed210285c4f21c393c9a4aca"
+    },
+    "ultra_budget_ledger": {
+      "old": "1f209e5e69f47c72ed3f97a62c7737795ee21e6181a82aa864662b406cfcca56",
+      "new": "9a2cb9a04480f3ecb95c6f94a57b6142d94ea599cfa63f3eae6b98991457f56d"
+    },
+    "web_alarm.ordinary_chat_bridge": {
+      "old": "df4b609281287ccf847e90e285253d02fbad8a21dc084f957063a0a265c01c51",
+      "new": "e916dd8b6dc1ec97c40a359247bc322e02bc05d38433ef012166ba533ac0b519"
+    },
+    "web_alarm.turn_service": {
+      "old": "e73a7e63fe63803cf8025b5e2577e7d747c943208ab24de0ef68f55105e075b6",
+      "new": "6a79bc672a4b00ab703c20436c72d808dbbc888453eece70c6dceb7ac40554bb"
+    },
+    "web_alarm.ultra_chat": {
+      "old": "6b805f54d29be9a4083dd3395ccf10d6578d246960338c4e2d2fda05682aecb8",
+      "new": "a652d69578e1b3920b22a30d877ca32adf30f06180c93a7f39abd639ebbdaa12"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "task": "CLAUDE-RT002-S1-REPAIR-001",
+  "sandbox": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-wj8lq1mb",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "FAILURES:1"
+    ]
+  },
+  "counts": {
+    "run": 69,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 69,
+  "failures": [
+    "__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity"
+  ],
+  "errors": [],
+  "skipped": [],
+  "isolation_violations": [],
+  "evidence_root": "M:\\GitHub\\ag_llm",
+  "evidence_problems": [],
+  "selected": null,
+  "elapsed_seconds": 35.884,
+  "log": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-wj8lq1mb\\unittest.log",
+  "log_sha256": "983223d09a09bb602fef59fd88cbaf092f92c6a27ce9b667d422e10e6fefdb68"
+}
+
+FAIL: test_production_send_sites_match_inventory_with_multiplicity (__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1395, in test_production_send_sites_match_inventory_with_multiplicity
+    self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)
+AssertionError: {('compressor_runtime.py', '_request_gigacha[902 chars]): 1} != {('server.py', 'ask_gigachat', 'client.post'[805 chars]): 1}
+Diff is 990 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 69 tests in 35.883s
+
+FAILED (failures=1)
+

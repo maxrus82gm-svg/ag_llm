@@ -1,0 +1,15 @@
+test_terminal_fake_ack_cannot_publish_success (test_web_alarm_ordinary_admission.AdmissionTests.test_terminal_fake_ack_cannot_publish_success) ... FAIL
+
+======================================================================
+FAIL: test_terminal_fake_ack_cannot_publish_success (test_web_alarm_ordinary_admission.AdmissionTests.test_terminal_fake_ack_cannot_publish_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ordinary_admission.py", line 223, in test_terminal_fake_ack_cannot_publish_success
+    with self.assertRaises(UltraChatError): self.service.submit_turn(wa,cid,body)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: UltraChatError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 1.147s
+
+FAILED (failures=1)

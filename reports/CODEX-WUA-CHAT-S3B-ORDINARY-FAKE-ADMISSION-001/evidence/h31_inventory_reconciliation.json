@@ -1,0 +1,10 @@
+{
+  "reason": "Existing H31 launcher changed before H32; source remains untouched, reconcile main and strengthen pins for exact guard/allowlist",
+  "old_main_pin": "cddb27458e20f1c6b3f5f6ddcf0f4f25135200a4ce05ca72d292167f8f897238",
+  "current_main_pin": "7c135a144637a3f29dd7639bd02714d379bcde433d14f8768150a37ea429a545",
+  "extra_guard_pins": {
+    "_require_offline_test": "53cf61c93ede45948cd292a5a9baaa909c9e54e55bb424138c77527cfe397532",
+    "_OFFLINE_TEST_PROFILES": "fefb1fb5af333f3cac9a16faa52047f12f6d2c2a3fc088defe487946528721c3"
+  },
+  "H27_guard": "Raw SHA 408f9c... normalized LF SHA ad4f79...; no source change"
+}

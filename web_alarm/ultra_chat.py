@@ -644,6 +644,21 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
     Stage5. STANDARD remains disabled. The original Stage5 class is unchanged.
     """
 
+    def _writable_workspace(self, core, wa_workspace_id, *, initialize=False):
+        root, workspace_id = super()._writable_workspace(core, wa_workspace_id, initialize=initialize)
+        if initialize:
+            from ultra_budget_ledger import BudgetLedger, LedgerDenied
+            try:
+                if workspace_id is None:
+                    workspace_id = core.ensure_workspace_storage(root)["workspace_id"]
+                with core._existing_workspace_writer(root, workspace_id):
+                    # Only an explicit first-chat initialization can enroll. Never bootstrap at send.
+                    BudgetLedger(root, workspace_id).initialize()
+            except (LedgerDenied, OSError, ValueError):
+                raise UltraChatError(503, "ordinary_enrollment_required",
+                                     "TEST audit requires verified enrollment or explicit migration") from None
+        return root, workspace_id
+
     def capability(self):
         return {**super().capability(), "core_bridge": True, "real_available": False,
                 "real_denial_reason": "provider_admission_required", "chat_preferences": True}

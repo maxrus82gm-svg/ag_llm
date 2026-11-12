@@ -1,0 +1,106 @@
+{
+  "changed_existing": {
+    "ordinary_chat_service.py": {
+      "before": "0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843",
+      "after": "1573d061a78ba02e6429e4cf3d971d0151bd4166293a65c39f9eea19d55825ac"
+    },
+    "web_alarm/ordinary_chat_bridge.py": {
+      "before": "baf3f04b6afcbcf4432c127715ff96d9689c4f8fc2bf3eaa7b21aa3f234b4ab2",
+      "after": "63d87efba308f2aa70c984724650778b2d28ae53a512c23d96b7f508ddb65d5d"
+    },
+    "web_alarm/ordinary_chat_test_adapter.py": {
+      "before": "fa62abf7268e9e60696d5d6ce85fe2ad4031f4ff884e0ecc83f75650024428f0",
+      "after": "4e6351f1704467bdbdfa043ea2852f0f5a89267f0fa2f30c24701619045a65e7"
+    },
+    "web_alarm/turn_service.py": {
+      "before": "06a7b42c117c7083280afbe27306a4ff1dfa474f29ffb2e83913d3d21da7c2b2",
+      "after": "8f19ddfa8b1aac5985a3d15076231d813b1e9cadeb682783da93ffd5acdeca09"
+    },
+    "ultra_budget_policy.py": {
+      "before": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13",
+      "after": "f6037d86fe966fdadb4d488411bc1be21d327b158546b7c01017da7f2394e14a"
+    },
+    "ultra_budget_ledger.py": {
+      "before": "3d64c3024bfc42957c3c0612b33c228ce0beea3e9b790fc97a5b1bbfe2aaf220",
+      "after": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592"
+    },
+    "web_alarm/ultra_chat.py": {
+      "before": "91d458fd22ad0b2deedde14362dd24bd54c9b5751a5befc17edd1946c86fc21d",
+      "after": "46aeff3c824b66f80aa5848cc14cec3a3c7db828c03e6966a68de5ac77ca3250"
+    },
+    "test_rt002_s1_routes.py": {
+      "before": "35426388b49eb4a8154f5dfe8717ff4f3796b315ce3b391a71db6834e4a09696",
+      "after": "380b970e922dd8624b223b53f02faa1a3f729ea3fc05514c0dea24233e25def4"
+    },
+    "test_rt002_s2_budget_policy.py": {
+      "before": "a7fa9b5d2bcf56dc8f037dd726679a8439c4b1f3135de969b9084bf8d3870d2c",
+      "after": "bcfc0bf0c114abbf61ca89631ef3eaad0e54adf4224b56fce5a3cafba954c4be"
+    }
+  },
+  "new_root_test": "test_web_alarm_ordinary_admission.py",
+  "protected_unchanged": 88,
+  "H31_guard_CMD_STANDARD_Tk_storage_normative": "UNCHANGED",
+  "backup_readback": "PASS",
+  "old_H30_H31_TEMP_copies": "NOT TOUCHED",
+  "syntax": "PASS",
+  "final_suites": {
+    "final_regression": {
+      "exit_code": 0,
+      "counts": {
+        "subtest:passed": 220,
+        "test:passed": 235
+      },
+      "expected_guard_denials": 9,
+      "guard_denials": 9,
+      "unexpected_guard_denials": 0
+    },
+    "post_review": {
+      "exit_code": 0,
+      "counts": {
+        "subtest:passed": 32,
+        "test:passed": 74
+      },
+      "expected_guard_denials": 0,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0
+    },
+    "s1_final": {
+      "exit_code": 0,
+      "counts": {
+        "run": 69,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      }
+    },
+    "s2_final": {
+      "exit_code": 0,
+      "counts": {
+        "run": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      }
+    },
+    "isolation_final": {
+      "exit_code": 0,
+      "counts": {
+        "test:passed": 52,
+        "subtest:passed": 5
+      },
+      "expected_guard_denials": 0,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0
+    },
+    "ui": {
+      "exit_code": 0
+    }
+  },
+  "http": "PASS / 4 one-byte-boundary fake calls / replay +0",
+  "mutations": "2/2 EXPECTED RED",
+  "git": "NOT RUN"
+}

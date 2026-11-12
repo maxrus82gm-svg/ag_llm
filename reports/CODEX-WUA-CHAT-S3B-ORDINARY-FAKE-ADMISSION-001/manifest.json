@@ -1,0 +1,1160 @@
+{
+  "task_id": "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "assigned_base": "main@97b37f776ce77488961b30da9ec066e84e173b1d №576 / assignment claim; no Git authority",
+  "source_before_after": {
+    "ordinary_chat_service.py": {
+      "before": "0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843",
+      "after": "1573d061a78ba02e6429e4cf3d971d0151bd4166293a65c39f9eea19d55825ac"
+    },
+    "web_alarm/ordinary_chat_bridge.py": {
+      "before": "baf3f04b6afcbcf4432c127715ff96d9689c4f8fc2bf3eaa7b21aa3f234b4ab2",
+      "after": "63d87efba308f2aa70c984724650778b2d28ae53a512c23d96b7f508ddb65d5d"
+    },
+    "web_alarm/ordinary_chat_test_adapter.py": {
+      "before": "fa62abf7268e9e60696d5d6ce85fe2ad4031f4ff884e0ecc83f75650024428f0",
+      "after": "4e6351f1704467bdbdfa043ea2852f0f5a89267f0fa2f30c24701619045a65e7"
+    },
+    "web_alarm/turn_service.py": {
+      "before": "06a7b42c117c7083280afbe27306a4ff1dfa474f29ffb2e83913d3d21da7c2b2",
+      "after": "8f19ddfa8b1aac5985a3d15076231d813b1e9cadeb682783da93ffd5acdeca09"
+    },
+    "ultra_budget_policy.py": {
+      "before": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13",
+      "after": "f6037d86fe966fdadb4d488411bc1be21d327b158546b7c01017da7f2394e14a"
+    },
+    "ultra_budget_ledger.py": {
+      "before": "3d64c3024bfc42957c3c0612b33c228ce0beea3e9b790fc97a5b1bbfe2aaf220",
+      "after": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592"
+    },
+    "web_alarm/ultra_chat.py": {
+      "before": "91d458fd22ad0b2deedde14362dd24bd54c9b5751a5befc17edd1946c86fc21d",
+      "after": "46aeff3c824b66f80aa5848cc14cec3a3c7db828c03e6966a68de5ac77ca3250"
+    },
+    "test_rt002_s1_routes.py": {
+      "before": "35426388b49eb4a8154f5dfe8717ff4f3796b315ce3b391a71db6834e4a09696",
+      "after": "380b970e922dd8624b223b53f02faa1a3f729ea3fc05514c0dea24233e25def4"
+    },
+    "test_rt002_s2_budget_policy.py": {
+      "before": "a7fa9b5d2bcf56dc8f037dd726679a8439c4b1f3135de969b9084bf8d3870d2c",
+      "after": "bcfc0bf0c114abbf61ca89631ef3eaad0e54adf4224b56fce5a3cafba954c4be"
+    }
+  },
+  "files": [
+    {
+      "path": "ordinary_chat_service.py",
+      "bytes": 14976,
+      "sha256": "1573d061a78ba02e6429e4cf3d971d0151bd4166293a65c39f9eea19d55825ac",
+      "before_sha256": "0d0050807ab6b0c9277334e4f89010fee424f2750eaf6f1be3f9d7f6927a8843",
+      "purpose": "Trusted pre-send outcome taxonomy; reuse request executor"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/checkpoint.json",
+      "bytes": 451,
+      "sha256": "c4d6f1b44418845faf71f7a9d7b7a617e17d4f2bccbc347b19b781346cf67204",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/closeout.json",
+      "bytes": 1585,
+      "sha256": "601552fe0dc0e18ed4e1b707a03ae386426cc02991b10030763d8c42ce0b8671",
+      "before_sha256": null,
+      "purpose": "Official finish/readback or task-local evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/adversarial0.cases.json",
+      "bytes": 6110,
+      "sha256": "233091f77ab760a86f47e71dacd7ea120452da43da4762dbc3f820f3bdc97e8b",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/adversarial0.result.json",
+      "bytes": 6529,
+      "sha256": "97125308347d5f987136965b4ec87d3afea142bc96cae6b36cb17e140694d66e",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/adversarial0.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/adversarial0.stdout.txt",
+      "bytes": 1123,
+      "sha256": "9da6d33f0c4bb18936df5950c439e29ee29881437c2827dcadcb9d339edcc6a2",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/adversarial1.cases.json",
+      "bytes": 6092,
+      "sha256": "54094a06e17ff9fef9b35100fe92f31e98e402f74d84a6e3654fd8367ba52541",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/adversarial1.result.json",
+      "bytes": 6511,
+      "sha256": "f817986129b64e87d0da3681bc535d71d3c441ce3fdd7599f51db652f9360762",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/adversarial1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/adversarial1.stdout.txt",
+      "bytes": 106,
+      "sha256": "451d0b2607da3e32427b46fbd82aaa21670b4b953f87bef921075036a9d7e6ea",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/backup.json",
+      "bytes": 2891,
+      "sha256": "2e4afa5d1ad05a85e93fb1a177bfe2fa217f6da2f9e573e4db6b7531f8640fed",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/baseline.json",
+      "bytes": 14014,
+      "sha256": "d0337d561d4206e394b59fa93b823c7ef3e75cc4dd99359d5783d8b5c2ea192d",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/bridge_inventory_reconciliation.json",
+      "bytes": 718,
+      "sha256": "932cd3a63bef67e7a7e672318f88e386d922fc88458ebcb9d7ef4342992a8760",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/checks.json",
+      "bytes": 3596,
+      "sha256": "d30096ba6b0d5c3c37b44af49bf1b51ac1a2ac6f2198329aa91c8c37826c5fe9",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/controls1.cases.json",
+      "bytes": 2790,
+      "sha256": "d3eb0bc098e9342f1b381b1b6afd42846dd1fa7b975ef293f5ebae7cad5f3165",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/controls1.guard.jsonl",
+      "bytes": 858,
+      "sha256": "6fa2f9d18a5b1b177cc12479bbd504a710fa8e2bdafae892bb613ff96b872c1b",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/controls1.result.json",
+      "bytes": 3490,
+      "sha256": "b1367797f77cb0a490afb20ded7fd68f4ecc343133116f4c8b5e6f4ab2cb4b22",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/controls1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/controls1.stdout.txt",
+      "bytes": 100,
+      "sha256": "e19f29d473889697d995853dffb46aca6f6eb1af41523d833a58c1f2abf1132a",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/feature_final0.cases.json",
+      "bytes": 22567,
+      "sha256": "027ca7ff0ec7b61fda7a453314da4030e8b8e7c689da70803dc21731fd0dd76f",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/feature_final0.result.json",
+      "bytes": 23146,
+      "sha256": "d87fbc80ee13b98345cb019c7241472d002acac3c1afe9d46d90378867b39df9",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/feature_final0.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/feature_final0.stdout.txt",
+      "bytes": 181,
+      "sha256": "6670410c8a17316fb02b4465401ad3cafcbc45b41882bbec09b0281403a0a630",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/final_regression.cases.json",
+      "bytes": 97868,
+      "sha256": "9969898c57d439e8a9b570e35e9ae8622fef6f8641823db5ced60ea74babe66c",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/final_regression.guard.jsonl",
+      "bytes": 861,
+      "sha256": "96767ebca39e827f203108f0ed9520bc78a27807954b0a8ef02a60f6591ec6c7",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/final_regression.result.json",
+      "bytes": 99045,
+      "sha256": "686ea42cd12a4a97389cb6b42607eadc282480a2a44e24247ca8db7ca26dd689",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/final_regression.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/final_regression.stdout.txt",
+      "bytes": 374,
+      "sha256": "6ac7c569ebf278b26a0923b863b0d44503ca9f5f825cab16b74800f3a7d437a9",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/final_review_pin.json",
+      "bytes": 264,
+      "sha256": "e9e87e0906a95753a8b0dc842b4e22144952d83ffcf7d4810dc8f7fe573d97ed",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/finish.command.json",
+      "bytes": 468,
+      "sha256": "e6b22080cf3419cfbcceae178231f87cb074703047bf0098739670317d9a8e22",
+      "before_sha256": null,
+      "purpose": "Official finish/readback or task-local evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/finish.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Official finish/readback or task-local evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/h31_inventory_reconciliation.json",
+      "bytes": 636,
+      "sha256": "8c9e00673bc8f8491ca2871ff78893513ab3fa92404b3ba02dd3f0e5c5ed1c3b",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/history_read.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Official finish/readback or task-local evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/history_read.stdout.txt",
+      "bytes": 757,
+      "sha256": "744d012de4f50a8403b60a40d8a168448d5a85a5feb59faa53b5b4018486c1f8",
+      "before_sha256": null,
+      "purpose": "Official finish/readback or task-local evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/http_final.result.json",
+      "bytes": 4122,
+      "sha256": "e9ca10c5ff304a7b209d8d3480db0ad364de1946f099415f1dff865af74ea551",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/http_smoke.result.json",
+      "bytes": 2754,
+      "sha256": "1eb1d4558ae55b146605f813982ad3cc7c96ddcd77bb63bdb55e10292aa5421d",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/integration0.cases.json",
+      "bytes": 7676,
+      "sha256": "77c708ad63e412b51b3b6fff7c4e6c6507c9bfbcfed115ac2daf0e1a5039ddfc",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/integration0.result.json",
+      "bytes": 8147,
+      "sha256": "9359dbbf159aa0bed797a5a68fe02804f9e562f746e23af93f1eaf45f443fc06",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/integration0.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/integration0.stdout.txt",
+      "bytes": 106,
+      "sha256": "b265a39bdf760c4487e3e32ef8d444fc7f02230df6aeaa7e244459afc6bcfdf0",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation0.cases.json",
+      "bytes": 55,
+      "sha256": "9424ab1151744949a0981b646f352c27bad2bf98a4f8fc625eb787e22c4a3373",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation0.result.json",
+      "bytes": 595,
+      "sha256": "ed2171b0e13f96cb460820c4505410c262959dfa7d0c734206cad644e105fe11",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation0.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation0.stdout.txt",
+      "bytes": 874,
+      "sha256": "b516fff52527e3dc5eda4f771b9b38ac1e46fc6f4f549db3bad23b634d644dab",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation1.cases.json",
+      "bytes": 13923,
+      "sha256": "e75f104d387aad6793125097f9035cc548a87902e0ec94ced815aaa85fbd5bfd",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation1.result.json",
+      "bytes": 14525,
+      "sha256": "0476d8eeda7b4a27776be62f83fba70cd970a876552c8590b78d2ef9c3c47b47",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation1.stdout.txt",
+      "bytes": 49862,
+      "sha256": "8eacf6df0a7a466c498a8362ea6837f4b0dec359c4d2e952da4abdc121dfafad",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation2.cases.json",
+      "bytes": 13923,
+      "sha256": "765930041de9aedcd3b2169b0cd6ac12b7b1be18cfbeaf3e7c08dcd3a18b50cc",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation2.result.json",
+      "bytes": 14526,
+      "sha256": "676997b1013cee018270c51af324590c0b35250b3b1fb52b5446f9d365c8f551",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation2.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation2.stdout.txt",
+      "bytes": 1557,
+      "sha256": "b25c0ae98c603bc81f35c17b731c6256fab3905ed08ceeb259ee78444f826b32",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation3.cases.json",
+      "bytes": 13900,
+      "sha256": "f032b5e1d5e7b014dcf4a556518e7e2db4db6f30d1d5d101c87129267337fade",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation3.result.json",
+      "bytes": 14502,
+      "sha256": "cf4b75571033eb0cea18b2de989189dbf3c79e1b6c1ecace0eb166807be3cb8c",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation3.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation3.stdout.txt",
+      "bytes": 116,
+      "sha256": "47bae3567c70cf4453f1fa63aa3c3aa2cdd45359cd4b7eb1ee500560a7b31bf1",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation_final.cases.json",
+      "bytes": 13900,
+      "sha256": "f032b5e1d5e7b014dcf4a556518e7e2db4db6f30d1d5d101c87129267337fade",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation_final.result.json",
+      "bytes": 14503,
+      "sha256": "96b6d517d4514f7e7db770462527cf4977bbbfa0ac295c671eca3c58cc39c52b",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation_final.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/isolation_final.stdout.txt",
+      "bytes": 116,
+      "sha256": "af6fa76a8225bd5d36ffaea715e0de74c8e1abefaf3b612ada2ec949bb511c39",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/mutation_s2_deny_bypassed.txt",
+      "bytes": 3153,
+      "sha256": "74955be470e28379aa10536f0fd8465a92bb7bf992636611610884662b3ccb8b",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/mutation_terminal_verification_bypassed.txt",
+      "bytes": 898,
+      "sha256": "bf9ca9d0e1586f7190cc3938ceae5c5cd89f6c0b3064b038c00d4a7f0f39f265",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/mutations.result.json",
+      "bytes": 762,
+      "sha256": "bbba47ce0c764e5dad0dfee6be1fcff65560695a5b0f51b8a9dbee54c8a91453",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/mutations_final.result.json",
+      "bytes": 762,
+      "sha256": "576b263129976408561f6d6c6841a250a94151ac5a5190993a35850dcc172b76",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/mutations_final_s2_deny_bypassed.txt",
+      "bytes": 3153,
+      "sha256": "8a1864a1e6f5a9211270be2c7a0c0bcbdb4ae095996df209838c49d26202eb13",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/mutations_final_terminal_verification_bypassed.txt",
+      "bytes": 898,
+      "sha256": "06c6309a54cf2d9d036a25cf2fff094fb10bec5480ad166e304f39e186caf3af",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/policy0.cases.json",
+      "bytes": 32569,
+      "sha256": "f9b51a011e5b2aebdd86ce2480554784ef3e955e2e16b11c8c5d88a66c7b5929",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/policy0.result.json",
+      "bytes": 33047,
+      "sha256": "0288a02a4765b8c395191a6fe3e0ec8322a5c86af2ced25716fd6c45ac32c118",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/policy0.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/policy0.stdout.txt",
+      "bytes": 276,
+      "sha256": "218f327068375faceaacc332d78e51fdf3c84d66a46864413c46eeac9fd58022",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/post_review.cases.json",
+      "bytes": 22779,
+      "sha256": "2f12eb707cf85421db353133af8e8afbc9becb5f9c2c1ffa4e563c1eb4701666",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/post_review.result.json",
+      "bytes": 23358,
+      "sha256": "99c19d4d5bce6abe26865c86af49d8bca4ec43b2c79c200d45281537ac43b3b3",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/post_review.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/post_review.stdout.txt",
+      "bytes": 171,
+      "sha256": "43869eec0a434e9fcc068777e4fb41e837325e10ebb08a0be02d87c8543e7c38",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/reconciliation.json",
+      "bytes": 1292,
+      "sha256": "54ebfbde40e0676d76bc45f09d116ed1acabbd8d73d5c795e25586e9781d1df7",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/reconciliation_python312.json",
+      "bytes": 1495,
+      "sha256": "a0630b4dcb94deaf21951648f280b418ad6a7889e27b64ea129d3b405f7dcc5c",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/regression0.cases.json",
+      "bytes": 72771,
+      "sha256": "ba66ad7a27a3529ebf405fd6257c9151d12717d090ac50e957111cf87ec1128c",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/regression0.guard.jsonl",
+      "bytes": 858,
+      "sha256": "34f4a2b628086e122ab6c7ac458c2928a631b4d9876e35c5ae28b2db74cf95f3",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/regression0.result.json",
+      "bytes": 73742,
+      "sha256": "4723a5fef07fb76489782e52bc0770dc8263797b1d607ce9752a82450a9c5766",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/regression0.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/regression0.stdout.txt",
+      "bytes": 261,
+      "sha256": "310183bbe72464744f12cfa5735ae366d807126e006a975e84135af1df732e17",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_0.result.json",
+      "bytes": 499,
+      "sha256": "341304a2b2b7334b5ca3db18e856d651d2e1b60c781bcc21d4727906026f9d37",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_0.stderr.txt",
+      "bytes": 23733,
+      "sha256": "c6ae20cb9557bb66da77245e08a55790fdb785b0800a1507865ec9a8a21702c5",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_0.stdout.txt",
+      "bytes": 1767,
+      "sha256": "9a9394ccd1acc4fc076d5d256c4d32cf1a2061019bf4d48c4f1fbff25f3209a3",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_0.unittest.log",
+      "bytes": 11170,
+      "sha256": "282c81c610d09be2f6f7f97117e540e3cba7ed41e5cc5fbab25b07d41f377382",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_1.result.json",
+      "bytes": 500,
+      "sha256": "da056fa9c3c5b0ad6861e08762122d952ffba84907d8bc154fd882dee8c2c696",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_1.stderr.txt",
+      "bytes": 23733,
+      "sha256": "69ac58603cf2c5cfcacb282befcbee88373330a28e166ee30c66044dda5aa68c",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_1.stdout.txt",
+      "bytes": 1767,
+      "sha256": "290db403641fe1bc9c450a62ca9b0b5f3a9163e0013eb1442dd60872f67097ec",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_1.unittest.log",
+      "bytes": 11170,
+      "sha256": "7e5594cf7891956e0a2692bd9f9cc085c32317f9c64f0fd6b4feb0d8032d421a",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_2.result.json",
+      "bytes": 500,
+      "sha256": "c5478434f9198865e376b050b68e6a3c66d29ae82ff19d5d9b82b17e10f38036",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_2.stderr.txt",
+      "bytes": 23733,
+      "sha256": "dcc359ca59d786a9e6a74339c6d6765d703ccb594414a29b42f44691faf180f3",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_2.stdout.txt",
+      "bytes": 1742,
+      "sha256": "7f0765e9d400d0ea24d6413b7aaebe59d311ab0d11ee45d45c51a92a4828de1d",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_2.unittest.log",
+      "bytes": 11146,
+      "sha256": "e3a5c9c3fb61c86ecb3682524cc349c34a3db3d595c7e4b4e1d8f7729548c195",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_3.result.json",
+      "bytes": 487,
+      "sha256": "b2921a5aaf701795cef93318cdf065971990094a850eec2ac3fac7bdf9b94ade",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_3.stderr.txt",
+      "bytes": 23733,
+      "sha256": "064aeab0111df1db4478756e0a03d57b035be3100a334135505617e3e9c8b5c6",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_3.stdout.txt",
+      "bytes": 1763,
+      "sha256": "9276c921b01f61cc1c3f55fdccec836a6c59b4e54c068f1fea57a1d84cfb431d",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_3.unittest.log",
+      "bytes": 11166,
+      "sha256": "ef4e23c31401a2108d4695991168066b3de1a656dccfdba3779bfc810c96198f",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_4.result.json",
+      "bytes": 487,
+      "sha256": "5fdaaf89c90e594f2b2e77bde9c37dfeb0e777a018f2182ea1f93444bb4e345f",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_4.stderr.txt",
+      "bytes": 23733,
+      "sha256": "4b4f345307ccd51ef06f6eba02ae96289a766e8d5264c45e1e2aa3de96dfec9b",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_4.stdout.txt",
+      "bytes": 1730,
+      "sha256": "3479e85a0ebe714005c74048ca8f9eb7b2c29f210c867f5a3a7021f4e3bb0672",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_4.unittest.log",
+      "bytes": 11133,
+      "sha256": "983223d09a09bb602fef59fd88cbaf092f92c6a27ce9b667d422e10e6fefdb68",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_5.result.json",
+      "bytes": 474,
+      "sha256": "77d2ddb1201a82a2688c2879d9ada81bcee039b3f2d9edfe9f7454b383219756",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_5.stderr.txt",
+      "bytes": 23733,
+      "sha256": "807abd8afe691d8c5f163f7c3892ef81d127523cae0feb82bfec94ffe94e7eef",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_5.stdout.txt",
+      "bytes": 791,
+      "sha256": "258587f45bc2f491803476ffccfaca71bf9f7af23ba73927bd3a08b8ddfe563d",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_5.unittest.log",
+      "bytes": 10360,
+      "sha256": "03a51de15a3346d25c4e53da60adb8b0965c254c7c294147e403e848875aeec7",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_final.result.json",
+      "bytes": 460,
+      "sha256": "954daba34a4124efd3f93a8066a94bdc60b857a02042f0905064a9e20f269152",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_final.stderr.txt",
+      "bytes": 23733,
+      "sha256": "7a965d0bcd70224ab5f6e82a410f4fe4ac330bf597584e145cd4081a7774148f",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_final.stdout.txt",
+      "bytes": 791,
+      "sha256": "dc532f1081c712e075a70a764114a8afb12869270acfad5d9251a8c1e48ebb15",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s1_final.unittest.log",
+      "bytes": 10360,
+      "sha256": "043041a6b7c90fc87439c52a2476c2a4ea2419c141a5a197181e034d8f477f4c",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_0.result.json",
+      "bytes": 506,
+      "sha256": "6988d4011fd3492bdfd2b7b50c4c78bd2ebfc5ae856022d1299304985cf39e09",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_0.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_0.stdout.txt",
+      "bytes": 2407,
+      "sha256": "c98ae319ee0a508fb18035d3439fdbd6d112945d4c2447a012671f789159c080",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_0.unittest.log",
+      "bytes": 11861,
+      "sha256": "f4fa027e525352f3ca9257f33dc563cd1fef16fc5faf5ff55a1995dbe5cfcb1f",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_1.result.json",
+      "bytes": 506,
+      "sha256": "755c34bd84d893bb196c726a27b887ec0cba76a543a6cf3d60a079831fd734fa",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_1.stdout.txt",
+      "bytes": 1772,
+      "sha256": "2ae59ae68ff8836d46acb471f06384b0b7452e7367e9fa084d51418ff8899843",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_1.unittest.log",
+      "bytes": 11300,
+      "sha256": "628938a74250e97a9260950c85ac6bd1156ead8dc1536afcdac1e7a921e51ab7",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_2.result.json",
+      "bytes": 506,
+      "sha256": "e863cb21a7fa864f1b05650b2a3b3bc17692d8d76d3f06cdcdc978e9eefcd873",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_2.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_2.stdout.txt",
+      "bytes": 1795,
+      "sha256": "970ce61dc44fa6181073cffbf230ef860d16a3e96e2cb35c94bc3fd5c9a14893",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_2.unittest.log",
+      "bytes": 11323,
+      "sha256": "1f4d4d87bca3917b0695d71dec1b8618914f6404b8f72c607d23ee40dc37557d",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_3.result.json",
+      "bytes": 507,
+      "sha256": "fcceee73e237d686a0a3a45b59ae4d390aa85a2ccb5b30edc4dd81834ea9c7f3",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_3.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_3.stdout.txt",
+      "bytes": 1825,
+      "sha256": "eea87ed2c6e93551cc526ff1c6bb89cd584267841e462ad6c63f85543c5a92c8",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_3.unittest.log",
+      "bytes": 11353,
+      "sha256": "1ed470dfb3eb8630f19b5dfc89e3a850d8a31e60f579fa12482846bd181271c6",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_4.result.json",
+      "bytes": 480,
+      "sha256": "ce379d340f8960d3f7621bd23131e38e4bd0f01a10f1f35b6336ea0921aed144",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_4.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_4.stdout.txt",
+      "bytes": 841,
+      "sha256": "bdf3b0f50409d395c4c5acf94a95cec9e399692ea33e55e33d65656f439bcff8",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_4.unittest.log",
+      "bytes": 10511,
+      "sha256": "4505b38c5961015dc10c6f551338fbe809eab2ff710af2f32285512f77c3b073",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_final.result.json",
+      "bytes": 480,
+      "sha256": "a71f86821ec49262a829336949c35cc99ecbfb691b7cbeb8035c721018e510a0",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_final.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_final.stdout.txt",
+      "bytes": 840,
+      "sha256": "7147f194ce2e559bf06b5da8acc4c7826bedb45f74e3c28799c77d9e2ec53fed",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/s2_final.unittest.log",
+      "bytes": 10510,
+      "sha256": "cfea6d053eb1be872e37859d5ce43802f668968a795d079f6282b693409d4c68",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/source_diff.txt",
+      "bytes": 34280,
+      "sha256": "ca0d942bee002c359c34332861f22331b2c8fb0a98b2dad1ae4ec4babdfc90e9",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/terminal_review_pin.json",
+      "bytes": 260,
+      "sha256": "856e9c995bafeb990ed6391b6a7b338bae97ab5725e2e5633609db8ee2d025b6",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/ui.result.json",
+      "bytes": 153,
+      "sha256": "f3bffdece0e73cef910ab6f07f5b28b2cc0d45b8c14431299d09b9ebd9ff39b1",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/ui.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence/ui.stdout.txt",
+      "bytes": 14243,
+      "sha256": "622548ceff71a85816789ec01cec6728d5ffcfd486ed10a93e8f6d949153566f",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/finish_receipt.json",
+      "bytes": 4961,
+      "sha256": "b5fcda30d4193c9ec87a35bb7287e08a06dcb90743e3b6239b4150389235d263",
+      "before_sha256": null,
+      "purpose": "Official finish/readback or task-local evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/handoff_task.md",
+      "bytes": 23876,
+      "sha256": "10e3c97abfdcc95d82ddd6e88cf937d8be3825743b1f3550deb57a4d82a0d18f",
+      "before_sha256": null,
+      "purpose": "Official finish/readback or task-local evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/http_smoke.py",
+      "bytes": 5301,
+      "sha256": "34c589348e817a82ff2201b95631b505db696deca29d3fdde724481ac5d5646d",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/isolation_checks.py",
+      "bytes": 2873,
+      "sha256": "a18a431209e017e572665ff588296a4cfc84e00d644821a757eec9a59cd1574b",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/mutation_checks.py",
+      "bytes": 2481,
+      "sha256": "fa0d76eb3e97d9b456812b87b6b5039f0f71e3100488aa2cdfcf3ec62eb9d608",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/report.md",
+      "bytes": 30330,
+      "sha256": "88e49b3159a455feb8bbc6fdb741bac28b1d6b4d0767050401b937d14b44bdbc",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/run_checks.py",
+      "bytes": 5338,
+      "sha256": "8302e359398822b13116a8f6fd8adf03b16bbd677c5644333380f08531632000",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/run_standalone.py",
+      "bytes": 1454,
+      "sha256": "1cb331863e2584bc2ace37aa0b3ac2e9b8f9f52d0853e98bfbf97ee979e7b2ca",
+      "before_sha256": null,
+      "purpose": "Task-local report / evidence / guarded reproduction helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/task_record.json",
+      "bytes": 708,
+      "sha256": "bef48daca2c62c9bcdce814e1d4b7cbc2cf7f40128705a7da90443c95579aa5a",
+      "before_sha256": null,
+      "purpose": "Official finish/readback or task-local evidence"
+    },
+    {
+      "path": "reports/task_history_sequences.json",
+      "bytes": 28,
+      "sha256": "7466c703f58da4ac7ca9a7f36886659a9affcb4cd091c29a96b17f3560dc47eb",
+      "before_sha256": "054ac080ca7acc6cbc72557248f1cdf1cb722057b73e5e0640aad34b642bd080",
+      "purpose": "Official finish/readback or task-local evidence"
+    },
+    {
+      "path": "test_rt002_s1_routes.py",
+      "bytes": 126196,
+      "sha256": "380b970e922dd8624b223b53f02faa1a3f729ea3fc05514c0dea24233e25def4",
+      "before_sha256": "35426388b49eb4a8154f5dfe8717ff4f3796b315ce3b391a71db6834e4a09696",
+      "purpose": "Exact source/caller inventory reconciliation, retain physical inventory"
+    },
+    {
+      "path": "test_rt002_s2_budget_policy.py",
+      "bytes": 153343,
+      "sha256": "bcfc0bf0c114abbf61ca89631ef3eaad0e54adf4224b56fce5a3cafba954c4be",
+      "before_sha256": "a7fa9b5d2bcf56dc8f037dd726679a8439c4b1f3135de969b9084bf8d3870d2c",
+      "purpose": "Sealed fake ingress reconciliation and strict old-policy default DENY"
+    },
+    {
+      "path": "test_web_alarm_ordinary_admission.py",
+      "bytes": 19507,
+      "sha256": "09ca986b91aede7bfcfd82989e7507a47994bf496ab7fad1247e0d30933168cb",
+      "before_sha256": null,
+      "purpose": "17 integration/adversarial test methods with synthetic storage"
+    },
+    {
+      "path": "ultra_budget_ledger.py",
+      "bytes": 13219,
+      "sha256": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592",
+      "before_sha256": "3d64c3024bfc42957c3c0612b33c228ce0beea3e9b790fc97a5b1bbfe2aaf220",
+      "purpose": "Readback exact committed envelope in existing S3a; Ordinary scope identity"
+    },
+    {
+      "path": "ultra_budget_policy.py",
+      "bytes": 56051,
+      "sha256": "f6037d86fe966fdadb4d488411bc1be21d327b158546b7c01017da7f2394e14a",
+      "before_sha256": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13",
+      "purpose": "Separate Ordinary per-attempt scope in existing S2"
+    },
+    {
+      "path": "web_alarm/ordinary_chat_bridge.py",
+      "bytes": 5971,
+      "sha256": "63d87efba308f2aa70c984724650778b2d28ae53a512c23d96b7f508ddb65d5d",
+      "before_sha256": "baf3f04b6afcbcf4432c127715ff96d9689c4f8fc2bf3eaa7b21aa3f234b4ab2",
+      "purpose": "Synthetic policy, exact bytes, task-local server-owned guard and strict fake sender"
+    },
+    {
+      "path": "web_alarm/ordinary_chat_test_adapter.py",
+      "bytes": 3133,
+      "sha256": "4e6351f1704467bdbdfa043ea2852f0f5a89267f0fa2f30c24701619045a65e7",
+      "before_sha256": "fa62abf7268e9e60696d5d6ce85fe2ad4031f4ff884e0ecc83f75650024428f0",
+      "purpose": "Fake immutable byte entry, legacy send compatibility"
+    },
+    {
+      "path": "web_alarm/turn_service.py",
+      "bytes": 37077,
+      "sha256": "8f19ddfa8b1aac5985a3d15076231d813b1e9cadeb682783da93ffd5acdeca09",
+      "before_sha256": "06a7b42c117c7083280afbe27306a4ff1dfa474f29ffb2e83913d3d21da7c2b2",
+      "purpose": "Saved admission binding, atomic durable reserve/SENT/terminal proofs"
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "bytes": 56000,
+      "sha256": "46aeff3c824b66f80aa5848cc14cec3a3c7db828c03e6966a68de5ac77ca3250",
+      "before_sha256": "91d458fd22ad0b2deedde14362dd24bd54c9b5751a5befc17edd1946c86fc21d",
+      "purpose": "Fresh explicit synthetic enrollment before Audit"
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "bytes": 46149,
+      "sha256": "c15e83708f483c8e36743b293e0bec0fa69119ec5ff028ea39d490b2b305a8f0",
+      "before_sha256": "06b72f1d26857885e879b1929723e4a3b687c0d06787f6542c82d336f544bab3",
+      "purpose": "Official finish/readback or task-local evidence"
+    }
+  ],
+  "result": "AUTHOR P0 P1 BOUNDED OFFLINE PASS",
+  "history_id": "H-CODEX-000032"
+}

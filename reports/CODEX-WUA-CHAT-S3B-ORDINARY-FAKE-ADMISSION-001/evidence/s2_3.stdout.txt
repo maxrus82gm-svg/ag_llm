@@ -1,0 +1,50 @@
+{
+  "task": "CLAUDE-RT002-S2-001",
+  "mode": "core",
+  "sandbox": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s2-yiiwmu_0",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "FAILURES:1"
+    ]
+  },
+  "counts": {
+    "run": 73,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 73,
+  "failures": [
+    "__main__.IsolationTests.test_no_production_module_imports_the_policy_yet"
+  ],
+  "errors": [],
+  "skipped": [],
+  "isolation_violations": [],
+  "problems": [],
+  "selected": null,
+  "dataset_sha256": "8a3ea10b75280ece550138af9a912b161997e17f5f3f17c894686961babf90ce",
+  "elapsed_seconds": 0.947,
+  "log": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s2-yiiwmu_0\\unittest.log",
+  "log_sha256": "1ed470dfb3eb8630f19b5dfc89e3a850d8a31e60f579fa12482846bd181271c6"
+}
+
+FAIL: test_no_production_module_imports_the_policy_yet (__main__.IsolationTests.test_no_production_module_imports_the_policy_yet)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s2_budget_policy.py", line 1878, in test_no_production_module_imports_the_policy_yet
+    self.assertEqual(_sha256(guard.read_bytes().replace(b"\r\n", b"\n")), OFFLINE_GUARD_SHA256)
+AssertionError: 'ad4f79ab756d627e6f2886b6ff53b2b6679f297f83734d9c2c574ba2dc117fc8' != '408f9cb95d9f780985784c48349d35ef9cc3a042168d61d92bd39a2608966c26'
+- ad4f79ab756d627e6f2886b6ff53b2b6679f297f83734d9c2c574ba2dc117fc8
++ 408f9cb95d9f780985784c48349d35ef9cc3a042168d61d92bd39a2608966c26
+
+
+----------------------------------------------------------------------
+Ran 73 tests in 0.945s
+
+FAILED (failures=1)
+

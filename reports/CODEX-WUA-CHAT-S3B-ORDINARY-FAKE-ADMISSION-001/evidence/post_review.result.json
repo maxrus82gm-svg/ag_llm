@@ -1,0 +1,664 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "subtest:passed": 32,
+    "test:passed": 74
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_commit_then_io_error_is_unknown_without_send_or_release",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_exact_bytes_receipts_binding_usage_replay_and_reopen",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_fake_transport_timeout_and_missing_usage_keep_unknown_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_foreign_owner_same_key_competes_for_one_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_historical_audit_requires_explicit_migration",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_old_policy_has_no_implicit_ordinary_admission",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_request_and_output_reserve_exceeding_synthetic_cap_deny",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_s2_deny_is_zero_send_failed_zero_usage_attempts",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_s2a_enrollment_failure_is_not_implicitly_repaired",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_terminal_failure_cannot_publish_success_or_drop_sent_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_terminal_fake_ack_cannot_publish_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_transport_error_is_not_misreported_as_timeout",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_complete_history_and_system_context_use_existing_core",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_context_limit_refuses_whole_request_without_silent_truncation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_cross_owner_new_turn_is_refused_during_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_invalid_response_is_failed_and_not_reexecuted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_late_cancel_retains_usage_but_never_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_many_chats_and_model_selection_are_independent",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_ready_replay_keeps_original_system_and_does_not_rebuild_context",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_real_transport_object_is_never_dispatched",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_tampered_assistant_is_not_projected_as_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_transport_failure_does_not_replay_or_enter_next_context",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_reasoning_is_nested_and_survives_reopen_and_replay",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeHttpTests::test_existing_web_page_routes_and_standard_denial",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_error_is_unknown_not_zero_and_cancel_before_start_costs_no_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_known_nested_usage_replay_reopen_and_chat_isolation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_late_cancel_preserves_known_usage_without_success_or_double_count",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_missing_usage_stays_unknown_and_partial_sum_is_explicit",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_preferences_persist_in_existing_chat_metadata_and_are_not_provider_caps",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_preflight_rejection_is_not_an_unknown_paid_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatHttpTests::test_settings_http_requires_write_capability_and_is_reopenable",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_durable_reservation_new_process_and_idempotent_identity",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_two_processes_compete_for_last_reservation[race]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_two_processes_compete_for_last_reservation[race_tokens]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_process_crash_no_false_zero_after_commit[crash_before-False]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_process_crash_no_false_zero_after_commit[crash_after-True]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_sent_timeout_unknown_late_usage_and_duplicate",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_not_sent_requires_proof_and_never_frees_sent_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[bad_json]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[ledger_version]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[bool_version]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[missing_state]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[checksum]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[bad_event]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[missing_index]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[missing_marker]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[marker_version]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[missing_profile]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[invalid_policy]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[missing_max_tokens]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[unknown_route]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[wire_changed]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[policy_changed]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_io_failure_never_returns_permit_and_keeps_committed_liability[fsync]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_io_failure_never_returns_permit_and_keeps_committed_liability[lock]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_io_failure_never_returns_permit_and_keeps_committed_liability[before_commit]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_io_failure_never_returns_permit_and_keeps_committed_liability[after_commit]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_generation_fallback_preserves_reserve",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_move_identity_and_existing_run_store_compatibility",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_missing_ledger_and_historical_audit_never_bootstrap_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_marker_first_initialization_failure_cannot_reset",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_policy_engine_upgrade_needs_migration_not_lower_replayed_reserve",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_or_missing_workspace_refused_without_creation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_unsafe_path_refusal_without_external_write[audit]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_unsafe_path_refusal_without_external_write[marker]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_unsafe_path_refusal_without_external_write[root]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001\\run_checks.py",
+    "--child",
+    "test_web_alarm_ordinary_admission.py",
+    "test_web_alarm_ordinary_core_bridge.py",
+    "test_web_alarm_perchat_usage_settings.py",
+    "test_rt002_s3a_ledger.py",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h32_f_s1va43\\p"
+  ],
+  "elapsed_seconds": 60.48399999999674,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0
+}

@@ -27,6 +27,14 @@ class PreparationError(ValueError):
         super().__init__(code)
 
 
+class PreSendDenied(PreparationError):
+    """Trusted offline admission proves the transport was not entered."""
+
+
+class PreSendUncertain(RuntimeError):
+    """Admission commit may exist; preserve liability and never retry."""
+
+
 @dataclass(frozen=True)
 class RequestLimits:
     max_messages: int
@@ -328,6 +336,11 @@ async def execute_request(request: PreparedRequest, *, transport: ChatTransport,
         # Direct await forwards cancellation. The child can only uncancel
         # itself, so the owner's count still records the external request.
         response = await asyncio.create_task(send())
+    except PreSendDenied:
+        return _result(request, Outcome.REJECTED, Execution.NOT_STARTED, code="admission_denied")
+    except PreSendUncertain:
+        return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.MAY_HAVE_EXECUTED,
+                       code="admission_commit_uncertain")
     except (TimeoutError, asyncio.CancelledError):
         return _result(request, Outcome.UNKNOWN_AFTER_START, Execution.MAY_HAVE_EXECUTED,
                        code="cancelled_or_timed_out_after_start")

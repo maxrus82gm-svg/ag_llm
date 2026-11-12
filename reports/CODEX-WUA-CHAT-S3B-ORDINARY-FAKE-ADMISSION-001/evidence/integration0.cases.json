@@ -1,0 +1,198 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "passed": 38
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_complete_history_and_system_context_use_existing_core",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_context_limit_refuses_whole_request_without_silent_truncation",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_cross_owner_new_turn_is_refused_during_send",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_invalid_response_is_failed_and_not_reexecuted",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_late_cancel_retains_usage_but_never_success",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_many_chats_and_model_selection_are_independent",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_ready_replay_keeps_original_system_and_does_not_rebuild_context",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_real_transport_object_is_never_dispatched",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_tampered_assistant_is_not_projected_as_success",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_transport_failure_does_not_replay_or_enter_next_context",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_reasoning_is_nested_and_survives_reopen_and_replay",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeHttpTests::test_existing_web_page_routes_and_standard_denial",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_error_is_unknown_not_zero_and_cancel_before_start_costs_no_attempt",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_known_nested_usage_replay_reopen_and_chat_isolation",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_late_cancel_preserves_known_usage_without_success_or_double_count",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_missing_usage_stays_unknown_and_partial_sum_is_explicit",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_preferences_persist_in_existing_chat_metadata_and_are_not_provider_caps",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_preflight_rejection_is_not_an_unknown_paid_attempt",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatHttpTests::test_settings_http_requires_write_capability_and_is_reopenable",
+      "phase": "call",
+      "outcome": "passed"
+    }
+  ]
+}

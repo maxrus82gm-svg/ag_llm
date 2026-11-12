@@ -115,6 +115,9 @@ def _replay(events):
             spec = policy.ROUTES[measure.route_id]
             if spec.scope == policy.SCOPE_RUN and data["binding"]["run_id"] != context.scope_id:
                 raise LedgerDenied("RUN_SCOPE_BINDING_CONFLICT")
+            if spec.scope == policy.SCOPE_ORDINARY and (context.scope_id != attempt
+                    or data["binding"]["turn_id"] is None or data["binding"]["run_id"] is None):
+                raise LedgerDenied("ORDINARY_SCOPE_BINDING_CONFLICT")
             pin = (spec.scope, snapshot.revision_sha256, context.final_audit_enabled)
             if context.scope_id in scopes and scopes[context.scope_id] != pin:
                 raise LedgerDenied("IMMUTABLE_SCOPE_POLICY_CONFLICT")
@@ -257,6 +260,15 @@ class BudgetLedger:
             raise
         except Exception as error:
             raise LedgerDenied("INPUT_DENY:" + type(error).__name__) from error
+
+    def reservation(self, provider_attempt_id):
+        """Readback the exact committed envelope and state; never grants a send."""
+        with self._locked():
+            index, _, records, envelopes = self._load()
+            attempt = _text(provider_attempt_id)
+            if attempt not in envelopes:
+                raise LedgerDenied("UNKNOWN_ATTEMPT")
+            return Receipt(records[attempt], True, index["revision"]), _copy(envelopes[attempt])
 
     def mark_sent(self, provider_attempt_id):
         return self._event("mark_sent", provider_attempt_id, {})

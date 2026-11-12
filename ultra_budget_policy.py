@@ -1,7 +1,8 @@
 """RT-002/B2 S2 — Ultra budget policy and conservative estimation.
 
-Pure policy contract: no I/O, no clock, no network, no runtime hooks. Nothing in the production
-runtime imports this module yet; S2 does not enforce anything. Ownership of the next steps (B2):
+Pure policy contract: no I/O, no clock, no network, no runtime hooks. Standalone S3a and the
+H32 fake-only Ordinary gate reuse it; it grants no REAL admission or paid-call enforcement.
+Full physical HTTP coverage still belongs to the subsequent B2 work:
   S3a  durable reserve/terminal ledger (persists the liability semantics defined here),
   S3b  mandatory pre-HTTP guard on every physical LLM send (calls evaluate_request with the
        exact wire bytes produced by serialize_request_body),
@@ -32,6 +33,7 @@ POLICY_SCHEMA_VERSION = 1
 SCOPE_RUN = "RUN"
 SCOPE_COMPRESSOR = "COMPRESSOR_JOB"
 SCOPE_MCP = "MCP_SESSION"
+SCOPE_ORDINARY = "ORDINARY_ATTEMPT"
 SCOPE_NONE = "NOT_BUDGETED"
 
 CLASS_WORK = "WORK"
@@ -62,6 +64,7 @@ ROUTES: Mapping[str, RouteSpec] = {
         RouteSpec("planner_review", "dredd", SCOPE_RUN, CLASS_WORK, "ACTIVE"),
         RouteSpec("compressor", "compressor", SCOPE_COMPRESSOR, CLASS_WORK, "ACTIVE"),
         RouteSpec("mcp_chat", "mcp", SCOPE_MCP, CLASS_WORK, "LEGACY_REACHABLE"),
+        RouteSpec("ordinary_chat", "ordinary", SCOPE_ORDINARY, CLASS_WORK, "OFFLINE_ONLY"),
         RouteSpec("oauth", "auth", SCOPE_NONE, CLASS_AUTH, "ACTIVE"),
     )
 }
@@ -183,6 +186,7 @@ class PolicySnapshot:
     mcp: ScopeLimits
     max_full_read_bytes: int
     revision_sha256: str
+    ordinary: ScopeLimits = ScopeLimits("DENY")
 
 
 MAX_TEXT_CHARS = 200
@@ -250,7 +254,7 @@ def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
     problems: list[str] = []
     top_required = {"schema_version", "revision_label", "run", "estimation", "output_reserve",
                     "compressor", "mcp", "read"}
-    if not _check_keys(raw, "policy", top_required, set(), problems):
+    if not _check_keys(raw, "policy", top_required, {"ordinary"}, problems):
         raise PolicyValidationError(problems)
     if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
         problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
@@ -383,18 +387,19 @@ def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
                                 limits.max_scope_liability_tokens, limits.max_scope_attempts) else limits
 
     compressor, mcp = scope("compressor"), scope("mcp")
+    ordinary = scope("ordinary") if "ordinary" in raw else ScopeLimits("DENY")
     read_raw = raw.get("read")
     max_read = None
     if _check_keys(read_raw, "policy.read", {"max_full_read_bytes"}, set(), problems):
         max_read = _int_field(read_raw, "max_full_read_bytes", "policy.read", problems, minimum=1,
                               maximum=MAX_SANE_BYTES)
-    if problems or run is None or compressor is None or mcp is None or max_read is None:
+    if problems or run is None or compressor is None or mcp is None or ordinary is None or max_read is None:
         raise PolicyValidationError(problems or ["policy: некорректная структура"])
     normalized = json.loads(json.dumps(raw, ensure_ascii=False, sort_keys=True))
     revision = hashlib.sha256(json.dumps(normalized, ensure_ascii=False, sort_keys=True,
                                          separators=(",", ":")).encode("utf-8")).hexdigest()
     return PolicySnapshot(POLICY_SCHEMA_VERSION, label, run, tuple(profiles), missing_profile, output_reserve,
-                          compressor, mcp, max_read, revision)
+                          compressor, mcp, max_read, revision, ordinary)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -904,7 +909,10 @@ def evaluate_request(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord]
         limit_tokens = snapshot.run.max_run_liability_tokens
         limit_attempts = snapshot.run.max_run_attempts
     else:
-        scope_limits = snapshot.compressor if spec.scope == SCOPE_COMPRESSOR else snapshot.mcp
+        scope_limits = (snapshot.ordinary if spec.scope == SCOPE_ORDINARY else
+                        snapshot.compressor if spec.scope == SCOPE_COMPRESSOR else snapshot.mcp)
+        if spec.scope == SCOPE_ORDINARY and context.final_audit_enabled:
+            return Decision(DENY, (_reason("INVALID_ORDINARY_CONTEXT", "Ordinary is a per-attempt scope"),), measure.route_id)
         if scope_limits.mode == "DENY":
             return Decision(DENY, (_reason("ROUTE_DISABLED_BY_POLICY",
                                            f"маршрут {spec.route_id} запрещён политикой ({spec.scope})"),),

@@ -1,0 +1,19 @@
+{
+  "command": [
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
+    "--date",
+    "2026-11-13",
+    "--no-chat-amendment",
+    "--headless",
+    "--expected-card-sha256",
+    "06b72f1d26857885e879b1929723e4a3b687c0d06787f6542c82d336f544bab3",
+    "--apply"
+  ],
+  "exit_code": 0,
+  "guard_installed": true
+}

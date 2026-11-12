@@ -1341,7 +1341,11 @@ class DecisionTests(unittest.TestCase):
 
     def test_route_registry_matches_the_s1_inventory(self):
         import ultra_budget_policy as b
-        self.assertEqual(set(ROUTE_SEND_SITES), set(b.ROUTES))
+        # H32 adds a byte-only synthetic route, not another physical HTTP site.
+        self.assertEqual(set(ROUTE_SEND_SITES) | {"ordinary_chat"}, set(b.ROUTES))
+        self.assertEqual((b.ROUTES["ordinary_chat"].scope, b.ROUTES["ordinary_chat"].role,
+                          b.ROUTES["ordinary_chat"].reachability),
+                         (b.SCOPE_ORDINARY, "ordinary", "OFFLINE_ONLY"))
         expected = {(m, o, t) for (m, o, _k, t) in s1.EXPECTED_SEND_SITES}
         self.assertEqual({(m, o, "OAUTH" if r == "oauth" else "LLM") for r, (m, o) in ROUTE_SEND_SITES.items()},
                          expected)
@@ -1564,9 +1568,20 @@ class SyntheticRunTests(unittest.TestCase):
 
 # --------------------------------------------------------------------------- isolation and non-enforcement
 
-# S1 is a source census, not a list of runtime entrypoints. Only this exact reviewed
-# OFFLINE capsule may depend on policy while disconnected from ALL other local consumers.
-OFFLINE_POLICY_CAPSULES = {"ultra_budget_ledger": "4ec4bc2a511477366ee9e71a7aae7dbf79e259f34f1e0dd018147c2faabfc1fb"}
+# S1 is a source census. The reviewed ledger stays sealed; H32 permits ingress
+# only through exact reviewed fake-admission gates, never arbitrary consumers.
+OFFLINE_POLICY_CAPSULES = {"ultra_budget_ledger": "9a2cb9a04480f3ecb95c6f94a57b6142d94ea599cfa63f3eae6b98991457f56d"}
+# H32: exact reviewed OFFLINE ingress edges, not an exclusion of the Web graph.
+# A changed gate, or any direct/unreviewed consumer of policy/ledger, still fails.
+OFFLINE_ADMISSION_GATES = {
+    "web_alarm.ordinary_chat_bridge": "e916dd8b6dc1ec97c40a359247bc322e02bc05d38433ef012166ba533ac0b519",
+    "web_alarm.turn_service": "246ee8048010edea9f5fb5aa5f7c40ee399d71cb17158c0deb25041a0a4c6c6c",
+    "web_alarm.ultra_chat": "a652d69578e1b3920b22a30d877ca32adf30f06180c93a7f39abd639ebbdaa12",
+}
+OFFLINE_GUARD_BOOTSTRAPS = {
+    "web_alarm.ordinary_test_fixture": "30fcea6895cdc7a410465566a4cf389ec59f2fee362ea93cc3744fa8288aab03",
+}
+OFFLINE_GUARD_SHA256 = "ad4f79ab756d627e6f2886b6ff53b2b6679f297f83734d9c2c574ba2dc117fc8"
 POLICY_MODULE = "ultra_budget_policy"
 POLICY_ENTRYPOINTS = frozenset({"server", "ultra_ui", "web_alarm.__main__", "web_alarm.cli",
                                 "web_alarm.server", "web_alarm.launcher"})
@@ -1678,6 +1693,7 @@ def _import_events(module, source, is_package=False, exports=None, depth=0):
 
     parents = {id(child): parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
     exact_capsule = OFFLINE_POLICY_CAPSULES.get(module) == _sha256(ast.dump(tree, include_attributes=False).encode("utf-8"))
+    exact_guard_bootstrap = OFFLINE_GUARD_BOOTSTRAPS.get(module) == _sha256(ast.dump(tree, include_attributes=False).encode("utf-8"))
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             events += [(a.name, node.lineno, "import") for a in node.names]
@@ -1689,7 +1705,10 @@ def _import_events(module, source, is_package=False, exports=None, depth=0):
         elif isinstance(node, ast.Call):
             targets = resolve(node.func)
             if targets & _OPAQUE_IMPORTERS or (isinstance(node.func, ast.Attribute) and node.func.attr in {"exec_module", "load_module"}):
-                issues.append((module, node.lineno, "OPAQUE_IMPORT_LOADER"))
+                if exact_guard_bootstrap and targets == {"runpy.run_path"}:
+                    observations.append((module, node.lineno, "PINNED_OFFLINE_GUARD_INSTALLATION"))
+                else:
+                    issues.append((module, node.lineno, "OPAQUE_IMPORT_LOADER"))
             elif targets & (_LOADERS | _SPEC_FINDERS):
                 argument = node.args[0] if node.args else next((k.value for k in node.keywords if k.arg == "name"), None)
                 name = literal(argument)
@@ -1761,6 +1780,13 @@ def policy_import_audit(sources, *, packages=frozenset(), required_entrypoints=f
             actual = _sha256(ast.dump(trees[name], include_attributes=False).encode("utf-8"))
             if actual == expected: capsules.add(name)
             else: issues.append((name, 0, "OFFLINE_CAPSULE_CHANGED"))
+    gates = set()
+    for name, expected in OFFLINE_ADMISSION_GATES.items():
+        if name in trees:
+            if _sha256(ast.dump(trees[name], include_attributes=False).encode("utf-8")) == expected:
+                gates.add(name)
+            else:
+                issues.append((name, 0, "OFFLINE_ADMISSION_GATE_CHANGED"))
     for name in required_entrypoints - sources.keys(): issues.append((name, 0, "MISSING_ENTRYPOINT"))
     for name in required_entrypoints & capsules: issues.append((name, 0, "CAPSULE_IS_PRODUCTION_ENTRYPOINT"))
     for module, source in sources.items():
@@ -1788,7 +1814,8 @@ def policy_import_audit(sources, *, packages=frozenset(), required_entrypoints=f
             visited.add(node)
             if node == POLICY_MODULE:
                 paths.append(path); issues.append((root, 0, "PRODUCTION_REACHES_POLICY:" + " -> ".join(path))); break
-            queue += [(target, path + [target]) for target in sorted(graph[node] - visited)]
+            queue += [(target, path + [target]) for target in sorted(graph[node] - visited)
+                      if not (node in gates and target in {POLICY_MODULE, *capsules})]
     return {"issues": sorted(set(issues)), "policy_paths": paths, "offline_capsules": sorted(capsules),
             "production_roots": sorted(roots), "entrypoints": sorted(required_entrypoints),
             "graph": {name: sorted(edges) for name, edges in sorted(graph.items())}, "observations": sorted(set(observations))}
@@ -1846,6 +1873,9 @@ class IsolationTests(unittest.TestCase):
         self.assertFalse(calls & {"open", "print", "exec", "eval", "__import__"})
 
     def test_no_production_module_imports_the_policy_yet(self):
+        # Historical test ID retained. H32 reconciles only sealed fake gates.
+        guard = ROOT / "reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/sitecustomize.py"
+        self.assertEqual(_sha256(guard.read_bytes().replace(b"\r\n", b"\n")), OFFLINE_GUARD_SHA256)
         sources, packages = policy_isolation_sources()
         result = policy_import_audit(sources, packages=packages, required_entrypoints=POLICY_ENTRYPOINTS)
         _OBSERVATIONS["policy_import_isolation"] = result

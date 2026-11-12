@@ -1,0 +1,98 @@
+{
+  "status": "PASS",
+  "workspaces": 2,
+  "chats": 4,
+  "physical_fake_calls": 4,
+  "replays_added_calls": 0,
+  "real_body_status": 400,
+  "per_chat": [
+    {
+      "attempts": 2,
+      "total": 14,
+      "reasoning": 4
+    },
+    {
+      "attempts": 1,
+      "total": 7,
+      "reasoning": 2
+    },
+    {
+      "attempts": 1,
+      "total": 7,
+      "reasoning": 2
+    },
+    {
+      "attempts": 0,
+      "total": 0,
+      "reasoning": 0
+    }
+  ],
+  "trace": [
+    {
+      "wire_sha256": "5de0a4aa1b801e94fab9b1c3bd40503891d780898f9d9028a2e43b4231ab20a5",
+      "wire_bytes": 722,
+      "binding": {
+        "chat_id": "chat_34055179574d4e97a2d6c60a9c9a1f2b",
+        "logical_call_id": "ordinary:71043de69eca696251e539b45725a076d038e4e8766411ff061c153e8c23048d",
+        "run_id": "turn_27c8308761672df531700aa608e49f9d97b8319e14f6a8e74866ff2a8d05b4d7",
+        "turn_id": "turn_27c8308761672df531700aa608e49f9d97b8319e14f6a8e74866ff2a8d05b4d7"
+      },
+      "workspace_id": "ws_3a7a2faa37224684b1f78dcb36cf2db2",
+      "turn_binding_sha256": "3607867ecda5f9cfc4192b974646dcebc310049adb5bfeec547c3bca9c699a12",
+      "policy_sha256": "1373f91360d049ddd75177e60ac64e1c4294fd040ec464753aae86be66f37645",
+      "endpoint": "fixture://ordinary/v1",
+      "provider_model_id": "GigaChat-2-Pro",
+      "ledger_state_at_send": "SENT"
+    },
+    {
+      "wire_sha256": "037d04495661449f55d27bd995032df474e0afa464db5455990b88042b0217a8",
+      "wire_bytes": 722,
+      "binding": {
+        "chat_id": "chat_fc2b9dc70ff54aa0814d91d489122438",
+        "logical_call_id": "ordinary:ed915754d6ddab287e6d4addfae031592d082eb9efce4da7adfb1b191d05d704",
+        "run_id": "turn_5ca3a40cd9a6d13dc779903a9d86dc93f0a1ec7457ab5902fcb549b675b6f50f",
+        "turn_id": "turn_5ca3a40cd9a6d13dc779903a9d86dc93f0a1ec7457ab5902fcb549b675b6f50f"
+      },
+      "workspace_id": "ws_3a7a2faa37224684b1f78dcb36cf2db2",
+      "turn_binding_sha256": "98b6b4cc71b6c159d8e8aef5f8794bf44809bc7364f520c288c605372a75fea7",
+      "policy_sha256": "1373f91360d049ddd75177e60ac64e1c4294fd040ec464753aae86be66f37645",
+      "endpoint": "fixture://ordinary/v1",
+      "provider_model_id": "GigaChat-2-Pro",
+      "ledger_state_at_send": "SENT"
+    },
+    {
+      "wire_sha256": "10242817f928eaefa3ae912d5761c2050b69679bc5bf2d923db4087a31e4a631",
+      "wire_bytes": 817,
+      "binding": {
+        "chat_id": "chat_34055179574d4e97a2d6c60a9c9a1f2b",
+        "logical_call_id": "ordinary:77cf88c29efb418c4442555f152ac18ea55c6f5d39de9bed4cf23b54df3db8f0",
+        "run_id": "turn_b9f22c7da021c2401077819e6e57abedeaca1389873d20c93487504fb10836a4",
+        "turn_id": "turn_b9f22c7da021c2401077819e6e57abedeaca1389873d20c93487504fb10836a4"
+      },
+      "workspace_id": "ws_3a7a2faa37224684b1f78dcb36cf2db2",
+      "turn_binding_sha256": "483a7d955f375ea0ea40e91c6fb63ecb4c5c86dc3c0df5287792c99b6869a9b6",
+      "policy_sha256": "1373f91360d049ddd75177e60ac64e1c4294fd040ec464753aae86be66f37645",
+      "endpoint": "fixture://ordinary/v1",
+      "provider_model_id": "GigaChat-2-Pro",
+      "ledger_state_at_send": "SENT"
+    },
+    {
+      "wire_sha256": "356b2b06529f59c5dc3dd451bab3ff0790406ac68409908738a5c8693bfa3702",
+      "wire_bytes": 722,
+      "binding": {
+        "chat_id": "chat_0e5f88ce62584daf86bd9f71daf681d5",
+        "logical_call_id": "ordinary:916574d9047e3e2ace39aadb72ae650408291ea190ef04224e926005d8a0fae6",
+        "run_id": "turn_8df512da42668beb6d0786b3012615672c73d45e2e11a8a9aa45e5a168f1b918",
+        "turn_id": "turn_8df512da42668beb6d0786b3012615672c73d45e2e11a8a9aa45e5a168f1b918"
+      },
+      "workspace_id": "ws_c8a717cd63f74257be9314cf62262f43",
+      "turn_binding_sha256": "fce8f8a05073ffa0d2bea3825155de40f132b4d3d9c81f860bc149208931e5e9",
+      "policy_sha256": "1373f91360d049ddd75177e60ac64e1c4294fd040ec464753aae86be66f37645",
+      "endpoint": "fixture://ordinary/v1",
+      "provider_model_id": "GigaChat-2-Pro",
+      "ledger_state_at_send": "SENT"
+    }
+  ],
+  "browser_visual": "NOT RUN",
+  "external_requests": 0
+}

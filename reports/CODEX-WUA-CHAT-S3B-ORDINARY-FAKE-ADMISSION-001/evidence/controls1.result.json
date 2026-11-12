@@ -1,0 +1,120 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "test:passed": 3
+  },
+  "cases": [
+    {
+      "test": "test_ordinary_chat_service.py::OfflineBoundary::test_early_process_guard_negative_controls",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_no_oauth_http_or_credentials_and_guard_controls",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_guard_and_provider_controls",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 9,
+  "guard_events": [
+    {
+      "test": "test_ordinary_chat_service.py::OfflineBoundary::test_early_process_guard_negative_controls",
+      "phase": "call",
+      "expected": true,
+      "events": [
+        {
+          "event": "socket.connect",
+          "boundary": "physical_network",
+          "pid": 19372,
+          "monotonic": 191608.75
+        },
+        {
+          "event": "socket.getaddrinfo",
+          "boundary": "dns",
+          "pid": 19372,
+          "monotonic": 191608.75
+        },
+        {
+          "event": "credential_read",
+          "boundary": "credentials",
+          "pid": 19372,
+          "monotonic": 191608.75
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_no_oauth_http_or_credentials_and_guard_controls",
+      "phase": "call",
+      "expected": true,
+      "events": [
+        {
+          "event": "socket.connect",
+          "boundary": "physical_network",
+          "pid": 19372,
+          "monotonic": 191609.453
+        },
+        {
+          "event": "socket.getaddrinfo",
+          "boundary": "dns",
+          "pid": 19372,
+          "monotonic": 191609.453
+        },
+        {
+          "event": "credential_read",
+          "boundary": "credentials",
+          "pid": 19372,
+          "monotonic": 191609.453
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_guard_and_provider_controls",
+      "phase": "call",
+      "expected": true,
+      "events": [
+        {
+          "event": "socket.connect",
+          "boundary": "physical_network",
+          "pid": 19372,
+          "monotonic": 191610.328
+        },
+        {
+          "event": "socket.getaddrinfo",
+          "boundary": "dns",
+          "pid": 19372,
+          "monotonic": 191610.328
+        },
+        {
+          "event": "credential_read",
+          "boundary": "credentials",
+          "pid": 19372,
+          "monotonic": 191610.328
+        }
+      ]
+    }
+  ],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001\\run_checks.py",
+    "--child",
+    "test_ordinary_chat_service.py::OfflineBoundary::test_early_process_guard_negative_controls",
+    "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_no_oauth_http_or_credentials_and_guard_controls",
+    "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_guard_and_provider_controls",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h32_con69jc5\\p"
+  ],
+  "elapsed_seconds": 2.625,
+  "guard_denials": 9,
+  "unexpected_guard_denials": 0
+}

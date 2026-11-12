@@ -1,0 +1,560 @@
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.....                [100%]
+================================== FAILURES ===================================
+__________ ImportIsolationQualityTests.test_benign_builtin_fromlist ___________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+____________ ImportIsolationQualityTests.test_benign_new_consumer _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+__________ ImportIsolationQualityTests.test_changed_offline_capsule ___________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_________ ImportIsolationQualityTests.test_changed_shared_dependency __________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+__________ ImportIsolationQualityTests.test_cloned_capsule_new_name ___________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+______ ImportIsolationQualityTests.test_collector_fromlist_benign_child _______
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:114: in test_collector_fromlist_benign_child
+    self.collected_case("collector_fromlist_benign_child", "import json\n", "PASS")
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:93: in collected_case
+    base = SANDBOX / label
+           ^^^^^^^
+E   NameError: name 'SANDBOX' is not defined
+______ ImportIsolationQualityTests.test_collector_fromlist_nested_policy ______
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:111: in test_collector_fromlist_nested_policy
+    self.collected_case("collector_fromlist_nested_policy", "import ultra_budget_policy\n", "RED")
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:93: in collected_case
+    base = SANDBOX / label
+           ^^^^^^^
+E   NameError: name 'SANDBOX' is not defined
+________________ ImportIsolationQualityTests.test_dict_import _________________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_______________ ImportIsolationQualityTests.test_direct_policy ________________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_______________ ImportIsolationQualityTests.test_dynamic_alias ________________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_______________ ImportIsolationQualityTests.test_dynamic_import _______________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+____________ ImportIsolationQualityTests.test_dynamic_module_alias ____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+______________ ImportIsolationQualityTests.test_dynamic_relative ______________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+____________ ImportIsolationQualityTests.test_dynamic_unknown_name ____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+________________ ImportIsolationQualityTests.test_exec_literal ________________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+________________ ImportIsolationQualityTests.test_exec_unknown ________________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_____________ ImportIsolationQualityTests.test_file_import_loader _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+______________ ImportIsolationQualityTests.test_file_loader_name ______________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_____________ ImportIsolationQualityTests.test_from_ledger_alias ______________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_____________ ImportIsolationQualityTests.test_from_policy_alias ______________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_______________ ImportIsolationQualityTests.test_getattr_import _______________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+________ ImportIsolationQualityTests.test_import_cycle_reaches_policy _________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+__________ ImportIsolationQualityTests.test_loader_container_escape ___________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_______________ ImportIsolationQualityTests.test_loader_escape ________________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+____________ ImportIsolationQualityTests.test_local_stdlib_shadow _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+___________ ImportIsolationQualityTests.test_missing_policy_source ____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+____________ ImportIsolationQualityTests.test_new_direct_consumer _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_ ImportIsolationQualityTests.test_offline_capsule_without_production_reachability _
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+__________ ImportIsolationQualityTests.test_opaque_loader_attribute ___________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_______ ImportIsolationQualityTests.test_opaque_loader_attribute_alias ________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+__________ ImportIsolationQualityTests.test_opaque_loader_namespace ___________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+____________ ImportIsolationQualityTests.test_package_initializer _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_______ ImportIsolationQualityTests.test_pinned_metadata_domain_escape ________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+______ ImportIsolationQualityTests.test_pinned_metadata_registry_escape _______
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+____________ ImportIsolationQualityTests.test_policy_module_alias _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+__________ ImportIsolationQualityTests.test_protected_submodule_name __________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+__________ ImportIsolationQualityTests.test_reexported_dynamic_alias __________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+__________ ImportIsolationQualityTests.test_relative_builtin_import ___________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+____________ ImportIsolationQualityTests.test_relative_from_import ____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_____________ ImportIsolationQualityTests.test_spec_parent_import _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+___________ ImportIsolationQualityTests.test_star_builtin_fromlist ____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_____________ ImportIsolationQualityTests.test_static_star_import _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_____________ ImportIsolationQualityTests.test_transitive_ledger ______________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+___________ ImportIsolationQualityTests.test_transitive_new_bridge ____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+__________ ImportIsolationQualityTests.test_unknown_builtin_fromlist __________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+____________ ImportIsolationQualityTests.test_unknown_import_root _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+_____________ ImportIsolationQualityTests.test_unknown_spec_query _____________
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:132: in <lambda>
+    setattr(ImportIsolationQualityTests, "test_" + name, lambda self, name=name: self.check_case(name))
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:119: in check_case
+    result = actual_oracle(sources)
+             ^^^^^^^^^^^^^^^^^^^^^^
+reports\CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001\isolation_checks.py:88: in actual_oracle
+    "failures": [text for _, text in result.failures], "audit": copy.deepcopy(s2._OBSERVATIONS["policy_import_isolation"])}
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'policy_import_isolation'
+=========================== short test summary info ===========================
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_benign_builtin_fromlist
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_benign_new_consumer
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_changed_offline_capsule
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_changed_shared_dependency
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_cloned_capsule_new_name
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_collector_fromlist_benign_child
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_collector_fromlist_nested_policy
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dict_import
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_direct_policy
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_alias
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_import
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_module_alias
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_relative
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_unknown_name
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_exec_literal
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_exec_unknown
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_file_import_loader
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_file_loader_name
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_from_ledger_alias
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_from_policy_alias
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_getattr_import
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_import_cycle_reaches_policy
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_loader_container_escape
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_loader_escape
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_local_stdlib_shadow
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_missing_policy_source
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_new_direct_consumer
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_offline_capsule_without_production_reachability
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_opaque_loader_attribute
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_opaque_loader_attribute_alias
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_opaque_loader_namespace
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_package_initializer
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_pinned_metadata_domain_escape
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_pinned_metadata_registry_escape
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_policy_module_alias
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_protected_submodule_name
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_reexported_dynamic_alias
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_relative_builtin_import
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_relative_from_import
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_spec_parent_import
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_star_builtin_fromlist
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_static_star_import
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_transitive_ledger
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_transitive_new_bridge
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_unknown_builtin_fromlist
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_unknown_import_root
+FAILED reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_unknown_spec_query
+47 failed, 5 passed, 5 subtests passed in 47.31s
