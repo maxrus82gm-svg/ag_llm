@@ -1,0 +1,78 @@
+name: WEB29 H31 F01 independent OFFLINE Windows
+
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-web29-h31-f01-independent.yml
+      - reports/CHATGPT-WEB29-H31-F01-CI-20261112/test_independent_f01.py
+      - web_alarm/launcher.py
+      - test_web_alarm_launcher.py
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/gpt-web29-h31-f01-independent.yml
+      - reports/CHATGPT-WEB29-H31-F01-CI-20261112/test_independent_f01.py
+      - web_alarm/launcher.py
+      - test_web_alarm_launcher.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  independent-f01-offline:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test-only dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check "httpx==0.28.1" "pytest==9.1.1" "mcp==2.2.0"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Independent focused tests with strict pre-import offline guard
+        shell: pwsh
+        env:
+          ORDINARY_GUARD_ROOT: ${{ github.workspace }}
+          ORDINARY_GUARD_NETWORK: deny
+          ORDINARY_GUARD_LOG: ${{ runner.temp }}\h31.guard.jsonl
+          PYTHONPATH: ${{ github.workspace }}\reports\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\guard;${{ github.workspace }}
+          LOCALAPPDATA: ${{ runner.temp }}\h31-data
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          New-Item -ItemType Directory -Force "$env:LOCALAPPDATA" | Out-Null
+          git rev-parse HEAD
+          python --version
+          python -B -X utf8 -c "import sitecustomize; print('OFFLINE_GUARD', sitecustomize.__file__); assert 'CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001' in sitecustomize.__file__"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -B -X utf8 -m unittest -v test_web_alarm_launcher.ConfigTests test_web_alarm_launcher.BannerAndPageTests test_web_alarm_launcher.StableEntryTests test_web_alarm_launcher.RunTests.test_r7_script_profile_warns_then_runs_the_script_and_cannot_self_test test_web_alarm_launcher.RunTests.test_r8_a_refused_configuration_stops_with_a_red_message_and_nothing_starts test_web_alarm_ordinary_test_activation.ActivationTests.test_active_profile_uses_bridge_and_old_stage5_is_available test_web_alarm_ordinary_test_activation.ActivationTests.test_missing_test_config_cannot_fall_back_to_standard > "$env:RUNNER_TEMP\h31-author-regression.log" 2>&1
+          $suiteExit = $LASTEXITCODE
+          Get-Content "$env:RUNNER_TEMP\h31-author-regression.log"
+          if ($suiteExit -ne 0) { exit $suiteExit }
+          python -B -X utf8 reports/CHATGPT-WEB29-H31-F01-CI-20261112/test_independent_f01.py > "$env:RUNNER_TEMP\h31-independent.log" 2>&1
+          $independentExit = $LASTEXITCODE
+          Get-Content "$env:RUNNER_TEMP\h31-independent.log"
+          if ($independentExit -ne 0) { exit $independentExit }
+          $guardLog = "$env:RUNNER_TEMP\h31.guard.jsonl"
+          if (Test-Path $guardLog) {
+            $violations = @(Get-Content $guardLog).Count
+            Write-Output "OFFLINE_GUARD_VIOLATIONS=$violations"
+            if ($violations -ne 0) { Get-Content $guardLog; exit 1 }
+          } else { Write-Output 'OFFLINE_GUARD_VIOLATIONS=0' }
+      - name: Save independent CI logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h31-independent-offline-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}\h31-author-regression.log
+            ${{ runner.temp }}\h31-independent.log
+            ${{ runner.temp }}\h31.guard.jsonl
+          if-no-files-found: warn
+          retention-days: 14
