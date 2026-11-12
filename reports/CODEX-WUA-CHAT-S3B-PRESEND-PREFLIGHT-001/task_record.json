@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "CODEX-WUA-CHAT-S3B-PRESEND-PREFLIGHT-001",
   "date": "2026-11-10",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / H30 READ-ONLY PREFLIGHT BOUNDED INDEPENDENT WINDOWS OFFLINE PASS",
+  "review": "PASS / independently 7/7 Windows Python 3.12.10 OFFLINE guard0; F-01 separately H31; not full S3b",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-CHAT-S3B-PRESEND-PREFLIGHT-001/handoff_task.md",
@@ -17,5 +17,28 @@
       "sha256": "4c671ac5a4055e40947432b741cdf1dc3216c44d3e2ce49ac6551324a115b02b"
     }
   },
-  "previous": []
+  "previous": [],
+  "independent_review": {
+    "date": "2026-11-12",
+    "scope": "H30 READ-ONLY P0/P1 pre-send map only",
+    "verdict": "BOUNDED INDEPENDENT WINDOWS OFFLINE PASS",
+    "source_main_sha": "d26c4ad9380b2bb1a0ccd1dd88bdf2facd3c954c",
+    "review_path": "reports/CHATGPT-WEB28-H30-REVIEW-20261112/review.md",
+    "evidence_path": "reports/CHATGPT-WEB28-H30-REVIEW-20261112/independent_runs.json",
+    "tests": {
+      "passed": 7,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "guard_violations": 0
+    },
+    "github_actions": "CI workflow added in same closeout commit; run pending as of document creation",
+    "not_run": [
+      "full S3b physical HTTP",
+      "full regression",
+      "H31 physical CMD/browser/F5",
+      "live/OAuth/paid",
+      "H30/H31 source-machine TEMP cleanup"
+    ]
+  }
 }

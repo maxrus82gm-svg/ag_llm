@@ -1,0 +1,83 @@
+name: WEB28 H30 independent Ordinary OFFLINE Windows
+
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-web28-h30-independent.yml
+      - reports/CHATGPT-WEB28-H30-REVIEW-20261112/**
+      - test_web_alarm_ordinary_core_bridge.py
+      - test_web_alarm_perchat_usage_settings.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  h30-offline:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-PRESEND-PREFLIGHT-001/
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test-only dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check --no-input "httpx==0.28.1" "mcp==2.2.0" "pytest==9.1.1"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Independent OFFLINE seven oracles
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path 'C:\h30') { throw 'Synthetic CI TEMP exists already; refusing overwrite' }
+          New-Item -ItemType Directory -Path 'C:\h30' | Out-Null
+          New-Item -ItemType Directory -Path 'C:\h30\la' | Out-Null
+          $env:TEMP = 'C:\h30'
+          $env:TMP = 'C:\h30'
+          $env:TMPDIR = 'C:\h30'
+          $env:LOCALAPPDATA = 'C:\h30\la'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $targets = @(
+            'test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_real_transport_object_is_never_dispatched',
+            'test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_bad_ids_model_and_config_cannot_read_or_send',
+            'test_web_alarm_perchat_usage_settings.PerChatTests.test_preflight_rejection_is_not_an_unknown_paid_attempt',
+            'test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_transport_failure_does_not_replay_or_enter_next_context',
+            'test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_invalid_response_is_failed_and_not_reexecuted',
+            'test_web_alarm_perchat_usage_settings.PerChatTests.test_late_cancel_preserves_known_usage_without_success_or_double_count',
+            'test_web_alarm_ordinary_core_bridge.CoreBridgeTests.test_ready_replay_keeps_original_system_and_does_not_rebuild_context'
+          )
+          git rev-parse HEAD
+          python -B -X utf8 wa4a_acceptance.py --task CHATGPT-WEB28-H30-GITHUB-CI --output 'C:\h30\evidence' @targets > "$env:RUNNER_TEMP\h30-tests.log" 2>&1
+          $code = $LASTEXITCODE
+          Get-Content "$env:RUNNER_TEMP\h30-tests.log"
+          if ($code -ne 0) { exit $code }
+          $proof = Get-Content 'C:\h30\evidence\results.json' -Raw | ConvertFrom-Json
+          if ($proof.tests_run -ne 7 -or $proof.passed -ne 7 -or $proof.failures -ne 0 -or $proof.errors -ne 0 -or $proof.skips -ne 0 -or -not $proof.successful) { throw 'Seven H30 cases not all PASS' }
+          if (@($proof.isolation_violations).Count -ne 0) { throw 'OFFLINE isolation violated' }
+          Write-Output 'H30_INDEPENDENT=7_PASS_0_FAIL_0_ERROR_0_SKIP'
+          Write-Output 'H30_OFFLINE_GUARD_VIOLATIONS=0'
+      - name: Save independent evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h30-offline-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            C:\h30\evidence\results.json
+            C:\h30\evidence\isolation.jsonl
+            ${{ runner.temp }}\h30-tests.log
+          if-no-files-found: warn
+          retention-days: 14

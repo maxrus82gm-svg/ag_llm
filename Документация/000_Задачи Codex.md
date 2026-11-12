@@ -226,6 +226,10 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
 
+## WEB28 / 12.11.2026 — H-CODEX-000030 — pre-send READ-ONLY independent bounded PASS
+
+`CODEX-WUA-CHAT-S3B-PRESEND-PREFLIGHT-001` / `H-CODEX-000030`, main №574 `d26c4ad9380b2bb1a0ccd1dd88bdf2facd3c954c`: independent Windows Python 3.12 7/7 OFFLINE PASS, guard0; four H30 cases + 3 adjacent tests, source SHA and author report SHA verified. Three initial synthetic TEMP attempts failed from Windows MAX_PATH; clean rerun in short TEMP all PASS without product edits. **VERDICT: H30 DOC CLOSED, P0/P1 PREFLIGHT RESEARCH ONLY**. Author PARTIAL at submission and separate H31 correction F-01 faithfully preserved. Not full S3b; GitHub dedicated H30 CI pending on same atomic GPT push, H31 physical CMD/browser/full CI/real/OAuth/paid/TEMP cleanup NOT RUN. Review `reports/CHATGPT-WEB28-H30-REVIEW-20261112/review.md`, evidence `reports/CHATGPT-WEB28-H30-REVIEW-20261112/independent_runs.json`. Next only with USER GO narrow Ordinary fake final-wire/S2/S3a one-send; B1/1.1 unchanged.
+
 ## WEB29 / 12.11.2026 — H-CODEX-000031 — F-01 TEST launcher independent bounded PASS
 
 `CODEX-WUA-CHAT-S3B-F01-LAUNCH-GUARD-001`; source main №573 `a26b3157`; [GitHub Windows run 43264689001](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43264689001): **18 existing + 3 reviewer = 21/21 PASS, guard violations 0**. Fail-closed для неподтверждённых script/args/kind под `--require-test`; два approved offline профиля сохранены, STANDARD и CMD не изменены. **VERDICT: PASS / H31 DOC CLOSED в BOUNDED INDEPENDENT OFFLINE scope.** Физический CMD/browser/F5, общий S3b, full CI, real/paid НЕ ПРОВЕРЕНЫ. H30 REVIEW PENDING. Local H30/H31 TEMP cleanup PENDING. Review `reports/CHATGPT-WEB29-H31-F01-REVIEW-20261112/review.md`. USER HARD GATE: независимый зелёный CI → полное обновление регистров/БЛОК4 → единый нумерованный GPT commit → merge пользователем. БЛОКИ 1/1.1 не менялись.
