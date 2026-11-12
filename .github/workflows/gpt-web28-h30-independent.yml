@@ -70,14 +70,28 @@ jobs:
           if (@($proof.isolation_violations).Count -ne 0) { throw 'OFFLINE isolation violated' }
           Write-Output 'H30_INDEPENDENT=7_PASS_0_FAIL_0_ERROR_0_SKIP'
           Write-Output 'H30_OFFLINE_GUARD_VIOLATIONS=0'
+      - name: Stage evidence to a single runner-volume directory
+        if: always()
+        shell: pwsh
+        run: |
+          $dest = Join-Path $env:RUNNER_TEMP 'h30-evidence-upload'
+          New-Item -ItemType Directory -Path $dest -Force | Out-Null
+          $sources = @{
+            'results.json' = 'C:\h30\evidence\results.json'
+            'isolation.jsonl' = 'C:\h30\evidence\isolation.jsonl'
+            'h30-tests.log' = (Join-Path $env:RUNNER_TEMP 'h30-tests.log')
+          }
+          foreach ($entry in $sources.GetEnumerator()) {
+            if (Test-Path $entry.Value) {
+              Copy-Item -LiteralPath $entry.Value -Destination (Join-Path $dest $entry.Key) -Force
+            }
+          }
+          Write-Output ('H30_ARTIFACT_STAGED=' + @(Get-ChildItem -LiteralPath $dest -File).Count)
       - name: Save independent evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: h30-offline-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            C:\h30\evidence\results.json
-            C:\h30\evidence\isolation.jsonl
-            ${{ runner.temp }}\h30-tests.log
+          path: ${{ runner.temp }}\h30-evidence-upload\
           if-no-files-found: warn
           retention-days: 14
