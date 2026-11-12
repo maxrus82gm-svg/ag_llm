@@ -1,6 +1,13 @@
 # Оперативная память проекта — №34
 
-## CURRENT / WEB28 10.11.2026 — H29 per-chat usage/settings принято в OFFLINE
+## CURRENT / WEB29 12.11.2026 — USER hard gate / H31 F-01 independent PASS
+
+**LATEST / WEB29 12.11.2026 — USER HARD GATE / H31 independent PASS:** порядок обязателен: успешные независимые проверки → один полный документальный closeout (review/task_record/№001/05/06/34/40/БЛОК 4) → один нумерованный атомарный GPT commit → пользовательский merge. H31 F-01 source main №573 `a26b3157` независимый [Windows CI 43264689001](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43264689001): **21 PASS / 0 FAIL / offline guard 0**, BOUNDED OFFLINE. Review `reports/CHATGPT-WEB29-H31-F01-REVIEW-20261112/review.md`. H30 остаётся PARTIAL / independent REVIEW PENDING, S3b и live/paid HOLD, CMD/browser full CI NOT RUN, H30/H31 TEMP cleanup PENDING. Следующий шаг — отдельный H30 review/Ordinary fake pre-send по USER GO; Colibri local LLM — другое направление.
+
+**Суть:** Web Alarm Ultra переиспользует старое Python-ядро, текущий шаг №37 §3а пункт 3. H31 защищает только TEST launcher, не pre-HTTP S3b. H29 per-chat настройки документально приняты, H30 PARTIAL. После PASS обязателен полный review/реестр/журнал/БЛОК 4, затем единый GPT commit и пользовательский merge. До отдельного USER GO никаких real GigaChat/OAuth/paid. Local LLM / Colibri Ultra — отдельный проект.
+
+
+## PREVIOUS / WEB28 10.11.2026 — H29 per-chat usage/settings принято в OFFLINE
 
 Пользовательский `main` №570 (`0aa3846e`) содержит `CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001` / `H-CODEX-000029`. Автор: Python 8 PASS + JS 57 PASS + TEST CMD smoke PASS; предыдущая независимая Windows-проверка 65/65 PASS (по отчёту в диалоге). **USER GUI PASS 10.11:** два Workspace, четыре чата; `01_01` после сохранения/F5 удержал `150000/15000`, остальные три — свои `250000/10000`; история и переключение на месте. TEST usage при отсутствии данных показывает честное `UNKNOWN`, не нулевые расходы. **DOC CLOSED / P0+P1 BOUNDED OFFLINE PASS** в этом scope. Ручная проверка действия кнопки 20k и широкий browser/a11y/full CI/clean Windows остаются за пределами проверенного. Review: `reports/CHATGPT-WEB28-H29-PERCHAT-REVIEW-20261110/review.md`.
 

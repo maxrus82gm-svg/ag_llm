@@ -226,6 +226,11 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
 
+## WEB29 / 12.11.2026 — H-CODEX-000031 — F-01 TEST launcher independent bounded PASS
+
+`CODEX-WUA-CHAT-S3B-F01-LAUNCH-GUARD-001`; source main №573 `a26b3157`; [GitHub Windows run 43264689001](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43264689001): **18 existing + 3 reviewer = 21/21 PASS, guard violations 0**. Fail-closed для неподтверждённых script/args/kind под `--require-test`; два approved offline профиля сохранены, STANDARD и CMD не изменены. **VERDICT: PASS / H31 DOC CLOSED в BOUNDED INDEPENDENT OFFLINE scope.** Физический CMD/browser/F5, общий S3b, full CI, real/paid НЕ ПРОВЕРЕНЫ. H30 REVIEW PENDING. Local H30/H31 TEMP cleanup PENDING. Review `reports/CHATGPT-WEB29-H31-F01-REVIEW-20261112/review.md`. USER HARD GATE: независимый зелёный CI → полное обновление регистров/БЛОК4 → единый нумерованный GPT commit → merge пользователем. БЛОКИ 1/1.1 не менялись.
+
+
 ## WEB28 / 10.11.2026 — H-CODEX-000029 — per-chat usage/settings BOUNDED OFFLINE + USER GUI PASS
 
 `CODEX-WUA-CHAT-PERCHAT-USAGE-SETTINGS-001`, main №570 `0aa3846e`; авторские 8 Python + 57 JS PASS, TEST CMD PASS, ранее независимые Windows 65/65 PASS по сохранённому контексту. Пользовательский GUI/F5: 2 Workspace/4 чата; `01_01` сохраняет 150000/15000, другие — 250000/10000. TEST `UNKNOWN` корректен при отсутствующем fake usage. **VERDICT: DOC CLOSED / P0+P1 BOUNDED OFFLINE PASS**, без реального provider cap и live. Не подтверждены реальный usage/20k-кнопка отдельным GUI тестом, broad CI/clean Windows. S3b/Stage7/paid HOLD. Review: `reports/CHATGPT-WEB28-H29-PERCHAT-REVIEW-20261110/review.md`. БЛОК 1 и БЛОК 1.1 не изменять.
