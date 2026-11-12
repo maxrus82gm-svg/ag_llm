@@ -57,6 +57,9 @@ jobs:
           ORDINARY_GUARD_LOG: ${{ runner.temp }}\h31.guard.jsonl
           PYTHONPATH: ${{ github.workspace }}\reports\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\guard;${{ github.workspace }}
           LOCALAPPDATA: ${{ runner.temp }}\h31-data
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
           PYTHONDONTWRITEBYTECODE: '1'
         run: |
           New-Item -ItemType Directory -Force "$env:LOCALAPPDATA" | Out-Null
