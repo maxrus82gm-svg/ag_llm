@@ -1,0 +1,203 @@
+# H33 independent Windows execution, deliberately OFFLINE and no production credentials.
+# Sparse checkout prevents historical Windows MAX_PATH failure on full repository checkout.
+name: WEB29 H33 independent guarded Windows OFFLINE
+
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-web29-h33-independent.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  h33-independent:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Sparse checkout - avoid legacy MAX_PATH
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /.github/workflows/gpt-web29-h33-independent.yml
+          sparse-checkout-cone-mode: false
+
+      - name: Python 3.12 for synthetic tests
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Create short Windows TEMP and install test dependencies
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path 'C:\h33') { throw 'Refusing to reuse synthetic H33 scratch' }
+          New-Item -ItemType Directory -Path 'C:\h33\la' -Force | Out-Null
+          'TEMP=C:\h33' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h33' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h33' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h33\la' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory -Path 'h33-ci-artifacts' -Force | Out-Null
+          (git rev-parse HEAD) | Out-File -FilePath 'h33-ci-artifacts/source_sha.txt' -Encoding utf8
+          Write-Output ('SOURCE_SHA=' + (git rev-parse HEAD))
+          python --version
+          node --version
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'venv creation failed' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'Test dependency installation failed' }
+
+      - name: H33 exact bytes, mock HTTP, real gate and recovery (18 tests)
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:' + $_.Name) }
+          $p = 'reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h33_http test_web_alarm_gigachat_transport.py > 'h33-ci-artifacts/http.log' 2>&1
+          $rc = $LASTEXITCODE
+          Get-Content 'h33-ci-artifacts/http.log' -Tail 55
+          if ($rc -ne 0) { throw "H33 guarded HTTP tests failed exit=$rc" }
+          $v = Get-Content "$p/evidence/ci_h33_http.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 18 -or $v.counts.'subtest:passed' -ne 36 -or $v.counts.'test:failed' -or $v.counts.'test:skipped' -or $v.unexpected_guard_denials -ne 0) { throw 'H33 HTTP count/guard mismatch' }
+          Write-Output 'H33_HTTP=18_PASS_36_SUBTESTS_0_UNEXPECTED_GUARDS'
+
+      - name: H32 and adjacent safety regression (236 tests)
+        if: '!cancelled()'
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $p = 'reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001'
+          $tests = @(
+            'test_web_alarm_ordinary_admission.py',
+            'test_web_alarm_ordinary_core_bridge.py',
+            'test_web_alarm_perchat_usage_settings.py',
+            'test_rt002_s3a_ledger.py',
+            'test_ordinary_chat_service.py',
+            'test_web_alarm_ultra_chat_turn.py',
+            'test_web_alarm_ultra_chat_turn_service.py',
+            'test_web_alarm_ultra_chat_turn_s4b.py',
+            'test_web_alarm_ultra_chat_turn_http.py',
+            'test_web_alarm_ultra_chat_s5.py',
+            'test_run_store_v2.py',
+            'test_web_alarm_launcher.py::StableEntryTests',
+            'test_web_alarm_ordinary_test_activation.py::ActivationTests::test_active_profile_uses_bridge_and_old_stage5_is_available',
+            'test_web_alarm_ordinary_test_activation.py::ActivationTests::test_missing_test_config_cannot_fall_back_to_standard'
+          )
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h33_regression @tests > 'h33-ci-artifacts/regression.log' 2>&1
+          $rc = $LASTEXITCODE
+          Get-Content 'h33-ci-artifacts/regression.log' -Tail 45
+          if ($rc -ne 0) { throw "H32/adjacent regression failed exit=$rc" }
+          $v = Get-Content "$p/evidence/ci_h33_regression.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 236 -or $v.counts.'subtest:passed' -ne 220 -or $v.counts.'test:failed' -or $v.counts.'test:skipped' -or $v.unexpected_guard_denials -ne 0) { throw 'Regression count/guard mismatch' }
+          Write-Output 'H33_REGRESSION=236_PASS_220_SUBTESTS_0_UNEXPECTED_GUARDS'
+
+      - name: Historical S1 pins and S2 standalone independent
+        if: '!cancelled()'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $p = 'reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001'
+          # Do NOT invent missing historical RAW or treat the author 69 as independent.
+          $pins = @(
+            '.ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/executor.jsonl',
+            '.ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/executor.jsonl'
+          )
+          if (($pins | Where-Object { -not (Test-Path $_) }).Count -eq 0) {
+            & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_standalone.py" ci_h33_s1 test_rt002_s1_routes.py > 'h33-ci-artifacts/s1.log' 2>&1
+            $rc = $LASTEXITCODE
+            Get-Content 'h33-ci-artifacts/s1.log' -Tail 50
+            if ($rc -ne 0) { throw "Pinned historical S1 failed exit=$rc" }
+            $s = Get-Content "$p/evidence/ci_h33_s1.result.json" -Raw | ConvertFrom-Json
+            if ($s.counts.run -ne 69 -or $s.exit_code -ne 0 -or $s.isolation_violations.Count) { throw 'S1 result mismatch' }
+            Write-Output 'H33_S1_INDEPENDENT=69_PASS'
+          } else {
+            'H33_S1_INDEPENDENT=NOT_RUN: historical R031/R026 RAW pins absent in GitHub checkout. Author 69 is not independent.' |
+              Tee-Object -FilePath 'h33-ci-artifacts/s1.log'
+          }
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_standalone.py" ci_h33_s2 test_rt002_s2_budget_policy.py > 'h33-ci-artifacts/s2.log' 2>&1
+          $rc = $LASTEXITCODE
+          Get-Content 'h33-ci-artifacts/s2.log' -Tail 50
+          if ($rc -ne 0) { throw "S2 standalone failed exit=$rc" }
+          $v = Get-Content "$p/evidence/ci_h33_s2.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.counts.run -ne 73 -or $v.counts.failures -or $v.counts.errors -or $v.counts.skipped -or $v.isolation_violations.Count) { throw 'S2 independent count/isolation mismatch' }
+          Write-Output 'H33_S2_INDEPENDENT=73_PASS'
+
+      - name: Positive H25/H33 isolation quality (52 tests)
+        if: '!cancelled()'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $p = 'reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h33_quality --import-mode=importlib reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py "$p/isolation_checks.py" > 'h33-ci-artifacts/quality.log' 2>&1
+          $rc = $LASTEXITCODE
+          Get-Content 'h33-ci-artifacts/quality.log' -Tail 40
+          if ($rc -ne 0) { throw "Isolation positive failed exit=$rc" }
+          $v = Get-Content "$p/evidence/ci_h33_quality.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 52 -or $v.counts.'subtest:passed' -ne 5 -or $v.counts.'test:failed' -or $v.counts.'test:skipped' -or $v.unexpected_guard_denials -ne 0) { throw 'Isolation count/guard mismatch' }
+          Write-Output 'H33_ISOLATION=52_PASS_5_SUBTESTS_0_UNEXPECTED_GUARDS'
+
+      - name: Two intentionally weakened controls must produce RED
+        if: '!cancelled()'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $p = 'reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/mutation_checks.py" ci_h33_mutations > 'h33-ci-artifacts/mutations.log' 2>&1
+          $rc = $LASTEXITCODE
+          Get-Content 'h33-ci-artifacts/mutations.log' -Tail 25
+          if ($rc -ne 0) { throw "Negative mutation checks failed exit=$rc" }
+          $v = Get-Content "$p/evidence/ci_h33_mutations.result.json" -Raw | ConvertFrom-Json
+          if ($v.cases.Count -ne 2 -or ($v.cases | Where-Object { $_.observed -ne 'RED' -or $_.errors -ne 0 -or $_.failures -le 0 }).Count -ne 0 -or $v.guard_denials -ne 0) { throw 'Expected RED mutations mismatch' }
+          Write-Output 'H33_MUTATIONS=2_EXPECTED_RED_0_ERRORS'
+
+      - name: Independent Node JS client UI (57 tests)
+        if: '!cancelled()'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          node --test test_web_alarm_ultra_chat_ui.js > 'h33-ci-artifacts/ui.log' 2>&1
+          $rc = $LASTEXITCODE
+          Get-Content 'h33-ci-artifacts/ui.log' -Tail 35
+          if ($rc -ne 0) { throw "Node JS UI failed exit=$rc" }
+          $lines = @(Get-Content 'h33-ci-artifacts/ui.log' | ForEach-Object { $_.Trim() })
+          if (-not ($lines -contains '# tests 57' -and $lines -contains '# pass 57' -and $lines -contains '# fail 0' -and $lines -contains '# skipped 0')) { throw 'Node TAP count mismatch' }
+          Write-Output 'H33_NODE_UI=57_PASS_0_FAIL'
+
+      - name: Gather immutable independent H33 evidence
+        if: always()
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dest = 'h33-ci-artifacts'
+          New-Item -ItemType Directory -Path $dest -Force | Out-Null
+          $source = 'reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence'
+          Get-ChildItem -LiteralPath $source -File -Filter 'ci_h33_*' -ErrorAction SilentlyContinue |
+            ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $dest -Force }
+          Write-Output ('H33_INDEPENDENT_ARTIFACT_FILES=' + @(Get-ChildItem -LiteralPath $dest -File).Count)
+
+      - name: Upload Windows independent H33 evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h33-independent-windows
+          path: h33-ci-artifacts/
+          if-no-files-found: warn
+          retention-days: 14
