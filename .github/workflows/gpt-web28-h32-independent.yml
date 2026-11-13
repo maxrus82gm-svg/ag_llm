@@ -135,8 +135,8 @@ jobs:
           $rc=$LASTEXITCODE
           Get-Content 'h32-ci-artifacts/ui.log' -Tail 45
           if ($rc -ne 0) { throw "Offline JS UI FAILED $rc" }
-          $uiText=Get-Content 'h32-ci-artifacts/ui.log' -Raw
-          if ($uiText -notmatch '(?m)^# tests 57$' -or $uiText -notmatch '(?m)^# pass 57$' -or $uiText -notmatch '(?m)^# fail 0$') { throw 'Node UI count not verified' }
+          $uiSummary=@(Get-Content 'h32-ci-artifacts/ui.log' | ForEach-Object { $_.Trim() })
+          if (-not($uiSummary -contains '# tests 57' -and $uiSummary -contains '# pass 57' -and $uiSummary -contains '# fail 0' -and $uiSummary -contains '# skipped 0')) { throw 'Node UI count not verified' }
           Write-Output 'H32_NODE_UI=57_PASS'
       - name: Gather independent evidence on one runner volume
         if: always()
