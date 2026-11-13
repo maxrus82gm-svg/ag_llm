@@ -131,7 +131,8 @@ jobs:
           Get-Content 'h32-ci-artifacts/ui.log' -Tail 45
           if ($rc -ne 0) { throw "Offline JS UI FAILED $rc" }
           $uiText=Get-Content 'h32-ci-artifacts/ui.log' -Raw
-          if ($uiText -notmatch '(?m)^# tests 57\s*
+          if ($uiText -notmatch '(?m)^# tests 57$' -or $uiText -notmatch '(?m)^# pass 57$' -or $uiText -notmatch '(?m)^# fail 0$') { throw 'Node UI count not verified' }
+          Write-Output 'H32_NODE_UI=57_PASS'
       - name: Gather independent evidence on one runner volume
         if: always()
         shell: pwsh
