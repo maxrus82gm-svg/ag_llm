@@ -1,8 +1,8 @@
 """Ordinary Core bridge; no real provider admission exists in this revision.
 
 The shared request service owns preparation, parsing and cancellation. Turn/RAW/
-Run Store still own persistence. Only the exact in-memory fixture transport can
-execute, and TurnService additionally requires explicitly isolated TEMP roots.
+Run Store still own persistence. Only exact in-memory or HTTP fixtures execute;
+TurnService additionally requires explicitly isolated TEMP roots.
 Adding a provider requires a separately accepted S3b path, not a config flag.
 """
 import asyncio
@@ -12,6 +12,7 @@ import hashlib
 
 import ordinary_chat_service as chat
 import ultra_budget_policy as policy
+from ordinary_gigachat_transport import GigaChatTransport
 from .ordinary_chat_test_adapter import OfflineTestAdapter, _FixtureTransport
 
 FIXTURE_ENDPOINT = "fixture://ordinary/v1"
@@ -32,11 +33,11 @@ def offline_policy():
                       max_scope_liability_tokens=8320, max_scope_attempts=1))
 
 
-def admission_snapshot(prepared):
+def admission_snapshot(prepared, *, endpoint=None):
     wire = policy.serialize_request_body(prepared.payload)
     raw = offline_policy()
     snapshot = policy.validate_policy(raw)
-    return dict(endpoint=FIXTURE_ENDPOINT, wire_bytes=len(wire),
+    return dict(endpoint=FIXTURE_ENDPOINT if endpoint is None else endpoint, wire_bytes=len(wire),
                 wire_sha256=hashlib.sha256(wire).hexdigest(), policy=raw,
                 policy_sha256=snapshot.revision_sha256)
 
@@ -57,11 +58,17 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
     arbitrary transport injection.
     """
 
-    def __init__(self, *, context_ref, response, context_loader=None):
+    def __init__(self, *, context_ref, response, context_loader=None, http_fixture=None):
         super().__init__(context=(), context_ref=context_ref,
                          limits=chat.RequestLimits(32, 2048, 8192, 8192, 128, 8),
                          response=response)
         self._context_loader = context_loader
+        if http_fixture is not None:
+            self._transport = GigaChatTransport(http_fixture)
+
+    def admission_snapshot(self, prepared):
+        endpoint = self._transport.endpoint if type(self._transport) is GigaChatTransport else None
+        return admission_snapshot(prepared, endpoint=endpoint)
 
     def freeze(self, body):
         if body["context_ref"] != self._context_ref:
@@ -72,7 +79,7 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
 
     def execute(self, prepared):
         # No Boolean, config_ref or injected object can activate a real sender.
-        if type(self._transport) is not _FixtureTransport:
+        if type(self._transport) not in (_FixtureTransport, GigaChatTransport):
             return chat.ChatResult(chat.Outcome.REJECTED, chat.Execution.NOT_STARTED,
                                    prepared.model, prepared.request_ref,
                                    error_code="provider_admission_required")
@@ -107,16 +114,22 @@ class _UsageCapture:
         self.reasoning = None
 
     async def send(self, payload, *, timeout_seconds):
-        if self.used or type(self.transport) is not _FixtureTransport:
+        if self.used or type(self.transport) not in (_FixtureTransport, GigaChatTransport):
             raise chat.PreSendDenied("fixture_admission_required")
         self.used = True
         wire = policy.serialize_request_body(payload)
-        self.guard(wire)
-        if self.adapter._transport is not self.transport or type(self.transport) is not _FixtureTransport:
+        if type(self.transport) is _FixtureTransport:
+            self.guard(wire)
+        if self.adapter._transport is not self.transport:
             raise chat.PreSendDenied("fixture_transport_changed")
-        response = await self.transport.send_bytes(wire, timeout_seconds=timeout_seconds)
-        if type(response) is dict and type(response.get("usage")) is dict:
-            details = response["usage"].get("completion_tokens_details")
+        if type(self.transport) is GigaChatTransport:
+            response = await self.transport.send_bytes(wire, timeout_seconds=timeout_seconds,
+                max_response_bytes=self.adapter._limits.max_response_bytes, admission=self.guard)
+        else:
+            response = await self.transport.send_bytes(wire, timeout_seconds=timeout_seconds)
+        decoded = response.data if type(response) is chat.ProviderResponse else response
+        if type(decoded) is dict and type(decoded.get("usage")) is dict:
+            details = decoded["usage"].get("completion_tokens_details")
             value = details.get("reasoning_tokens") if type(details) is dict else None
             if type(value) is int and value >= 0:
                 self.reasoning = value

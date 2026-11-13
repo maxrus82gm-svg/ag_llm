@@ -1,0 +1,2823 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "subtest:passed": 220,
+    "test:passed": 236
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_commit_then_io_error_is_unknown_without_send_or_release",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_exact_bytes_receipts_binding_usage_replay_and_reopen",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_fake_transport_timeout_and_missing_usage_keep_unknown_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_foreign_owner_same_key_competes_for_one_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_historical_audit_requires_explicit_migration",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_old_policy_has_no_implicit_ordinary_admission",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_request_and_output_reserve_exceeding_synthetic_cap_deny",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_s2_deny_is_zero_send_failed_zero_usage_attempts",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_s2a_enrollment_failure_is_not_implicitly_repaired",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_terminal_failure_cannot_publish_success_or_drop_sent_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_terminal_fake_ack_cannot_publish_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_transport_error_is_not_misreported_as_timeout",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_complete_history_and_system_context_use_existing_core",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_context_limit_refuses_whole_request_without_silent_truncation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_cross_owner_new_turn_is_refused_during_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_invalid_response_is_failed_and_not_reexecuted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_late_cancel_retains_usage_but_never_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_many_chats_and_model_selection_are_independent",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_ready_replay_keeps_original_system_and_does_not_rebuild_context",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_real_transport_object_is_never_dispatched",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_tampered_assistant_is_not_projected_as_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_transport_failure_does_not_replay_or_enter_next_context",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_reasoning_is_nested_and_survives_reopen_and_replay",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeHttpTests::test_existing_web_page_routes_and_standard_denial",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_error_is_unknown_not_zero_and_cancel_before_start_costs_no_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_invalid_settings_do_not_write_or_reset_existing_values",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_known_nested_usage_replay_reopen_and_chat_isolation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_late_cancel_preserves_known_usage_without_success_or_double_count",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_missing_usage_stays_unknown_and_partial_sum_is_explicit",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_preferences_persist_in_existing_chat_metadata_and_are_not_provider_caps",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatTests::test_preflight_rejection_is_not_an_unknown_paid_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_perchat_usage_settings.py::PerChatHttpTests::test_settings_http_requires_write_capability_and_is_reopenable",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_durable_reservation_new_process_and_idempotent_identity",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_two_processes_compete_for_last_reservation[race]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_two_processes_compete_for_last_reservation[race_tokens]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_process_crash_no_false_zero_after_commit[crash_before-False]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_process_crash_no_false_zero_after_commit[crash_after-True]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_sent_timeout_unknown_late_usage_and_duplicate",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_not_sent_requires_proof_and_never_frees_sent_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[bad_json]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[ledger_version]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[bool_version]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[missing_state]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[checksum]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[bad_event]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[missing_index]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[missing_marker]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_corrupt_or_missing_ledger_fails_closed[marker_version]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[missing_profile]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[invalid_policy]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[missing_max_tokens]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[unknown_route]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[wire_changed]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_request_policy_and_scope_binding_deny_without_writes[policy_changed]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_io_failure_never_returns_permit_and_keeps_committed_liability[fsync]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_io_failure_never_returns_permit_and_keeps_committed_liability[lock]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_io_failure_never_returns_permit_and_keeps_committed_liability[before_commit]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_io_failure_never_returns_permit_and_keeps_committed_liability[after_commit]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_generation_fallback_preserves_reserve",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_move_identity_and_existing_run_store_compatibility",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_missing_ledger_and_historical_audit_never_bootstrap_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_marker_first_initialization_failure_cannot_reset",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_policy_engine_upgrade_needs_migration_not_lower_replayed_reserve",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_invalid_or_missing_workspace_refused_without_creation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_unsafe_path_refusal_without_external_write[audit]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_unsafe_path_refusal_without_external_write[marker]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_rt002_s3a_ledger.py::test_unsafe_path_refusal_without_external_write[root]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_complete_context_order_and_exact_text",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_corrupt_context_matrix_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_determinism_and_provenance_binding",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_disabled_and_unsupported_registry_entries_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_disabled_and_unsupported_registry_entries_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_disabled_and_unsupported_registry_entries_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_disabled_and_unsupported_registry_entries_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_disabled_and_unsupported_registry_entries_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_disabled_and_unsupported_registry_entries_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_every_registered_model_resolves_from_canonical_registry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_every_registered_model_resolves_from_canonical_registry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_every_registered_model_resolves_from_canonical_registry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_every_registered_model_resolves_from_canonical_registry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_every_registered_model_resolves_from_canonical_registry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_every_registered_model_resolves_from_canonical_registry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_every_registered_model_resolves_from_canonical_registry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_explicit_registered_model_and_wire_payload",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_current_user_or_context_reference",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_invalid_limits_are_explicit_errors",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_message_count_includes_current_user_and_system",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_message_utf8_boundary",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_missing_coerced_and_padded_model_ids_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_missing_coerced_and_padded_model_ids_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_missing_coerced_and_padded_model_ids_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_missing_coerced_and_padded_model_ids_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_missing_coerced_and_padded_model_ids_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_missing_coerced_and_padded_model_ids_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_snapshot_deep_freeze_and_shell_choice_change",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_tool_context_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_unknown_model_has_no_fallback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::PreparationContract::test_wire_byte_boundary_uses_entire_json",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_answer_and_safe_metadata",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_existing_usage_parser_is_reused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_incomplete_choice_or_tool_invocation_not_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_incomplete_choice_or_tool_invocation_not_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_incomplete_choice_or_tool_invocation_not_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_incomplete_choice_or_tool_invocation_not_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_incomplete_choice_or_tool_invocation_not_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_incomplete_choice_or_tool_invocation_not_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_incomplete_choice_or_tool_invocation_not_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_answer_retains_valid_supplied_usage",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_invalid_usage_does_not_become_zero_or_known_cost",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_malformed_responses_are_typed_and_redacted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_missing_optional_fields_and_eos_compatibility",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_response_utf8_limit_and_cycle",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_usage_complete_zero_partial_missing_and_extra_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_usage_complete_zero_partial_missing_and_extra_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_usage_complete_zero_partial_missing_and_extra_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_usage_complete_zero_partial_missing_and_extra_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_usage_complete_zero_partial_missing_and_extra_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ResponseContract::test_usage_complete_zero_partial_missing_and_extra_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_absolute_deadline_checked_even_before_timer_callback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_absolute_deadline_checked_even_before_timer_callback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_absolute_deadline_checked_even_before_timer_callback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_absolute_deadline_checked_even_before_timer_callback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_adapter_mutation_cannot_change_prepared_request",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_bad_cancellation_predicate_fails_closed",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_cancel_after_response_preserves_known_usage_without_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_cancel_before_start_proves_no_call",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_explicit_task_cancellation_after_entry_is_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_external_cancel_suppressed_by_transport_cannot_publish_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_external_cancel_suppressed_by_transport_cannot_publish_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_external_cancel_suppressed_by_transport_cannot_publish_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_forged_payload_binding_is_rejected_without_call",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_immediate_reply_within_one_clock_tick_still_succeeds",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_no_sender_default_or_missing_sender",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_one_call_exact_wire_and_explicit_timeout",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_preparation_and_fake_execution_open_no_storage",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_previous_cancel_count_does_not_reject_timely_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_revoked_or_changed_model_does_not_dispatch",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_swallowed_timeout_cannot_publish_late_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_timeout_fired_inside_one_clock_tick_remains_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_timeout_is_unknown_and_one_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::ExecutionContract::test_transport_error_is_redacted_uncertain_and_not_retried",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::OfflineBoundary::test_early_process_guard_negative_controls",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_ordinary_chat_service.py::OfflineBoundary::test_import_and_execution_do_not_touch_network_oauth_or_credentials",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn.py::TurnPrerequisiteTests::test_audit_junction_must_not_write_outside_workspace",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn.py::TurnPrerequisiteTests::test_normal_run_roundtrip_uses_existing_store",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn.py::TurnPrerequisiteTests::test_same_run_two_processes_have_unique_sequences_or_visible_refusal",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_adapter_failure_is_failed_and_does_not_replay",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_conflict_and_distinct_keys",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_corrupt_raw_or_event_is_refused_without_mutation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_damaged_ready_raw_prevents_execution",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_foreign_chat_and_workspace_identity_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_foreign_chat_and_workspace_identity_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_foreign_chat_and_workspace_identity_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_get_never_starts_ready_turn_and_cancel_before_start",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_invalid_references_schema_and_test_roots_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_invalid_references_schema_and_test_roots_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_invalid_references_schema_and_test_roots_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_invalid_references_schema_and_test_roots_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_invalid_references_schema_and_test_roots_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_invalid_references_schema_and_test_roots_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_invalid_references_schema_and_test_roots_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_invalid_references_schema_and_test_roots_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_invalid_unicode_is_rejected_before_storage",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_late_result_after_cancel_is_not_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_preexisting_raw_is_preserved_byte_for_byte",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_process_exit_recovery_and_raw_identity",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_process_exit_recovery_and_raw_identity",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_process_exit_recovery_and_raw_identity",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_process_exit_recovery_and_raw_identity",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_process_exit_recovery_and_raw_identity",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_raw_crash_before_and_after_commit",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_raw_crash_before_and_after_commit",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_raw_crash_before_and_after_commit",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_result_fsync_lost_ack_recovers_without_second_execution",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_roundtrip_replay_and_reopen",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_stale_ready_projection_cannot_execute_a_started_turn_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_started_without_result_is_unknown_after_reopen",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_turn_audit_junction_refused_without_external_bytes",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_two_processes_one_turn",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_service.py::TurnTests::test_two_service_writers_share_one_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_cancel_ready_has_no_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_corrupt_durable_components_refused_without_mutation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_corrupt_durable_components_refused_without_mutation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_corrupt_durable_components_refused_without_mutation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_corrupt_durable_components_refused_without_mutation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_corrupt_durable_components_refused_without_mutation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_corrupt_durable_components_refused_without_mutation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_corrupt_durable_components_refused_without_mutation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_corrupt_durable_components_refused_without_mutation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_errors_and_usage_have_durable_classifications",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_errors_and_usage_have_durable_classifications",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_errors_and_usage_have_durable_classifications",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_errors_and_usage_have_durable_classifications",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_errors_and_usage_have_durable_classifications",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_errors_and_usage_have_durable_classifications",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_errors_and_usage_have_durable_classifications",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_fake_answer_survives_reopen",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_invalid_model_context_and_authority_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_invalid_model_context_and_authority_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_invalid_model_context_and_authority_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_invalid_model_context_and_authority_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_legacy_turn_with_adapter_retains_v1",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_no_oauth_http_or_credentials_and_guard_controls",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_process_crash_at_three_boundaries",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_process_crash_at_three_boundaries",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_process_crash_at_three_boundaries",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_process_crash_at_three_boundaries",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_ready_snapshot_survives_adapter_settings_change",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_result_ack_lost_recovers_exact_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_revoked_model_never_replaced",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_s4a_wire_durable_start_and_replay",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_two_writers_and_late_cancel",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_two_writers_and_late_cancel",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_two_writers_and_late_cancel",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_valid_run_checksum_cannot_bypass_attempt_and_usage_binding",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_valid_run_checksum_cannot_bypass_attempt_and_usage_binding",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_valid_run_checksum_cannot_bypass_attempt_and_usage_binding",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_valid_run_checksum_cannot_bypass_attempt_and_usage_binding",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_foreign_chat_registered_root_not_allowlisted_and_methods",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_http_cancel_rejects_late_result",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_lost_physical_http_reply_replays_saved_turn",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_send_read_tokens_history_and_restart",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_standard_has_no_send_and_read_capability_cannot_cancel",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_turn_read_requires_read_authority_and_valid_scope",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_turn_read_requires_read_authority_and_valid_scope",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_turn_read_requires_read_authority_and_valid_scope",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_turn_read_requires_read_authority_and_valid_scope",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_two_clients_one_key_one_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_context_isolation_model_binding_restart_and_conflict",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_error_and_unavailable_storage",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_explicit_repeat_recovers_pending_result",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_model_refusal_leaves_no_turn_or_raw",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_new_process_reuses_original_key_without_transport",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_refuses_foreign_registered_path_before_reading_history",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_tampered_assistant_is_not_projected_as_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_two_messages_save_fake_answers",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_guard_and_provider_controls",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_http_cancel_reopen_usage_and_standard_gate",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_tk_cancel_control_and_reopen_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_tk_controls_and_history_shared_with_web",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_ids_and_utf8_offsets_are_stable",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_existing_directory_junction_is_refused_without_external_writes[.ultra/audit]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_existing_directory_junction_is_refused_without_external_writes[.ultra/audit/chat]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_existing_directory_junction_is_refused_without_external_writes[.ultra/audit/chat/run]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_existing_directory_junction_is_refused_without_external_writes[.ultra/audit/index_generations]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_hardlinked_files_are_refused_without_touching_target[index.json]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_hardlinked_files_are_refused_without_touching_target[summary.json]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_hardlinked_files_are_refused_without_touching_target[server.jsonl]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_hardlinked_files_are_refused_without_touching_target[records.idx.jsonl]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_hardlinked_files_are_refused_without_touching_target[append.pending.json]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_index_summary_path_cannot_escape_workspace[False]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_index_summary_path_cannot_escape_workspace[True]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_disk_error_requires_explicit_recovery_preserving_confirmed_prefix[False]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_disk_error_requires_explicit_recovery_preserving_confirmed_prefix[True]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_unexplained_corruption_is_not_silently_repaired[missing_index]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_unexplained_corruption_is_not_silently_repaired[torn_index]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_unexplained_corruption_is_not_silently_repaired[bad_checksum]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_corrupt_pending_intent_is_not_discarded",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_partial_stream_write_is_visible_and_recovery_preserves_prefix",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_pending_recovery_refuses_unexplained_changes_without_mutation[changed_prefix]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_pending_recovery_refuses_unexplained_changes_without_mutation[extra_index]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_pending_recovery_refuses_unexplained_changes_without_mutation[foreign_stream]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_pending_recovery_refuses_unexplained_changes_without_mutation[bad_tail_hash]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_process_crash_recovery_never_loses_confirmed_records[after_intent]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_process_crash_recovery_never_loses_confirmed_records[after_stream]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_process_crash_recovery_never_loses_confirmed_records[after_index]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_append_lock_timeout_is_visible_and_does_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_generation_hardlink_is_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_concurrent_run_offsets_hashes_and_restart",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_append_refuses_projected_read_limit_before_any_write[False]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_gate_append_refuses_projected_read_limit_before_any_write[True]",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_atomic_json_retries_transient_permission_error",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_persistent_canonical_lock_falls_back_to_generation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_generation_path_preserves_monotonic_task_and_run_ids",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_primary_index_recovers_and_compacts_generations_after_unlock",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_generation_write_failure_remains_visible",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_summary_only_update_does_not_rewrite_workspace_index",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_new_recorder_has_directory_not_monolith",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_event_sources_reflect_record_ownership",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_repeat_registration_from_two_processes_creates_one_entry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_identity_conflicts_are_refused_without_any_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_nested_calls_reenter_and_another_thread_waits",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_a_held_workspace_lock_is_a_bounded_visible_refusal",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_a_process_dying_at_publication_leaves_no_unconfirmed_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_status_updates_from_two_processes_are_all_kept",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_the_index_is_never_published_outside_the_lock",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_a_junction_at_ultra_is_refused_and_the_target_untouched",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_a_damaged_index_is_a_visible_error_and_is_not_overwritten",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_run_store_v2.py::test_p9_a_reader_tolerates_a_generation_compacted_while_it_reads",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_explicit_standard_and_config_cannot_be_combined",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_explicit_standard_ignores_the_selected_test_configuration",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_generic_launcher_still_accepts_other_repository_scripts",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_accepts_only_both_approved_dispatches",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_accepts_only_both_approved_dispatches",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_accepts_only_both_approved_dispatches",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_corrupt_json_without_any_dispatch",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_corrupt_json_without_any_dispatch",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_corrupt_json_without_any_dispatch",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_corrupt_json_without_any_dispatch",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_corrupt_json_without_any_dispatch",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_require_test_denies_script_args_name_kind_and_path_substitutions",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_launcher.py::StableEntryTests::test_test_entry_uses_the_existing_stage5_script_dispatch",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_active_profile_uses_bridge_and_old_stage5_is_available",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_missing_test_config_cannot_fall_back_to_standard",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 9,
+  "guard_events": [
+    {
+      "test": "test_ordinary_chat_service.py::OfflineBoundary::test_early_process_guard_negative_controls",
+      "phase": "call",
+      "expected": true,
+      "events": [
+        {
+          "event": "socket.connect",
+          "boundary": "physical_network",
+          "pid": 37136,
+          "monotonic": 51583.421
+        },
+        {
+          "event": "socket.getaddrinfo",
+          "boundary": "dns",
+          "pid": 37136,
+          "monotonic": 51583.421
+        },
+        {
+          "event": "credential_read",
+          "boundary": "credentials",
+          "pid": 37136,
+          "monotonic": 51583.421
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_s4b.py::OfflineTurnTests::test_no_oauth_http_or_credentials_and_guard_controls",
+      "phase": "call",
+      "expected": true,
+      "events": [
+        {
+          "event": "socket.connect",
+          "boundary": "physical_network",
+          "pid": 37136,
+          "monotonic": 51610.75
+        },
+        {
+          "event": "socket.getaddrinfo",
+          "boundary": "dns",
+          "pid": 37136,
+          "monotonic": 51610.75
+        },
+        {
+          "event": "credential_read",
+          "boundary": "credentials",
+          "pid": 37136,
+          "monotonic": 51610.75
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_guard_and_provider_controls",
+      "phase": "call",
+      "expected": true,
+      "events": [
+        {
+          "event": "socket.connect",
+          "boundary": "physical_network",
+          "pid": 37136,
+          "monotonic": 51640.171
+        },
+        {
+          "event": "socket.getaddrinfo",
+          "boundary": "dns",
+          "pid": 37136,
+          "monotonic": 51640.187
+        },
+        {
+          "event": "credential_read",
+          "boundary": "credentials",
+          "pid": 37136,
+          "monotonic": 51640.187
+        }
+      ]
+    }
+  ]
+}

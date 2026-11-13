@@ -1,0 +1,25 @@
+...............                            [100%]
+================================== FAILURES ===================================
+_ HTTPTransportTests.test_forged_missing_replay_wrongwire_receipt_zero_token_http (mode='sent_ack') _
+test_web_alarm_gigachat_transport.py:131: in test_forged_missing_replay_wrongwire_receipt_zero_token_http
+    self.assertNotEqual(self.service.submit_turn(ws,cid,self.body('hello'))['state'],'SUCCEEDED')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+web_alarm\ultra_chat.py:604: in submit_turn
+    return turns.submit(root, workspace_id, chat_id,
+web_alarm\turn_service.py:464: in submit
+    return self._execute(root,workspace_id,chat_id,ids['turn_id'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+web_alarm\turn_service.py:486: in _execute
+    return self._execute_offline(root, workspace_id, chat_id, turn_id, start, prepared)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+web_alarm\turn_service.py:624: in _execute_offline
+    with self._session(root, workspace_id, chat_id):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+web_alarm\turn_service.py:133: in _session
+    raise UltraChatError(503, 'turn_storage_unavailable', 'Turn could not be verified or stored') from None
+E   web_alarm.ultra_chat.UltraChatError: Turn could not be verified or stored
+=========================== short test summary info ===========================
+SUBFAILED(mode='sent_ack') test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_forged_missing_replay_wrongwire_receipt_zero_token_http
+1 failed, 15 passed, 29 subtests passed in 43.88s

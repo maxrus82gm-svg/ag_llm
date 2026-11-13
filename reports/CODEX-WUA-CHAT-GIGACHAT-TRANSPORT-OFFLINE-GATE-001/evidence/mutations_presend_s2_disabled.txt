@@ -1,0 +1,60 @@
+test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) ... 
+  test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='deny') ... FAIL
+  test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='caps') ... FAIL
+  test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='missing') ... FAIL
+  test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='corrupt') ... FAIL
+  test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='upgrade') ... FAIL
+
+======================================================================
+FAIL: test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='deny')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_gigachat_transport.py", line 117, in test_budget_denials_and_invalid_enrollment_zero_token_http
+    self.assertEqual(self.service.submit_turn(ws,cid,self.body(mode))['state'],'FAILED')
+AssertionError: 'SUCCEEDED' != 'FAILED'
+- SUCCEEDED
++ FAILED
+
+
+======================================================================
+FAIL: test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='caps')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_gigachat_transport.py", line 117, in test_budget_denials_and_invalid_enrollment_zero_token_http
+    self.assertEqual(self.service.submit_turn(ws,cid,self.body(mode))['state'],'FAILED')
+AssertionError: 'SUCCEEDED' != 'FAILED'
+- SUCCEEDED
++ FAILED
+
+
+======================================================================
+FAIL: test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_gigachat_transport.py", line 118, in test_budget_denials_and_invalid_enrollment_zero_token_http
+    self.assertEqual(self.fixture.token_calls,0); self.assertEqual(self.fixture.requests,[])
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='corrupt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_gigachat_transport.py", line 118, in test_budget_denials_and_invalid_enrollment_zero_token_http
+    self.assertEqual(self.fixture.token_calls,0); self.assertEqual(self.fixture.requests,[])
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_budget_denials_and_invalid_enrollment_zero_token_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_budget_denials_and_invalid_enrollment_zero_token_http) (mode='upgrade')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_gigachat_transport.py", line 118, in test_budget_denials_and_invalid_enrollment_zero_token_http
+    self.assertEqual(self.fixture.token_calls,0); self.assertEqual(self.fixture.requests,[])
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+----------------------------------------------------------------------
+Ran 1 test in 4.465s
+
+FAILED (failures=5)

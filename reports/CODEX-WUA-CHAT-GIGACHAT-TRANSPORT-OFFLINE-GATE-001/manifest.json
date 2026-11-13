@@ -1,0 +1,795 @@
+{
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "history_id": "H-CODEX-000033",
+  "assigned_base": "main@72f2ff53051104fe9b084624a39be5f3dcc5a09a / assignment claim; Git NOT RUN",
+  "source_before_after": {
+    "ordinary_chat_service.py": {
+      "before": "1573d061a78ba02e6429e4cf3d971d0151bd4166293a65c39f9eea19d55825ac",
+      "after": "3b58c4722e2b7981ea7841902c566ae8492b82a009e9324fb0ec603552d4a4b1"
+    },
+    "web_alarm/ordinary_chat_bridge.py": {
+      "before": "63d87efba308f2aa70c984724650778b2d28ae53a512c23d96b7f508ddb65d5d",
+      "after": "e94e7400314f678fcf01dabbaa5e8e2180eccef587bec9437c6202a79a5d250d"
+    },
+    "web_alarm/turn_service.py": {
+      "before": "8f19ddfa8b1aac5985a3d15076231d813b1e9cadeb682783da93ffd5acdeca09",
+      "after": "3896de8969398c7cb5dc05b512a6c9b6adca98013dee417429039f71a02adc4d"
+    },
+    "web_alarm/ultra_chat.py": {
+      "before": "46aeff3c824b66f80aa5848cc14cec3a3c7db828c03e6966a68de5ac77ca3250",
+      "after": "09c410f406fd40a7640077e15a0a74743681566567243153c8fdf380f96e0af7"
+    },
+    "test_rt002_s1_routes.py": {
+      "before": "380b970e922dd8624b223b53f02faa1a3f729ea3fc05514c0dea24233e25def4",
+      "after": "ce5783278b99ba006a756c7f56373d62d66ba6160af398812fac821b2204358f"
+    },
+    "test_rt002_s2_budget_policy.py": {
+      "before": "bcfc0bf0c114abbf61ca89631ef3eaad0e54adf4224b56fce5a3cafba954c4be",
+      "after": "75186b8c55eee937b918b9184b41a52666f4867160fea97c7f08d7f2a9c93651"
+    },
+    "ordinary_gigachat_transport.py": {
+      "before": null,
+      "after": "a1e624beb1bd7406afc77f82e02280090f148c9f18357b3bcded9673f37da87f"
+    },
+    "test_web_alarm_gigachat_transport.py": {
+      "before": null,
+      "after": "7ec32516bdd263ab07abad4ef284056d15ff42428066c1b72a736f6d755ea5bc"
+    }
+  },
+  "result": "AUTHOR P0 P1 BOUNDED OFFLINE PASS",
+  "tests": {
+    "final_http": {
+      "exit_code": 0,
+      "counts": {
+        "test:passed": 18,
+        "subtest:passed": 36
+      },
+      "expected_guard_denials": 0,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001\\run_checks.py",
+        "--child",
+        "test_web_alarm_gigachat_transport.py",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\h33__hec6j9s\\p"
+      ]
+    },
+    "regression": {
+      "exit_code": 0,
+      "counts": {
+        "subtest:passed": 220,
+        "test:passed": 236
+      },
+      "expected_guard_denials": 9,
+      "guard_denials": 9,
+      "unexpected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001\\run_checks.py",
+        "--child",
+        "test_web_alarm_ordinary_admission.py",
+        "test_web_alarm_ordinary_core_bridge.py",
+        "test_web_alarm_perchat_usage_settings.py",
+        "test_rt002_s3a_ledger.py",
+        "test_ordinary_chat_service.py",
+        "test_web_alarm_ultra_chat_turn.py",
+        "test_web_alarm_ultra_chat_turn_service.py",
+        "test_web_alarm_ultra_chat_turn_s4b.py",
+        "test_web_alarm_ultra_chat_turn_http.py",
+        "test_web_alarm_ultra_chat_s5.py",
+        "test_run_store_v2.py",
+        "test_web_alarm_launcher.py::StableEntryTests",
+        "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_active_profile_uses_bridge_and_old_stage5_is_available",
+        "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_missing_test_config_cannot_fall_back_to_standard",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\h33_ze3atf0d\\p"
+      ]
+    },
+    "s1_confirm": {
+      "exit_code": 0,
+      "counts": {
+        "run": 69,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "test_rt002_s1_routes.py"
+      ]
+    },
+    "s2_confirm": {
+      "exit_code": 0,
+      "counts": {
+        "run": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "test_rt002_s2_budget_policy.py"
+      ]
+    },
+    "quality_confirm": {
+      "exit_code": 0,
+      "counts": {
+        "test:passed": 52,
+        "subtest:passed": 5
+      },
+      "expected_guard_denials": 0,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001\\run_checks.py",
+        "--child",
+        "--import-mode=importlib",
+        "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py",
+        "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/isolation_checks.py",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\h33_xhb0kj3s\\p"
+      ]
+    },
+    "mutations": {
+      "status": "PASS: two weakening controls expected RED",
+      "guard_denials": 0
+    },
+    "node": {
+      "exit_code": 0,
+      "command": [
+        "node",
+        "--test",
+        "test_web_alarm_ultra_chat_ui.js"
+      ]
+    }
+  },
+  "real_enabled": false,
+  "real_network_oauth_paid_calls": 0,
+  "independent_ci": "NOT RUN",
+  "backup": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-h33-backup-9q64puzp",
+  "protected_unchanged": 92,
+  "files": [
+    {
+      "path": "ordinary_chat_service.py",
+      "bytes": 15579,
+      "sha256": "3b58c4722e2b7981ea7841902c566ae8492b82a009e9324fb0ec603552d4a4b1",
+      "before_sha256": "1573d061a78ba02e6429e4cf3d971d0151bd4166293a65c39f9eea19d55825ac",
+      "purpose": "Scoped source/test or official task-slot rotation"
+    },
+    {
+      "path": "ordinary_gigachat_transport.py",
+      "bytes": 5517,
+      "sha256": "a1e624beb1bd7406afc77f82e02280090f148c9f18357b3bcded9673f37da87f",
+      "before_sha256": null,
+      "purpose": "Scoped source/test or official task-slot rotation"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/build_manifest.py",
+      "bytes": 3409,
+      "sha256": "6937093cb69acff7263e21b1e37ed2a360e46fd7855702956c434ee4befc9517",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/checkpoint.json",
+      "bytes": 398,
+      "sha256": "3aebb58997fe1ee38c56eac290b69805cab9513ac05bf82af46f23aae187cb35",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/closeout.json",
+      "bytes": 1483,
+      "sha256": "838b07a39ebb07a7a70dcbbc0ec0b8076e60a2c28515a69dda5de001733ebe25",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/adversarial1.cases.json",
+      "bytes": 12362,
+      "sha256": "18174768dc04531d702b2ca84f6c87a191b36fd76c30293106461ced7cf99cc8",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/adversarial1.result.json",
+      "bytes": 12803,
+      "sha256": "e330b4f3fae879d27af31004be261258f4a106958564dd559d1e05846724d0f9",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/adversarial1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/adversarial1.stdout.txt",
+      "bytes": 86,
+      "sha256": "a1a02bf650b856c345d25837d4d72275d27d750e11ad2614562384dd4c7ad211",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/base_fingerprints.json",
+      "bytes": 515,
+      "sha256": "81fcfec1189be0b3575641d56f70e5a53282d3c37dfb5ed02b08600324ca8f8a",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/environment.json",
+      "bytes": 643,
+      "sha256": "dd9c2da76040713f3a72d31fdcd9db393da1e776f8dab39b75ab7428b5ecf355",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/final_http.cases.json",
+      "bytes": 12362,
+      "sha256": "18174768dc04531d702b2ca84f6c87a191b36fd76c30293106461ced7cf99cc8",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/final_http.http_trace.json",
+      "bytes": 2282,
+      "sha256": "85203b34fe36cafec4e08991cccac07199500883870b8ddf9fdd18569d5f199e",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/final_http.result.json",
+      "bytes": 12816,
+      "sha256": "53c91cd560d83a8ee8cae83d95bced9b4f6e702be21459667e7ece8f9290c11f",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/final_http.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/final_http.stdout.txt",
+      "bytes": 86,
+      "sha256": "7935b97ee5badf570b7806ee4480b3ce54a2a22ac6ed13903dcad922d4e5c9dc",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/final_preservation.json",
+      "bytes": 283,
+      "sha256": "9977314264e30730b41ffac67bc8cbaf8ef6fa6a64abc7284edea3b25d2ed0d9",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/finish.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/finish.stdout.json",
+      "bytes": 5055,
+      "sha256": "f383ad3440653ae166b41b9b63e5d7a560afcf7d41ec99a32f6a9ebcc73b4600",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/finish_command.json",
+      "bytes": 607,
+      "sha256": "6b7911c397cd2bb09fed062fcd169deb9838aef8cc9dfa1a50295e2a8d7768f1",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/history_readback.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/history_readback.txt",
+      "bytes": 773,
+      "sha256": "7843a182b9ab850f76debf891518c08611375f5cb03aa47db37d5d45ce84f19f",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/initial.cases.json",
+      "bytes": 10365,
+      "sha256": "378c5954ff759e82caa093add3eaa08f39e15dc0b0d1228cd00713f309a56cb3",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/initial.result.json",
+      "bytes": 10819,
+      "sha256": "ab5a3069248073e03f5c63fc98abac815ac1ef902ccb1a49cdbab9e838ab5ddf",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/initial.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/initial.stdout.txt",
+      "bytes": 1803,
+      "sha256": "886821395c3e0a2fcc0cd00f7b3f7c33d1a0db7072ca590056145cb62bae3d09",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/launcher_observation.json",
+      "bytes": 867,
+      "sha256": "9ac8053b863caf6ea76d03be491aff03adf8694b685d4821092fc17dff59fe5b",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/mutations.result.json",
+      "bytes": 888,
+      "sha256": "81ec53983cca7f2860efcf4c4a55dfa2ca745226e06be2c2ee5456b82bd23a1e",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/mutations_http_wire_check_disabled.txt",
+      "bytes": 995,
+      "sha256": "96c840d4769a013f22c3d982214f483b6a25d7290c01e5cccdf87c266e7e1d41",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/mutations_presend_s2_disabled.txt",
+      "bytes": 4692,
+      "sha256": "3ae7cabd82683b9cbe389665e12d0ab73190bc26f7ba6270cdba9eb8d46bf668",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/node.result.json",
+      "bytes": 111,
+      "sha256": "bbb85b34984447d0a714928ac96d303c3268c2989ef6d74880f3621cbb7da474",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/node.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/node.stdout.txt",
+      "bytes": 14260,
+      "sha256": "a3d0b6df56b85b4d5d1b35d6895be4a1e4a396724407f2a16932b175251a076c",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/pre_finish.json",
+      "bytes": 230,
+      "sha256": "940da0db8ed9d777202130bc47f98f3fb5ea265a5c6b46c1a8494bc30e36d31a",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/preservation_before_finish.json",
+      "bytes": 8843,
+      "sha256": "ee97e25f302799c48fcf5b9cbeaf45fd623992c2e22a53b760ee6914ce8bcc0f",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/quality.cases.json",
+      "bytes": 13940,
+      "sha256": "54c43a7a9a46c798280912ca38f668d0af9960c4a4504d8bb1dbc7b3d0ac1f03",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/quality.result.json",
+      "bytes": 14550,
+      "sha256": "b48e4638060b4c642189cb97cd318bfbc5d2557552a93cba5920525c0c7f88c3",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/quality.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/quality.stdout.txt",
+      "bytes": 116,
+      "sha256": "b8b4733cb9d4676705330fcebad7aa5aff667a460a7e597ec855b77cb9dd5a07",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/quality_confirm.cases.json",
+      "bytes": 13940,
+      "sha256": "54c43a7a9a46c798280912ca38f668d0af9960c4a4504d8bb1dbc7b3d0ac1f03",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/quality_confirm.result.json",
+      "bytes": 14550,
+      "sha256": "c31804772f78cb622cb83139bb52d34b000e77f85fe841863ec46b2dc572cd2e",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/quality_confirm.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/quality_confirm.stdout.txt",
+      "bytes": 116,
+      "sha256": "74565d0d810178bc25c010f0deafc2ba3f6261e2b92fb09ed94a25c3517cde7b",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/reconciled_pins.json",
+      "bytes": 2076,
+      "sha256": "09f1db67132cd7e4faca01f78e545a9e49d88374dc0eb52832f54ec2b2f5bd4f",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/regression.cases.json",
+      "bytes": 98068,
+      "sha256": "daa0be42e148c795a23a42b4cd504fb0b4072b1cc32b8f38497837cdf2597cac",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/regression.guard.jsonl",
+      "bytes": 849,
+      "sha256": "ef51a985d92def5e45c888af34cb38f12a0e2f2f7ad93041178bbba337983f93",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/regression.result.json",
+      "bytes": 99249,
+      "sha256": "376e78b0cc77865097c1a6c15405a99b3c29472a2f66a8426a5e34a46d2ba3f0",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/regression.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/regression.stdout.txt",
+      "bytes": 374,
+      "sha256": "88c90de457f07c76f094431ede997cde691b132bf497cef1a63c8671d196db0f",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_confirm.result.json",
+      "bytes": 462,
+      "sha256": "f3abc72164af873331c273495eff7dc14a2a25c4fbec248ab9a526f6acab29e5",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_confirm.stderr.txt",
+      "bytes": 23733,
+      "sha256": "8a888f828b15b39f1e9b478b641e10090f3264f3f1160fa917e332072c4bd975",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_confirm.stdout.txt",
+      "bytes": 791,
+      "sha256": "48afeb604f04d90d4e947c73574dd1fe86012fc3f258f1cbea5410b4eb42b865",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_confirm.unittest.txt",
+      "bytes": 10360,
+      "sha256": "d27298d9c759cb48ba487a3a9c555014273310c325e3b6d7c3339a98dca560cb",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_final.result.json",
+      "bytes": 473,
+      "sha256": "e34782e02783776a482d06254d8aef609d8065284ad963434ead63a6c5ac0cba",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_final.stderr.txt",
+      "bytes": 23733,
+      "sha256": "c8600311af8f1faec1f3ab9d887b5e01c4059fbd3b3bed823b04c997c21e9db8",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_final.stdout.txt",
+      "bytes": 791,
+      "sha256": "816a34a8d62cbc0d303016775c788ec8475e6914781e5fbd114d95b8e6dba399",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_final.unittest.txt",
+      "bytes": 10360,
+      "sha256": "2a15653406610537fa6c178eae22c9d0c0297bd97ca73014d8d467854eaf0386",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_confirm.result.json",
+      "bytes": 480,
+      "sha256": "2ae3cd48761b59f75380aa6a87c807739a16f5380766501d8477b11dfc103b64",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_confirm.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_confirm.stdout.txt",
+      "bytes": 840,
+      "sha256": "f2ae862be9f789c39848ee5794d5b30b88c4a8ca10a641cd2e33fee5bdfc15f3",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_confirm.unittest.txt",
+      "bytes": 10510,
+      "sha256": "2e1ef21dbb0402689233e4c39753b15168eea883da86476d19e779cff3a342d9",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_final.result.json",
+      "bytes": 481,
+      "sha256": "3a39490aef0d73e5f0b5e615a8b1b99f3812ae112b9f1bf4a5c3ce9641968946",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_final.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_final.stdout.txt",
+      "bytes": 840,
+      "sha256": "5ac204e50f9bf803aaaa3fe8dca96687b6d1a586456fabb7674d18b8cba1a40e",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_final.unittest.txt",
+      "bytes": 10510,
+      "sha256": "1386603d97c3c805e184cb45846c5c16f6658fc893d5c03ba28cffe2431712a6",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/source_changes.patch.txt",
+      "bytes": 51341,
+      "sha256": "56f734f5a3839a4399fe35b0d565273996079a5b12ce110d190e28ed93ae11c3",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/source_fingerprints.json",
+      "bytes": 1535,
+      "sha256": "9ddc8ba4478443802730b61d99aeea2e4c60ca44546268bd3b6d79b645e56321",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/handoff_task.md",
+      "bytes": 27555,
+      "sha256": "cecd5415043c96d94f5b3d2d7b3092dfdf48b7eaa8043678466a0479d4010e27",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/isolation_checks.py",
+      "bytes": 2918,
+      "sha256": "9f2a22976d89454c5459f37fb1ddc2296e15a61126fb1b6e52734056c655be11",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/mutation_checks.py",
+      "bytes": 3474,
+      "sha256": "99c7363cc5b55437ba71068057489c6c4f71f98e244905b4942e3abf0f9887bc",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/preservation.json",
+      "bytes": 15263,
+      "sha256": "6e9b5a1619129c561f7ee1dd0236ac607fb62401d77152f9b1b71cc73a605c39",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/provider_contract.md",
+      "bytes": 4297,
+      "sha256": "7ac63553bbeb43f08a473420ac51160c566d4e9d2bf4173a75065d1447ec5fb2",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/report.md",
+      "bytes": 20517,
+      "sha256": "c0647a42d2384b14a17c906f8805baac6d772bc60b1cbf97b771cab57b2ef39d",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/route_inventory.md",
+      "bytes": 4848,
+      "sha256": "f56e06f4a5bb9b81ccf67992bc39a4c98bc499a179525fc81528586d7282c302",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/run_checks.py",
+      "bytes": 5478,
+      "sha256": "d8edab5c10a0893d2742f8a24c3bd38cf32e410d81d8443f32a9f73550f2744b",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/run_standalone.py",
+      "bytes": 1476,
+      "sha256": "fa96a93aa91f4dc1cd2df22a8fe2586a77e71cc89b1c73ea24271016d99619a2",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/task_record.json",
+      "bytes": 724,
+      "sha256": "0d330d2b93c6400b590ec2cdc0da839e9c7c9b7d30678f8b28493cab4d16f328",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/windows_reproduce.md",
+      "bytes": 3542,
+      "sha256": "520c3f4de61af0a7fa4671fb5988deed00972347bea7b772eb159ef6fd4a9bbf",
+      "before_sha256": null,
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "reports/task_history_sequences.json",
+      "bytes": 28,
+      "sha256": "df71decaede0b14d9544d1dea9707d99c094470ac3b4a16bd3b5c6c88ba127cc",
+      "before_sha256": "7466c703f58da4ac7ca9a7f36886659a9affcb4cd091c29a96b17f3560dc47eb",
+      "purpose": "Task evidence/report/helper"
+    },
+    {
+      "path": "test_rt002_s1_routes.py",
+      "bytes": 127361,
+      "sha256": "ce5783278b99ba006a756c7f56373d62d66ba6160af398812fac821b2204358f",
+      "before_sha256": "380b970e922dd8624b223b53f02faa1a3f729ea3fc05514c0dea24233e25def4",
+      "purpose": "Scoped source/test or official task-slot rotation"
+    },
+    {
+      "path": "test_rt002_s2_budget_policy.py",
+      "bytes": 153328,
+      "sha256": "75186b8c55eee937b918b9184b41a52666f4867160fea97c7f08d7f2a9c93651",
+      "before_sha256": "bcfc0bf0c114abbf61ca89631ef3eaad0e54adf4224b56fce5a3cafba954c4be",
+      "purpose": "Scoped source/test or official task-slot rotation"
+    },
+    {
+      "path": "test_web_alarm_gigachat_transport.py",
+      "bytes": 22867,
+      "sha256": "7ec32516bdd263ab07abad4ef284056d15ff42428066c1b72a736f6d755ea5bc",
+      "before_sha256": null,
+      "purpose": "Scoped source/test or official task-slot rotation"
+    },
+    {
+      "path": "web_alarm/ordinary_chat_bridge.py",
+      "bytes": 6795,
+      "sha256": "e94e7400314f678fcf01dabbaa5e8e2180eccef587bec9437c6202a79a5d250d",
+      "before_sha256": "63d87efba308f2aa70c984724650778b2d28ae53a512c23d96b7f508ddb65d5d",
+      "purpose": "Scoped source/test or official task-slot rotation"
+    },
+    {
+      "path": "web_alarm/turn_service.py",
+      "bytes": 40050,
+      "sha256": "3896de8969398c7cb5dc05b512a6c9b6adca98013dee417429039f71a02adc4d",
+      "before_sha256": "8f19ddfa8b1aac5985a3d15076231d813b1e9cadeb682783da93ffd5acdeca09",
+      "purpose": "Scoped source/test or official task-slot rotation"
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "bytes": 56603,
+      "sha256": "09c410f406fd40a7640077e15a0a74743681566567243153c8fdf380f96e0af7",
+      "before_sha256": "46aeff3c824b66f80aa5848cc14cec3a3c7db828c03e6966a68de5ac77ca3250",
+      "purpose": "Scoped source/test or official task-slot rotation"
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "bytes": 43298,
+      "sha256": "cdc8c5090a55a349a8d4a0e4c3a7be01c54a170a9db8d5261a9bc9be1be8d9a9",
+      "before_sha256": "2d9202185584d6f8e8743874ee2f90f84fc80de381ca3b7ca6581a6927de942d",
+      "purpose": "Scoped source/test or official task-slot rotation"
+    }
+  ],
+  "ignored_local_duplicates": [
+    "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_confirm.unittest.log",
+    "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s1_final.unittest.log",
+    "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_confirm.unittest.log",
+    "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/evidence/s2_final.unittest.log"
+  ],
+  "note": "manifest excludes its own recursive hash; ignored .log transcripts have identical publishable .txt copies"
+}

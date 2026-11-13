@@ -1,0 +1,28 @@
+{
+  "status": "PASS: two weakening controls expected RED",
+  "cases": [
+    {
+      "mutation": "presend_s2_disabled",
+      "tests": 1,
+      "failures": 5,
+      "errors": 0,
+      "expected": "RED",
+      "observed": "RED"
+    },
+    {
+      "mutation": "http_wire_check_disabled",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "expected": "RED",
+      "observed": "RED"
+    }
+  ],
+  "source_files_unchanged": {
+    "ordinary_gigachat_transport.py": "a1e624beb1bd7406afc77f82e02280090f148c9f18357b3bcded9673f37da87f",
+    "web_alarm/turn_service.py": "3896de8969398c7cb5dc05b512a6c9b6adca98013dee417429039f71a02adc4d",
+    "ultra_budget_policy.py": "f6037d86fe966fdadb4d488411bc1be21d327b158546b7c01017da7f2394e14a",
+    "web_alarm/launcher.py": "f70a511fc1db51e36a3c7869e44956ac465d7e143aec5a3b5083d2020289beaf"
+  },
+  "guard_denials": 0
+}

@@ -1,0 +1,18 @@
+test_post_admission_http_byte_substitution_is_zero_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_post_admission_http_byte_substitution_is_zero_http) ... FAIL
+
+======================================================================
+FAIL: test_post_admission_http_byte_substitution_is_zero_http (test_web_alarm_gigachat_transport.HTTPTransportTests.test_post_admission_http_byte_substitution_is_zero_http)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_gigachat_transport.py", line 166, in test_post_admission_http_byte_substitution_is_zero_http
+    self.assertEqual(result['state'],'UNKNOWN');self.assertEqual(self.fixture.requests,[])
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'SUCCEEDED' != 'UNKNOWN'
+- SUCCEEDED
++ UNKNOWN
+
+
+----------------------------------------------------------------------
+Ran 1 test in 1.001s
+
+FAILED (failures=1)

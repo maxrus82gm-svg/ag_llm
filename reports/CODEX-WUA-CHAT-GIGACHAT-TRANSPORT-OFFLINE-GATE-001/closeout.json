@@ -1,0 +1,42 @@
+{
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+  "history_id": "H-CODEX-000033",
+  "result": "AUTHOR P0 P1 BOUNDED OFFLINE PASS",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED",
+  "finish": "ROTATED / CHECK DRY-RUN APPLY READBACK PASS",
+  "report_and_assignment_sha": "VERIFIED",
+  "report_sha256": "c0647a42d2384b14a17c906f8805baac6d772bc60b1cbf97b771cab57b2ef39d",
+  "blocks_2_4_unchanged": true,
+  "protected_unchanged": 92,
+  "backup": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-h33-backup-9q64puzp",
+  "backup_sha_readback": "PASS / RETAINED UNTIL INDEPENDENT ACCEPTANCE",
+  "H30_H31_H32_backups": "NOT TOUCHED",
+  "real_network_oauth_paid_calls": 0,
+  "unexpected_guard_denials": 0,
+  "expected_regression_guard_denials": 9,
+  "tests": {
+    "H33": 18,
+    "H33_subtests": 36,
+    "regression": 236,
+    "regression_subtests": 220,
+    "S1": 69,
+    "S2": 73,
+    "quality": 52,
+    "quality_subtests": 5,
+    "JS": 57,
+    "expected_RED_controls": 2,
+    "Web_MockTransport_POST": 4,
+    "replay_extra_sends": 0
+  },
+  "not_run": [
+    "REAL GigaChat/OAuth/paid/external HTTP",
+    "independent GitHub-hosted Windows CI",
+    "Git/GitHub operations",
+    "physical CMD/browser/manual F5 GUI",
+    "S2 provenance",
+    "historical adoption/upgrade",
+    "full S3b/S3c/S9/S13a"
+  ],
+  "next": "Independent published-SHA OFFLINE Windows verification; keep REAL closed and backup retained"
+}

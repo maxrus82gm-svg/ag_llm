@@ -1,0 +1,849 @@
+--- before/ordinary_chat_service.py
++++ after/ordinary_chat_service.py
+@@ -33,6 +33,14 @@
+ 
+ class PreSendUncertain(RuntimeError):
+     """Admission commit may exist; preserve liability and never retry."""
++
++
++@dataclass(frozen=True)
++class ProviderResponse:
++    """Bounded decoded HTTP reply; status errors cannot become successful text."""
++    status: int
++    data: object
++    error_code: str | None = None
+ 
+ 
+ @dataclass(frozen=True)
+@@ -233,11 +241,17 @@
+     headers, request content or exception messages. Valid answer text is content,
+     and must be treated as untrusted by the eventual rendering shell.
+     """
++    http_reply = response if type(response) is ProviderResponse else None
++    if http_reply is not None:
++        response = http_reply.data
+     usage = Usage()
+ 
+     def invalid(code):
+         return _result(request, Outcome.INVALID_RESPONSE, Execution.RESPONSE_RECEIVED,
+                        code=code, usage=usage)
++
++    if http_reply is not None and http_reply.error_code is not None:
++        return invalid(http_reply.error_code)
+ 
+     try:
+         size = 0
+@@ -252,6 +266,8 @@
+     # A rejected answer can still be billable. Keep validated supplied usage
+     # independently of answer validity, without returning raw provider fields.
+     usage = _usage(response)
++    if http_reply is not None and (type(http_reply.status) is not int or http_reply.status != 200):
++        return invalid('provider_http_status')
+     if "error" in response:
+         return invalid("invalid_response_structure")
+     choices = response.get("choices")
+--- before/web_alarm/ordinary_chat_bridge.py
++++ after/web_alarm/ordinary_chat_bridge.py
+@@ -1,8 +1,8 @@
+ """Ordinary Core bridge; no real provider admission exists in this revision.
+ 
+ The shared request service owns preparation, parsing and cancellation. Turn/RAW/
+-Run Store still own persistence. Only the exact in-memory fixture transport can
+-execute, and TurnService additionally requires explicitly isolated TEMP roots.
++Run Store still own persistence. Only exact in-memory or HTTP fixtures execute;
++TurnService additionally requires explicitly isolated TEMP roots.
+ Adding a provider requires a separately accepted S3b path, not a config flag.
+ """
+ import asyncio
+@@ -12,6 +12,7 @@
+ 
+ import ordinary_chat_service as chat
+ import ultra_budget_policy as policy
++from ordinary_gigachat_transport import GigaChatTransport
+ from .ordinary_chat_test_adapter import OfflineTestAdapter, _FixtureTransport
+ 
+ FIXTURE_ENDPOINT = "fixture://ordinary/v1"
+@@ -32,11 +33,11 @@
+                       max_scope_liability_tokens=8320, max_scope_attempts=1))
+ 
+ 
+-def admission_snapshot(prepared):
++def admission_snapshot(prepared, *, endpoint=None):
+     wire = policy.serialize_request_body(prepared.payload)
+     raw = offline_policy()
+     snapshot = policy.validate_policy(raw)
+-    return dict(endpoint=FIXTURE_ENDPOINT, wire_bytes=len(wire),
++    return dict(endpoint=FIXTURE_ENDPOINT if endpoint is None else endpoint, wire_bytes=len(wire),
+                 wire_sha256=hashlib.sha256(wire).hexdigest(), policy=raw,
+                 policy_sha256=snapshot.revision_sha256)
+ 
+@@ -57,11 +58,17 @@
+     arbitrary transport injection.
+     """
+ 
+-    def __init__(self, *, context_ref, response, context_loader=None):
++    def __init__(self, *, context_ref, response, context_loader=None, http_fixture=None):
+         super().__init__(context=(), context_ref=context_ref,
+                          limits=chat.RequestLimits(32, 2048, 8192, 8192, 128, 8),
+                          response=response)
+         self._context_loader = context_loader
++        if http_fixture is not None:
++            self._transport = GigaChatTransport(http_fixture)
++
++    def admission_snapshot(self, prepared):
++        endpoint = self._transport.endpoint if type(self._transport) is GigaChatTransport else None
++        return admission_snapshot(prepared, endpoint=endpoint)
+ 
+     def freeze(self, body):
+         if body["context_ref"] != self._context_ref:
+@@ -72,7 +79,7 @@
+ 
+     def execute(self, prepared):
+         # No Boolean, config_ref or injected object can activate a real sender.
+-        if type(self._transport) is not _FixtureTransport:
++        if type(self._transport) not in (_FixtureTransport, GigaChatTransport):
+             return chat.ChatResult(chat.Outcome.REJECTED, chat.Execution.NOT_STARTED,
+                                    prepared.model, prepared.request_ref,
+                                    error_code="provider_admission_required")
+@@ -107,16 +114,22 @@
+         self.reasoning = None
+ 
+     async def send(self, payload, *, timeout_seconds):
+-        if self.used or type(self.transport) is not _FixtureTransport:
++        if self.used or type(self.transport) not in (_FixtureTransport, GigaChatTransport):
+             raise chat.PreSendDenied("fixture_admission_required")
+         self.used = True
+         wire = policy.serialize_request_body(payload)
+-        self.guard(wire)
+-        if self.adapter._transport is not self.transport or type(self.transport) is not _FixtureTransport:
++        if type(self.transport) is _FixtureTransport:
++            self.guard(wire)
++        if self.adapter._transport is not self.transport:
+             raise chat.PreSendDenied("fixture_transport_changed")
+-        response = await self.transport.send_bytes(wire, timeout_seconds=timeout_seconds)
+-        if type(response) is dict and type(response.get("usage")) is dict:
+-            details = response["usage"].get("completion_tokens_details")
++        if type(self.transport) is GigaChatTransport:
++            response = await self.transport.send_bytes(wire, timeout_seconds=timeout_seconds,
++                max_response_bytes=self.adapter._limits.max_response_bytes, admission=self.guard)
++        else:
++            response = await self.transport.send_bytes(wire, timeout_seconds=timeout_seconds)
++        decoded = response.data if type(response) is chat.ProviderResponse else response
++        if type(decoded) is dict and type(decoded.get("usage")) is dict:
++            details = decoded["usage"].get("completion_tokens_details")
+             value = details.get("reasoning_tokens") if type(details) is dict else None
+             if type(value) is int and value >= 0:
+                 self.reasoning = value
+--- before/web_alarm/turn_service.py
++++ after/web_alarm/turn_service.py
+@@ -45,6 +45,58 @@
+     return dict(turn_id='turn_'+token, run_id='turn_'+token, task_block_id='tb_'+token[:32],
+                 user_message_id='msg_'+_digest([token, 'user'])[:32],
+                 assistant_message_id='msg_'+_digest([token, 'assistant'])[:32], attempt_id='attempt_'+token)
++
++
++class _TurnAdmission:
++    """Ephemeral server capability, never serialized or accepted from a client.
++
++    The existing ledger remains the authority. This object only binds an exact
++    active owner to the new byte transport and rechecks its durable SENT state.
++    """
++    def __init__(self, owner, root, workspace_id, chat_id, turn_id, start, prepared):
++        self.owner = owner
++        self.args = (root, workspace_id, chat_id, turn_id, start, prepared)
++        self.used = False
++        self.dispatched = False
++
++    def __call__(self, wire):
++        import ordinary_chat_service as chat
++        if self.used:
++            raise chat.PreSendDenied('turn_admission_replayed')
++        self.used = True
++        self.owner._ordinary_admit(*self.args, wire)
++
++    def _transport(self, transport):
++        import ordinary_chat_service as chat
++        from ordinary_gigachat_transport import GigaChatTransport
++        if (type(self.owner) is not TurnService or not self.owner._ordinary()
++                or type(transport) is not GigaChatTransport
++                or self.owner._offline_adapter._transport is not transport):
++            raise chat.PreSendDenied('server_transport_required')
++
++    def authorize(self, wire, transport):
++        self._transport(transport)
++        self(wire)
++
++    def limits(self, timeout_seconds, max_response_bytes):
++        import ordinary_chat_service as chat
++        prepared = self.args[-1]
++        if (type(prepared) is not chat.PreparedRequest
++                or timeout_seconds != prepared.limits.timeout_seconds
++                or max_response_bytes != prepared.limits.max_response_bytes):
++            raise chat.PreSendDenied('transport_limits_changed')
++
++    def check(self, wire, transport, *, physical=False):
++        import ordinary_chat_service as chat
++        try:
++            self._transport(transport)
++            if not self.used or self.dispatched:
++                raise ValueError('admission_not_fresh')
++            self.owner._ordinary_recheck(*self.args, wire)
++            if physical:
++                self.dispatched = True
++        except Exception:
++            raise chat.PreSendUncertain('physical_admission_not_verified') from None
+ 
+ 
+ class TurnService:
+@@ -395,9 +447,8 @@
+                 if offline:
+                     turn.update(schema_version=2, prepared=snapshot, references={k: body[k] for k in REFERENCES})
+                     if self._ordinary():
+-                        from .ordinary_chat_bridge import admission_snapshot
+                         prepared = self._offline_adapter.restore(snapshot, turn['references'], body['text'])
+-                        turn['ordinary_admission'] = admission_snapshot(prepared)
++                        turn['ordinary_admission'] = self._offline_adapter.admission_snapshot(prepared)
+                     turn['binding_sha256'] = self._binding(turn)
+                 self._save(root,turn)
+             turn = self._load(root,workspace_id,chat_id,ids['turn_id'])
+@@ -465,10 +516,9 @@
+ 
+     def _ordinary_envelope(self, root, turn, prepared, wire):
+         import ordinary_chat_service as chat
+-        from .ordinary_chat_bridge import admission_snapshot
+         import ultra_budget_policy as policy
+         accepted = turn.get('ordinary_admission')
+-        current = admission_snapshot(prepared)
++        current = self._offline_adapter.admission_snapshot(prepared)
+         restored = self._offline_adapter.restore(turn['prepared'], turn['references'],
+                                                  self._raw(root, turn, 'user')['original_text'])
+         if (type(wire) is not bytes or accepted != current or restored != prepared
+@@ -522,6 +572,19 @@
+                 raise chat.PreSendUncertain('ordinary_sent_commit_uncertain') from None
+             raise chat.PreSendDenied('ordinary_admission_unavailable') from None
+ 
++    def _ordinary_recheck(self, root, workspace_id, chat_id, turn_id, start, prepared, wire):
++        import ultra_budget_policy as policy
++        from ultra_budget_ledger import BudgetLedger
++        with self._session(root, workspace_id, chat_id):
++            turn = self._load(root, workspace_id, chat_id, turn_id)
++            if (turn['state'] != 'ATTEMPTING' or turn['cancel_requested']
++                    or self._started(turn) != start or not self._is_active(root, turn)):
++                raise ValueError('inactive_owner')
++            expected = self._ordinary_envelope(root, turn, prepared, wire)
++            receipt, saved = BudgetLedger(root, workspace_id).reservation(turn['attempt_id'])
++            if receipt.record.state != policy.SENT or saved != expected:
++                raise ValueError('sent_binding_changed')
++
+     def _ordinary_terminal(self, root, workspace_id, turn, prepared, result):
+         import ordinary_chat_service as chat
+         import ultra_budget_policy as policy
+@@ -545,7 +608,7 @@
+                            or result.error_code == 'admission_commit_uncertain') else
+                        'cancelled' if turn['cancel_requested'] else 'timeout')
+             if result.outcome is chat.Outcome.INVALID_RESPONSE:
+-                outcome = 'parse_error'
++                outcome = 'provider_error' if result.error_code == 'provider_http_status' else 'parse_error'
+             if result.usage.status == 'complete':
+                 usage = {k: getattr(result.usage, k) for k in ('prompt_tokens','completion_tokens','total_tokens')}
+         expected_record = policy.apply_terminal(receipt.record, outcome, usage)
+@@ -559,8 +622,8 @@
+     def _execute_offline(self, root, workspace_id, chat_id, turn_id, start, prepared):
+         try:
+             if self._ordinary():
+-                result = self._offline_adapter.execute_turn(prepared, lambda wire:
+-                    self._ordinary_admit(root, workspace_id, chat_id, turn_id, start, prepared, wire))
++                result = self._offline_adapter.execute_turn(prepared,
++                    _TurnAdmission(self, root, workspace_id, chat_id, turn_id, start, prepared))
+             else:
+                 result = self._offline_adapter.execute(prepared)
+         except Exception:
+--- before/web_alarm/ultra_chat.py
++++ after/web_alarm/ultra_chat.py
+@@ -643,6 +643,16 @@
+     Deliberately inherits the disposable storage and capability boundaries of
+     Stage5. STANDARD remains disabled. The original Stage5 class is unchanged.
+     """
++
++    def __init__(self, registry, root, *, http_fixture=None):
++        # Internal synthetic fixture only. Existing launcher/profile has no flag
++        # or route to select this; REAL stays unavailable in every capability.
++        if http_fixture is not None:
++            from ordinary_gigachat_transport import OfflineHTTPFixture
++            if type(http_fixture) is not OfflineHTTPFixture:
++                raise ValueError('Expected exact offline HTTP fixture')
++        self._http_fixture = http_fixture
++        super().__init__(registry, root)
+ 
+     def _writable_workspace(self, core, wa_workspace_id, *, initialize=False):
+         root, workspace_id = super()._writable_workspace(core, wa_workspace_id, initialize=initialize)
+@@ -780,7 +790,8 @@
+                 raise UltraChatError(400, "invalid_context_ref", "Invalid Chat context")
+             loader = lambda: self._chat_context(root, chat_id)
+         adapter = OrdinaryCoreAdapter(context_ref=context_ref, context_loader=loader,
+-            response={"choices": [{"message": {"role": "assistant", "content": response_text}}]})
++            response={"choices": [{"message": {"role": "assistant", "content": response_text}}]},
++            http_fixture=self._http_fixture)
+         return TurnService(test_roots=[root], offline_adapter=adapter)
+ 
+     def _chat_context(self, root, chat_id):
+--- before/test_rt002_s1_routes.py
++++ after/test_rt002_s1_routes.py
+@@ -76,6 +76,8 @@
+ # Keep the eight approved physical routes above stable: S2 imports that exact contract.
+ # The FULL S1 comparison below includes every additional construction as well.
+ RECONCILED_ADDITIONAL_SITES = {
++    # H33 stream uses an exact pinned mock-only transport; keep UNKNOWN conservative.
++    ('ordinary_gigachat_transport.py', 'GigaChatTransport.send_bytes', 'client.stream', 'UNKNOWN'): 1,
+     # Exact reconciled constructions; LOCAL describes the initial URL, not redirect/proxy enforcement.
+     ("launcher.py", "<import>", "import:urllib.request", "LOCAL_HTTP_ORIGIN"): 1,
+     ("launcher.py", "_get", "urlopen", "LOCAL_HTTP_ORIGIN"): 1,
+@@ -1004,9 +1006,8 @@
+                  '_profile': '211c49182f6b11fc35bb45a5f24159b3a8524330a564790099402135ffad8b51',
+                  'load_launch': '028ef20016c91faa3650c84fc36241a2e5454a5e90c3dbe02abc9835e77b5c7b',
+                  'main': '7c135a144637a3f29dd7639bd02714d379bcde433d14f8768150a37ea429a545',
+-                  '_require_offline_test': '53cf61c93ede45948cd292a5a9baaa909c9e54e55bb424138c77527cfe397532',
+-                  '_OFFLINE_TEST_PROFILES': 'fefb1fb5af333f3cac9a16faa52047f12f6d2c2a3fc088defe487946528721c3',
+-                 },
++                 '_require_offline_test': '53cf61c93ede45948cd292a5a9baaa909c9e54e55bb424138c77527cfe397532',
++                 '_OFFLINE_TEST_PROFILES': 'fefb1fb5af333f3cac9a16faa52047f12f6d2c2a3fc088defe487946528721c3'},
+  'ordinary_chat_service.py': {'ChatTransport': '187a6a36bb86916f4dfa3da4bea9ad33ac9d666c638278eed25ec69673737162',
+                               'execute_request': 'c674b375d01430e6bd15de8a061ed2f880ec1bbe27f8b84ab13de37b23caa02f'},
+  'model_cards.py': {'Provider': '3d0e1706696a0a6fa9f834c7cbaee18a750e16c0ef4bf7fa55e31accb3ed6fbb',
+@@ -1019,12 +1020,19 @@
+  'ordinary_chat_test_adapter.py': {'_FixtureTransport': '6336ff1d3d29155f33823a19c49de1deb9bf2314ed210285c4f21c393c9a4aca',
+                                    'OfflineTestAdapter.__init__': '42a521d669cf25f5b9b5a40b6c5ff1f291a2bb4aa9fff8f1c70b61e79f233c8d',
+                                    'OfflineTestAdapter.execute': 'cb457ecae9f740e72e24fccf6a155d3167a77188b2d15a55e3b4a90507391c81'},
+- 'ordinary_chat_bridge.py': {'OrdinaryCoreAdapter': '4556c0365eb952e442219ca3d869e1b7cf3fb869eeb02dbd129785dfbad39909', '_UsageCapture': 'bcd76dd34432a374e16207cf49fa18b538860bf7799b0d5dedcb6ca447015069', 'offline_policy': '7fcc4593b411d2dd7e04e59792c6628cec7cdf039e94e496c914cd634d58ac90', 'admission_snapshot': '2954d9d014909c5c2e8c680cd5603405f0687b293fa6e8875cf0286ed975311a', 'FIXTURE_ENDPOINT': 'b403ecd484783ae6681f878a32e02e2098fa5ba6addc77158191ee17e870ab7b'}}
++ 'ordinary_chat_bridge.py': {'OrdinaryCoreAdapter': '04c2b82bc95e3f5c16769bba94ef0d1146d3b59a54e6bfdc4e6d872d66a2f6b0',
++                             '_UsageCapture': 'c07ca1656ac75ab87ac65b189c68af685f2187ca0002a77db614b3fd3242eab7',
++                             'offline_policy': '7fcc4593b411d2dd7e04e59792c6628cec7cdf039e94e496c914cd634d58ac90',
++                             'admission_snapshot': '0c18157fa4fe9919629d1980733fbf17f6f93258162d22104724964e84374136',
++                             'FIXTURE_ENDPOINT': 'b403ecd484783ae6681f878a32e02e2098fa5ba6addc77158191ee17e870ab7b'},
++ 'ordinary_gigachat_transport.py': {'GigaChatTransport': '58228cc2c74e9803f2dfa3a120bb4d361a1a9d53887c3861985d0c5d61242379',
++                                    'OfflineHTTPFixture': '82b9145bddd93541eaabc6b8ca186d3d7c7412df636b44fcb2b7bd5e15b8adbc'}}
+ RECON_REFERENCES = {'launcher.py': '4f4f60619368656989a3c750c60da2168ec18d776d5303daa36d3ec06a1cd0ae',
+  'ordinary_chat_service.py': '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945',
+  'model_cards.py': '84bd9a33d00a64020534df64f250eb1461cd122e5562da91d3747da9b1758243',
+  'ordinary_chat_test_adapter.py': '1d5ff808d35be09490e20b71681faf7b4b949b94bfe3d5e7edc9bd71865a6c04',
+- 'ordinary_chat_bridge.py': '3b5abf8d7e78f3311f02edb3e2fbd1180636385259cdb37fe813f30061b5c06a'}
++ 'ordinary_chat_bridge.py': '3b5abf8d7e78f3311f02edb3e2fbd1180636385259cdb37fe813f30061b5c06a',
++ 'ordinary_gigachat_transport.py': 'f06d5c8b38315be9447b7d669eeffe92819a0dc97873260d50452f22f8cba991'}
+ RECON_SYMBOLS = frozenset({"_get", "_already_running", "_self_test", "run_web_alarm", "execute_request"})
+ METADATA_FIELDS = frozenset({"api_url", "oauth_url"})
+ 
+@@ -1041,6 +1049,8 @@
+         symbols |= {"HOST", "urllib"}
+     if module_name == "model_cards.py":
+         symbols |= {"Provider", "BUILTIN_PROVIDERS"}
++    if module_name == "ordinary_gigachat_transport.py":
++        symbols |= {"CHAT_URL", "ProviderResponse", "httpx", "_TurnAdmission"}
+     for node in ast.walk(tree):
+         if module_name != "launcher.py" and isinstance(node, ast.Name) and node.id == "_get":
+             scope = parents.get(id(node))
+@@ -1340,6 +1350,10 @@
+                 sites.append({"module": module_name, "owner": "<import>", "kind": "import:" + name,
+                               "traffic": ("LOCAL_HTTP_ORIGIN" if reconciled and module_name == "launcher.py"
+                                           and name == "urllib.request" else "UNKNOWN"), "line": node.lineno})
++    # H33 exact pinned endpoint property is server metadata for the sealed HTTP adapter.
++    # Only this node is reconciled; all other endpoint flows remain unexplained.
++    if reconciled and module_name == "ordinary_gigachat_transport.py":
++        allowed.update(id(ref) for ref, owner in references if owner == "GigaChatTransport.endpoint")
+     unexplained = []
+     seen = set()
+     for ref, owner in references:
+@@ -1423,7 +1437,7 @@
+                     importers.add(module.name)
+         self.assertEqual(importers - NON_PRODUCTION_MODULES, {
+             "server.py", "planner_runtime.py", "verifier_runtime.py", "compressor_runtime.py",
+-            "gigachat_transport.py"})
++            "gigachat_transport.py", "ordinary_gigachat_transport.py"})
+ 
+     def test_every_endpoint_constant_read_is_an_inventoried_send_url(self):
+         """Second, receiver-independent net: an LLM/OAuth endpoint read anywhere else is unexplained."""
+--- before/test_rt002_s2_budget_policy.py
++++ after/test_rt002_s2_budget_policy.py
+@@ -1573,11 +1573,9 @@
+ OFFLINE_POLICY_CAPSULES = {"ultra_budget_ledger": "9a2cb9a04480f3ecb95c6f94a57b6142d94ea599cfa63f3eae6b98991457f56d"}
+ # H32: exact reviewed OFFLINE ingress edges, not an exclusion of the Web graph.
+ # A changed gate, or any direct/unreviewed consumer of policy/ledger, still fails.
+-OFFLINE_ADMISSION_GATES = {
+-    "web_alarm.ordinary_chat_bridge": "e916dd8b6dc1ec97c40a359247bc322e02bc05d38433ef012166ba533ac0b519",
+-    "web_alarm.turn_service": "246ee8048010edea9f5fb5aa5f7c40ee399d71cb17158c0deb25041a0a4c6c6c",
+-    "web_alarm.ultra_chat": "a652d69578e1b3920b22a30d877ca32adf30f06180c93a7f39abd639ebbdaa12",
+-}
++OFFLINE_ADMISSION_GATES = {'web_alarm.ordinary_chat_bridge': 'cf7f550ccee87c1a6368bdc1ab7126a6b360427aace1134aa0d9f753be7db4d3',
++ 'web_alarm.turn_service': 'c2a8a6412594816165ed843e78fead02d9821891c03677e9317b560cab6b10d5',
++ 'web_alarm.ultra_chat': '1caf0c05a9addeb9e08652566dbea5c15c3a1805b4e39b3ed59ad01cc3a38681'}
+ OFFLINE_GUARD_BOOTSTRAPS = {
+     "web_alarm.ordinary_test_fixture": "30fcea6895cdc7a410465566a4cf389ec59f2fee362ea93cc3744fa8288aab03",
+ }
+--- before/ordinary_gigachat_transport.py
++++ after/ordinary_gigachat_transport.py
+@@ -0,0 +1,110 @@
++"""Byte-oriented GigaChat HTTP boundary; H33 permits synthetic HTTP ONLY.
++
++No network transport, real token provider or REAL switch exists here. The existing
++gigachat_transport remains the owner of real OAuth. A later reviewed REAL gate
++must supply that authority; a receipt or an HTTP URL is not authority.
++"""
++import asyncio
++from dataclasses import dataclass, field
++import hashlib
++import json
++import math
++
++import httpx
++
++from gigachat_transport import CHAT_URL
++from ordinary_chat_service import PreSendDenied, ProviderResponse
++
++
++@dataclass
++class OfflineHTTPFixture:
++    """Server-owned synthetic input, never reconstructed from browser/config.
++
++    Observations deliberately omit headers, token and raw provider data. Test
++    instrumentation can inspect the actual httpx request inside MockTransport.
++    """
++    body: bytes = b'{"choices":[{"message":{"role":"assistant","content":"TEST HTTP"}}]}'
++    status: int = 200
++    error: str | None = None
++    delay: float = 0
++    token_error: bool = False
++    token_calls: int = field(default=0, init=False)
++    requests: list = field(default_factory=list, init=False)
++
++    async def token(self):
++        # Explicit fake of the existing get_access_token boundary: no env,
++        # credentials, OAuth, token cache, refresh or fallback.
++        self.token_calls += 1
++        if self.token_error:
++            raise RuntimeError('synthetic_token_unavailable')
++        return 'H33-SYNTHETIC-NON-CREDENTIAL'
++
++
++class GigaChatTransport:
++    """One POST of admitted immutable bytes, no serialization and no retry."""
++
++    def __init__(self, fixture=None):
++        if type(fixture) is not OfflineHTTPFixture:
++            raise PreSendDenied('real_transport_disabled')
++        self._fixture = fixture
++
++    @property
++    def endpoint(self):
++        return CHAT_URL
++
++    async def send_bytes(self, wire, *, timeout_seconds, max_response_bytes, admission=None):
++        from web_alarm.turn_service import _TurnAdmission
++        if (type(self) is not GigaChatTransport or type(self._fixture) is not OfflineHTTPFixture
++                or type(admission) is not _TurnAdmission or type(wire) is not bytes
++                or type(max_response_bytes) is not int or max_response_bytes <= 0
++                or type(timeout_seconds) not in (int, float)
++                or not math.isfinite(timeout_seconds) or timeout_seconds <= 0):
++            raise PreSendDenied('server_turn_authority_required')
++        # This checks the exact owner/transport/binding BEFORE any token call.
++        admission.limits(timeout_seconds, max_response_bytes)
++        admission.authorize(wire, self)
++        fixture = self._fixture
++        token = await fixture.token()
++        if token != 'H33-SYNTHETIC-NON-CREDENTIAL':
++            raise RuntimeError('synthetic_token_required')
++
++        async def handle(request):
++            # Final physical boundary: compare what httpx actually constructed,
++            # after admission, after token acquisition, immediately before send.
++            if (request.method != 'POST' or str(request.url) != self.endpoint
++                    or request.content != wire or self._fixture is not fixture):
++                from ordinary_chat_service import PreSendUncertain
++                raise PreSendUncertain('http_wire_or_endpoint_changed')
++            admission.check(wire, self, physical=True)
++            fixture.requests.append(dict(method=request.method, endpoint=str(request.url),
++                wire_bytes=len(request.content), wire_sha256=hashlib.sha256(request.content).hexdigest(),
++                timeout=dict(request.extensions['timeout'])))
++            if fixture.delay:
++                await asyncio.sleep(fixture.delay)
++            if fixture.error == 'timeout':
++                raise httpx.ReadTimeout('synthetic_timeout')
++            if fixture.error == 'transport':
++                raise httpx.ConnectError('synthetic_transport_error')
++            return httpx.Response(fixture.status, content=fixture.body)
++
++        # Never instantiate a default/network HTTP transport. Disable proxy env
++        # and redirects even though the only possible transport is MockTransport.
++        try:
++            async with httpx.AsyncClient(transport=httpx.MockTransport(handle), trust_env=False,
++                    follow_redirects=False, timeout=httpx.Timeout(timeout_seconds)) as client:
++                admission.check(wire, self)
++                async with client.stream('POST', self.endpoint, content=wire, headers={
++                        'Authorization': 'Bearer '+token, 'Accept': 'application/json',
++                        'Content-Type': 'application/json; charset=utf-8'}) as response:
++                    data = bytearray()
++                    async for chunk in response.aiter_bytes():
++                        if len(data) + len(chunk) > max_response_bytes:
++                            return ProviderResponse(response.status_code, None, 'response_limit_exceeded')
++                        data.extend(chunk)
++                    try:
++                        decoded = json.loads(data.decode('utf-8'))
++                    except (ValueError, UnicodeError, RecursionError):
++                        return ProviderResponse(response.status_code, None, 'invalid_json_response')
++                    return ProviderResponse(response.status_code, decoded)
++        except httpx.TimeoutException:
++            raise TimeoutError("provider_timeout") from None
+--- before/test_web_alarm_gigachat_transport.py
++++ after/test_web_alarm_gigachat_transport.py
+@@ -0,0 +1,353 @@
++"""H33 adversarial HTTP fixtures over the accepted H32 durable chain."""
++import asyncio
++from concurrent.futures import ThreadPoolExecutor
++from dataclasses import replace
++import hashlib
++import json
++import os
++from pathlib import Path
++import threading
++import unittest
++from unittest.mock import patch
++from uuid import uuid4
++
++import httpx
++import context_storage as core
++import gigachat_transport as legacy
++import ordinary_chat_service as chat
++import ordinary_gigachat_transport as transport
++import run_store as runs
++import ultra_budget_policy as policy
++from ultra_budget_ledger import BudgetLedger, LedgerDenied
++from web_alarm import ordinary_chat_bridge as bridge
++from web_alarm.turn_service import TurnService, _TurnAdmission
++from web_alarm.ultra_chat import OrdinaryCoreChatService, UltraChatError
++from web_alarm.server import WebAlarmApi, create_server
++import test_web_alarm_ultra_chat_s5 as s5
++import test_web_alarm_ordinary_core_bridge as old_bridge_tests
++from test_web_alarm_ordinary_core_bridge import reply
++
++
++USAGE = {'prompt_tokens':7, 'completion_tokens':5, 'total_tokens':12,
++         'completion_tokens_details':{'reasoning_tokens':3}}
++
++
++class HTTPTransportTests(s5.Fixture):
++    def setUp(self):
++        super().setUp()
++        self.fixture = transport.OfflineHTTPFixture(body=json.dumps(reply(USAGE)).encode())
++        self.service = OrdinaryCoreChatService(self.registry, self.root, http_fixture=self.fixture)
++        # Real OAuth is a tripwire, independently of the process credential guard.
++        oauth = patch.object(legacy, 'get_access_token', side_effect=AssertionError('REAL OAuth forbidden'))
++        self.oauth = oauth.start(); self.addCleanup(oauth.stop)
++        self.addCleanup(lambda: self.oauth.assert_not_called())
++
++    def project(self):
++        ws, cid = self.create_chat('H33 synthetic')
++        root = Path(self.registry.get(ws).workspace_root)
++        wid = core.read_workspace_identity_bounded(root)['workspace_id']
++        return ws, cid, root, wid, BudgetLedger(root, wid)
++
++    def test_exact_http_bytes_headers_sent_binding_usage_and_reopen(self):
++        ws,cid,root,wid,ledger = self.project()
++        observed=[]; original=httpx.MockTransport.handle_async_request
++        async def capture(mock, request):
++            wire=request.content
++            saved=ledger.recover().attempts[-1]
++            self.assertEqual(saved.state, policy.SENT)
++            receipt,env=ledger.reservation(saved.attempt_id)
++            turn=runs.load_run_summary(root,env['binding']['turn_id'],cid)['turn']
++            self.assertEqual(wire,env['wire_utf8'].encode())
++            self.assertEqual(hashlib.sha256(wire).hexdigest(),turn['ordinary_admission']['wire_sha256'])
++            self.assertEqual(turn['ordinary_admission']['endpoint'],legacy.CHAT_URL)
++            self.assertEqual(request.headers['authorization'],'Bearer H33-SYNTHETIC-NON-CREDENTIAL')
++            self.assertEqual(request.headers['content-type'],'application/json; charset=utf-8')
++            self.assertEqual(json.loads(wire)['model'],'GigaChat-2-Pro')
++            self.assertEqual(request.extensions['timeout'],dict(connect=8.,read=8.,write=8.,pool=8.))
++            observed.append(wire)
++            return await original(mock,request)
++        body=self.body('Привет 🌍')
++        with patch.object(httpx.MockTransport,'handle_async_request',capture):
++            result=self.service.submit_turn(ws,cid,body)
++        self.assertEqual(result['state'],'SUCCEEDED')
++        self.service=OrdinaryCoreChatService(self.registry,self.root,http_fixture=self.fixture)
++        self.assertEqual(self.service.submit_turn(ws,cid,body),result)
++        self.assertEqual(len(observed),1); self.assertEqual(len(self.fixture.requests),1)
++        page=self.service.messages(ws,cid,None,50)
++        self.assertEqual(len(page['messages']),2)
++        self.assertEqual(page['usage_summary']['known']['total_tokens'],12)
++        self.assertEqual(page['usage_summary']['known']['reasoning_tokens'],3)
++        self.assertEqual(ledger.recover().attempts[0].state,policy.KNOWN_TERMINAL)
++
++    def test_direct_untrusted_authority_and_real_factory_are_zero_token_http(self):
++        sender=transport.GigaChatTransport(self.fixture)
++        for authority in (None,{},True,lambda wire:None, object()):
++            with self.subTest(authority=type(authority).__name__), self.assertRaises(chat.PreSendDenied):
++                asyncio.run(sender.send_bytes(b'{}',timeout_seconds=1,max_response_bytes=100,admission=authority))
++        for fixture in (None,{},True,httpx.MockTransport(lambda r:httpx.Response(200)),object()):
++            with self.assertRaises(chat.PreSendDenied): transport.GigaChatTransport(fixture)
++        self.assertEqual(self.fixture.token_calls,0); self.assertEqual(self.fixture.requests,[])
++
++    def test_low_level_forged_turn_and_replayed_capability_are_denied(self):
++        sender=transport.GigaChatTransport(self.fixture)
++        forged=_TurnAdmission(object(),None,None,None,None,None,None)
++        with self.assertRaises(chat.PreSendDenied):
++            asyncio.run(sender.send_bytes(b'{}',timeout_seconds=1,max_response_bytes=100,admission=forged))
++        ws,cid,_,_,_=self.project(); captured=[]; original=_TurnAdmission.authorize
++        def authorize(cap,wire,sender):
++            captured.append((cap,wire,sender)); return original(cap,wire,sender)
++        with patch.object(_TurnAdmission,'authorize',authorize): self.service.submit_turn(ws,cid,self.body('one'))
++        cap,wire,sender=captured[0]
++        with self.assertRaises(chat.PreSendDenied):
++            asyncio.run(sender.send_bytes(wire,timeout_seconds=1,max_response_bytes=100,admission=cap))
++        self.assertEqual(len(self.fixture.requests),1);self.assertEqual(self.fixture.token_calls,1)
++
++    def test_budget_denials_and_invalid_enrollment_zero_token_http(self):
++        for mode in ('deny','caps','missing','corrupt','upgrade'):
++            with self.subTest(mode=mode):
++                ws,cid,root,_,ledger=self.project()
++                raw=bridge.offline_policy()
++                if mode=='deny': raw['ordinary']={'mode':'DENY'}
++                if mode=='caps': raw['ordinary']['max_scope_liability_tokens']=1
++                marker=root/'.ultra/audit/budget.enrollment.json'
++                if mode=='missing': marker.unlink()
++                elif mode=='corrupt': marker.write_text('{}')
++                elif mode=='upgrade':
++                    data=json.loads(marker.read_text());data['policy_engine_sha256']='0'*64;marker.write_text(json.dumps(data))
++                with patch.object(bridge,'offline_policy',return_value=raw):
++                    self.assertEqual(self.service.submit_turn(ws,cid,self.body(mode))['state'],'FAILED')
++                self.assertEqual(self.fixture.token_calls,0); self.assertEqual(self.fixture.requests,[])
++
++    def test_forged_missing_replay_wrongwire_receipt_zero_token_http(self):
++        original=BudgetLedger.reserve
++        for mode in ('missing','replayed','wrongwire','sent_ack'):
++            with self.subTest(mode=mode):
++                ws,cid,_,_,ledger=self.project()
++                def reserve(obj,attempt,raw,route,wire,context,binding):
++                    if mode=='missing':raise LedgerDenied('synthetic')
++                    if mode=='wrongwire': wire=wire.replace(b'hello',b'other')
++                    receipt=original(obj,attempt,raw,route,wire,context,binding)
++                    return replace(receipt,replayed=True) if mode=='replayed' else receipt
++                with patch.object(BudgetLedger,'reserve',reserve), patch.object(BudgetLedger,'mark_sent',
++                        return_value=None) if mode=='sent_ack' else patch.object(legacy,'CHAT_URL',legacy.CHAT_URL):
++                    try:self.assertNotEqual(self.service.submit_turn(ws,cid,self.body('hello'))['state'],'SUCCEEDED')
++                    except UltraChatError as error:self.assertEqual(error.status,503)
++                self.assertEqual(self.fixture.token_calls,0);self.assertEqual(self.fixture.requests,[])
++
++    def test_post_sent_changes_block_before_token(self):
++        original=BudgetLedger.mark_sent
++        for mode in ('endpoint','policy','model','transport'):
++            with self.subTest(mode=mode):
++                ws,cid,_,wid,ledger=self.project(); patches=[]
++                def marked(obj,attempt):
++                    receipt=original(obj,attempt)
++                    if mode=='endpoint': p=patch.object(transport,'CHAT_URL','https://invalid.example/')
++                    elif mode=='policy':
++                        raw=bridge.offline_policy();raw['revision_label']='changed';p=patch.object(bridge,'offline_policy',return_value=raw)
++                    elif mode=='model': p=patch.object(chat,'_model',side_effect=ValueError('changed'))
++                    else:
++                        self.service._owners[(wid,cid)][1]._offline_adapter._transport=object();return receipt
++                    p.start();patches.append(p);return receipt
++                try:
++                    with patch.object(BudgetLedger,'mark_sent',marked):
++                        try:self.service.submit_turn(ws,cid,self.body(mode))
++                        except UltraChatError:pass
++                finally:
++                    for p in patches:p.stop()
++                self.assertEqual(self.fixture.token_calls,0);self.assertEqual(self.fixture.requests,[])
++                self.assertGreater(ledger.recover().attempts[0].liability_tokens,0)
++
++    def test_post_admission_http_byte_substitution_is_zero_http(self):
++        ws,cid,_,_,ledger=self.project(); original=httpx.MockTransport.handle_async_request
++        async def substitute(mock,request):
++            request._content=request.content+b' '
++            return await original(mock,request)
++        with patch.object(httpx.MockTransport,'handle_async_request',substitute):
++            result=self.service.submit_turn(ws,cid,self.body('wire integrity'))
++        self.assertEqual(result['state'],'UNKNOWN');self.assertEqual(self.fixture.requests,[])
++        self.assertEqual(self.fixture.token_calls,1)
++        self.assertGreater(ledger.recover().attempts[0].liability_tokens,0)
++
++    def test_cancel_during_token_wait_zero_http_no_retry(self):
++        ws,cid,_,_,ledger=self.project(); entered=threading.Event();release=threading.Event()
++        original=transport.OfflineHTTPFixture.token
++        async def token(fixture):
++            entered.set()
++            await asyncio.to_thread(release.wait,5)
++            return await original(fixture)
++        body=self.body('cancel before HTTP')
++        with patch.object(transport.OfflineHTTPFixture,'token',token),ThreadPoolExecutor() as pool:
++            pending=pool.submit(self.service.submit_turn,ws,cid,body)
++            try:
++                self.assertTrue(entered.wait(5));tid=self.service.latest_turn(ws,cid)['turn']['turn_id']
++                self.service._turn_request('cancel',ws,cid,tid,{})
++            finally:release.set()
++            result=pending.result(10)
++        self.assertEqual(result['state'],'UNKNOWN');self.assertEqual(self.fixture.requests,[])
++        self.assertEqual(self.service.submit_turn(ws,cid,body)['state'],'UNKNOWN')
++        self.assertGreater(ledger.recover().attempts[0].liability_tokens,0)
++
++    def test_http_status_json_size_and_provider_errors_no_refresh_retry(self):
++        scenarios=[(401,json.dumps(reply(USAGE)).encode()),(429,b'{"error":"synthetic secret"}'),
++                   (500,b'{}'),(302,b'{}'),(200,b'not json'),(200,b'\xff'),(200,b'x'*8193),
++                   (200,b'{"choices":[]}'),(200,b'{"error":{"secret":"masked"}}')]
++        for status,body in scenarios:
++            with self.subTest(status=status,size=len(body)):
++                ws,cid,_,_,ledger=self.project();self.fixture.status=status;self.fixture.body=body
++                before=len(self.fixture.requests);token_before=self.fixture.token_calls
++                payload=self.body('status');result=self.service.submit_turn(ws,cid,payload)
++                self.assertEqual(result['state'],'FAILED')
++                self.assertEqual(len(self.fixture.requests),before+1);self.assertEqual(self.fixture.token_calls,token_before+1)
++                self.assertEqual(self.service.submit_turn(ws,cid,payload),result)
++                self.assertNotIn('synthetic secret',json.dumps(result))
++                record=ledger.recover().attempts[0]
++                self.assertIn(record.state,(policy.KNOWN_TERMINAL,policy.UNKNOWN_TERMINAL))
++                if status==401:self.assertEqual(record.terminal_outcomes,('provider_error',))
++
++    def test_transport_timeout_token_failure_no_automatic_retry(self):
++        for mode in ('timeout','transport','token'):
++            with self.subTest(mode=mode):
++                ws,cid,_,_,ledger=self.project();self.fixture.error=None if mode=='token' else mode
++                self.fixture.token_error=mode=='token';before=len(self.fixture.requests);tokens=self.fixture.token_calls
++                body=self.body(mode);result=self.service.submit_turn(ws,cid,body)
++                self.assertEqual(result['state'],'UNKNOWN')
++                self.assertEqual(len(self.fixture.requests),before+(mode!='token'))
++                self.assertEqual(self.fixture.token_calls,tokens+1)
++                self.assertEqual(self.service.submit_turn(ws,cid,body),result)
++                self.assertGreater(ledger.recover().attempts[0].liability_tokens,0)
++
++    def test_terminal_failure_reopen_does_not_resend(self):
++        ws,cid,_,_,ledger=self.project();body=self.body('disk unavailable')
++        with patch.object(BudgetLedger,'terminal',side_effect=OSError('synthetic disk')):
++            with self.assertRaises(UltraChatError):self.service.submit_turn(ws,cid,body)
++        self.assertEqual(len(self.fixture.requests),1)
++        self.service=OrdinaryCoreChatService(self.registry,self.root,http_fixture=self.fixture)
++        self.assertEqual(self.service.submit_turn(ws,cid,body)['state'],'UNKNOWN')
++        self.assertEqual(len(self.fixture.requests),1);self.assertEqual(ledger.recover().attempts[0].state,policy.SENT)
++
++    def test_post_token_binding_or_client_url_changes_are_zero_http(self):
++        for mode in ('wire','url','policy','transport'):
++            with self.subTest(mode=mode):
++                ws,cid,_,wid,ledger=self.project();patches=[]
++                original=transport.OfflineHTTPFixture.token
++                async def token(fixture):
++                    value=await original(fixture)
++                    if mode=='policy':
++                        raw=bridge.offline_policy();raw['revision_label']='changed after token'
++                        p=patch.object(bridge,'offline_policy',return_value=raw);p.start();patches.append(p)
++                    elif mode=='transport':self.service._owners[(wid,cid)][1]._offline_adapter._transport=object()
++                    return value
++                stream=httpx.AsyncClient.stream
++                def mutate(client,method,url,**kwargs):
++                    if mode=='wire':kwargs['content']+=b' '
++                    if mode=='url':url='https://invalid.example/changed'
++                    return stream(client,method,url,**kwargs)
++                try:
++                    with patch.object(transport.OfflineHTTPFixture,'token',token),patch.object(httpx.AsyncClient,'stream',mutate):
++                        try:self.assertNotEqual(self.service.submit_turn(ws,cid,self.body(mode))['state'],'SUCCEEDED')
++                        except UltraChatError:pass
++                finally:
++                    for p in patches:p.stop()
++                self.assertEqual(self.fixture.requests,[])
++                self.assertGreater(ledger.recover().attempts[0].liability_tokens,0)
++
++    def test_concurrent_duplicate_has_single_http_and_no_second_owner(self):
++        ws,cid,_,_,_=self.project();entered=threading.Event();release=threading.Event()
++        original=httpx.MockTransport.handle_async_request
++        async def waiting(mock,request):
++            entered.set();await asyncio.to_thread(release.wait,5)
++            return await original(mock,request)
++        body=self.body('one concurrent send')
++        other=OrdinaryCoreChatService(self.registry,self.root,http_fixture=self.fixture)
++        with patch.object(httpx.MockTransport,'handle_async_request',waiting),ThreadPoolExecutor() as pool:
++            pending=pool.submit(self.service.submit_turn,ws,cid,body)
++            try:
++                self.assertTrue(entered.wait(5))
++                self.assertNotEqual(self.service.submit_turn(ws,cid,body)['state'],'SUCCEEDED')
++                with self.assertRaises(UltraChatError):other.submit_turn(ws,cid,self.body('second owner'))
++            finally:release.set()
++            result=pending.result(10)
++        self.assertEqual(result['state'],'SUCCEEDED');self.assertEqual(len(self.fixture.requests),1)
++
++    def test_crash_after_sent_or_after_http_reopen_no_retry(self):
++        class PowerLoss(BaseException):pass
++        for point in ('sent','http'):
++            with self.subTest(point=point):
++                ws,cid,_,_,ledger=self.project();body=self.body('power loss');before=len(self.fixture.requests)
++                mark=BudgetLedger.mark_sent;handle=httpx.MockTransport.handle_async_request
++                def crash_sent(obj,attempt):
++                    mark(obj,attempt);raise PowerLoss()
++                async def crash_http(mock,request):
++                    await handle(mock,request);raise PowerLoss()
++                hook=patch.object(BudgetLedger,'mark_sent',crash_sent) if point=='sent' else patch.object(httpx.MockTransport,'handle_async_request',crash_http)
++                with hook,self.assertRaises(PowerLoss):self.service.submit_turn(ws,cid,body)
++                self.service=OrdinaryCoreChatService(self.registry,self.root,http_fixture=self.fixture)
++                self.assertEqual(self.service.submit_turn(ws,cid,body)['state'],'UNKNOWN')
++                self.assertEqual(len(self.fixture.requests),before+(point=='http'))
++                self.assertEqual(ledger.recover().attempts[0].state,policy.SENT)
++
++    def test_deadline_after_http_preserves_unknown_liability(self):
++        ws,cid,_,_,ledger=self.project();original=bridge.OrdinaryCoreAdapter.__init__
++        def bounded(adapter,**kwargs):
++            original(adapter,**kwargs);adapter._limits=replace(adapter._limits,timeout_seconds=2)
++        self.fixture.delay=3
++        with patch.object(bridge.OrdinaryCoreAdapter,'__init__',bounded):
++            result=self.service.submit_turn(ws,cid,self.body('deadline'))
++        self.assertEqual(result['state'],'UNKNOWN');self.assertEqual(len(self.fixture.requests),1)
++        self.assertGreater(ledger.recover().attempts[0].liability_tokens,0)
++
++    def test_multi_chat_context_and_partial_invalid_missing_reasoning_usage(self):
++        ws,a,_,_,_=self.project();b='chat_'+uuid4().hex
++        self.service.create_chat(ws,{'chat_id':b})
++        for usage in (None,{'prompt_tokens':2}, {'prompt_tokens':True},
++                      {**USAGE,'completion_tokens_details':{'reasoning_tokens':99}}):
++            self.fixture.body=json.dumps(reply(usage)).encode()
++            result=self.service.submit_turn(ws,a,self.body('A'))
++            self.assertEqual(result['state'],'SUCCEEDED')
++            self.assertIsNone(result['usage']['reasoning_tokens'])
++        self.service.submit_turn(ws,b,self.body('B','gigachat_ultra'))
++        self.assertEqual(len(self.service.messages(ws,b,None,50)['messages']),2)
++        self.assertEqual(self.service.messages(ws,b,None,50)['usage_summary']['attempts'],1)
++
++    def test_browser_config_unknown_models_and_env_do_not_enable_real(self):
++        ws,cid,_,_,_=self.project()
++        for body in ({**self.body('x'),'config_ref':'REAL'},self.body('x','unknown-model')):
++            with self.assertRaises(UltraChatError):self.service.submit_turn(ws,cid,body)
++        self.assertEqual(self.fixture.token_calls,0);self.assertEqual(self.fixture.requests,[])
++        with patch.dict('os.environ',{'GIGACHAT_LIVE':'1','WUA_REAL':'1'}):
++            with self.assertRaises(chat.PreSendDenied):transport.GigaChatTransport()
++
++
++class WebHTTPTransportTests(unittest.TestCase):
++    def test_loopback_web_two_workspaces_four_chats_replay_f5(self):
++        import tempfile
++        helper=old_bridge_tests.CoreBridgeHttpTests()
++        with tempfile.TemporaryDirectory(prefix='h33web_') as folder:
++            root=Path(folder).resolve();api=WebAlarmApi(root/'registry')
++            fixture=transport.OfflineHTTPFixture(body=json.dumps(reply(USAGE)).encode())
++            service=OrdinaryCoreChatService(api.registry,root,http_fixture=fixture)
++            server=create_server(api,port=0,offline_chat=service);thread=threading.Thread(target=server.serve_forever);thread.start()
++            try:
++                cap,read,write=helper.tokens(server)
++                self.assertFalse(cap['real_available']);self.assertTrue(cap['core_bridge'])
++                trace=[]
++                for i in range(2):
++                    code,ws=helper.http(server,'POST','/ultra/chat/workspaces',{'title':'synthetic'},write)
++                    base=f'/ultra/chat/workspaces/{ws["wa_workspace_id"]}/chats'
++                    for j in range(2):
++                        cid='chat_'+uuid4().hex
++                        self.assertEqual(helper.http(server,'POST',base,{'chat_id':cid,'initialize_workspace':True},write)[0],201)
++                        body=s5.Fixture.body('HTTP isolated')
++                        url=base+'/'+cid+'/turns'
++                        code,result=helper.http(server,'POST',url,body,write)
++                        self.assertEqual(result['state'],'SUCCEEDED')
++                        self.assertEqual(helper.http(server,'POST',url,body,write)[1],result)
++                        self.assertEqual(helper.http(server,'GET',base+'/'+cid+'/messages',headers=read)[1]['usage_summary']['known']['total_tokens'],12)
++                        trace.append(dict(workspace=ws['wa_workspace_id'],chat=cid,turn=result['turn_id'],
++                                          **fixture.requests[-1]))
++                self.assertEqual(len(fixture.requests),4)
++                self.assertEqual(helper.http(server,'GET','/')[0],200)
++                if os.environ.get('H33_TRACE'):
++                    Path(os.environ['H33_TRACE']).write_text(json.dumps(dict(real_available=cap['real_available'],
++                        sends=trace,replay_extra_sends=0,total_tokens_per_chat=12),indent=2),encoding='utf-8')
++            finally:server.shutdown();server.server_close();thread.join()

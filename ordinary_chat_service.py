@@ -36,6 +36,14 @@ class PreSendUncertain(RuntimeError):
 
 
 @dataclass(frozen=True)
+class ProviderResponse:
+    """Bounded decoded HTTP reply; status errors cannot become successful text."""
+    status: int
+    data: object
+    error_code: str | None = None
+
+
+@dataclass(frozen=True)
 class RequestLimits:
     max_messages: int
     max_message_bytes: int
@@ -233,11 +241,17 @@ def parse_response(request: PreparedRequest, response: object) -> ChatResult:
     headers, request content or exception messages. Valid answer text is content,
     and must be treated as untrusted by the eventual rendering shell.
     """
+    http_reply = response if type(response) is ProviderResponse else None
+    if http_reply is not None:
+        response = http_reply.data
     usage = Usage()
 
     def invalid(code):
         return _result(request, Outcome.INVALID_RESPONSE, Execution.RESPONSE_RECEIVED,
                        code=code, usage=usage)
+
+    if http_reply is not None and http_reply.error_code is not None:
+        return invalid(http_reply.error_code)
 
     try:
         size = 0
@@ -252,6 +266,8 @@ def parse_response(request: PreparedRequest, response: object) -> ChatResult:
     # A rejected answer can still be billable. Keep validated supplied usage
     # independently of answer validity, without returning raw provider fields.
     usage = _usage(response)
+    if http_reply is not None and (type(http_reply.status) is not int or http_reply.status != 200):
+        return invalid('provider_http_status')
     if "error" in response:
         return invalid("invalid_response_structure")
     choices = response.get("choices")

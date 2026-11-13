@@ -47,6 +47,58 @@ def identities(workspace_id, chat_id, key):
                 assistant_message_id='msg_'+_digest([token, 'assistant'])[:32], attempt_id='attempt_'+token)
 
 
+class _TurnAdmission:
+    """Ephemeral server capability, never serialized or accepted from a client.
+
+    The existing ledger remains the authority. This object only binds an exact
+    active owner to the new byte transport and rechecks its durable SENT state.
+    """
+    def __init__(self, owner, root, workspace_id, chat_id, turn_id, start, prepared):
+        self.owner = owner
+        self.args = (root, workspace_id, chat_id, turn_id, start, prepared)
+        self.used = False
+        self.dispatched = False
+
+    def __call__(self, wire):
+        import ordinary_chat_service as chat
+        if self.used:
+            raise chat.PreSendDenied('turn_admission_replayed')
+        self.used = True
+        self.owner._ordinary_admit(*self.args, wire)
+
+    def _transport(self, transport):
+        import ordinary_chat_service as chat
+        from ordinary_gigachat_transport import GigaChatTransport
+        if (type(self.owner) is not TurnService or not self.owner._ordinary()
+                or type(transport) is not GigaChatTransport
+                or self.owner._offline_adapter._transport is not transport):
+            raise chat.PreSendDenied('server_transport_required')
+
+    def authorize(self, wire, transport):
+        self._transport(transport)
+        self(wire)
+
+    def limits(self, timeout_seconds, max_response_bytes):
+        import ordinary_chat_service as chat
+        prepared = self.args[-1]
+        if (type(prepared) is not chat.PreparedRequest
+                or timeout_seconds != prepared.limits.timeout_seconds
+                or max_response_bytes != prepared.limits.max_response_bytes):
+            raise chat.PreSendDenied('transport_limits_changed')
+
+    def check(self, wire, transport, *, physical=False):
+        import ordinary_chat_service as chat
+        try:
+            self._transport(transport)
+            if not self.used or self.dispatched:
+                raise ValueError('admission_not_fresh')
+            self.owner._ordinary_recheck(*self.args, wire)
+            if physical:
+                self.dispatched = True
+        except Exception:
+            raise chat.PreSendUncertain('physical_admission_not_verified') from None
+
+
 class TurnService:
     def __init__(self, *, test_roots=(), offline_adapter=None):
         self.test_roots = frozenset(Path(p).resolve() for p in test_roots)
@@ -395,9 +447,8 @@ class TurnService:
                 if offline:
                     turn.update(schema_version=2, prepared=snapshot, references={k: body[k] for k in REFERENCES})
                     if self._ordinary():
-                        from .ordinary_chat_bridge import admission_snapshot
                         prepared = self._offline_adapter.restore(snapshot, turn['references'], body['text'])
-                        turn['ordinary_admission'] = admission_snapshot(prepared)
+                        turn['ordinary_admission'] = self._offline_adapter.admission_snapshot(prepared)
                     turn['binding_sha256'] = self._binding(turn)
                 self._save(root,turn)
             turn = self._load(root,workspace_id,chat_id,ids['turn_id'])
@@ -465,10 +516,9 @@ class TurnService:
 
     def _ordinary_envelope(self, root, turn, prepared, wire):
         import ordinary_chat_service as chat
-        from .ordinary_chat_bridge import admission_snapshot
         import ultra_budget_policy as policy
         accepted = turn.get('ordinary_admission')
-        current = admission_snapshot(prepared)
+        current = self._offline_adapter.admission_snapshot(prepared)
         restored = self._offline_adapter.restore(turn['prepared'], turn['references'],
                                                  self._raw(root, turn, 'user')['original_text'])
         if (type(wire) is not bytes or accepted != current or restored != prepared
@@ -522,6 +572,19 @@ class TurnService:
                 raise chat.PreSendUncertain('ordinary_sent_commit_uncertain') from None
             raise chat.PreSendDenied('ordinary_admission_unavailable') from None
 
+    def _ordinary_recheck(self, root, workspace_id, chat_id, turn_id, start, prepared, wire):
+        import ultra_budget_policy as policy
+        from ultra_budget_ledger import BudgetLedger
+        with self._session(root, workspace_id, chat_id):
+            turn = self._load(root, workspace_id, chat_id, turn_id)
+            if (turn['state'] != 'ATTEMPTING' or turn['cancel_requested']
+                    or self._started(turn) != start or not self._is_active(root, turn)):
+                raise ValueError('inactive_owner')
+            expected = self._ordinary_envelope(root, turn, prepared, wire)
+            receipt, saved = BudgetLedger(root, workspace_id).reservation(turn['attempt_id'])
+            if receipt.record.state != policy.SENT or saved != expected:
+                raise ValueError('sent_binding_changed')
+
     def _ordinary_terminal(self, root, workspace_id, turn, prepared, result):
         import ordinary_chat_service as chat
         import ultra_budget_policy as policy
@@ -545,7 +608,7 @@ class TurnService:
                            or result.error_code == 'admission_commit_uncertain') else
                        'cancelled' if turn['cancel_requested'] else 'timeout')
             if result.outcome is chat.Outcome.INVALID_RESPONSE:
-                outcome = 'parse_error'
+                outcome = 'provider_error' if result.error_code == 'provider_http_status' else 'parse_error'
             if result.usage.status == 'complete':
                 usage = {k: getattr(result.usage, k) for k in ('prompt_tokens','completion_tokens','total_tokens')}
         expected_record = policy.apply_terminal(receipt.record, outcome, usage)
@@ -559,8 +622,8 @@ class TurnService:
     def _execute_offline(self, root, workspace_id, chat_id, turn_id, start, prepared):
         try:
             if self._ordinary():
-                result = self._offline_adapter.execute_turn(prepared, lambda wire:
-                    self._ordinary_admit(root, workspace_id, chat_id, turn_id, start, prepared, wire))
+                result = self._offline_adapter.execute_turn(prepared,
+                    _TurnAdmission(self, root, workspace_id, chat_id, turn_id, start, prepared))
             else:
                 result = self._offline_adapter.execute(prepared)
         except Exception:

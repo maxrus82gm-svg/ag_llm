@@ -1573,11 +1573,9 @@ class SyntheticRunTests(unittest.TestCase):
 OFFLINE_POLICY_CAPSULES = {"ultra_budget_ledger": "9a2cb9a04480f3ecb95c6f94a57b6142d94ea599cfa63f3eae6b98991457f56d"}
 # H32: exact reviewed OFFLINE ingress edges, not an exclusion of the Web graph.
 # A changed gate, or any direct/unreviewed consumer of policy/ledger, still fails.
-OFFLINE_ADMISSION_GATES = {
-    "web_alarm.ordinary_chat_bridge": "e916dd8b6dc1ec97c40a359247bc322e02bc05d38433ef012166ba533ac0b519",
-    "web_alarm.turn_service": "246ee8048010edea9f5fb5aa5f7c40ee399d71cb17158c0deb25041a0a4c6c6c",
-    "web_alarm.ultra_chat": "a652d69578e1b3920b22a30d877ca32adf30f06180c93a7f39abd639ebbdaa12",
-}
+OFFLINE_ADMISSION_GATES = {'web_alarm.ordinary_chat_bridge': 'cf7f550ccee87c1a6368bdc1ab7126a6b360427aace1134aa0d9f753be7db4d3',
+ 'web_alarm.turn_service': 'c2a8a6412594816165ed843e78fead02d9821891c03677e9317b560cab6b10d5',
+ 'web_alarm.ultra_chat': '1caf0c05a9addeb9e08652566dbea5c15c3a1805b4e39b3ed59ad01cc3a38681'}
 OFFLINE_GUARD_BOOTSTRAPS = {
     "web_alarm.ordinary_test_fixture": "30fcea6895cdc7a410465566a4cf389ec59f2fee362ea93cc3744fa8288aab03",
 }

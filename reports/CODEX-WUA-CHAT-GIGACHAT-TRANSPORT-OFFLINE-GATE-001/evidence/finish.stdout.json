@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "2d9202185584d6f8e8743874ee2f90f84fc80de381ca3b7ca6581a6927de942d",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 391,
+    "b11b": 397,
+    "b11e": 688
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+    "problems": [],
+    "title": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+    "lines": 342
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
+    "copy_sha256": "70c5dc089835b097b59270e874506ad8b252768c7dc45094b52dae75283173c3",
+    "history_id": "H-CODEX-000032",
+    "history_record": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "2d9202185584d6f8e8743874ee2f90f84fc80de381ca3b7ca6581a6927de942d",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
+    "copy_sha256": "70c5dc089835b097b59270e874506ad8b252768c7dc45094b52dae75283173c3",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/handoff_task.md",
+    "archive_sha256": "10e3c97abfdcc95d82ddd6e88cf937d8be3825743b1f3550deb57a4d82a0d18f"
+   },
+   "history_id": "H-CODEX-000033",
+   "new_card_sha256": "cdc8c5090a55a349a8d4a0e4c3a7be01c54a170a9db8d5261a9bc9be1be8d9a9",
+   "copy_sha256_lf": "f4e4736dccbb0925591c861d90c7c77dc2e2835ff0e2882253be00cf8bd2f5c1",
+   "copy_lines": 342,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "2d9202185584d6f8e8743874ee2f90f84fc80de381ca3b7ca6581a6927de942d",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
+    "copy_sha256": "70c5dc089835b097b59270e874506ad8b252768c7dc45094b52dae75283173c3",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/handoff_task.md",
+    "archive_sha256": "10e3c97abfdcc95d82ddd6e88cf937d8be3825743b1f3550deb57a4d82a0d18f"
+   },
+   "history_id": "H-CODEX-000033",
+   "new_card_sha256": "cdc8c5090a55a349a8d4a0e4c3a7be01c54a170a9db8d5261a9bc9be1be8d9a9",
+   "copy_sha256_lf": "f4e4736dccbb0925591c861d90c7c77dc2e2835ff0e2882253be00cf8bd2f5c1",
+   "copy_lines": 342,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+    "history_id": "H-CODEX-000033",
+    "record": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "cecd5415043c96d94f5b3d2d7b3092dfdf48b7eaa8043678466a0479d4010e27",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "cdc8c5090a55a349a8d4a0e4c3a7be01c54a170a9db8d5261a9bc9be1be8d9a9",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 401
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+    "copy_sha256": "f4e4736dccbb0925591c861d90c7c77dc2e2835ff0e2882253be00cf8bd2f5c1",
+    "history_id": "H-CODEX-000033",
+    "history_record": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+ "history": {
+  "id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+  "history_id": "H-CODEX-000033",
+  "record": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

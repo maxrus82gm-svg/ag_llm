@@ -644,6 +644,16 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
     Stage5. STANDARD remains disabled. The original Stage5 class is unchanged.
     """
 
+    def __init__(self, registry, root, *, http_fixture=None):
+        # Internal synthetic fixture only. Existing launcher/profile has no flag
+        # or route to select this; REAL stays unavailable in every capability.
+        if http_fixture is not None:
+            from ordinary_gigachat_transport import OfflineHTTPFixture
+            if type(http_fixture) is not OfflineHTTPFixture:
+                raise ValueError('Expected exact offline HTTP fixture')
+        self._http_fixture = http_fixture
+        super().__init__(registry, root)
+
     def _writable_workspace(self, core, wa_workspace_id, *, initialize=False):
         root, workspace_id = super()._writable_workspace(core, wa_workspace_id, initialize=initialize)
         if initialize:
@@ -780,7 +790,8 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
                 raise UltraChatError(400, "invalid_context_ref", "Invalid Chat context")
             loader = lambda: self._chat_context(root, chat_id)
         adapter = OrdinaryCoreAdapter(context_ref=context_ref, context_loader=loader,
-            response={"choices": [{"message": {"role": "assistant", "content": response_text}}]})
+            response={"choices": [{"message": {"role": "assistant", "content": response_text}}]},
+            http_fixture=self._http_fixture)
         return TurnService(test_roots=[root], offline_adapter=adapter)
 
     def _chat_context(self, root, chat_id):
