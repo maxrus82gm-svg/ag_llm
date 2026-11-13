@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "review_id": "WEB28-H32-20261113",
+  "task_id": "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
+  "history_id": "H-CODEX-000032",
+  "verdict": "PASS / BOUNDED INDEPENDENT WINDOWS OFFLINE",
+  "source_commit": "4e4edd0be60f2d1491b6f8d6859dc4f883c1a4bb",
+  "source_inherited_through_main": "36c41c79b066b4c19120ce11266a727d10cb7407",
+  "code_diff_since_source": "No product source changes; compare 4e4edd0..36c41c7 includes only workflows/Obsidian/docs",
+  "successful_runs": [
+    {
+      "run_id": 43417573566,
+      "source_ref": "GPT@2703ba6d5ef4ad6ca44682347852850329fdf3a6",
+      "conclusion": "success",
+      "job_id": 131859252421,
+      "artifact_id": 14032492988,
+      "artifact_name": "h32-independent-windows",
+      "artifact_sha256": "d2c6feec34f7592c0700b301c0c4c1823aefd1cc219592965c0c5af0acfaec99",
+      "tests": {
+        "h32_full": 236,
+        "full_subtests": 220,
+        "post_review": 74,
+        "post_subtests": 32,
+        "quality_isolation": 52,
+        "node_ui": 57,
+        "s2_standalone": "PASS exit 0",
+        "s1_pinned_raw": "NOT RUN"
+      },
+      "unexpected_guard_denials": 0,
+      "url": "https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43417573566"
+    },
+    {
+      "run_id": 43416113378,
+      "source_ref": "GPT@5d7854d6c5b28f360b6c51c161386fd6d3eb4f2b",
+      "conclusion": "success",
+      "job_id": 131854337977,
+      "artifact_id": 14031398967,
+      "artifact_name": "h32-http-and-mutant-independent",
+      "artifact_sha256": "fa3e07583e0d9063f6f6a9690a869a264072c05eae5320a44320498e579d7031",
+      "tests": {
+        "workspace": 2,
+        "chats": 4,
+        "fake_send": 4,
+        "replay_extra_send": 0,
+        "external_request": 0,
+        "negative_controls_expected_red": 2
+      },
+      "url": "https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43416113378"
+    }
+  ],
+  "not_run": [
+    "Pinned historical S1 RAW on fresh GitHub checkout (author previously 69 PASS; does not count as H32 independent S1)",
+    "Physical user CMD/browser/F5/clean machine",
+    "Full all-route S3b/S3c/S9/S13a",
+    "REAL/OAuth/paid/provider caps and billing/calibration/reasoning",
+    "Historical audit enrollment adoption/engine migration/power-loss fencing",
+    "H30/H31/H32 original source-machine backup cleanup"
+  ],
+  "limitations": [
+    "Synthetic H32 Ordinary per-attempt route ONLY",
+    "No real network calls",
+    "S3a retains full synthetic wire, privacy/capacity requires separately reviewed production policy",
+    "S3a engine fingerprint changes require separately approved migration",
+    "Historical S1 independent on GitHub is NOT RUN, prior H24 bounded independent is separate historical evidence"
+  ],
+  "publication": "One atomic GPT documentary closeout; owner merge pending"
+}

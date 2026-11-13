@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
   "date": "2026-11-13",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / H32 ORDINARY FAKE ADMISSION BOUNDED INDEPENDENT OFFLINE PASS; FULL S3b/REAL HOLD",
+  "review": "PASS / BOUNDED INDEPENDENT WINDOWS OFFLINE H32: 236+220 subtests, 74+32 subtests, S2 standalone, quality52, Node57, 4 fake HTTP, 2 expected RED; S1 RAW/physical GUI/REAL NOT RUN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/handoff_task.md",
@@ -15,7 +15,67 @@
     "report": {
       "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/report.md",
       "sha256": "88e49b3159a455feb8bbc6fdb741bac28b1d6b4d0767050401b937d14b44bdbc"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB28-H32-REVIEW-20261113/review.md",
+      "sha256": "7999d1d75570e689e3ae95b5226dd72171bfc001a68e7e89974543aaf66539ae"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
+      "history_id": "H-CODEX-000032",
+      "agent": "codex",
+      "title": "CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001",
+      "date": "2026-11-13",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/handoff_task.md",
+          "sha256": "10e3c97abfdcc95d82ddd6e88cf937d8be3825743b1f3550deb57a4d82a0d18f"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/report.md",
+          "sha256": "88e49b3159a455feb8bbc6fdb741bac28b1d6b4d0767050401b937d14b44bdbc"
+        }
+      },
+      "previous": []
+    }
+  ],
+  "independent_review": {
+    "date": "2026-11-13",
+    "verdict": "BOUNDED INDEPENDENT WINDOWS OFFLINE PASS",
+    "scope": "Ordinary fake only; no full S3b or LIVE approval",
+    "source_main_sha": "4e4edd0be60f2d1491b6f8d6859dc4f883c1a4bb",
+    "review_path": "reports/CHATGPT-WEB28-H32-REVIEW-20261113/review.md",
+    "evidence_path": "reports/CHATGPT-WEB28-H32-REVIEW-20261113/independent_runs.json",
+    "tests": {
+      "h32_full_pass": 236,
+      "h32_full_subtests_pass": 220,
+      "h32_post_pass": 74,
+      "h32_post_subtests_pass": 32,
+      "s2_standalone": "PASS",
+      "quality_pass": 52,
+      "node_ui_pass": 57,
+      "http_fake_calls": 4,
+      "replay_additional_calls": 0,
+      "expected_mutation_red": 2,
+      "unexpected_guard_denials": 0,
+      "s1_historical_raw": "NOT RUN"
+    },
+    "actions_run_ids": [
+      43417573566,
+      43416113378
+    ],
+    "not_run": [
+      "historical pinned S1 RAW on current GitHub CI",
+      "physical Windows CMD/browser/F5",
+      "full S3b/S3c/S9/S13a",
+      "REAL/OAuth/paid/provider caps",
+      "old audit migration/host fencing",
+      "original source-machine backup cleanup"
+    ]
+  }
 }
