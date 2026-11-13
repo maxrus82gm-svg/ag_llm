@@ -52,7 +52,7 @@ jobs:
           Write-Output ('SOURCE_SHA='+(git rev-parse HEAD))
           python --version
           node --version
-      - name: Independent Windows H32 full 236 and post-review 74 regression
+      - name: Independent Windows H32 full regression 236 and post-review 74
         shell: pwsh
         env:
           PYTHONDONTWRITEBYTECODE: '1'
@@ -132,76 +132,6 @@ jobs:
           if ($rc -ne 0) { throw "Offline JS UI FAILED $rc" }
           $uiText=Get-Content 'h32-ci-artifacts/ui.log' -Raw
           if ($uiText -notmatch '(?m)^# tests 57$' -or $uiText -notmatch '(?m)^# pass 57$' -or $uiText -notmatch '(?m)^# fail 0$') { throw 'Node UI count not verified' }
-          Write-Output 'H32_NODE_UI=57_PASS'
-      - name: Gather independent evidence on one runner volume
-        if: always()
-        shell: pwsh
-        run: |
-          $dest='h32-ci-artifacts'
-          New-Item -ItemType Directory -Path $dest -Force | Out-Null
-          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence'
-          foreach($name in @('ci_h32_full','ci_h32_post','ci_h32_quality')) {
-            foreach($ext in @('.result.json','.cases.json','.guard.jsonl','.stdout.txt','.stderr.txt')) {
-              $source="$p/$name$ext"
-              if(Test-Path $source) { Copy-Item -LiteralPath $source -Destination "$dest/$name$ext" -Force }
-            }
-          }
-          Write-Output ('H32_INDEPENDENT_ARTIFACT_FILES='+@(Get-ChildItem $dest -File).Count)
-      - name: Upload independent Windows report (including failures)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: h32-independent-windows
-          path: h32-ci-artifacts/
-          if-no-files-found: warn
-          retention-days: 14
- -or $uiText -notmatch '(?m)^# pass 57\s*
-      - name: Gather independent evidence on one runner volume
-        if: always()
-        shell: pwsh
-        run: |
-          $dest='h32-ci-artifacts'
-          New-Item -ItemType Directory -Path $dest -Force | Out-Null
-          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence'
-          foreach($name in @('ci_h32_full','ci_h32_post','ci_h32_quality')) {
-            foreach($ext in @('.result.json','.cases.json','.guard.jsonl','.stdout.txt','.stderr.txt')) {
-              $source="$p/$name$ext"
-              if(Test-Path $source) { Copy-Item -LiteralPath $source -Destination "$dest/$name$ext" -Force }
-            }
-          }
-          Write-Output ('H32_INDEPENDENT_ARTIFACT_FILES='+@(Get-ChildItem $dest -File).Count)
-      - name: Upload independent Windows report (including failures)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: h32-independent-windows
-          path: h32-ci-artifacts/
-          if-no-files-found: warn
-          retention-days: 14
- -or $uiText -notmatch '(?m)^# fail 0\s*
-      - name: Gather independent evidence on one runner volume
-        if: always()
-        shell: pwsh
-        run: |
-          $dest='h32-ci-artifacts'
-          New-Item -ItemType Directory -Path $dest -Force | Out-Null
-          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence'
-          foreach($name in @('ci_h32_full','ci_h32_post','ci_h32_quality')) {
-            foreach($ext in @('.result.json','.cases.json','.guard.jsonl','.stdout.txt','.stderr.txt')) {
-              $source="$p/$name$ext"
-              if(Test-Path $source) { Copy-Item -LiteralPath $source -Destination "$dest/$name$ext" -Force }
-            }
-          }
-          Write-Output ('H32_INDEPENDENT_ARTIFACT_FILES='+@(Get-ChildItem $dest -File).Count)
-      - name: Upload independent Windows report (including failures)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: h32-independent-windows
-          path: h32-ci-artifacts/
-          if-no-files-found: warn
-          retention-days: 14
-) { throw 'Node UI count not verified' }
           Write-Output 'H32_NODE_UI=57_PASS'
       - name: Gather independent evidence on one runner volume
         if: always()
