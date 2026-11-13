@@ -18,6 +18,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /.github/workflows/gpt-web28-h32-independent.yml
+          sparse-checkout-cone-mode: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -81,11 +93,19 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference='Stop'
-          & .\.venv\Scripts\python.exe -B -X utf8 test_rt002_s1_routes.py > 'h32-ci-artifacts/s1.log' 2>&1
-          $rc=$LASTEXITCODE
-          Get-Content 'h32-ci-artifacts/s1.log' -Tail 60
-          if ($rc -ne 0) { throw "S1 standalone FAILED $rc" }
-          Write-Output 'S1_INDEPENDENT=EXIT_0'
+          # S1 relies on pinned, historical RAW from a local .ultra Audit which is deliberately not in Git.
+          # Do not invent/synthesize it and do not claim the 69 author cases were independently rerun.
+          if ((Test-Path '.ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/executor.jsonl') -and
+              (Test-Path '.ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/executor.jsonl')) {
+            & .\.venv\Scripts\python.exe -B -X utf8 test_rt002_s1_routes.py > 'h32-ci-artifacts/s1.log' 2>&1
+            $rc=$LASTEXITCODE
+            Get-Content 'h32-ci-artifacts/s1.log' -Tail 60
+            if ($rc -ne 0) { throw "S1 standalone FAILED $rc" }
+            Write-Output 'S1_INDEPENDENT=EXIT_0'
+          } else {
+            'S1_INDEPENDENT=NOT_RUN: pinned historical RAW absent from GitHub checkout; author S1 69 is not independent evidence.' |
+              Tee-Object -FilePath 'h32-ci-artifacts/s1.log'
+          }
           & .\.venv\Scripts\python.exe -B -X utf8 test_rt002_s2_budget_policy.py > 'h32-ci-artifacts/s2.log' 2>&1
           $rc=$LASTEXITCODE
           Get-Content 'h32-ci-artifacts/s2.log' -Tail 60
