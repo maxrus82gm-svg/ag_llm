@@ -52,7 +52,7 @@ jobs:
           Write-Output ('SOURCE_SHA='+(git rev-parse HEAD))
           python --version
           node --version
-      - name: Independent Windows H32 full regression 235 plus H32 post-review 74
+      - name: Independent Windows H32 full 236 and post-review 74 regression
         shell: pwsh
         env:
           PYTHONDONTWRITEBYTECODE: '1'
@@ -81,16 +81,17 @@ jobs:
           Get-Content 'h32-ci-artifacts/full.log'
           if ($rc -ne 0) { throw "H32 full regression exited $rc" }
           $v=Get-Content "$p/evidence/ci_h32_full.result.json" -Raw | ConvertFrom-Json
-          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 235 -or $v.unexpected_guard_denials -ne 0) { throw 'H32 full independent count or isolation mismatch' }
-          Write-Output 'H32_FULL=235_PASS_UNEXPECTED_GUARDS_0'
+          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 236 -or $v.counts.'subtest:passed' -ne 220 -or $v.unexpected_guard_denials -ne 0 -or $v.counts.'test:failed' -or $v.counts.'test:skipped') { throw 'H32 full independent count or isolation mismatch' }
+          Write-Output 'H32_FULL=236_PASS_220_SUBTESTS_UNEXPECTED_GUARDS_0'
           & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h32_post test_web_alarm_ordinary_admission.py test_web_alarm_ordinary_core_bridge.py test_web_alarm_perchat_usage_settings.py test_rt002_s3a_ledger.py > 'h32-ci-artifacts/post.log' 2>&1
           $rc=$LASTEXITCODE
           Get-Content 'h32-ci-artifacts/post.log'
           if ($rc -ne 0) { throw "H32 post-review exited $rc" }
           $v=Get-Content "$p/evidence/ci_h32_post.result.json" -Raw | ConvertFrom-Json
-          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 74 -or $v.unexpected_guard_denials -ne 0) { throw 'H32 post independent count or isolation mismatch' }
-          Write-Output 'H32_POST=74_PASS_UNEXPECTED_GUARDS_0'
+          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 74 -or $v.counts.'subtest:passed' -ne 32 -or $v.unexpected_guard_denials -ne 0 -or $v.counts.'test:failed' -or $v.counts.'test:skipped') { throw 'H32 post independent count or isolation mismatch' }
+          Write-Output 'H32_POST=74_PASS_32_SUBTESTS_UNEXPECTED_GUARDS_0'
       - name: Independent S1 / S2 guarded standalone safety gates
+        if: ${{ !cancelled() }}
         shell: pwsh
         run: |
           $ErrorActionPreference='Stop'
@@ -113,6 +114,7 @@ jobs:
           if ($rc -ne 0) { throw "S2 standalone FAILED $rc" }
           Write-Output 'S2_INDEPENDENT=EXIT_0'
       - name: Independent H25 quality isolation and offline Node UI
+        if: ${{ !cancelled() }}
         shell: pwsh
         run: |
           $ErrorActionPreference='Stop'
@@ -122,13 +124,84 @@ jobs:
           Get-Content 'h32-ci-artifacts/quality.log'
           if ($rc -ne 0) { throw "H25 quality FAILED $rc" }
           $v=Get-Content "$p/evidence/ci_h32_quality.result.json" -Raw | ConvertFrom-Json
-          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 52 -or $v.unexpected_guard_denials -ne 0) { throw 'H25 quality count or isolation mismatch' }
+          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 52 -or $v.counts.'subtest:passed' -ne 5 -or $v.unexpected_guard_denials -ne 0 -or $v.counts.'test:failed' -or $v.counts.'test:skipped') { throw 'H25 quality count or isolation mismatch' }
           Write-Output 'H32_QUALITY=52_PASS_UNEXPECTED_GUARDS_0'
           node --test test_web_alarm_ultra_chat_ui.js > 'h32-ci-artifacts/ui.log' 2>&1
           $rc=$LASTEXITCODE
           Get-Content 'h32-ci-artifacts/ui.log' -Tail 45
           if ($rc -ne 0) { throw "Offline JS UI FAILED $rc" }
-          Write-Output 'H32_NODE_UI=EXIT_0'
+          $uiText=Get-Content 'h32-ci-artifacts/ui.log' -Raw
+          if ($uiText -notmatch '(?m)^# tests 57\s*
+      - name: Gather independent evidence on one runner volume
+        if: always()
+        shell: pwsh
+        run: |
+          $dest='h32-ci-artifacts'
+          New-Item -ItemType Directory -Path $dest -Force | Out-Null
+          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence'
+          foreach($name in @('ci_h32_full','ci_h32_post','ci_h32_quality')) {
+            foreach($ext in @('.result.json','.cases.json','.guard.jsonl','.stdout.txt','.stderr.txt')) {
+              $source="$p/$name$ext"
+              if(Test-Path $source) { Copy-Item -LiteralPath $source -Destination "$dest/$name$ext" -Force }
+            }
+          }
+          Write-Output ('H32_INDEPENDENT_ARTIFACT_FILES='+@(Get-ChildItem $dest -File).Count)
+      - name: Upload independent Windows report (including failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h32-independent-windows
+          path: h32-ci-artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+ -or $uiText -notmatch '(?m)^# pass 57\s*
+      - name: Gather independent evidence on one runner volume
+        if: always()
+        shell: pwsh
+        run: |
+          $dest='h32-ci-artifacts'
+          New-Item -ItemType Directory -Path $dest -Force | Out-Null
+          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence'
+          foreach($name in @('ci_h32_full','ci_h32_post','ci_h32_quality')) {
+            foreach($ext in @('.result.json','.cases.json','.guard.jsonl','.stdout.txt','.stderr.txt')) {
+              $source="$p/$name$ext"
+              if(Test-Path $source) { Copy-Item -LiteralPath $source -Destination "$dest/$name$ext" -Force }
+            }
+          }
+          Write-Output ('H32_INDEPENDENT_ARTIFACT_FILES='+@(Get-ChildItem $dest -File).Count)
+      - name: Upload independent Windows report (including failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h32-independent-windows
+          path: h32-ci-artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+ -or $uiText -notmatch '(?m)^# fail 0\s*
+      - name: Gather independent evidence on one runner volume
+        if: always()
+        shell: pwsh
+        run: |
+          $dest='h32-ci-artifacts'
+          New-Item -ItemType Directory -Path $dest -Force | Out-Null
+          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence'
+          foreach($name in @('ci_h32_full','ci_h32_post','ci_h32_quality')) {
+            foreach($ext in @('.result.json','.cases.json','.guard.jsonl','.stdout.txt','.stderr.txt')) {
+              $source="$p/$name$ext"
+              if(Test-Path $source) { Copy-Item -LiteralPath $source -Destination "$dest/$name$ext" -Force }
+            }
+          }
+          Write-Output ('H32_INDEPENDENT_ARTIFACT_FILES='+@(Get-ChildItem $dest -File).Count)
+      - name: Upload independent Windows report (including failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h32-independent-windows
+          path: h32-ci-artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+) { throw 'Node UI count not verified' }
+          Write-Output 'H32_NODE_UI=57_PASS'
       - name: Gather independent evidence on one runner volume
         if: always()
         shell: pwsh
