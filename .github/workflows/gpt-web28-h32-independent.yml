@@ -113,19 +113,24 @@ jobs:
           Get-Content 'h32-ci-artifacts/s2.log' -Tail 60
           if ($rc -ne 0) { throw "S2 standalone FAILED $rc" }
           Write-Output 'S2_INDEPENDENT=EXIT_0'
-      - name: Independent H25 quality isolation and offline Node UI
+      - name: Independent H25 and H32 quality isolation
         if: ${{ !cancelled() }}
         shell: pwsh
         run: |
           $ErrorActionPreference='Stop'
           $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001'
-          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h32_quality reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py --import-mode=importlib > 'h32-ci-artifacts/quality.log' 2>&1
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h32_quality reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/isolation_checks.py --import-mode=importlib > 'h32-ci-artifacts/quality.log' 2>&1
           $rc=$LASTEXITCODE
           Get-Content 'h32-ci-artifacts/quality.log'
           if ($rc -ne 0) { throw "H25 quality FAILED $rc" }
           $v=Get-Content "$p/evidence/ci_h32_quality.result.json" -Raw | ConvertFrom-Json
           if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 52 -or $v.counts.'subtest:passed' -ne 5 -or $v.unexpected_guard_denials -ne 0 -or $v.counts.'test:failed' -or $v.counts.'test:skipped') { throw 'H25 quality count or isolation mismatch' }
           Write-Output 'H32_QUALITY=52_PASS_UNEXPECTED_GUARDS_0'
+      - name: Independent 57-case Node UI
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
           node --test test_web_alarm_ultra_chat_ui.js > 'h32-ci-artifacts/ui.log' 2>&1
           $rc=$LASTEXITCODE
           Get-Content 'h32-ci-artifacts/ui.log' -Tail 45
