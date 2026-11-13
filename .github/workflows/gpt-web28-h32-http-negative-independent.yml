@@ -1,0 +1,116 @@
+name: WEB28 H32 independent HTTP and mutation Windows OFFLINE
+
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-web28-h32-http-negative-independent.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  h32-http-mutations:
+    runs-on: windows-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /.github/workflows/gpt-web28-h32-http-negative-independent.yml
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bootstrap isolated test-only environment
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'venv creation failed' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'test dependency install failed' }
+          if (Test-Path 'C:\h32-http') { throw 'Synthetic TEMP already exists' }
+          New-Item -ItemType Directory -Path 'C:\h32-http\la' -Force | Out-Null
+          'TEMP=C:\h32-http' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h32-http' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h32-http' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h32-http\la' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory -Path 'h32-http-evidence' -Force | Out-Null
+          git rev-parse HEAD | Set-Content 'h32-http-evidence/source-sha.txt'
+          python --version
+      - name: Independent guarded 2 Workspace 4 Chat loopback HTTP
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/http_smoke.py" ci_h32_http > 'h32-http-evidence/http.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'h32-http-evidence/http.log' -Tail 75
+          if ($rc -ne 0) { throw "HTTP fixture scenario failed $rc" }
+          $v=Get-Content "$p/evidence/ci_h32_http.result.json" -Raw | ConvertFrom-Json
+          if ($v.status -ne 'PASS' -or $v.workspaces -ne 2 -or $v.chats -ne 4 -or
+              $v.physical_fake_calls -ne 4 -or $v.replays_added_calls -ne 0 -or
+              $v.real_body_status -ne 400 -or $v.external_requests -ne 0 -or $v.trace.Count -ne 4) {
+            throw 'HTTP matrix mismatch'
+          }
+          if (@($v.trace | Where-Object { $_.ledger_state_at_send -ne 'SENT' -or $_.wire_bytes -le 0 -or $_.wire_sha256.Length -ne 64 }).Count -ne 0) {
+            throw 'HTTP wire/ledger proof mismatch'
+          }
+          Write-Output 'H32_HTTP=2_WORKSPACES_4_CHATS_4_FAKE_SENDS_0_REPLAY_0_EXTERNAL'
+      - name: Independent two expected RED weakening controls
+        if: always()
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/mutation_checks.py" ci_h32_mutation > 'h32-http-evidence/mutations.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'h32-http-evidence/mutations.log' -Tail 65
+          if ($rc -ne 0) { throw "Negative control runner failed $rc" }
+          $v=Get-Content "$p/evidence/ci_h32_mutation.result.json" -Raw | ConvertFrom-Json
+          if ($v.cases.Count -ne 2) { throw 'Two mutation cases required' }
+          foreach($c in $v.cases) {
+            if ($c.tests -ne 1 -or $c.failures -ne 1 -or $c.errors -ne 0 -or $c.expected -ne 'RED' -or $c.observed -ne 'RED') {
+              throw 'Negative weakening control was not caught'
+            }
+          }
+          Write-Output 'H32_MUTATIONS=2_EXPECTED_RED_0_ERRORS'
+      - name: Stage complete evidence on one volume
+        if: always()
+        shell: pwsh
+        run: |
+          $dest='h32-http-evidence'
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence'
+          foreach($name in @('ci_h32_http','ci_h32_mutation')) {
+            foreach($ext in @('.result.json','.guard.jsonl')) {
+              if(Test-Path "$p/$name$ext") { Copy-Item -LiteralPath "$p/$name$ext" -Destination $dest -Force }
+            }
+          }
+          foreach($kind in @('s2_deny_bypassed','terminal_verification_bypassed')) {
+            if(Test-Path "$p/ci_h32_mutation_$kind.txt") { Copy-Item -LiteralPath "$p/ci_h32_mutation_$kind.txt" -Destination $dest -Force }
+            if(Test-Path "$p/evidence/ci_h32_mutation_$kind.txt") { Copy-Item -LiteralPath "$p/evidence/ci_h32_mutation_$kind.txt" -Destination $dest -Force }
+          }
+          Write-Output ('H32_ARTIFACT_FILES='+@(Get-ChildItem -File $dest).Count)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: h32-http-and-mutant-independent
+          path: h32-http-evidence/
+          if-no-files-found: warn
+          retention-days: 14
