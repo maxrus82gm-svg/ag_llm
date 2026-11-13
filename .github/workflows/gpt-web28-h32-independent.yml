@@ -1,0 +1,132 @@
+name: WEB28 H32 independent guarded Windows OFFLINE
+
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-web28-h32-independent.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  h32-independent:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare test-only Windows Python and short synthetic TEMP
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'venv failed' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'dependency install failed' }
+          if (Test-Path 'C:\h32') { throw 'Existing synthetic scratch; refusing overwrite' }
+          New-Item -ItemType Directory -Path 'C:\h32\la' -Force | Out-Null
+          'TEMP=C:\h32' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h32' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h32' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h32\la' | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory -Path 'h32-ci-artifacts' -Force | Out-Null
+          Write-Output ('SOURCE_SHA='+(git rev-parse HEAD))
+          python --version
+          node --version
+      - name: Independent Windows H32 full regression 235 plus H32 post-review 74
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001'
+          $tests=@(
+            'test_web_alarm_ordinary_admission.py',
+            'test_web_alarm_ordinary_core_bridge.py',
+            'test_web_alarm_perchat_usage_settings.py',
+            'test_rt002_s3a_ledger.py',
+            'test_ordinary_chat_service.py',
+            'test_web_alarm_ultra_chat_turn.py',
+            'test_web_alarm_ultra_chat_turn_service.py',
+            'test_web_alarm_ultra_chat_turn_s4b.py',
+            'test_web_alarm_ultra_chat_turn_http.py',
+            'test_web_alarm_ultra_chat_s5.py',
+            'test_run_store_v2.py',
+            'test_web_alarm_launcher.py::StableEntryTests',
+            'test_web_alarm_ordinary_test_activation.py::ActivationTests::test_active_profile_uses_bridge_and_old_stage5_is_available',
+            'test_web_alarm_ordinary_test_activation.py::ActivationTests::test_missing_test_config_cannot_fall_back_to_standard'
+          )
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h32_full @tests > 'h32-ci-artifacts/full.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'h32-ci-artifacts/full.log'
+          if ($rc -ne 0) { throw "H32 full regression exited $rc" }
+          $v=Get-Content "$p/evidence/ci_h32_full.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 235 -or $v.unexpected_guard_denials -ne 0) { throw 'H32 full independent count or isolation mismatch' }
+          Write-Output 'H32_FULL=235_PASS_UNEXPECTED_GUARDS_0'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h32_post test_web_alarm_ordinary_admission.py test_web_alarm_ordinary_core_bridge.py test_web_alarm_perchat_usage_settings.py test_rt002_s3a_ledger.py > 'h32-ci-artifacts/post.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'h32-ci-artifacts/post.log'
+          if ($rc -ne 0) { throw "H32 post-review exited $rc" }
+          $v=Get-Content "$p/evidence/ci_h32_post.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 74 -or $v.unexpected_guard_denials -ne 0) { throw 'H32 post independent count or isolation mismatch' }
+          Write-Output 'H32_POST=74_PASS_UNEXPECTED_GUARDS_0'
+      - name: Independent S1 / S2 guarded standalone safety gates
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          & .\.venv\Scripts\python.exe -B -X utf8 test_rt002_s1_routes.py > 'h32-ci-artifacts/s1.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'h32-ci-artifacts/s1.log' -Tail 60
+          if ($rc -ne 0) { throw "S1 standalone FAILED $rc" }
+          Write-Output 'S1_INDEPENDENT=EXIT_0'
+          & .\.venv\Scripts\python.exe -B -X utf8 test_rt002_s2_budget_policy.py > 'h32-ci-artifacts/s2.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'h32-ci-artifacts/s2.log' -Tail 60
+          if ($rc -ne 0) { throw "S2 standalone FAILED $rc" }
+          Write-Output 'S2_INDEPENDENT=EXIT_0'
+      - name: Independent H25 quality isolation and offline Node UI
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h32_quality reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py --import-mode=importlib > 'h32-ci-artifacts/quality.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'h32-ci-artifacts/quality.log'
+          if ($rc -ne 0) { throw "H25 quality FAILED $rc" }
+          $v=Get-Content "$p/evidence/ci_h32_quality.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.counts.'test:passed' -ne 52 -or $v.unexpected_guard_denials -ne 0) { throw 'H25 quality count or isolation mismatch' }
+          Write-Output 'H32_QUALITY=52_PASS_UNEXPECTED_GUARDS_0'
+          node --test test_web_alarm_ultra_chat_ui.js > 'h32-ci-artifacts/ui.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'h32-ci-artifacts/ui.log' -Tail 45
+          if ($rc -ne 0) { throw "Offline JS UI FAILED $rc" }
+          Write-Output 'H32_NODE_UI=EXIT_0'
+      - name: Gather independent evidence on one runner volume
+        if: always()
+        shell: pwsh
+        run: |
+          $dest='h32-ci-artifacts'
+          New-Item -ItemType Directory -Path $dest -Force | Out-Null
+          $p='reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/evidence'
+          foreach($name in @('ci_h32_full','ci_h32_post','ci_h32_quality')) {
+            foreach($ext in @('.result.json','.cases.json','.guard.jsonl','.stdout.txt','.stderr.txt')) {
+              $source="$p/$name$ext"
+              if(Test-Path $source) { Copy-Item -LiteralPath $source -Destination "$dest/$name$ext" -Force }
+            }
+          }
+          Write-Output ('H32_INDEPENDENT_ARTIFACT_FILES='+@(Get-ChildItem $dest -File).Count)
+      - name: Upload independent Windows report (including failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h32-independent-windows
+          path: h32-ci-artifacts/
+          if-no-files-found: warn
+          retention-days: 14
