@@ -402,39 +402,39 @@ GitHub commit/push исполнителю не разрешены этой по�
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
 
-История старых записей и прежний полный текст БЛОКОВ 2–4 сохранены в `reports/CHATGPT-WEB28-H32-REVIEW-20261113/prior_card_blocks_2_4.md`; `№001 Codex` и `task_record.json` — адресные источники. БЛОКИ 1/1.1 не изменялись.
+Полный предыдущий БЛОК 2–4 `reports/CHATGPT-WEB29-H33-REVIEW-20261113/prior_closeout_snapshot.md`; БЛОКИ 1/1.1 неизменны; подробнее №001 Codex/№05/адресная запись.
 
-- **13.11 / H-CODEX-000032:** Ordinary fake exact-wire admission / bounded independent Windows PASS; REAL/Stage6 HOLD.
-- **12.11 / H-CODEX-000031:** TEST launcher guard F-01, independent 21/21 PASS, physical GUI OPEN.
-- **10.11 / H-CODEX-000030:** pre-send read-only preflight, independent 7/7 PASS; H32 successor accepted narrowly.
-- **10.11 / H-CODEX-000029:** per-chat preferences/usage, previous independent 65/65 + user GUI 4 chats PASS, real caps OPEN.
-- **09.11 / H-CODEX-000028:** Ordinary TEST activation, bounded independent OFFLINE PASS, REAL HOLD.
+- **13.11 / H-CODEX-000033:** HTTP GigaChat MockTransport + exact wire, независимые Windows 18+36 PASS; REAL HOLD.
+- **13.11 / H-CODEX-000032:** Ordinary fake one-send S2/S3a/Turn/RAW OFFLINE PASS.
+- **12.11 / H-CODEX-000031:** launcher guard 21 PASS, physical CMD/F5 NOT RUN.
+- **10.11 / H-CODEX-000030:** read-only pre-send review 7 PASS, full S3b OPEN.
+- **10.11 / H-CODEX-000029:** per-chat settings/usage, user GUI PASS, provider caps OPEN.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **H32:** exact immutable final bytes→Ordinary S2/S3a reserve/SENT→single fake send→durable terminal/RAW/usage/reopen. GitHub CI 236 full + 74 post + 52 quality + 57 Node PASS, S2 PASS, four fake HTTP calls, replay +0, two expected RED. H32 independent pinned S1 RAW NOT RUN; no REAL/paid.
-- **H31:** TEST allowlisted launcher preserved, physical Windows CMD/browser/F5 and cleanup OPEN.
-- **H30:** read-only mapping validated independently, H32 implements only narrow fake path, all-send S3b still OPEN.
-- **H29:** per-chat UI preferences retained, provider cap/calibration not verified.
-- **H28:** TEST fake activation preserved, live independent.
+- **H33:** GigaChat-shaped MockTransport exact bytes→S2/S3a→one synthetic HTTP→terminal/Turn/RAW/usage/reopen; independent CI 43478748679: 18+36, regression236+220, S2 73, isolation52+5, UI57 PASS, 2 expected RED; S1 RAW NOT RUN, REAL factory absent.
+- **H32:** accepted only one fake send, no real transport admission.
+- **H31:** launcher F-01 defended, physical GUI NOT RUN.
+- **H30:** READ-ONLY preflight PASS; broad S3b not verified.
+- **H29:** per-chat preferences supported; real caps unverified.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
 
-## WEB28 / 13.11.2026 — H-CODEX-000032 — Ordinary fake pre-send bounded independent PASS
+## WEB29 / 13.11.2026 — H-CODEX-000033 — GigaChat MockTransport bounded independent PASS
 
-**TASK:** `CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001`. **Source:** `main@4e4edd0be60f2d1491b6f8d6859dc4f883c1a4bb` (№578); no product-code drift through main №590. **Independent:** GitHub-hosted Windows Python 3.12/Node. [Run 43417573566](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43417573566) SUCCESS: **236 PASS/220 subtests**, post-review **74 PASS/32 subtests**, S2 standalone exit0, isolation **52 PASS**, Node UI **57 PASS**, unexpected guards 0; artifact 14032492988. [Run 43416113378](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43416113378) SUCCESS: 2 Workspace/4 Chat/4 fake sends/0 replay duplicates/0 external; two mutation controls expected RED; artifact 14031398967. **Verdict: PASS / H32 DOC CLOSED, P0+P1 BOUNDED INDEPENDENT OFFLINE.** Source/Turn+wire+ledger+terminal/recovery unchanged after code publication. **NOT RUN:** pinned historical S1 RAW in this CI (author 69 not counted independent), physical CMD/browser/F5, all-route S3b/S3c/S9/S13a, REAL/OAuth/paid, actual provider caps and old-audit migration. **H31 GUI and S3b/REAL remain OPEN.** Full verdict: `reports/CHATGPT-WEB28-H32-REVIEW-20261113/review.md`; №06 event `EVT-WEB28-H32-ORDINARY-FAKE-CLOSEOUT-20261113`. БЛОК 1 WAITING, БЛОК 1.1 immutable H32; **никакого нового USER GO на live**.
+**TASK:** `CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001`, source `main@56e7f33c351624de94db77e080767930b8cf3d38` №592; CI-only `GPT@397040862b63fb23f7f3b51e1e1e1d793fee5179` №593. Independent [Windows run 43478748679](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43478748679) **SUCCESS**, job 132069412034, artifact 14062849789 (29 files): H33 **18 PASS + 36 subtests**, H32/core regression **236 PASS + 220 subtests**, S2 **73 PASS**, isolation **52 PASS + 5 subtests**, Node UI **57 PASS**, **2 expected RED**, unexpected guards 0. Exact-wire/ledger/terminal/reopen verified in synthetic `httpx.MockTransport`, real_available=false. **VERDICT: PASS / H33 DOC CLOSED STRICTLY BOUNDED INDEPENDENT WINDOWS OFFLINE.** Historical S1 pinned RAW NOT RUN (author 69 is not independent), physical CMD/browser/F5 NOT RUN, real provider caps/OAuth/paid, all-route S3b/S3c/S9/S13a, old-audit migration/capacity and host fencing OPEN. **REAL/Stage6 full/Stage7 HOLD**, no user live GO. Review `reports/CHATGPT-WEB29-H33-REVIEW-20261113/review.md`, №06 `EVT-WEB29-H33-MOCK-HTTP-CLOSEOUT-20261113`. БЛОК 1 WAITING, БЛОК 1.1 immutable H33.
 
-## WEB29 / 12.11.2026 — H-CODEX-000031 — ранее принятый bounded independent PASS
+## WEB28 / 13.11.2026 — H-CODEX-000032 — прежний bounded independent OFFLINE PASS
 
-TEST launcher F-01 GitHub CI 43264689001, 21/21 guard0, physical CMD/browser/F5 NOT RUN. Детали: `reports/CHATGPT-WEB29-H31-F01-REVIEW-20261112/review.md`, №06.
+Ordinary fake one-send; independent Windows runs 43417573566 and 43416113378 SUCCESS, 236/74/52/57 and two expected RED. Full `reports/CHATGPT-WEB28-H32-REVIEW-20261113/review.md`, №06; no REAL/full S3b.
 
-## WEB28 / 12.11.2026 — H-CODEX-000030 — ранее принятый bounded independent PASS
+## WEB29 / 12.11.2026 — H-CODEX-000031 — прежний bounded independent OFFLINE PASS
 
-READ-ONLY preflight 7/7 guard0, H31 F-01 отдельно; не full S3b. Детали: `reports/CHATGPT-WEB28-H30-REVIEW-20261112/review.md`, №06.
+TEST launcher F-01 Windows independent 21 PASS, physical CMD/browser/F5 NOT RUN. Full `reports/CHATGPT-WEB29-H31-F01-REVIEW-20261112/review.md`, №06.
 
-**Прежний дословный БЛОК 4 и БЛОКИ 2–3:** `reports/CHATGPT-WEB28-H32-REVIEW-20261113/prior_card_blocks_2_4.md`; эта ротация не удаляет старые evidence/историю. 
+**Снимок вытесненной старой записи H30 и БЛОКОВ 2–4:** `reports/CHATGPT-WEB29-H33-REVIEW-20261113/prior_closeout_snapshot.md`; исходные evidence/№06 сохранены.

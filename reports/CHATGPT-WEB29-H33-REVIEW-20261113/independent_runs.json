@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "review_id": "WEB29-H33-20261113",
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+  "history_id": "H-CODEX-000033",
+  "source_sha": "56e7f33c351624de94db77e080767930b8cf3d38",
+  "verified_sha": "397040862b63fb23f7f3b51e1e1e1d793fee5179",
+  "github_run_id": 43478748679,
+  "github_job_id": 132069412034,
+  "run_url": "https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43478748679",
+  "conclusion": "success",
+  "artifact": {
+    "id": 14062849789,
+    "name": "h33-independent-windows",
+    "files": 29
+  },
+  "tests": {
+    "H33_http_pass": 18,
+    "H33_http_subtests": 36,
+    "H32_adjacent_regression_pass": 236,
+    "H32_adjacent_regression_subtests": 220,
+    "S2_standalone_pass": 73,
+    "isolation_pass": 52,
+    "isolation_subtests": 5,
+    "node_ui_pass": 57,
+    "expected_red_mutants": 2,
+    "unexpected_guard_denials": 0,
+    "S1_historical_raw": "NOT RUN"
+  },
+  "verdict": "DOC CLOSED / BOUNDED INDEPENDENT WINDOWS OFFLINE PASS; REAL HOLD",
+  "unverified": [
+    "real OAuth/API/paid",
+    "physical Windows GUI",
+    "all-route S3b/S3c/S9/S13a",
+    "historical S1 pinned RAW",
+    "provider caps/billing/reasoning",
+    "old-audit migration/RAW retention/host fencing"
+  ],
+  "review_sha256": "d1862a2c487c396dfe9be78c534ed5c04cba4af0dc2547849ef8f4641f19a026"
+}

@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
   "date": "2026-11-13",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / H33 GIGACHAT MOCK HTTP BOUNDED INDEPENDENT WINDOWS OFFLINE PASS; FULL S3b/REAL HOLD",
+  "review": "PASS / BOUNDED INDEPENDENT WINDOWS OFFLINE: H33 18+36, regression 236+220, S2 73, isolation 52+5, Node57, 2 expected RED; S1 RAW NOT RUN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/handoff_task.md",
@@ -15,7 +15,52 @@
     "report": {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/report.md",
       "sha256": "c0647a42d2384b14a17c906f8805baac6d772bc60b1cbf97b771cab57b2ef39d"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB29-H33-REVIEW-20261113/review.md",
+      "sha256": "d1862a2c487c396dfe9be78c534ed5c04cba4af0dc2547849ef8f4641f19a026"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+      "history_id": "H-CODEX-000033",
+      "agent": "codex",
+      "title": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+      "date": "2026-11-13",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/handoff_task.md",
+          "sha256": "cecd5415043c96d94f5b3d2d7b3092dfdf48b7eaa8043678466a0479d4010e27"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/report.md",
+          "sha256": "c0647a42d2384b14a17c906f8805baac6d772bc60b1cbf97b771cab57b2ef39d"
+        }
+      },
+      "previous": []
+    }
+  ],
+  "independent_review": {
+    "date": "2026-11-13",
+    "source_commit": "56e7f33c351624de94db77e080767930b8cf3d38",
+    "ci_commit": "397040862b63fb23f7f3b51e1e1e1d793fee5179",
+    "run_id": 43478748679,
+    "job_id": 132069412034,
+    "artifact_id": 14062849789,
+    "review_path": "reports/CHATGPT-WEB29-H33-REVIEW-20261113/review.md",
+    "evidence_path": "reports/CHATGPT-WEB29-H33-REVIEW-20261113/independent_runs.json",
+    "verdict": "BOUNDED INDEPENDENT WINDOWS OFFLINE PASS",
+    "not_run": [
+      "historical S1 pinned RAW",
+      "physical CMD/GUI/F5",
+      "REAL/OAuth/paid",
+      "provider caps/migration",
+      "all-route S3b/S3c/S9/S13a"
+    ],
+    "real_authorized": false
+  }
 }
