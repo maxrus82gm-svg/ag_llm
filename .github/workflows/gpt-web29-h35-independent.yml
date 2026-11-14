@@ -96,8 +96,8 @@ jobs:
           Get-Content "ci-h35-evidence/H35_application.log" -Tail 30
           if ($rc -ne 0) { throw 'H35_application runner exited '+$rc }
           $x=Get-Content "$p/evidence/ci_h35_application.result.json" -Raw | ConvertFrom-Json
-          if ($x.exit_code -ne 0 -or $x.runner_exit_code -ne 0 -or $x.unexpected_guard_denials -ne 0 -or $x.counts.'test:passed' -ne 7 -or $x.counts.'subtest:passed' -ne 10 -or $x.expected_guard_denials -ne 0 -or $x.counts.'test:failed' -or $x.counts.'test:error' -or $x.counts.'test:skipped') { throw 'Unexpected counts, exit or guard deviations' }
-          Write-Output 'H35_application=7_TESTS_10_SUBTESTS_0_EXPECTED_GUARDS'
+          if ($x.exit_code -ne 0 -or $x.runner_exit_code -ne 0 -or $x.unexpected_guard_denials -ne 0 -or $x.counts.'test:passed' -ne 9 -or $x.counts.'subtest:passed' -ne 10 -or $x.expected_guard_denials -ne 0 -or $x.counts.'test:failed' -or $x.counts.'test:error' -or $x.counts.'test:skipped') { throw 'Unexpected counts, exit or guard deviations' }
+          Write-Output 'H35_application=9_TESTS_10_SUBTESTS_0_EXPECTED_GUARDS'
       - name: H35_legacy
         shell: pwsh
         env:
