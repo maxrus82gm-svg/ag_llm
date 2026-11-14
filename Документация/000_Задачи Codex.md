@@ -405,28 +405,32 @@ OAuth POST учитывать отдельно от семи LLM POST.
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
 
-Полный предыдущий БЛОК 2–4 `reports/CHATGPT-WEB29-H33-REVIEW-20261113/prior_closeout_snapshot.md`; БЛОКИ 1/1.1 неизменны; подробнее №001 Codex/№05/адресная запись.
+Предыдущие БЛОКИ 2–4 сохранены в reports/CHATGPT-WEB29-H34-REVIEW-20261114/prior_closeout_snapshot.md. B1/1.1 неизменны.
 
-- **13.11 / H-CODEX-000033:** HTTP GigaChat MockTransport + exact wire, независимые Windows 18+36 PASS; REAL HOLD.
-- **13.11 / H-CODEX-000032:** Ordinary fake one-send S2/S3a/Turn/RAW OFFLINE PASS.
-- **12.11 / H-CODEX-000031:** launcher guard 21 PASS, physical CMD/F5 NOT RUN.
-- **10.11 / H-CODEX-000030:** read-only pre-send review 7 PASS, full S3b OPEN.
-- **10.11 / H-CODEX-000029:** per-chat settings/usage, user GUI PASS, provider caps OPEN.
+- **14.11 / H-CODEX-000034:** семь legacy GigaChat send-site, guarded admission, independent Windows 244+110 / 254+256 PASS; REAL HOLD.
+- **13.11 / H-CODEX-000033:** GigaChat MockTransport immutable bytes Windows PASS.
+- **13.11 / H-CODEX-000032:** Ordinary fake one-send S2/S3a/Turn/RAW PASS.
+- **12.11 / H-CODEX-000031:** launcher F-01 guard 21 PASS, physical CMD NOT RUN.
+- **10.11 / H-CODEX-000030:** READ-ONLY pre-send PASS, all S3b OPEN.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **H33:** GigaChat-shaped MockTransport exact bytes→S2/S3a→one synthetic HTTP→terminal/Turn/RAW/usage/reopen; independent CI 43478748679: 18+36, regression236+220, S2 73, isolation52+5, UI57 PASS, 2 expected RED; S1 RAW NOT RUN, REAL factory absent.
-- **H32:** accepted only one fake send, no real transport admission.
-- **H31:** launcher F-01 defended, physical GUI NOT RUN.
-- **H30:** READ-ONLY preflight PASS; broad S3b not verified.
-- **H29:** per-chat preferences supported; real caps unverified.
+- **H34:** shared server owner only OFFLINE, seven legacy sends protected; SHA16/16; CI run43576129606 SUCCESS. REAL OAuth gate DENY, full S3b/S3c/S9/S13a and physical user smoke OPEN.
+- **H33:** GigaChat MockTransport immutable bytes → S2/S3a → terminal/Turn/RAW/reopen PASS.
+- **H32:** Ordinary synthetic one-send accepted, real transport absent.
+- **H31:** TEST launcher guard accepted; physical GUI NOT RUN.
+- **H30:** READ-ONLY preflight accepted; full S3b OPEN.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
+
+## WEB29 / 14.11.2026 — H-CODEX-000034 — seven legacy sends bounded independent PASS
+
+TASK CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001, author source main #595 db34931753ad1a6af88434a4ffe6b1097032070f; CI-only #602 5eafbbe2a036738723dc7d2b9c1409f8f518c554. [Windows run 43576129606](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43576129606) **SUCCESS / 3 jobs** with artifacts 14106478799 / 14106388326 / 14106099308: source SHA16/16, legacy244+110, regression254+256, S2 73, quality52+6, 7-site denial1+7, UI57, 3 expected RED, guard0, compile/Tk smoke PASS. Initial CI #601 SHA LF/CRLF false RED preserved, corrected only CI. **VERDICT DOC CLOSED / PASS BOUNDED INDEPENDENT WINDOWS OFFLINE**; S1 historical RAW, physical CMD/browser/F5, real OAuth/API/paid, model caps, full S3b/S3c/S9/S13a NOT RUN/OPEN; REAL HOLD. Review reports/CHATGPT-WEB29-H34-REVIEW-20261114/review.md, receipts reports/CHATGPT-WEB29-H34-REVIEW-20261114/independent_runs.json. B1 WAITING / B1.1 H34 unchanged; no REAL authorization.
 
 ## WEB29 / 13.11.2026 — H-CODEX-000033 — GigaChat MockTransport bounded independent PASS
 

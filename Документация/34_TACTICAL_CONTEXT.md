@@ -1,6 +1,10 @@
+## CURRENT / WEB29 14.11.2026 — H34 seven legacy sends bounded independent Windows OFFLINE PASS / DOC CLOSED
+
+**LATEST:** H-CODEX-000034 / CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001; author main #595 db34931753ad1a6af88434a4ffe6b1097032070f, CI-only #601/#602 5eafbbe2a036738723dc7d2b9c1409f8f518c554; [Windows run 43576129606](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43576129606) SUCCESS / 3 jobs: SHA16/16, legacy244+110, regression254+256, S2 73, isolation52+6, seven-site1+7, UI57, 3 expected RED, guard0. Seven legacy sends now guarded through shared S2/S3a/H33 synthetic transport, REAL OAuth gate unconditionally DENY. First CI source SHA LF/CRLF failure preserved, fixed CI only. **Full S3b/S3c/S9/S13a, REAL caps/OAuth/API/paid, historical S1 RAW and physical GUI NOT VERIFIED; LIVE HOLD**. Review reports/CHATGPT-WEB29-H34-REVIEW-20261114/review.md. **NEXT:** choose single verified provider/model contract, separately assigned server-only REAL authority preparation and predecessors, user physical GUI when ready; first LIVE only by explicit OWNER GO. Colibri separate.
+
 # Оперативная память проекта — №34
 
-## CURRENT / WEB29 13.11.2026 — H33 bounded Windows OFFLINE PASS / DOC CLOSED
+## PREVIOUS / WEB29 13.11.2026 — H33 bounded Windows OFFLINE PASS / DOC CLOSED
 
 **LATEST:** `H-CODEX-000033` / `CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001`, source `main@56e7f33c351624de94db77e080767930b8cf3d38` №592, CI-only GPT №593 `397040862b63fb23f7f3b51e1e1e1d793fee5179`: [GitHub Windows run 43478748679](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43478748679) **SUCCESS** (H33 18+36, regression 236+220, S2 73, isolation52+5, Node57 PASS, 2 expected RED, guards unexpected0), artifact 14062849789 (29 files). GigaChat-shaped `httpx.MockTransport` final bytes→S2/S3a SENT→one synthetic POST→terminal/Turn/RAW/usage/reopen **BOUNDED INDEPENDENT OFFLINE accepted; no REAL factory**. Review `reports/CHATGPT-WEB29-H33-REVIEW-20261113/review.md`, №06 `EVT-WEB29-H33-MOCK-HTTP-CLOSEOUT-20261113`. H32 preceding accepted synthetic fake, old current `reports/CHATGPT-WEB29-H33-REVIEW-20261113/prior_closeout_snapshot.md`.
 
