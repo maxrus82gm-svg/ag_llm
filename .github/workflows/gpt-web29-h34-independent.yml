@@ -1,0 +1,356 @@
+# H34 independent guarded Windows test CI; no live OAuth/API/paid use.
+name: WEB29 H34 independent Windows OFFLINE
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-web29-h34-independent.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-and-legacy:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /.github/workflows/gpt-web29-h34-independent.yml
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Create isolated Python and TEMP, record immutable source
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path 'C:\h34_ci') { throw 'Unexpected preexisting synthetic TEMP' }
+          New-Item -ItemType Directory 'C:\h34_ci\la' -Force | Out-Null
+          'TEMP=C:\h34_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h34_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h34_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h34_ci\la' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory 'ci-h34-evidence' -Force | Out-Null
+          git rev-parse HEAD | Set-Content 'ci-h34-evidence/source_sha.txt'
+          python --version
+          node --version
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'Windows venv unavailable' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'Windows dependencies unavailable' }
+      - name: Verify all H34 manifest source pins before runtime
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+          & .\.venv\Scripts\python.exe -c "import json,pathlib,hashlib,sys; m=json.loads(pathlib.Path('$p/manifest.json').read_text(encoding='utf-8')); pins=m['source_before_after']; matches=[(name, (lambda b,w: hashlib.sha256(b).hexdigest()==w or hashlib.sha256(b.replace(bytes([13,10]),bytes([10])).replace(bytes([10]),bytes([13,10]))).hexdigest()==w)(pathlib.Path(name).read_bytes(), record['after'])) for name,record in pins.items()]; print('H34_SOURCE_PINS:',len(matches),'MATCH',sum(ok for _,ok in matches)); print('MISMATCH:',[name for name,ok in matches if not ok]); sys.exit(0 if len(matches)==16 and all(ok for _,ok in matches) else 1)" > ci-h34-evidence/pins.log 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content ci-h34-evidence/pins.log
+          if ($rc -ne 0) { throw 'SOURCE SHA mismatch; stop before runtime tests' }
+      - name: H34_legacy
+        if: '!cancelled()'
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h34_legacy test_gigachat_admission.py test_planner_session.py test_planner_diagnostics.py test_provider_attempt_integration.py test_verifier_runtime.py test_final_audit.py test_task_planner.py > 'ci-h34-evidence/H34_legacy.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'ci-h34-evidence/H34_legacy.log' -Tail 55
+          if ($rc -ne 0) { throw 'H34_legacy runner failed; exit='+$rc }
+          $v=Get-Content "$p/evidence/ci_h34_legacy.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.runner_exit_code -ne 0 -or $v.unexpected_guard_denials -ne 0 -or $v.counts.'test:passed' -ne 244 -or $v.counts.'subtest:passed' -ne 110 -or $v.counts.'test:failed' -or $v.counts.'test:skipped' -or $v.counts.'test:error') { throw 'H34 legacy counts/guard/exit mismatch' }
+          Write-Output 'H34_LEGACY=244_PASS_110_SUBTESTS_0_UNEXPECTED_GUARDS'
+      - name: Collect bounded evidence even when tests fail
+        if: always()
+        shell: pwsh
+        run: |
+          $dest='ci-h34-evidence'
+          New-Item -ItemType Directory $dest -Force | Out-Null
+          $source='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/evidence'
+          Get-ChildItem $source -File -Filter 'ci_h34_*' -ErrorAction SilentlyContinue |
+            ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $dest -Force }
+          Write-Output ('CI_H34_COLLECTED='+(Get-ChildItem $dest -File).Count)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: h34-independent-legacy
+          path: ci-h34-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+
+  core-regression:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /.github/workflows/gpt-web29-h34-independent.yml
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Create isolated Python and TEMP, record immutable source
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path 'C:\h34_ci') { throw 'Unexpected preexisting synthetic TEMP' }
+          New-Item -ItemType Directory 'C:\h34_ci\la' -Force | Out-Null
+          'TEMP=C:\h34_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h34_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h34_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h34_ci\la' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory 'ci-h34-evidence' -Force | Out-Null
+          git rev-parse HEAD | Set-Content 'ci-h34-evidence/source_sha.txt'
+          python --version
+          node --version
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'Windows venv unavailable' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'Windows dependencies unavailable' }
+      - name: H34_regression
+        if: '!cancelled()'
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h34_regression test_web_alarm_gigachat_transport.py test_web_alarm_ordinary_admission.py test_web_alarm_ordinary_core_bridge.py test_web_alarm_perchat_usage_settings.py test_rt002_s3a_ledger.py test_ordinary_chat_service.py test_web_alarm_ultra_chat_turn.py test_web_alarm_ultra_chat_turn_service.py test_web_alarm_ultra_chat_turn_s4b.py test_web_alarm_ultra_chat_turn_http.py test_web_alarm_ultra_chat_s5.py test_run_store_v2.py test_web_alarm_launcher.py::StableEntryTests test_web_alarm_ordinary_test_activation.py::ActivationTests::test_active_profile_uses_bridge_and_old_stage5_is_available test_web_alarm_ordinary_test_activation.py::ActivationTests::test_missing_test_config_cannot_fall_back_to_standard > 'ci-h34-evidence/H34_regression.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'ci-h34-evidence/H34_regression.log' -Tail 55
+          if ($rc -ne 0) { throw 'H34_regression runner failed; exit='+$rc }
+          $v=Get-Content "$p/evidence/ci_h34_regression.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.runner_exit_code -ne 0 -or $v.unexpected_guard_denials -ne 0 -or $v.counts.'test:passed' -ne 254 -or $v.counts.'subtest:passed' -ne 256 -or $v.counts.'test:failed' -or $v.counts.'test:skipped' -or $v.counts.'test:error') { throw 'H34 regression counts/guard/exit mismatch' }
+          Write-Output 'H34_REGRESSION=254_PASS_256_SUBTESTS_0_UNEXPECTED_GUARDS'
+      - name: H34_s2
+        if: '!cancelled()'
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_standalone.py" ci_h34_s2 test_rt002_s2_budget_policy.py > 'ci-h34-evidence/H34_s2.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'ci-h34-evidence/H34_s2.log' -Tail 55
+          if ($rc -ne 0) { throw 'H34_s2 runner failed; exit='+$rc }
+          $v=Get-Content "$p/evidence/ci_h34_s2.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.counts.run -ne 73 -or $v.counts.failures -or $v.counts.errors -or $v.counts.skipped -or $v.isolation_violations.Count) { throw 'H34 S2 counts/isolation mismatch' }
+          Write-Output 'H34_S2=73_PASS'
+      - name: H34_node_ui
+        if: '!cancelled()'
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+          node --test test_web_alarm_ultra_chat_ui.js > 'ci-h34-evidence/H34_node_ui.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'ci-h34-evidence/H34_node_ui.log' -Tail 55
+          if ($rc -ne 0) { throw 'H34_node_ui runner failed; exit='+$rc }
+          $log=@(Get-Content 'ci-h34-evidence/H34_node_ui.log' | ForEach-Object {$_.Trim()})
+          if (-not ($log -contains '# tests 57' -and $log -contains '# pass 57' -and $log -contains '# fail 0' -and $log -contains '# skipped 0')) { throw 'H34 Node UI count mismatch' }
+          Write-Output 'H34_NODE=57_PASS'
+      - name: Historical S1 RAW pin gate
+        if: '!cancelled()'
+        shell: pwsh
+        run: |
+          $pins=@('.ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20261001_182057_e90f93/executor.jsonl','.ultra/audit/chat_b36a4eba7fdf47f98b1d71507bc2938d/20260930_233733_1f2fee/executor.jsonl')
+          if (@($pins | Where-Object {-not (Test-Path $_)}).Count -gt 0) {
+            'H34_S1=NOT_RUN; required historical RAW absent. No synthetic replacement.' |
+              Tee-Object -FilePath ci-h34-evidence/s1.log
+          } else {
+            $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+            & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_standalone.py" ci_h34_s1 test_rt002_s1_routes.py > ci-h34-evidence/s1.log 2>&1
+            $rc=$LASTEXITCODE;Get-Content ci-h34-evidence/s1.log -Tail 30
+            if ($rc -ne 0) { throw "H34 S1 failed exit $rc" }
+            $v=Get-Content "$p/evidence/ci_h34_s1.result.json" -Raw | ConvertFrom-Json
+            if ($v.counts.run -ne 69 -or $v.counts.failures -or $v.counts.errors -or $v.isolation_violations.Count) { throw 'S1 mismatch' }
+          }
+      - name: Collect bounded evidence even when tests fail
+        if: always()
+        shell: pwsh
+        run: |
+          $dest='ci-h34-evidence'
+          New-Item -ItemType Directory $dest -Force | Out-Null
+          $source='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/evidence'
+          Get-ChildItem $source -File -Filter 'ci_h34_*' -ErrorAction SilentlyContinue |
+            ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $dest -Force }
+          Write-Output ('CI_H34_COLLECTED='+(Get-ChildItem $dest -File).Count)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: h34-independent-core
+          path: ci-h34-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+
+  safety-and-contracts:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /.github/workflows/gpt-web29-h34-independent.yml
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Create isolated Python and TEMP, record immutable source
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path 'C:\h34_ci') { throw 'Unexpected preexisting synthetic TEMP' }
+          New-Item -ItemType Directory 'C:\h34_ci\la' -Force | Out-Null
+          'TEMP=C:\h34_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h34_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h34_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h34_ci\la' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory 'ci-h34-evidence' -Force | Out-Null
+          git rev-parse HEAD | Set-Content 'ci-h34-evidence/source_sha.txt'
+          python --version
+          node --version
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'Windows venv unavailable' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'Windows dependencies unavailable' }
+      - name: H34_quality
+        if: '!cancelled()'
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h34_quality --import-mode=importlib reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py > 'ci-h34-evidence/H34_quality.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'ci-h34-evidence/H34_quality.log' -Tail 55
+          if ($rc -ne 0) { throw 'H34_quality runner failed; exit='+$rc }
+          $v=Get-Content "$p/evidence/ci_h34_quality.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.runner_exit_code -ne 0 -or $v.unexpected_guard_denials -ne 0 -or $v.counts.'test:passed' -ne 52 -or $v.counts.'subtest:passed' -ne 6 -or $v.counts.'test:failed' -or $v.counts.'test:skipped' -or $v.counts.'test:error') { throw 'H34 quality counts/guard/exit mismatch' }
+          Write-Output 'H34_QUALITY=52_PASS_6_SUBTESTS_0_UNEXPECTED_GUARDS'
+      - name: H34_oracle
+        if: '!cancelled()'
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h34_oracle test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth > 'ci-h34-evidence/H34_oracle.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'ci-h34-evidence/H34_oracle.log' -Tail 55
+          if ($rc -ne 0) { throw 'H34_oracle runner failed; exit='+$rc }
+          $v=Get-Content "$p/evidence/ci_h34_oracle.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.runner_exit_code -ne 0 -or $v.unexpected_guard_denials -ne 0 -or $v.counts.'test:passed' -ne 1 -or $v.counts.'subtest:passed' -ne 7 -or $v.counts.'test:failed' -or $v.counts.'test:skipped' -or $v.counts.'test:error') { throw 'H34 oracle counts/guard/exit mismatch' }
+          Write-Output 'H34_ORACLE=1_PASS_7_SUBTESTS_0_UNEXPECTED_GUARDS'
+      - name: H34_mutations
+        if: '!cancelled()'
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/mutation_checks.py" ci_h34_mutations > 'ci-h34-evidence/H34_mutations.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'ci-h34-evidence/H34_mutations.log' -Tail 55
+          if ($rc -ne 0) { throw 'H34_mutations runner failed; exit='+$rc }
+          $v=Get-Content "$p/evidence/ci_h34_mutations.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.cases.Count -ne 3 -or ($v.cases | Where-Object {$_.observed -ne 'RED' -or $_.errors -ne 0 -or $_.failures -lt 1}).Count -ne 0 -or $v.guard_denials -ne 0) { throw 'H34 weakening controls not RED' }
+          Write-Output 'H34_MUTATIONS=3_EXPECTED_RED_0_ERRORS'
+      - name: H34_server_gates
+        if: '!cancelled()'
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/server_gates.py" ci_h34_server_gates > 'ci-h34-evidence/H34_server_gates.log' 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content 'ci-h34-evidence/H34_server_gates.log' -Tail 55
+          if ($rc -ne 0) { throw 'H34_server_gates runner failed; exit='+$rc }
+          $v=Get-Content "$p/evidence/ci_h34_server_gates.result.json" -Raw | ConvertFrom-Json
+          if ($v.exit_code -ne 0 -or $v.guard_denials -ne 0 -or -not $v.compile.ok -or -not $v.ui_smoke.ok) { throw 'H34 compile/Tk smoke gates failed' }
+          Write-Output 'H34_SERVER_GATES=COMPILE_UI_SMOKE_PASS'
+      - name: Collect bounded evidence even when tests fail
+        if: always()
+        shell: pwsh
+        run: |
+          $dest='ci-h34-evidence'
+          New-Item -ItemType Directory $dest -Force | Out-Null
+          $source='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/evidence'
+          Get-ChildItem $source -File -Filter 'ci_h34_*' -ErrorAction SilentlyContinue |
+            ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $dest -Force }
+          Write-Output ('CI_H34_COLLECTED='+(Get-ChildItem $dest -File).Count)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: h34-independent-safety
+          path: ci-h34-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+
