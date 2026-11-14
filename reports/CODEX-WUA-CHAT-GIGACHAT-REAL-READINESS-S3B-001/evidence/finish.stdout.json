@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "73f74a799586ba2b62273678e25009870ee92ab816d405ea1fc9920288ec9bee",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 394,
+    "b11b": 400,
+    "b11e": 745
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+    "problems": [],
+    "title": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+    "lines": 345
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+    "copy_sha256": "f4e4736dccbb0925591c861d90c7c77dc2e2835ff0e2882253be00cf8bd2f5c1",
+    "history_id": "H-CODEX-000033",
+    "history_record": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "73f74a799586ba2b62273678e25009870ee92ab816d405ea1fc9920288ec9bee",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+    "copy_sha256": "f4e4736dccbb0925591c861d90c7c77dc2e2835ff0e2882253be00cf8bd2f5c1",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/handoff_task.md",
+    "archive_sha256": "cecd5415043c96d94f5b3d2d7b3092dfdf48b7eaa8043678466a0479d4010e27"
+   },
+   "history_id": "H-CODEX-000034",
+   "new_card_sha256": "15a7c42f80793ee0e6bebcad2dcb1db29b86326a9413277f1502de95022e2df4",
+   "copy_sha256_lf": "df167b0de0c377f420b33c48ffce54398b5583664c87703632b3f91ffc1da9f2",
+   "copy_lines": 345,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "73f74a799586ba2b62273678e25009870ee92ab816d405ea1fc9920288ec9bee",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001",
+    "copy_sha256": "f4e4736dccbb0925591c861d90c7c77dc2e2835ff0e2882253be00cf8bd2f5c1",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/handoff_task.md",
+    "archive_sha256": "cecd5415043c96d94f5b3d2d7b3092dfdf48b7eaa8043678466a0479d4010e27"
+   },
+   "history_id": "H-CODEX-000034",
+   "new_card_sha256": "15a7c42f80793ee0e6bebcad2dcb1db29b86326a9413277f1502de95022e2df4",
+   "copy_sha256_lf": "df167b0de0c377f420b33c48ffce54398b5583664c87703632b3f91ffc1da9f2",
+   "copy_lines": 345,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+    "history_id": "H-CODEX-000034",
+    "record": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "4df11828d31b20e9a5f9e899da53a2251b51d1a1df8fac7481541685f8d7ded9",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "15a7c42f80793ee0e6bebcad2dcb1db29b86326a9413277f1502de95022e2df4",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 404
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+    "copy_sha256": "df167b0de0c377f420b33c48ffce54398b5583664c87703632b3f91ffc1da9f2",
+    "history_id": "H-CODEX-000034",
+    "history_record": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+ "history": {
+  "id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+  "history_id": "H-CODEX-000034",
+  "record": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

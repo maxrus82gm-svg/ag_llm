@@ -1,0 +1,31 @@
+............................... [ 36%]
+........................FF.......................... [ 97%]
+..                                                                       [100%]
+================================== FAILURES ===================================
+_ ProviderAttemptIntegrationTests.test_audit_diagnostic_emits_executor_attempt_and_usage _
+test_provider_attempt_integration.py:251: in test_audit_diagnostic_emits_executor_attempt_and_usage
+    answer = await server._request_audit_diagnostic(
+server.py:3497: in _request_audit_diagnostic
+    client = guarded_client("audit_diagnostic", timeout=AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS, parent=client)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gigachat_admission.py:334: in guarded_client
+    owner=_require_owner(route)
+          ^^^^^^^^^^^^^^^^^^^^^
+gigachat_admission.py:173: in _require_owner
+    raise PreSendDenied('server_admission_required')
+E   ordinary_chat_service.PreSendDenied: server_admission_required
+_ ProviderAttemptIntegrationTests.test_audit_diagnostic_parse_error_closes_attempt _
+test_provider_attempt_integration.py:305: in test_audit_diagnostic_parse_error_closes_attempt
+    self.assertEqual(
+E   AssertionError: Lists differ: ['provider_attempt_started'] != ['provider_attempt_started', 'provider_attempt_terminal']
+E   
+E   Second list contains 1 additional elements.
+E   First extra element 1:
+E   'provider_attempt_terminal'
+E   
+E   - ['provider_attempt_started']
+E   + ['provider_attempt_started', 'provider_attempt_terminal']
+=========================== short test summary info ===========================
+FAILED test_provider_attempt_integration.py::ProviderAttemptIntegrationTests::test_audit_diagnostic_emits_executor_attempt_and_usage
+FAILED test_provider_attempt_integration.py::ProviderAttemptIntegrationTests::test_audit_diagnostic_parse_error_closes_attempt
+2 failed, 83 passed, 61 subtests passed in 35.31s

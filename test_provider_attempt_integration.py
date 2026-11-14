@@ -83,10 +83,10 @@ class ProviderAttemptIntegrationTests(unittest.IsolatedAsyncioTestCase):
             diagnostic_callback=lambda kind, data: diagnostics.append((kind, data)),
         )
         with (
-            patch.object(planner_runtime, "get_access_token", AsyncMock(return_value="token")),
+            patch.object(planner_runtime, "offline_access_token", AsyncMock(return_value="token")),
             patch.object(
-                planner_runtime.httpx,
-                "AsyncClient",
+                planner_runtime,
+                "guarded_client",
                 return_value=FakeClient(payload),
             ),
         ):
@@ -197,12 +197,12 @@ class ProviderAttemptIntegrationTests(unittest.IsolatedAsyncioTestCase):
         with (
             patch.object(
                 compressor_runtime,
-                "get_access_token",
+                "offline_access_token",
                 AsyncMock(return_value="token"),
             ),
             patch.object(
-                compressor_runtime.httpx,
-                "AsyncClient",
+                compressor_runtime,
+                "guarded_client",
                 return_value=FakeClient(payload),
             ),
         ):
@@ -248,18 +248,19 @@ class ProviderAttemptIntegrationTests(unittest.IsolatedAsyncioTestCase):
                 "total_tokens": 50,
             },
         }
-        answer = await server._request_audit_diagnostic(
-            FakeClient(payload),
-            {"Authorization": "token"},
-            "provider-model",
-            [{"role": "user", "content": "Task context"}],
-            "Rejected candidate",
-            "Why was it wrong?",
-            model_id="gigachat_ultra",
-            provider="gigachat",
-            diagnostic_callback=lambda event, data: events.append((event, data)),
-            source_references=["run:r1", "task_block:tb1"],
-        )
+        with patch.object(server,"guarded_client",return_value=FakeClient(payload)):
+            answer = await server._request_audit_diagnostic(
+                FakeClient(payload),
+                {"Authorization": "token"},
+                "provider-model",
+                [{"role": "user", "content": "Task context"}],
+                "Rejected candidate",
+                "Why was it wrong?",
+                model_id="gigachat_ultra",
+                provider="gigachat",
+                diagnostic_callback=lambda event, data: events.append((event, data)),
+                source_references=["run:r1", "task_block:tb1"],
+            )
 
         self.assertEqual(answer, "diagnosis")
         self.assertEqual(
@@ -287,7 +288,7 @@ class ProviderAttemptIntegrationTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_audit_diagnostic_parse_error_closes_attempt(self):
         events = []
-        with self.assertRaises(ValueError):
+        with patch.object(server,"guarded_client",return_value=FakeClient({})),self.assertRaises(ValueError):
             await server._request_audit_diagnostic(
                 FakeClient({}),
                 {"Authorization": "token"},

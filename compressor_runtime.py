@@ -23,6 +23,7 @@ from context_storage import (
     probe_existing_workspace,
 )
 from gigachat_transport import extract_usage
+from gigachat_admission import guarded_client, offline_access_token
 from model_registry import get_model_spec
 from provider_accounting import (
     build_provider_attempt_started,
@@ -348,7 +349,7 @@ async def _request_gigachat(
 
     notify("provider_attempt_started", provider_started)
     try:
-        token = await get_access_token()
+        token = await offline_access_token()
     except asyncio.CancelledError:
         finish_provider_attempt("cancelled", "CancelledError")
         raise
@@ -361,8 +362,8 @@ async def _request_gigachat(
         "Accept": "application/json",
     }
     try:
-        async with httpx.AsyncClient(timeout=180.0) as client:
-            response = await client.post(CHAT_URL, headers=headers, json=body)
+        async with guarded_client('compressor', timeout=180.0) as client:
+            response = await client.post(CHAT_URL, headers=headers, json=body, attempt=provider_started)
             response.raise_for_status()
             provider_http_status = getattr(response, "status_code", None)
     except asyncio.CancelledError:
@@ -396,15 +397,15 @@ async def _request_gigachat(
         finish_reason = choice.get("finish_reason")
     except (KeyError, IndexError, TypeError) as exc:
         finish_provider_attempt("parse_error", type(exc).__name__)
-        raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
+        raise RuntimeError("Неожиданная структура ответа GigaChat.") from exc
     if not isinstance(content, str):
         finish_provider_attempt("parse_error", "RuntimeError")
-        raise RuntimeError(f"GigaChat вернул не-текстовый ответ: {data}")
+        raise RuntimeError("GigaChat вернул не-текстовый ответ.")
     if finish_reason and finish_reason not in ("stop", "eos"):
         finish_provider_attempt("parse_error", "RuntimeError")
         raise RuntimeError(
             "Ответ GigaChat завершён нештатно. "
-            f"finish_reason={finish_reason}."
+            "finish_reason=unsupported."
         )
     finish_provider_attempt("completed")
     return content

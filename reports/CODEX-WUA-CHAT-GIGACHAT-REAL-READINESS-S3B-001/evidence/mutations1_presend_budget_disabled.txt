@@ -1,0 +1,21 @@
+test_s2_real_denial_zero_http (test_gigachat_admission.ServerAdmissionTests.test_s2_real_denial_zero_http) ... FAIL
+
+======================================================================
+FAIL: test_s2_real_denial_zero_http (test_gigachat_admission.ServerAdmissionTests.test_s2_real_denial_zero_http)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 232, in test_s2_real_denial_zero_http
+    with self.assertRaises(PreSendDenied):await self.send(owner)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PreSendDenied not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.737s
+
+FAILED (failures=1)

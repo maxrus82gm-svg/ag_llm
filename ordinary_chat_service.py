@@ -7,7 +7,7 @@ states. A deadline/cancellation after invocation never proves non-execution.
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 import hashlib
 import json
@@ -39,7 +39,7 @@ class PreSendUncertain(RuntimeError):
 class ProviderResponse:
     """Bounded decoded HTTP reply; status errors cannot become successful text."""
     status: int
-    data: object
+    data: object = field(repr=False)
     error_code: str | None = None
 
 

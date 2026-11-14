@@ -1,0 +1,178 @@
+{
+  "real_enabled": false,
+  "routes": [
+    {
+      "route": "audit_diagnostic",
+      "workspace_id": "ws_f41d63ce6b894c7fa12d2c46b7df95ce",
+      "run_id": "h34_run",
+      "attempt": "pa_h34",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "model": "GigaChat-2-Pro",
+      "terminal_state": "KNOWN_TERMINAL",
+      "method": "POST",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 114,
+      "wire_sha256": "0c78143c4118b571a202b2fcb925b97e0a0ecbecf7cd66f1542e97822bdd947f",
+      "timeout": {
+        "connect": 8.0,
+        "read": 8.0,
+        "write": 8.0,
+        "pool": 8.0
+      }
+    },
+    {
+      "route": "compressor",
+      "workspace_id": "ws_d225235bbcb84f5f9e308d574cf8cb3f",
+      "run_id": "h34_run",
+      "attempt": "pa_h34",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "model": "GigaChat-2-Pro",
+      "terminal_state": "KNOWN_TERMINAL",
+      "method": "POST",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 114,
+      "wire_sha256": "0c78143c4118b571a202b2fcb925b97e0a0ecbecf7cd66f1542e97822bdd947f",
+      "timeout": {
+        "connect": 8.0,
+        "read": 8.0,
+        "write": 8.0,
+        "pool": 8.0
+      }
+    },
+    {
+      "route": "executor",
+      "workspace_id": "ws_3e55186978764335b630036452ff4697",
+      "run_id": "h34_run",
+      "attempt": "pa_h34",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "model": "GigaChat-2-Pro",
+      "terminal_state": "KNOWN_TERMINAL",
+      "method": "POST",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 114,
+      "wire_sha256": "0c78143c4118b571a202b2fcb925b97e0a0ecbecf7cd66f1542e97822bdd947f",
+      "timeout": {
+        "connect": 8.0,
+        "read": 8.0,
+        "write": 8.0,
+        "pool": 8.0
+      }
+    },
+    {
+      "route": "mcp_chat",
+      "workspace_id": "ws_840847c93ecc43f293486bc3dd381d74",
+      "run_id": "h34_run",
+      "attempt": "pa_h34",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "model": "GigaChat-2-Pro",
+      "terminal_state": "KNOWN_TERMINAL",
+      "method": "POST",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 114,
+      "wire_sha256": "0c78143c4118b571a202b2fcb925b97e0a0ecbecf7cd66f1542e97822bdd947f",
+      "timeout": {
+        "connect": 8.0,
+        "read": 8.0,
+        "write": 8.0,
+        "pool": 8.0
+      }
+    },
+    {
+      "route": "planner_direct",
+      "workspace_id": "ws_9e3309b0c7004ca6aba4e9acd8013c59",
+      "run_id": "h34_run",
+      "attempt": "pa_h34",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "model": "GigaChat-2-Pro",
+      "terminal_state": "KNOWN_TERMINAL",
+      "method": "POST",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 114,
+      "wire_sha256": "0c78143c4118b571a202b2fcb925b97e0a0ecbecf7cd66f1542e97822bdd947f",
+      "timeout": {
+        "connect": 8.0,
+        "read": 8.0,
+        "write": 8.0,
+        "pool": 8.0
+      }
+    },
+    {
+      "route": "planner_review",
+      "workspace_id": "ws_c14ce2604e3547318af47158648bb4b9",
+      "run_id": "h34_run",
+      "attempt": "pa_h34",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "model": "GigaChat-2-Pro",
+      "terminal_state": "KNOWN_TERMINAL",
+      "method": "POST",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 114,
+      "wire_sha256": "0c78143c4118b571a202b2fcb925b97e0a0ecbecf7cd66f1542e97822bdd947f",
+      "timeout": {
+        "connect": 8.0,
+        "read": 8.0,
+        "write": 8.0,
+        "pool": 8.0
+      }
+    },
+    {
+      "route": "planner_session",
+      "workspace_id": "ws_49b04870efb44924b965fa006026b5eb",
+      "run_id": "h34_run",
+      "attempt": "pa_h34",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "model": "GigaChat-2-Pro",
+      "terminal_state": "KNOWN_TERMINAL",
+      "method": "POST",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 114,
+      "wire_sha256": "0c78143c4118b571a202b2fcb925b97e0a0ecbecf7cd66f1542e97822bdd947f",
+      "timeout": {
+        "connect": 8.0,
+        "read": 8.0,
+        "write": 8.0,
+        "pool": 8.0
+      }
+    },
+    {
+      "route": "verifier_final",
+      "workspace_id": "ws_e6de8e47586349eca7a171d571e0b4eb",
+      "run_id": "h34_run",
+      "attempt": "pa_h34",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "model": "GigaChat-2-Pro",
+      "terminal_state": "KNOWN_TERMINAL",
+      "method": "POST",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 114,
+      "wire_sha256": "0c78143c4118b571a202b2fcb925b97e0a0ecbecf7cd66f1542e97822bdd947f",
+      "timeout": {
+        "connect": 8.0,
+        "read": 8.0,
+        "write": 8.0,
+        "pool": 8.0
+      }
+    },
+    {
+      "route": "verifier_permission",
+      "workspace_id": "ws_bd8d31c63453486a9ab39b29a20eb47a",
+      "run_id": "h34_run",
+      "attempt": "pa_h34",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "model": "GigaChat-2-Pro",
+      "terminal_state": "KNOWN_TERMINAL",
+      "method": "POST",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 114,
+      "wire_sha256": "0c78143c4118b571a202b2fcb925b97e0a0ecbecf7cd66f1542e97822bdd947f",
+      "timeout": {
+        "connect": 8.0,
+        "read": 8.0,
+        "write": 8.0,
+        "pool": 8.0
+      }
+    }
+  ],
+  "token_kind": "synthetic only",
+  "physical_POST_count": 9
+}

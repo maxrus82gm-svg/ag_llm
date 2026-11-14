@@ -29,6 +29,8 @@ def extract_usage(data: object) -> dict:
 
 
 async def get_access_token() -> str:
+    from gigachat_admission import require_real_authority
+    require_real_authority()  # Before cache/env/HTTP. H34 grants no REAL OAuth.
     global _access_token, _access_token_valid_until
 
     if _access_token and time.time() < _access_token_valid_until:
@@ -58,7 +60,7 @@ async def get_access_token() -> str:
     token = data.get("access_token")
 
     if not token:
-        raise RuntimeError(f"GigaChat не вернул access_token: {data}")
+        raise RuntimeError("GigaChat не вернул корректный access_token.")
 
     _access_token = token
     _access_token_valid_until = time.time() + 25 * 60

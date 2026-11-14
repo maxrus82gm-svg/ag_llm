@@ -1,0 +1,10 @@
+Initial broad legacy compatibility command selected test_gigachat_admission.py,
+test_planner_session.py, test_planner_diagnostics.py,
+test_provider_attempt_integration.py, test_verifier_runtime.py,
+test_final_audit.py, test_task_planner.py through run_checks.py.
+Parent exit 1: subprocess.TimeoutExpired after 240 seconds. The inherited H33
+runner had not caught TimeoutExpired, so it did not preserve partial stdout or
+write a final cases/result file. This run is INCOMPLETE / NOT PASS; counts cannot
+be reconstructed. The child was terminated by subprocess.run on timeout.
+H34 runner now preserves timeout output/exit124 and current node/count progress;
+budget for the broad suite is 600 seconds. No production guard is changed.

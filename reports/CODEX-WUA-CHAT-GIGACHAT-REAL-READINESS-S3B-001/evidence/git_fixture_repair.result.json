@@ -1,0 +1,37 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "test:passed": 2
+  },
+  "cases": [
+    {
+      "test": "test_final_audit.py::FinalAuditRuntimeTests::test_run_owned_delete_absent_and_reappeared",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_final_audit.py::FinalAuditRuntimeTests::test_151c_missing_requirement_source_is_mechanically_critical",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001\\run_checks.py",
+    "--child",
+    "test_final_audit.py::FinalAuditRuntimeTests::test_run_owned_delete_absent_and_reappeared",
+    "test_final_audit.py::FinalAuditRuntimeTests::test_151c_missing_requirement_source_is_mechanically_critical",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h34_ilw_5nl7\\p"
+  ],
+  "elapsed_seconds": 1.7969999999986612,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0
+}

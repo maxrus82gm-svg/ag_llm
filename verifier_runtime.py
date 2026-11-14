@@ -11,6 +11,7 @@ import httpx
 
 from agent_global_context import APP_DATA_ROOT
 from gigachat_transport import CHAT_URL, extract_usage, get_access_token
+from gigachat_admission import guarded_client, offline_access_token
 from model_registry import get_model_spec
 from provider_accounting import (
     build_provider_attempt_started,
@@ -211,9 +212,11 @@ def _build_verifier_request_body(
     }
 
 
-async def _request_gigachat(body: dict[str, Any]) -> tuple[str, dict]:
+async def _request_gigachat(body: dict[str, Any], *, _route="verifier_final", _attempt=None) -> tuple[str, dict]:
+    if _route not in {"verifier_final", "verifier_permission", "planner_review"}:
+        raise ValueError("invalid_verifier_route")
     try:
-        token = await get_access_token()
+        token = await offline_access_token()
     except Exception as exc:
         raise _provider_call_error(
             "Не удалось получить GigaChat access token.",
@@ -225,8 +228,8 @@ async def _request_gigachat(body: dict[str, Any]) -> tuple[str, dict]:
         "Accept": "application/json",
     }
     try:
-        async with httpx.AsyncClient(timeout=VERIFIER_TIMEOUT_SECONDS) as client:
-            response = await client.post(CHAT_URL, headers=headers, json=body)
+        async with guarded_client(_route, timeout=VERIFIER_TIMEOUT_SECONDS) as client:
+            response = await client.post(CHAT_URL, headers=headers, json=body, attempt=_attempt)
             response.raise_for_status()
     except asyncio.CancelledError:
         raise
@@ -272,7 +275,7 @@ async def _request_gigachat(body: dict[str, Any]) -> tuple[str, dict]:
         raise VerifierProtocolError("Verifier вернул пустой или не-текстовый ответ.")
     if finish_reason and finish_reason not in {"stop", "eos"}:
         raise VerifierProtocolError(
-            f"Verifier завершился нештатно: finish_reason={finish_reason!r}."
+            "Verifier завершился нештатно: finish_reason=unsupported."
         )
     return content, extract_usage(data)
 
@@ -487,7 +490,7 @@ async def run_verifier_check(
         )
         try:
             content, provider_usage = _content_and_usage(
-                await _request_gigachat(body)
+                await _request_gigachat(body, _route="verifier_final" if check_type=="FINAL" else "verifier_permission", _attempt=provider_started)
             )
         except asyncio.CancelledError:
             finish_provider_attempt("cancelled", "CancelledError")
@@ -675,7 +678,7 @@ async def run_planner_dredd_review(
             diagnostic_callback, "provider_attempt_started", provider_started
         )
         try:
-            content, usage = _content_and_usage(await _request_gigachat(body))
+            content, usage = _content_and_usage(await _request_gigachat(body, _route="planner_review", _attempt=provider_started))
         except asyncio.CancelledError:
             finish_provider_attempt("cancelled", "CancelledError")
             raise

@@ -136,7 +136,7 @@ MANIFEST = (
     "R031RawMatrixTests.test_large_blocks_follow_eight_plus_three",
     "R031RawMatrixTests.test_negative_control_oracle_detects_a_missing_resend",
     "R031RawMatrixTests.test_tokens_from_raw_terminals_without_summary",
-    "RouteTransportTests.test_accounting_storage_failure_does_not_stop_a_paid_send",
+    "RouteTransportTests.test_legacy_observer_failure_cannot_erase_durable_s3b_send",
     "RouteTransportTests.test_executor_transport_failures_are_recorded_as_unknown_not_zero",
     "RouteTransportTests.test_negative_control_synchronous_transport_is_rejected",
     "RouteTransportTests.test_negative_control_unexpected_destination_is_rejected",
@@ -308,7 +308,23 @@ class WireCapture:
             capture.violations.append(f"synchronous transport used for {request.method} {request.url}")
             raise httpx.ConnectError("S1 fake transport: synchronous transport is not inventoried", request=request)
 
-        return _Patches([patch.object(httpx.AsyncHTTPTransport, "handle_async_request", handle_async_request),
+        # H34 keeps capture at the actual H33 MockTransport boundary, after its
+        # byte/owner/SENT checks. This is explicit synthetic test instrumentation.
+        from test_gigachat_admission import capture_owner
+        original_mock=httpx.MockTransport.handle_async_request
+        async def mock_request(mock, request):
+            await original_mock(mock,request)
+            from gigachat_admission import _OWNER
+            owner=_OWNER.get()
+            proof,envelope=owner.ledger.reservation(owner.inflight)
+            _OBSERVATIONS.setdefault('h34_admitted_requests',[]).append(dict(
+                route=envelope['route_id'],attempt=proof.record.attempt_id,state=proof.record.state,
+                binding=envelope['binding'],workspace_id=owner.workspace_id,policy_sha256=owner.policy_hash,
+                endpoint=str(request.url),wire_bytes=len(request.content),wire_sha256=_sha256(request.content)))
+            return await capture.handle(request)
+        return _Patches([capture_owner(self),
+                         patch.object(httpx.MockTransport, "handle_async_request", mock_request),
+                         patch.object(httpx.AsyncHTTPTransport, "handle_async_request", handle_async_request),
                          patch.object(httpx.HTTPTransport, "handle_request", handle_request)])
 
 def token_patches():
@@ -483,7 +499,7 @@ class AccountingSemanticsTests(unittest.TestCase):
     """C/E on current run_store code with disposable workspaces only."""
 
     def setUp(self):
-        self.temp = Path(tempfile.mkdtemp(dir=_SANDBOX))
+        self.temp = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir())))
         self.workspace = self.temp / "workspace"
         self.workspace.mkdir()
 
@@ -638,7 +654,7 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
             n.attr for n in ast.walk(fn) if isinstance(n, ast.Attribute)}
         self.assertFalse({"build_provider_attempt_started", "build_provider_attempt_terminal",
                           "extract_usage", "_emit"} & names)
-        _OBSERVATIONS["route1_unaccounted_wire_bytes"] = len(capture.requests[0]["content"])
+        _OBSERVATIONS["route1_guarded_wire_bytes"] = len(capture.requests[0]["content"])
 
     async def test_route2_audit_diagnostic_forks_full_executor_context(self):
         import httpx
@@ -650,7 +666,7 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
         events = []
         capture = WireCapture(lambda _b, _n: (200, chat_response("because")))
         with _Patches([capture.patch()]):
-            async with httpx.AsyncClient(timeout=5.0) as client:
+            async with server.guarded_client("executor", timeout=5.0) as client:
                 answer = await server._request_audit_diagnostic(
                     client, {"Authorization": "Bearer x"}, "GigaChat-3-Ultra", messages, "CANDIDATE", "Why?",
                     model_id="gigachat_ultra", diagnostic_callback=lambda k, p: events.append({"event": k, **p}))
@@ -674,6 +690,7 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
         agent_global_context.save_agent_global_context("S1 TEST GLOBAL CONTEXT", "ultra")
         events: list[dict] = []
         capture = WireCapture(responder)
+        capture.workspace = workspace
         permissions = {"allow_read": True, "allow_write": False, "allow_delete": False, "allow_verify": False,
                        "allow_guard_p1": True, "read_scope": ".", "write_scope": ".", "delete_scope": ".",
                        "tool_limit": tool_limit, "auto_backup": True}
@@ -687,7 +704,7 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
         return result, events, capture
 
     async def test_route3_executor_direct_accumulates_tool_results_without_reset(self):
-        workspace = Path(tempfile.mkdtemp(dir=_SANDBOX)) / "ws"
+        workspace = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()))) / "ws"
         workspace.mkdir()
         big = "S1BIG-" + ("строка данных " * 8000)
         (workspace / "big.txt").write_text(big, encoding="utf-8", newline="\n")
@@ -717,7 +734,7 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
         _OBSERVATIONS["route3_direct_request_bytes"] = sizes
 
     async def test_route3_route4_planner_on_resets_executor_context_at_stage_boundary(self):
-        workspace = Path(tempfile.mkdtemp(dir=_SANDBOX)) / "ws"
+        workspace = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()))) / "ws"
         workspace.mkdir()
         (workspace / "big.txt").write_text("S1STAGE-" + ("контекст " * 6000), encoding="utf-8", newline="\n")
         plan = {"stages": [
@@ -776,10 +793,11 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
         import run_store
         for status, outcome in (("timeout", "timeout"), (500, "provider_error")):
             with self.subTest(status=status):
-                workspace = Path(tempfile.mkdtemp(dir=_SANDBOX)) / "ws"
+                workspace = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()))) / "ws"
                 workspace.mkdir()
                 events: list[dict] = []
                 capture = WireCapture(lambda _b, _n, s=status: (s, {"error": "fake"}))
+                capture.workspace = workspace
                 import agent_global_context
                 import server
                 agent_global_context.save_agent_global_context("S1 TEST GLOBAL CONTEXT", "ultra")
@@ -804,7 +822,7 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
                                  (1, 1, False))
                 self.assertIsNone(summary["usage"]["total"]["total_tokens"])
 
-    async def test_accounting_storage_failure_does_not_stop_a_paid_send(self):
+    async def test_legacy_observer_failure_cannot_erase_durable_s3b_send(self):
         import audit_storage
         import run_store
         original = audit_storage.AuditThreadRecorder.observe
@@ -814,7 +832,7 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
                 raise OSError("S1 simulated accounting storage failure")
             return original(recorder, event, *args, **kwargs)
 
-        workspace = Path(tempfile.mkdtemp(dir=_SANDBOX)) / "ws"
+        workspace = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()))) / "ws"
         workspace.mkdir()
         with patch.object(audit_storage.AuditThreadRecorder, "observe", failing_observe):
             result, events, capture = await self.run_executor(
@@ -825,10 +843,19 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual({e.get("audit_storage_error") for e in flagged}, {"OSError"})
         run_id = next(e["run_id"] for e in events if e.get("event") == "run_started")
         summary = run_store.load_run_summary(workspace, run_id)
-        # one physical paid request happened, yet the durable summary records no attempt at all
+        # Legacy callback summary still lacks the event, but shared S3a persists
+        # the actual admitted attempt and supplied usage independently.
         self.assertEqual(summary["usage"]["executor"]["attempts_started"], 0)
         self.assertEqual(summary["usage"]["total"]["calls"], 0)
         self.assertEqual(summary["provider_accounting"]["started_ids"], [])
+        from ultra_budget_ledger import BudgetLedger
+        import ultra_budget_policy as budget
+        from context_storage import read_workspace_identity_bounded
+        wid=read_workspace_identity_bounded(workspace)['workspace_id']
+        records=BudgetLedger(workspace,wid).recover().attempts
+        self.assertEqual(len(records),1)
+        self.assertEqual(records[0].state,budget.KNOWN_TERMINAL)
+        self.assertEqual(records[0].usage.prompt_tokens,11)
         self.assertIn("готово", result)
 
     async def test_route5_direct_run_planner_is_accounted_but_has_no_production_caller(self):
@@ -915,22 +942,19 @@ class RouteTransportTests(unittest.IsolatedAsyncioTestCase):
                 "provider_accounting": run_store.empty_provider_accounting_summary()}, "compressor", "pa_c")
 
     async def test_oauth_token_traffic_is_distinct_from_llm_traffic(self):
+        # H34 safety change: unowned OAuth is denied even when cached. The
+        # physical OAuth site remains separately inventoried; no fake cache
+        # success is misreported as permission to run the real function.
         import gigachat_transport
-        capture = WireCapture(lambda _b, _n: (200, chat_response()),
-                              oauth_responder=lambda body, _n: (200, {"access_token": "s1-oauth-token",
-                                                                      "expires_at": 0}))
-        with _Patches([capture.patch(),
-                       patch.dict(os.environ, {"GIGACHAT_CREDENTIALS": "s1-dummy-credentials"}),
-                       patch.object(gigachat_transport, "_access_token", None),
-                       patch.object(gigachat_transport, "_access_token_valid_until", 0.0)]):
-            first = await gigachat_transport.get_access_token()
-            second = await gigachat_transport.get_access_token()  # cached: no second physical request
-        self.assertEqual((first, second), ("s1-oauth-token", "s1-oauth-token"))
+        from ordinary_chat_service import PreSendDenied
+        capture = WireCapture(lambda _b, _n: (200, chat_response()))
+        with capture.patch(), patch.object(gigachat_transport, "_access_token", "synthetic-cached"), patch.object(
+                gigachat_transport, "_access_token_valid_until", float("inf")):
+            with self.assertRaises(PreSendDenied): await gigachat_transport.get_access_token()
+            with self.assertRaises(PreSendDenied): await gigachat_transport.get_access_token()
+        self.assertEqual(capture.requests, [])
         self.assertEqual(capture.violations, [])
-        self.assertEqual([(r["method"], r["traffic"]) for r in capture.requests], [("POST", "OAUTH")])
-        self.assertEqual(capture.requests[0]["url"], gigachat_transport.OAUTH_URL)
-        self.assertNotEqual(capture.requests[0]["url"], gigachat_transport.CHAT_URL)
-        self.assertEqual(capture.requests[0]["content"], b"scope=GIGACHAT_API_PERS")
+        _OBSERVATIONS["h34_oauth_default_denied_before_cache"] = True
 
     async def test_negative_control_synchronous_transport_is_rejected(self):
         import httpx
@@ -1025,14 +1049,30 @@ RECON_PINS = {'launcher.py': {'HOST': '7c633fca520e5ff51d812e2327fc4e006fd6cb51b
                              'offline_policy': '7fcc4593b411d2dd7e04e59792c6628cec7cdf039e94e496c914cd634d58ac90',
                              'admission_snapshot': '0c18157fa4fe9919629d1980733fbf17f6f93258162d22104724964e84374136',
                              'FIXTURE_ENDPOINT': 'b403ecd484783ae6681f878a32e02e2098fa5ba6addc77158191ee17e870ab7b'},
- 'ordinary_gigachat_transport.py': {'GigaChatTransport': '58228cc2c74e9803f2dfa3a120bb4d361a1a9d53887c3861985d0c5d61242379',
-                                    'OfflineHTTPFixture': '82b9145bddd93541eaabc6b8ca186d3d7c7412df636b44fcb2b7bd5e15b8adbc'}}
+ 'ordinary_gigachat_transport.py': {'GigaChatTransport': 'af503c4b01309c78cbe6611186a909a08c2fa18a5926992807fb2b7ce56ba841',
+                                    'OfflineHTTPFixture': '82b9145bddd93541eaabc6b8ca186d3d7c7412df636b44fcb2b7bd5e15b8adbc'},
+ 'gigachat_admission.py': {'_digest': '315a115797befe462c27b877f21f8dbe25debb83b3d1243318297c0dc47a6d3c',
+                           'ProviderProfile': 'f245a85f835c3a9c1d833145f470319abe04c21ff47ef88497e1fb4b403de20f',
+                           'synthetic_profiles': '3991e10ae85d3ce8ecfee8c5343f87ae0021991085d9181b81c94fabfa81af85',
+                           'require_real_authority': '5105a6204d0b53c06858e345ae0ed400d75c71f5a51c5c80d29acfc375b31393',
+                           '_ServerOwner': 'a0edff35d524bb9721641abb4c32767f2b89892b5aa12f17580b47abe50aa383',
+                           'offline_server_owner': 'f18045425e5277a8b68e65ec564dc0fab22e55c2002bf25de77d5a6f3b646660',
+                           '_require_owner': 'a500722e46c0dbc40b7ac16f365fa7adf560e963d11693922bbec5608280a371',
+                           'bind_server_run': '79646b1c24b0dbf0b4070df1633baac5685fa9f991bcbb80bc475da41ff423b8',
+                           'offline_access_token': '7a19ce61f6230707b9bb06e64351a13e78339bcbaddadfffdde154428b5cfc97',
+                           '_ServerAttempt': '40bd7ea30a2416828dad04080b354ea63f4d3184de15462a58d3dfb06b12d1bc',
+                           '_GuardedClient': '8bb6ed0a2c2283b057cf2e76ee059883070ea2b7773bfc759c874f5d2aba58a6',
+                           'guarded_client': '59bb0b99a624e1f417cfeee68a12a1ce40fa26a20668dc601e14356729df89f3',
+                           '_OWNER': '65b4002088fe478ce0d70282539edf5421f34cff1f9c58bc5bc8a12b832749d5',
+                           '_ROUTES': 'd285cfd2881e3e040d56dc427511d62302c032e18476093ccc6625ca007f13c3',
+                           '_VERSION': '912bf4b3e3c7e2d6ab5d1ebb8cc254055fd7c34ba0e9d5b1d0f6da4b84728b2e'}}
 RECON_REFERENCES = {'launcher.py': '4f4f60619368656989a3c750c60da2168ec18d776d5303daa36d3ec06a1cd0ae',
  'ordinary_chat_service.py': '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945',
  'model_cards.py': '84bd9a33d00a64020534df64f250eb1461cd122e5562da91d3747da9b1758243',
  'ordinary_chat_test_adapter.py': '1d5ff808d35be09490e20b71681faf7b4b949b94bfe3d5e7edc9bd71865a6c04',
  'ordinary_chat_bridge.py': '3b5abf8d7e78f3311f02edb3e2fbd1180636385259cdb37fe813f30061b5c06a',
- 'ordinary_gigachat_transport.py': 'f06d5c8b38315be9447b7d669eeffe92819a0dc97873260d50452f22f8cba991'}
+ 'ordinary_gigachat_transport.py': 'b47dc34b8f3cfe1379a04a4151fe4478dc9f3efe5a6392ee67727993f3a6b0c1',
+ 'gigachat_admission.py': 'b9c12295f18eb3e9ac11b80eec51b0b8f5bf63f28d6c63e5821d7d1072abdc28'}
 RECON_SYMBOLS = frozenset({"_get", "_already_running", "_self_test", "run_web_alarm", "execute_request"})
 METADATA_FIELDS = frozenset({"api_url", "oauth_url"})
 
@@ -1049,6 +1089,8 @@ def _recon_reference_nodes(tree, module_name):
         symbols |= {"HOST", "urllib"}
     if module_name == "model_cards.py":
         symbols |= {"Provider", "BUILTIN_PROVIDERS"}
+    if module_name == "gigachat_admission.py":
+        symbols |= {"CHAT_URL", "guarded_client", "offline_access_token", "bind_server_run", "_OWNER"}
     if module_name == "ordinary_gigachat_transport.py":
         symbols |= {"CHAT_URL", "ProviderResponse", "httpx", "_TurnAdmission"}
     for node in ast.walk(tree):
@@ -1198,6 +1240,8 @@ def analyze_module(module_name: str, source: str) -> dict:
                 if alias.name == "httpx":
                     httpx_names.add(alias.asname or "httpx")
         elif isinstance(node, ast.ImportFrom):
+            if node.module == "gigachat_admission":
+                factory_names |= {a.asname or a.name for a in node.names if a.name == "guarded_client"}
             if node.module == "httpx":
                 factory_names |= {a.asname or a.name for a in node.names if a.name in CLIENT_FACTORIES}
             for alias in node.names:  # from ANY module: re-exports keep the constant's name or an alias
@@ -1354,6 +1398,9 @@ def analyze_module(module_name: str, source: str) -> dict:
     # Only this node is reconciled; all other endpoint flows remain unexplained.
     if reconciled and module_name == "ordinary_gigachat_transport.py":
         allowed.update(id(ref) for ref, owner in references if owner == "GigaChatTransport.endpoint")
+    if reconciled and module_name == "gigachat_admission.py":
+        allowed.update(id(ref) for ref, owner in references if owner in {
+            "synthetic_profiles", "_ServerOwner.profile", "_GuardedClient.post"})
     unexplained = []
     seen = set()
     for ref, owner in references:
@@ -1437,7 +1484,7 @@ class StaticRouteInventoryTests(unittest.TestCase):
                     importers.add(module.name)
         self.assertEqual(importers - NON_PRODUCTION_MODULES, {
             "server.py", "planner_runtime.py", "verifier_runtime.py", "compressor_runtime.py",
-            "gigachat_transport.py", "ordinary_gigachat_transport.py"})
+            "gigachat_transport.py", "ordinary_gigachat_transport.py", "gigachat_admission.py"})
 
     def test_every_endpoint_constant_read_is_an_inventoried_send_url(self):
         """Second, receiver-independent net: an LLM/OAuth endpoint read anywhere else is unexplained."""
@@ -1530,8 +1577,8 @@ class StaticRouteInventoryTests(unittest.TestCase):
     def test_negative_control_real_source_mutations_are_detected(self):
         import server
         source = Path(server.__file__).read_text(encoding="utf-8")
-        opener = "    async with httpx.AsyncClient(timeout=180.0) as client:\n"
-        self.assertGreaterEqual(source.count(opener), 2)  # first occurrence is ask_gigachat
+        opener = "    async with guarded_client('mcp_chat', timeout=180.0) as client:\n"
+        self.assertEqual(source.count(opener), 1)  # first occurrence is ask_gigachat
         baseline = site_multiset(scan_send_sites("server.py", source))
         mutations = {
             "second_post_in_ask_gigachat": (
@@ -1733,7 +1780,7 @@ class EndpointFlowTests(unittest.TestCase):
         import verifier_runtime
         verifier = Path(verifier_runtime.__file__).read_text(encoding="utf-8")
         srv = Path(server.__file__).read_text(encoding="utf-8")
-        send = "            response = await client.post(CHAT_URL, headers=headers, json=body)\n"
+        send = "            response = await client.post(CHAT_URL, headers=headers, json=body, attempt=_attempt)\n"
         self.assertEqual(verifier.count(send), 1)
         self.assertEqual(unexplained_endpoint_reads("verifier_runtime.py", verifier), [])
         self.assertEqual(unexplained_endpoint_reads("server.py", srv), [])
@@ -1924,7 +1971,7 @@ class EvidenceGateTests(unittest.TestCase):
             self.assertEqual((len(data), _sha256(data)), (size, digest), name)
 
     def test_snapshot_reports_missing_and_mismatched_sources(self):
-        root = Path(tempfile.mkdtemp(dir=_SANDBOX))
+        root = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir())))
         evidence, problems = snapshot_evidence(root / "empty", root / "out1", EVIDENCE_PINS)
         self.assertEqual((evidence, len(problems)), ({}, len(EVIDENCE_PINS)))
         self.assertTrue(all(p.endswith("source missing") for p in problems))

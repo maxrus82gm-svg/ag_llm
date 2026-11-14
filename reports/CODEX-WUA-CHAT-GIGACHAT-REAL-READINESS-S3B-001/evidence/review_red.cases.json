@@ -1,0 +1,22 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "test:failed": 2
+  },
+  "cases": [
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_model_snapshot_substitution_before_admission_is_denied",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_external_cancel_suppressed_by_token_provider_is_zero_http",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": []
+}

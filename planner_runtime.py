@@ -12,6 +12,7 @@ import httpx
 
 from context_registry import resolve_context_text
 from gigachat_transport import CHAT_URL, extract_usage, get_access_token
+from gigachat_admission import guarded_client, offline_access_token
 from model_registry import get_model_spec
 from provider_accounting import (
     build_provider_attempt_started,
@@ -648,8 +649,8 @@ class PlannerSession:
             )
 
         try:
-            token = await get_access_token()
-            async with httpx.AsyncClient(timeout=PLANNER_TIMEOUT_SECONDS) as client:
+            token = await offline_access_token()
+            async with guarded_client('planner_session', timeout=PLANNER_TIMEOUT_SECONDS) as client:
                 provider_started = build_provider_attempt_started(
                     role="planner",
                     mode=mode,
@@ -667,7 +668,7 @@ class PlannerSession:
                 self._diagnostic("provider_attempt_started", provider_started)
                 try:
                     response = await client.post(
-                        CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body,
+                        CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body, attempt=provider_started,
                     )
                     response.raise_for_status()
                     provider_http_status = getattr(response, "status_code", None)
@@ -764,7 +765,7 @@ async def run_planner(*, mode: str, raw_task: str, context: dict,
             "system": body["messages"][0]["content"],
             "user": body["messages"][1]["content"],
         })
-        token = await get_access_token()
+        token = await offline_access_token()
         model = get_model_spec(planner_model_id)
         provider_started = None
         provider_started_at = None
@@ -789,7 +790,7 @@ async def run_planner(*, mode: str, raw_task: str, context: dict,
                 ),
             )
 
-        async with httpx.AsyncClient(timeout=PLANNER_TIMEOUT_SECONDS) as client:
+        async with guarded_client('planner_direct', timeout=PLANNER_TIMEOUT_SECONDS) as client:
             provider_started = build_provider_attempt_started(
                 role="planner",
                 mode=mode,
@@ -804,7 +805,7 @@ async def run_planner(*, mode: str, raw_task: str, context: dict,
             diagnostic("provider_attempt_started", provider_started)
             try:
                 response = await client.post(
-                    CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body
+                    CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body, attempt=provider_started
                 )
                 response.raise_for_status()
                 provider_http_status = getattr(response, "status_code", None)

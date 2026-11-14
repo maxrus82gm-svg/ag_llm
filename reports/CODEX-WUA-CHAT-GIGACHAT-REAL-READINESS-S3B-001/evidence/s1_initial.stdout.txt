@@ -1,0 +1,234 @@
+{
+  "task": "CLAUDE-RT002-S1-REPAIR-001",
+  "sandbox": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-u_9bxmk0",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "ERRORS:5"
+    ]
+  },
+  "counts": {
+    "run": 69,
+    "failures": 0,
+    "errors": 5,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 69,
+  "failures": [],
+  "errors": [
+    "__main__.RouteTransportTests.test_accounting_storage_failure_does_not_stop_a_paid_send",
+    "__main__.RouteTransportTests.test_executor_transport_failures_are_recorded_as_unknown_not_zero (status='timeout')",
+    "__main__.RouteTransportTests.test_executor_transport_failures_are_recorded_as_unknown_not_zero (status=500)",
+    "__main__.RouteTransportTests.test_route3_executor_direct_accumulates_tool_results_without_reset",
+    "__main__.RouteTransportTests.test_route3_route4_planner_on_resets_executor_context_at_stage_boundary"
+  ],
+  "skipped": [],
+  "isolation_violations": [],
+  "evidence_root": "M:\\GitHub\\ag_llm",
+  "evidence_problems": [],
+  "selected": null,
+  "elapsed_seconds": 23.737,
+  "log": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-u_9bxmk0\\unittest.log",
+  "log_sha256": "721e586f14e1f4d695adc106b17610bcc57fb3e12e36c20923835ffa86143bbe"
+}
+
+ERROR: test_accounting_storage_failure_does_not_stop_a_paid_send (__main__.RouteTransportTests.test_accounting_storage_failure_does_not_stop_a_paid_send)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 831, in test_accounting_storage_failure_does_not_stop_a_paid_send
+    result, events, capture = await self.run_executor(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 693, in run_executor
+    with _Patches([capture.patch(), *token_patches(), *guards]):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 59, in capture_owner
+    with synthetic_owner(root=root,run_id=None if root is not None else 'h34_s1_run') as owner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 50, in synthetic_owner
+    with admission.offline_server_owner(location,wid,synthetic_policy() if raw is None else raw,fixture,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 155, in offline_server_owner
+    owner=_ServerOwner(root,workspace_id,raw_policy,fixture,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 66, in __init__
+    raise PreSendDenied('explicit_offline_server_owner_required')
+ordinary_chat_service.PreSendDenied: explicit_offline_server_owner_required
+
+======================================================================
+ERROR: test_executor_transport_failures_are_recorded_as_unknown_not_zero (__main__.RouteTransportTests.test_executor_transport_failures_are_recorded_as_unknown_not_zero) (status='timeout')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 800, in test_executor_transport_failures_are_recorded_as_unknown_not_zero
+    with _Patches([capture.patch(), *token_patches()]):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 59, in capture_owner
+    with synthetic_owner(root=root,run_id=None if root is not None else 'h34_s1_run') as owner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 50, in synthetic_owner
+    with admission.offline_server_owner(location,wid,synthetic_policy() if raw is None else raw,fixture,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 155, in offline_server_owner
+    owner=_ServerOwner(root,workspace_id,raw_policy,fixture,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 66, in __init__
+    raise PreSendDenied('explicit_offline_server_owner_required')
+ordinary_chat_service.PreSendDenied: explicit_offline_server_owner_required
+
+======================================================================
+ERROR: test_executor_transport_failures_are_recorded_as_unknown_not_zero (__main__.RouteTransportTests.test_executor_transport_failures_are_recorded_as_unknown_not_zero) (status=500)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 800, in test_executor_transport_failures_are_recorded_as_unknown_not_zero
+    with _Patches([capture.patch(), *token_patches()]):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 59, in capture_owner
+    with synthetic_owner(root=root,run_id=None if root is not None else 'h34_s1_run') as owner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 50, in synthetic_owner
+    with admission.offline_server_owner(location,wid,synthetic_policy() if raw is None else raw,fixture,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 155, in offline_server_owner
+    owner=_ServerOwner(root,workspace_id,raw_policy,fixture,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 66, in __init__
+    raise PreSendDenied('explicit_offline_server_owner_required')
+ordinary_chat_service.PreSendDenied: explicit_offline_server_owner_required
+
+======================================================================
+ERROR: test_route3_executor_direct_accumulates_tool_results_without_reset (__main__.RouteTransportTests.test_route3_executor_direct_accumulates_tool_results_without_reset)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 710, in test_route3_executor_direct_accumulates_tool_results_without_reset
+    result, events, capture = await self.run_executor(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 693, in run_executor
+    with _Patches([capture.patch(), *token_patches(), *guards]):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 59, in capture_owner
+    with synthetic_owner(root=root,run_id=None if root is not None else 'h34_s1_run') as owner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 50, in synthetic_owner
+    with admission.offline_server_owner(location,wid,synthetic_policy() if raw is None else raw,fixture,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 155, in offline_server_owner
+    owner=_ServerOwner(root,workspace_id,raw_policy,fixture,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 66, in __init__
+    raise PreSendDenied('explicit_offline_server_owner_required')
+ordinary_chat_service.PreSendDenied: explicit_offline_server_owner_required
+
+======================================================================
+ERROR: test_route3_route4_planner_on_resets_executor_context_at_stage_boundary (__main__.RouteTransportTests.test_route3_route4_planner_on_resets_executor_context_at_stage_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 763, in test_route3_route4_planner_on_resets_executor_context_at_stage_boundary
+    result, events, capture = await self.run_executor(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 693, in run_executor
+    with _Patches([capture.patch(), *token_patches(), *guards]):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 338, in __enter__
+    item.__enter__()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 59, in capture_owner
+    with synthetic_owner(root=root,run_id=None if root is not None else 'h34_s1_run') as owner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 50, in synthetic_owner
+    with admission.offline_server_owner(location,wid,synthetic_policy() if raw is None else raw,fixture,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 155, in offline_server_owner
+    owner=_ServerOwner(root,workspace_id,raw_policy,fixture,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\gigachat_admission.py", line 66, in __init__
+    raise PreSendDenied('explicit_offline_server_owner_required')
+ordinary_chat_service.PreSendDenied: explicit_offline_server_owner_required
+
+----------------------------------------------------------------------
+Ran 69 tests in 23.735s
+
+FAILED (errors=5)
+

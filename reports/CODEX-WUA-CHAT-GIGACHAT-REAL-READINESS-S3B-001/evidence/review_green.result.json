@@ -1,0 +1,37 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "test:passed": 2
+  },
+  "cases": [
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_model_snapshot_substitution_before_admission_is_denied",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_external_cancel_suppressed_by_token_provider_is_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001\\run_checks.py",
+    "--child",
+    "test_gigachat_admission.py::ServerAdmissionTests::test_model_snapshot_substitution_before_admission_is_denied",
+    "test_gigachat_admission.py::ServerAdmissionTests::test_external_cancel_suppressed_by_token_provider_is_zero_http",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h34_2f6nfcnx\\p"
+  ],
+  "elapsed_seconds": 1.7189999999973224,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0
+}

@@ -1,0 +1,20 @@
+............................................................................ [ 29%]
+................................................................................... [ 62%]
+..................................... [ 77%]
+..........................................................                                                                   [100%]
+============================== warnings summary ===============================
+test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_tk_controls_and_history_shared_with_web
+  M:\GitHub\ag_llm\.venv\Lib\site-packages\_pytest\unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored in: <function Variable.__del__ at 0x00000201D372A700>
+  
+  Traceback (most recent call last):
+    File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 414, in __del__
+      if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  RuntimeError: main thread is not in main loop
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+254 passed, 1 warning, 256 subtests passed in 232.96s (0:03:52)

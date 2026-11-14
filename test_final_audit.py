@@ -123,7 +123,7 @@ class FakeClient:
     async def __aexit__(self, exc_type, exc, tb):
         return False
 
-    async def post(self, _url, *, headers, json):
+    async def post(self, _url, *, headers, json, attempt=None):
         self.post_count += 1
         self.bodies.append(copy.deepcopy(json))
         if self.responses:
@@ -255,7 +255,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         }
         with ExitStack() as stack:
             stack.enter_context(
-                patch.object(server, "get_access_token", AsyncMock(return_value="token"))
+                patch.object(server, "offline_access_token", AsyncMock(return_value="token"))
             )
             stack.enter_context(
                 patch.object(server, "ensure_workspace_storage", return_value=workspace_info)
@@ -278,7 +278,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 patch.object(server, "_create_backup_session", return_value=backup)
             )
             stack.enter_context(
-                patch.object(server.httpx, "AsyncClient", return_value=client)
+                patch.object(server, "guarded_client", return_value=client)
             )
             if mock_git:
                 stack.enter_context(
@@ -287,6 +287,11 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 stack.enter_context(
                     patch.object(server, "_agent_git_diff", return_value=dict(git_result))
                 )
+            else:
+                unavailable={"ok":False,"exit_code":128,"stdout":"","stderr":"synthetic: not a Git workspace",
+                             "truncated":False,"stdout_bytes":0,"stderr_bytes":30}
+                stack.enter_context(patch.object(server,"_agent_git_status",return_value=dict(unavailable)))
+                stack.enter_context(patch.object(server,"_agent_git_diff",return_value=dict(unavailable)))
             stack.enter_context(
                 patch.object(
                     server, "_request_audit_diagnostic",
@@ -418,12 +423,14 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         policy = server._prepare_policy_for_workspace(
             self.workspace, server._normalize_permissions(self.permissions)
         )
-        _context, metadata = server._collect_final_audit_evidence(
-            root=self.workspace, candidate_final="Done", policy=policy,
-            run_id="test", api_request_count=1, tool_call_count=1,
-            verification_state={"write_revision": 1}, backup_session=None,
-            run_owned_state=expected,
-        )
+        unavailable={"ok":False,"exit_code":128,"stdout":"","stderr":"synthetic: not a Git workspace","truncated":False}
+        with patch.object(server,"_agent_git_status",return_value=dict(unavailable)),patch.object(server,"_agent_git_diff",return_value=dict(unavailable)):
+            _context, metadata = server._collect_final_audit_evidence(
+                root=self.workspace, candidate_final="Done", policy=policy,
+                run_id="test", api_request_count=1, tool_call_count=1,
+                verification_state={"write_revision": 1}, backup_session=None,
+                run_owned_state=expected,
+            )
         self.assertTrue(metadata["critical_for_success"])
         self.assertTrue(metadata["critical_for_mutating_run"])
 
@@ -2007,18 +2014,20 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 }],
             }],
         }
-        _context, metadata = server._collect_final_audit_evidence(
-            root=self.workspace,
-            candidate_final="Done",
-            policy=policy,
-            run_id="run-test",
-            api_request_count=1,
-            tool_call_count=1,
-            verification_state={"write_revision": 0},
-            backup_session=None,
-            task_plan_evidence=task_plan,
-            freshness_snapshot=freshness,
-        )
+        unavailable={"ok":False,"exit_code":128,"stdout":"","stderr":"synthetic: not a Git workspace","truncated":False}
+        with patch.object(server,"_agent_git_status",return_value=dict(unavailable)),patch.object(server,"_agent_git_diff",return_value=dict(unavailable)):
+            _context, metadata = server._collect_final_audit_evidence(
+                root=self.workspace,
+                candidate_final="Done",
+                policy=policy,
+                run_id="run-test",
+                api_request_count=1,
+                tool_call_count=1,
+                verification_state={"write_revision": 0},
+                backup_session=None,
+                task_plan_evidence=task_plan,
+                freshness_snapshot=freshness,
+            )
         self.assertTrue(metadata["critical_for_success"])
         self.assertIn(
             "requirement_evidence_missing:evidence:verify:readback",

@@ -1,0 +1,22 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "test:passed": 2
+  },
+  "cases": [
+    {
+      "test": "test_final_audit.py::FinalAuditRuntimeTests::test_run_owned_delete_absent_and_reappeared",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_final_audit.py::FinalAuditRuntimeTests::test_151c_missing_requirement_source_is_mechanically_critical",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": []
+}

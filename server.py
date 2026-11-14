@@ -30,6 +30,7 @@ from agent_global_context import load_agent_global_context
 from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
 from gigachat_transport import CHAT_URL, OAUTH_URL, extract_usage, get_access_token
+from gigachat_admission import guarded_client, offline_access_token, bind_server_run
 from audit_storage import AuditThreadRecorder
 from run_store import validate_run_record
 from planner_runtime import (
@@ -556,7 +557,7 @@ AGENT_FUNCTIONS = [
 ]
 
 async def ask_gigachat(prompt: str) -> str:
-    token = await get_access_token()
+    token = await offline_access_token()
 
     headers = {
         "Authorization": f"Bearer {token}",
@@ -571,7 +572,7 @@ async def ask_gigachat(prompt: str) -> str:
         "stream": False,
     }
 
-    async with httpx.AsyncClient(timeout=180.0) as client:
+    async with guarded_client('mcp_chat', timeout=180.0) as client:
         response = await client.post(
             CHAT_URL,
             headers=headers,
@@ -587,18 +588,18 @@ async def ask_gigachat(prompt: str) -> str:
         finish_reason = choice.get("finish_reason")
 
         if not content:
-            raise RuntimeError(f"GigaChat вернул пустой ответ: {data}")
+            raise RuntimeError("GigaChat вернул пустой ответ.")
 
         if finish_reason and finish_reason not in ("stop", "eos"):
             raise RuntimeError(
                 "Ответ GigaChat завершён нештатно. "
-                f"finish_reason={finish_reason}. "
+                "finish_reason=unsupported. "
                 "Возможна обрезка ответа по лимиту токенов."
             )
 
         return content
     except (KeyError, IndexError, TypeError) as exc:
-        raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
+        raise RuntimeError("Неожиданная структура ответа GigaChat.") from exc
 
 def _validate_workspace_root(workspace_root: str) -> Path:
     if not isinstance(workspace_root, str) or not workspace_root.strip():
@@ -3494,8 +3495,9 @@ async def _request_audit_diagnostic(
 
     notify("provider_attempt_started", provider_started)
     try:
+        client = guarded_client("audit_diagnostic", timeout=AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS, parent=client)
         response = await asyncio.wait_for(
-            client.post(CHAT_URL, headers=headers, json=body),
+            client.post(CHAT_URL, headers=headers, json=body, attempt=provider_started),
             timeout=AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS,
         )
         response.raise_for_status()
@@ -3949,6 +3951,8 @@ async def _run_agent_task_impl(
     if audit_recorder is None:
         _block_evidence("mandatory_evidence_store_unavailable")
 
+    bind_server_run(root, run_id, chat_id, final_audit_enabled=final_audit_enabled)
+
     try:
         runtime_paths = ensure_workspace_runtime_dirs(
             workspace_info["workspace_id"]
@@ -4188,7 +4192,7 @@ async def _run_agent_task_impl(
         })
 
     try:
-        token = await get_access_token()
+        token = await offline_access_token()
     except Exception as exc:
         _emit(
             "run_failed",
@@ -4606,7 +4610,7 @@ async def _run_agent_task_impl(
 
     stage_context()
 
-    async with httpx.AsyncClient(timeout=180.0) as client:
+    async with guarded_client('executor', timeout=180.0) as client:
         while True:
             _assert_durable_outcomes()
             if lifecycle:
@@ -4850,7 +4854,7 @@ async def _run_agent_task_impl(
                 request_start = time.time()
                 try:
                     response = await client.post(
-                        CHAT_URL, headers=headers, json=body
+                        CHAT_URL, headers=headers, json=body, attempt=provider_started
                     )
                     request_duration = time.time() - request_start
                     response.raise_for_status()
@@ -4924,7 +4928,7 @@ async def _run_agent_task_impl(
                     "tool_calls": tool_call_count,
                     "duration": time.time() - start_time,
                 })
-                raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
+                raise RuntimeError("Неожиданная структура ответа GigaChat.") from exc
 
             if not server_dispatched:
                 finish_executor_provider_attempt("completed")
@@ -6342,7 +6346,7 @@ async def _run_agent_task_impl(
                     "tool_calls": tool_call_count,
                     "duration": time.time() - start_time,
                 })
-                raise RuntimeError(f"GigaChat вернул пустой финальный ответ: {data}")
+                raise RuntimeError("GigaChat вернул пустой финальный ответ.")
 
             stripped_content = content.strip()
             final_response_problem = None

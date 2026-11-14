@@ -55,14 +55,14 @@ class FakeClient:
     async def __aexit__(self, *_args):
         return False
 
-    async def post(self, _url, *, headers, json):
+    async def post(self, _url, *, headers, json, attempt=None):
         self.body = json
         self.headers = headers
         return self.response
 
 
 class FailingClient(FakeClient):
-    async def post(self, _url, *, headers, json):
+    async def post(self, _url, *, headers, json, attempt=None):
         raise RuntimeError("provider-sensitive-detail")
 
 
@@ -72,9 +72,9 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         client = FakeClient(content)
         diagnostics = []
         with patch.object(
-            planner_runtime, "get_access_token", AsyncMock(return_value="secret")
+            planner_runtime, "offline_access_token", AsyncMock(return_value="secret")
         ), patch.object(
-            planner_runtime.httpx, "AsyncClient", return_value=client
+            planner_runtime, "guarded_client", return_value=client
         ):
             result = await planner_runtime.run_planner(
                 mode="INITIAL",
@@ -115,9 +115,9 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         client = FakeClient(content)
         diagnostics = []
         with patch.object(
-            planner_runtime, "get_access_token", AsyncMock(return_value="secret")
+            planner_runtime, "offline_access_token", AsyncMock(return_value="secret")
         ), patch.object(
-            planner_runtime.httpx, "AsyncClient", return_value=client
+            planner_runtime, "guarded_client", return_value=client
         ):
             with self.assertRaisesRegex(
                 planner_runtime.PlannerError,
@@ -151,9 +151,9 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
             raise RuntimeError("diagnostics unavailable")
 
         with patch.object(
-            planner_runtime, "get_access_token", AsyncMock(return_value="secret")
+            planner_runtime, "offline_access_token", AsyncMock(return_value="secret")
         ), patch.object(
-            planner_runtime.httpx, "AsyncClient", return_value=client
+            planner_runtime, "guarded_client", return_value=client
         ):
             result = await planner_runtime.run_planner(
                 mode="INITIAL",
@@ -166,10 +166,10 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
     async def test_runtime_error_diagnostic_uses_safe_message(self):
         diagnostics = []
         with patch.object(
-            planner_runtime, "get_access_token", AsyncMock(return_value="secret")
+            planner_runtime, "offline_access_token", AsyncMock(return_value="secret")
         ), patch.object(
-            planner_runtime.httpx,
-            "AsyncClient",
+            planner_runtime,
+            "guarded_client",
             return_value=FailingClient("unused"),
         ):
             with self.assertRaisesRegex(

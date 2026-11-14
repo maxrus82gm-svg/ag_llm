@@ -1,0 +1,22 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+_ ServerAdmissionTests.test_model_snapshot_substitution_before_admission_is_denied _
+test_gigachat_admission.py:191: in test_model_snapshot_substitution_before_admission_is_denied
+    with self.assertRaises(PreSendDenied):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: PreSendDenied not raised
+------------------------------ Captured log call ------------------------------
+WARNING  asyncio:base_events.py:1994 Executing <Task finished name='Task-2' coro=<ServerAdmissionTests.test_model_snapshot_substitution_before_admission_is_denied() done, defined at M:\GitHub\ag_llm\test_gigachat_admission.py:184> exception=AssertionError('PreSendDenied not raised') created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:100> took 0.641 seconds
+_ ServerAdmissionTests.test_external_cancel_suppressed_by_token_provider_is_zero_http _
+test_gigachat_admission.py:206: in test_external_cancel_suppressed_by_token_provider_is_zero_http
+    with self.assertRaises(PreSendUncertain):await pending
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: PreSendUncertain not raised
+------------------------------ Captured log call ------------------------------
+WARNING  asyncio:base_events.py:1994 Executing <Task pending name='Task-7' coro=<ServerAdmissionTests.test_external_cancel_suppressed_by_token_provider_is_zero_http() running at M:\GitHub\ag_llm\test_gigachat_admission.py:205> wait_for=<Future pending cb=[Task.task_wakeup()] created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:448> cb=[_run_until_complete_cb() at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:181] created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:100> took 0.187 seconds
+WARNING  asyncio:base_events.py:1994 Executing <Task pending name='Task-8' coro=<ServerAdmissionTests.send() running at M:\GitHub\ag_llm\test_gigachat_admission.py:89> wait_for=<Future pending cb=[Task.task_wakeup()] created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:448> created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py:420> took 0.188 seconds
+WARNING  asyncio:base_events.py:1994 Executing <Task finished name='Task-8' coro=<ServerAdmissionTests.send() done, defined at M:\GitHub\ag_llm\test_gigachat_admission.py:87> result=<Response [200 OK]> created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py:420> took 0.141 seconds
+=========================== short test summary info ===========================
+FAILED test_gigachat_admission.py::ServerAdmissionTests::test_model_snapshot_substitution_before_admission_is_denied
+FAILED test_gigachat_admission.py::ServerAdmissionTests::test_external_cancel_suppressed_by_token_provider_is_zero_http
+2 failed in 1.78s

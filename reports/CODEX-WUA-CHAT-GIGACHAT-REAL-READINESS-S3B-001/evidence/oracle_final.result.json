@@ -1,0 +1,75 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "subtest:passed": 7,
+    "test:passed": 1
+  },
+  "cases": [
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001\\run_checks.py",
+    "--child",
+    "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h34_huvahdfl\\p"
+  ],
+  "elapsed_seconds": 4.0,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 0,
+  "runner_exit_code": 0
+}

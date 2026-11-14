@@ -1697,8 +1697,8 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_runtime_parses_one_shot_without_executor_session(self):
         client = legacy.FakeClient([legacy.FakeResponse(json.dumps(plan(False)))])
-        with patch.object(planner_runtime, "get_access_token", AsyncMock(return_value="secret")), \
-                patch.object(planner_runtime.httpx, "AsyncClient", return_value=client):
+        with patch.object(planner_runtime, "offline_access_token", AsyncMock(return_value="secret")), \
+                patch.object(planner_runtime, "guarded_client", return_value=client):
             result = await planner_runtime.run_planner(mode="INITIAL", raw_task="Explain", context={})
         self.assertEqual(result, plan(False))
         self.assertEqual(client.post_count, 1)

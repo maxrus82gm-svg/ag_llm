@@ -1,0 +1,8 @@
+Initial server_gates.py server_gates1: exit 1, before compile/UI child creation.
+Existing server._verification_env executes dict(os.environ). The unchanged H27
+guard rejected a credential-variable retrieval while copying the environment:
+PermissionError: OFFLINE guard: credentials.
+No credential value was returned or logged. No HTTP/OAuth call occurred.
+Raw guard event is server_gates1.guard.jsonl. Compile/UI results were NOT RUN in
+this attempt. Fix is only in the isolated runner: delete GIGACHAT_* keys by name
+before guard/runtime imports, without retrieving their values; keep guard active.

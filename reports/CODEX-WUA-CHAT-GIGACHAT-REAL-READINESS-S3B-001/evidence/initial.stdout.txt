@@ -1,0 +1,40 @@
+......F.........                                [100%]
+================================== FAILURES ===================================
+_ ServerAdmissionTests.test_budget_deny_missing_corrupt_upgrade_ledger_zero_http (mode='deny') _
+test_gigachat_admission.py:121: in test_budget_deny_missing_corrupt_upgrade_ledger_zero_http
+    with self.assertRaises((PreSendDenied,LedgerDenied)):await self.send(owner)
+                                                         ^^^^^^^^^^^^^^^^^^^^^^
+test_gigachat_admission.py:66: in send
+    return await client.post(oauth.CHAT_URL,json=BODY if body is None else body,
+gigachat_admission.py:291: in post
+    cap=_ServerAttempt(self.owner,self.route,wire,attempt_id,logical,self.timeout)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gigachat_admission.py:192: in __init__
+    owner.check();profile=owner.profile(json_codec.loads(wire).get('model'),wire)
+    ^^^^^^^^^^^^^
+gigachat_admission.py:112: in check
+    if (policy.validate_policy(self.raw_policy).revision_sha256!=self.policy_hash
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ultra_budget_policy.py:397: in validate_policy
+    raise PolicyValidationError(problems or ["policy: некорректная структура"])
+E   ultra_budget_policy.PolicyValidationError: policy.run.max_request_input_tokens_est: не может превышать лимит RUN; policy.run.max_verification_request_input_tokens_est: не может превышать лимит RUN
+_ ServerAdmissionTests.test_late_response_after_suppressed_cancellation_is_discarded _
+test_gigachat_admission.py:206: in test_late_response_after_suppressed_cancellation_is_discarded
+    with self.assertRaises(httpx.ReadTimeout):await self.send(owner,timeout=.1)
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test_gigachat_admission.py:66: in send
+    return await client.post(oauth.CHAT_URL,json=BODY if body is None else body,
+gigachat_admission.py:295: in post
+    reply=await cap.transport.send_bytes(wire,timeout_seconds=self.timeout,
+ordinary_gigachat_transport.py:66: in send_bytes
+    admission.authorize(wire, self)
+gigachat_admission.py:235: in authorize
+    if marking:raise PreSendUncertain('server_sent_commit_uncertain') from None
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   ordinary_chat_service.PreSendUncertain: server_sent_commit_uncertain
+------------------------------ Captured log call ------------------------------
+WARNING  asyncio:base_events.py:1994 Executing <Task finished name='Task-33' coro=<ServerAdmissionTests.test_late_response_after_suppressed_cancellation_is_discarded() done, defined at M:\GitHub\ag_llm\test_gigachat_admission.py:197> exception=PreSendUncertain('server_sent_commit_uncertain') created at C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:100> took 0.422 seconds
+=========================== short test summary info ===========================
+SUBFAILED(mode='deny') test_gigachat_admission.py::ServerAdmissionTests::test_budget_deny_missing_corrupt_upgrade_ledger_zero_http
+FAILED test_gigachat_admission.py::ServerAdmissionTests::test_late_response_after_suppressed_cancellation_is_discarded
+2 failed, 15 passed, 24 subtests passed in 15.25s

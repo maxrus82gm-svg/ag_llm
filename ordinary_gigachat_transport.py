@@ -54,8 +54,9 @@ class GigaChatTransport:
 
     async def send_bytes(self, wire, *, timeout_seconds, max_response_bytes, admission=None):
         from web_alarm.turn_service import _TurnAdmission
+        from gigachat_admission import _ServerAttempt
         if (type(self) is not GigaChatTransport or type(self._fixture) is not OfflineHTTPFixture
-                or type(admission) is not _TurnAdmission or type(wire) is not bytes
+                or type(admission) not in (_TurnAdmission, _ServerAttempt) or type(wire) is not bytes
                 or type(max_response_bytes) is not int or max_response_bytes <= 0
                 or type(timeout_seconds) not in (int, float)
                 or not math.isfinite(timeout_seconds) or timeout_seconds <= 0):

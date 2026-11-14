@@ -1,0 +1,375 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "test:passed": 52,
+    "subtest:passed": 6
+  },
+  "cases": [
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_benign_builtin_fromlist",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_benign_new_consumer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_changed_offline_capsule",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_changed_shared_dependency",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_cloned_capsule_new_name",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_collector_fromlist_benign_child",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_collector_fromlist_nested_policy",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dict_import",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_direct_policy",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_alias",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_import",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_module_alias",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_relative",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_dynamic_unknown_name",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_exec_literal",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_exec_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_file_import_loader",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_file_loader_name",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_from_ledger_alias",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_from_policy_alias",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_getattr_import",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_import_cycle_reaches_policy",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_loader_container_escape",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_loader_escape",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_local_stdlib_shadow",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_missing_policy_source",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_new_direct_consumer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_offline_capsule_without_production_reachability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_opaque_loader_attribute",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_opaque_loader_attribute_alias",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_opaque_loader_namespace",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_package_initializer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_pinned_metadata_domain_escape",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_pinned_metadata_registry_escape",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_policy_module_alias",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_protected_submodule_name",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_reexported_dynamic_alias",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_relative_builtin_import",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_relative_from_import",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_spec_parent_import",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_star_builtin_fromlist",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_static_star_import",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_transitive_ledger",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_transitive_new_bridge",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_unknown_builtin_fromlist",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_unknown_import_root",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py::ImportIsolationQualityTests::test_unknown_spec_query",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_guard_bootstrap_cannot_load_another_script",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_mutating_each_gate_is_detected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_mutating_each_gate_is_detected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_mutating_each_gate_is_detected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_mutating_each_gate_is_detected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_mutating_each_gate_is_detected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_reviewed_admission_is_accepted_but_still_in_graph",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_standard_entrypoint_cannot_add_an_unguarded_policy_edge",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_unreviewed_direct_and_transitive_policy_consumers_are_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_unreviewed_direct_and_transitive_policy_consumers_are_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py::GateIsolationTests::test_unreviewed_direct_and_transitive_policy_consumers_are_rejected",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001\\run_checks.py",
+    "--child",
+    "--import-mode=importlib",
+    "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py",
+    "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/isolation_checks.py",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h34_7_rivhv0\\p"
+  ],
+  "elapsed_seconds": 75.04699999999866,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0
+}

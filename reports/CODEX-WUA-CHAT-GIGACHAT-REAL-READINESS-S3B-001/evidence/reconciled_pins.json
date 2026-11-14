@@ -1,0 +1,58 @@
+{
+  "reviewed_before": {
+    "ordinary_gigachat_transport.py": {
+      "GigaChatTransport": "af503c4b01309c78cbe6611186a909a08c2fa18a5926992807fb2b7ce56ba841",
+      "OfflineHTTPFixture": "82b9145bddd93541eaabc6b8ca186d3d7c7412df636b44fcb2b7bd5e15b8adbc"
+    },
+    "gigachat_admission.py": {
+      "_digest": "315a115797befe462c27b877f21f8dbe25debb83b3d1243318297c0dc47a6d3c",
+      "ProviderProfile": "f245a85f835c3a9c1d833145f470319abe04c21ff47ef88497e1fb4b403de20f",
+      "synthetic_profiles": "3991e10ae85d3ce8ecfee8c5343f87ae0021991085d9181b81c94fabfa81af85",
+      "require_real_authority": "5105a6204d0b53c06858e345ae0ed400d75c71f5a51c5c80d29acfc375b31393",
+      "_ServerOwner": "478da2139f99a0e38a0d25b49ca1dfa47b78f87476cc5b306019b31a8ac90dfa",
+      "offline_server_owner": "f18045425e5277a8b68e65ec564dc0fab22e55c2002bf25de77d5a6f3b646660",
+      "_require_owner": "a500722e46c0dbc40b7ac16f365fa7adf560e963d11693922bbec5608280a371",
+      "bind_server_run": "79646b1c24b0dbf0b4070df1633baac5685fa9f991bcbb80bc475da41ff423b8",
+      "offline_access_token": "7a19ce61f6230707b9bb06e64351a13e78339bcbaddadfffdde154428b5cfc97",
+      "_ServerAttempt": "40bd7ea30a2416828dad04080b354ea63f4d3184de15462a58d3dfb06b12d1bc",
+      "_GuardedClient": "8bb6ed0a2c2283b057cf2e76ee059883070ea2b7773bfc759c874f5d2aba58a6",
+      "guarded_client": "59bb0b99a624e1f417cfeee68a12a1ce40fa26a20668dc601e14356729df89f3",
+      "_OWNER": "65b4002088fe478ce0d70282539edf5421f34cff1f9c58bc5bc8a12b832749d5",
+      "_ROUTES": "d285cfd2881e3e040d56dc427511d62302c032e18476093ccc6625ca007f13c3",
+      "_VERSION": "912bf4b3e3c7e2d6ab5d1ebb8cc254055fd7c34ba0e9d5b1d0f6da4b84728b2e"
+    }
+  },
+  "reviewed_after": {
+    "ordinary_gigachat_transport.py": {
+      "GigaChatTransport": "af503c4b01309c78cbe6611186a909a08c2fa18a5926992807fb2b7ce56ba841",
+      "OfflineHTTPFixture": "82b9145bddd93541eaabc6b8ca186d3d7c7412df636b44fcb2b7bd5e15b8adbc"
+    },
+    "gigachat_admission.py": {
+      "_digest": "315a115797befe462c27b877f21f8dbe25debb83b3d1243318297c0dc47a6d3c",
+      "ProviderProfile": "f245a85f835c3a9c1d833145f470319abe04c21ff47ef88497e1fb4b403de20f",
+      "synthetic_profiles": "3991e10ae85d3ce8ecfee8c5343f87ae0021991085d9181b81c94fabfa81af85",
+      "require_real_authority": "5105a6204d0b53c06858e345ae0ed400d75c71f5a51c5c80d29acfc375b31393",
+      "_ServerOwner": "a0edff35d524bb9721641abb4c32767f2b89892b5aa12f17580b47abe50aa383",
+      "offline_server_owner": "f18045425e5277a8b68e65ec564dc0fab22e55c2002bf25de77d5a6f3b646660",
+      "_require_owner": "a500722e46c0dbc40b7ac16f365fa7adf560e963d11693922bbec5608280a371",
+      "bind_server_run": "79646b1c24b0dbf0b4070df1633baac5685fa9f991bcbb80bc475da41ff423b8",
+      "offline_access_token": "7a19ce61f6230707b9bb06e64351a13e78339bcbaddadfffdde154428b5cfc97",
+      "_ServerAttempt": "40bd7ea30a2416828dad04080b354ea63f4d3184de15462a58d3dfb06b12d1bc",
+      "_GuardedClient": "8bb6ed0a2c2283b057cf2e76ee059883070ea2b7773bfc759c874f5d2aba58a6",
+      "guarded_client": "59bb0b99a624e1f417cfeee68a12a1ce40fa26a20668dc601e14356729df89f3",
+      "_OWNER": "65b4002088fe478ce0d70282539edf5421f34cff1f9c58bc5bc8a12b832749d5",
+      "_ROUTES": "d285cfd2881e3e040d56dc427511d62302c032e18476093ccc6625ca007f13c3",
+      "_VERSION": "912bf4b3e3c7e2d6ab5d1ebb8cc254055fd7c34ba0e9d5b1d0f6da4b84728b2e"
+    }
+  },
+  "references": {
+    "ordinary_gigachat_transport.py": "b47dc34b8f3cfe1379a04a4151fe4478dc9f3efe5a6392ee67727993f3a6b0c1",
+    "gigachat_admission.py": "b9c12295f18eb3e9ac11b80eec51b0b8f5bf63f28d6c63e5821d7d1072abdc28"
+  },
+  "s2_gates": {
+    "web_alarm.ordinary_chat_bridge": "cf7f550ccee87c1a6368bdc1ab7126a6b360427aace1134aa0d9f753be7db4d3",
+    "web_alarm.turn_service": "c2a8a6412594816165ed843e78fead02d9821891c03677e9317b560cab6b10d5",
+    "web_alarm.ultra_chat": "1caf0c05a9addeb9e08652566dbea5c15c3a1805b4e39b3ed59ad01cc3a38681",
+    "gigachat_admission": "c9f0295e9592c6be7a0fc7c81a00266bfd15189bc15723ee183d36b535b9d73c"
+  }
+}

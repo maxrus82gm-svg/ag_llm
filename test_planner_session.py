@@ -64,7 +64,7 @@ class _Client:
     async def __aexit__(self, *_args):
         return False
 
-    async def post(self, _url, *, headers, json):
+    async def post(self, _url, *, headers, json, attempt=None):
         self.bodies.append(copy.deepcopy(json))
         return _Response(self.outputs.pop(0))
 
@@ -77,9 +77,9 @@ class PlannerSessionRuntimeTests(unittest.IsolatedAsyncioTestCase):
         })]
         bodies = []
         session = PlannerSession(raw_task="UNIQUE RAW TASK")
-        with (patch.object(planner_runtime, "get_access_token", AsyncMock(return_value="token")),
-              patch.object(planner_runtime.httpx, "AsyncClient",
-                           side_effect=lambda **_kwargs: _Client(outputs, bodies))):
+        with (patch.object(planner_runtime, "offline_access_token", AsyncMock(return_value="token")),
+              patch.object(planner_runtime, "guarded_client",
+                           side_effect=lambda _route=None, **_kwargs: _Client(outputs, bodies))):
             await session.call(
                 mode="INITIAL", raw_task="UNIQUE RAW TASK",
                 context={"permissions": {"READ": True}, "tools": [{"name": "read_file"}]},
@@ -101,9 +101,9 @@ class PlannerSessionRuntimeTests(unittest.IsolatedAsyncioTestCase):
     async def test_invalid_raw_assistant_response_remains_before_repair(self):
         outputs = ["not json", json.dumps(analysis_plan())]
         session = PlannerSession(raw_task="task")
-        with (patch.object(planner_runtime, "get_access_token", AsyncMock(return_value="token")),
-              patch.object(planner_runtime.httpx, "AsyncClient",
-                           side_effect=lambda **_kwargs: _Client(outputs, []))):
+        with (patch.object(planner_runtime, "offline_access_token", AsyncMock(return_value="token")),
+              patch.object(planner_runtime, "guarded_client",
+                           side_effect=lambda _route=None, **_kwargs: _Client(outputs, []))):
             with self.assertRaises(PlannerError):
                 await session.call(mode="INITIAL", raw_task="task", context={})
             session.add_control_message(
@@ -174,12 +174,12 @@ class PlannerSessionRuntimeTests(unittest.IsolatedAsyncioTestCase):
         session = PlannerSession(raw_task="Create exact text:\nline1\nline2\n")
         with (
             patch.object(
-                planner_runtime, "get_access_token",
+                planner_runtime, "offline_access_token",
                 AsyncMock(return_value="token"),
             ),
             patch.object(
-                planner_runtime.httpx, "AsyncClient",
-                side_effect=lambda **_kwargs: _Client(outputs, []),
+                planner_runtime, "guarded_client",
+                side_effect=lambda _route=None, **_kwargs: _Client(outputs, []),
             ),
         ):
             with self.assertRaisesRegex(PlannerError, "double-escaped"):

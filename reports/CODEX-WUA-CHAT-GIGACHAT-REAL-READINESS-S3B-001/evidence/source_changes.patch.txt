@@ -1,0 +1,1780 @@
+--- before/server.py
++++ after/server.py
+@@ -30,6 +30,7 @@
+ from server_context_messages import resolve_server_context_message
+ from model_registry import get_model_spec
+ from gigachat_transport import CHAT_URL, OAUTH_URL, extract_usage, get_access_token
++from gigachat_admission import guarded_client, offline_access_token, bind_server_run
+ from audit_storage import AuditThreadRecorder
+ from run_store import validate_run_record
+ from planner_runtime import (
+@@ -556,7 +557,7 @@
+ ]
+ 
+ async def ask_gigachat(prompt: str) -> str:
+-    token = await get_access_token()
++    token = await offline_access_token()
+ 
+     headers = {
+         "Authorization": f"Bearer {token}",
+@@ -571,7 +572,7 @@
+         "stream": False,
+     }
+ 
+-    async with httpx.AsyncClient(timeout=180.0) as client:
++    async with guarded_client('mcp_chat', timeout=180.0) as client:
+         response = await client.post(
+             CHAT_URL,
+             headers=headers,
+@@ -587,18 +588,18 @@
+         finish_reason = choice.get("finish_reason")
+ 
+         if not content:
+-            raise RuntimeError(f"GigaChat вернул пустой ответ: {data}")
++            raise RuntimeError("GigaChat вернул пустой ответ.")
+ 
+         if finish_reason and finish_reason not in ("stop", "eos"):
+             raise RuntimeError(
+                 "Ответ GigaChat завершён нештатно. "
+-                f"finish_reason={finish_reason}. "
++                "finish_reason=unsupported. "
+                 "Возможна обрезка ответа по лимиту токенов."
+             )
+ 
+         return content
+     except (KeyError, IndexError, TypeError) as exc:
+-        raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
++        raise RuntimeError("Неожиданная структура ответа GigaChat.") from exc
+ 
+ def _validate_workspace_root(workspace_root: str) -> Path:
+     if not isinstance(workspace_root, str) or not workspace_root.strip():
+@@ -3494,8 +3495,9 @@
+ 
+     notify("provider_attempt_started", provider_started)
+     try:
++        client = guarded_client("audit_diagnostic", timeout=AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS, parent=client)
+         response = await asyncio.wait_for(
+-            client.post(CHAT_URL, headers=headers, json=body),
++            client.post(CHAT_URL, headers=headers, json=body, attempt=provider_started),
+             timeout=AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS,
+         )
+         response.raise_for_status()
+@@ -3948,6 +3950,8 @@
+ 
+     if audit_recorder is None:
+         _block_evidence("mandatory_evidence_store_unavailable")
++
++    bind_server_run(root, run_id, chat_id, final_audit_enabled=final_audit_enabled)
+ 
+     try:
+         runtime_paths = ensure_workspace_runtime_dirs(
+@@ -4188,7 +4192,7 @@
+         })
+ 
+     try:
+-        token = await get_access_token()
++        token = await offline_access_token()
+     except Exception as exc:
+         _emit(
+             "run_failed",
+@@ -4606,7 +4610,7 @@
+ 
+     stage_context()
+ 
+-    async with httpx.AsyncClient(timeout=180.0) as client:
++    async with guarded_client('executor', timeout=180.0) as client:
+         while True:
+             _assert_durable_outcomes()
+             if lifecycle:
+@@ -4850,7 +4854,7 @@
+                 request_start = time.time()
+                 try:
+                     response = await client.post(
+-                        CHAT_URL, headers=headers, json=body
++                        CHAT_URL, headers=headers, json=body, attempt=provider_started
+                     )
+                     request_duration = time.time() - request_start
+                     response.raise_for_status()
+@@ -4924,7 +4928,7 @@
+                     "tool_calls": tool_call_count,
+                     "duration": time.time() - start_time,
+                 })
+-                raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
++                raise RuntimeError("Неожиданная структура ответа GigaChat.") from exc
+ 
+             if not server_dispatched:
+                 finish_executor_provider_attempt("completed")
+@@ -6342,7 +6346,7 @@
+                     "tool_calls": tool_call_count,
+                     "duration": time.time() - start_time,
+                 })
+-                raise RuntimeError(f"GigaChat вернул пустой финальный ответ: {data}")
++                raise RuntimeError("GigaChat вернул пустой финальный ответ.")
+ 
+             stripped_content = content.strip()
+             final_response_problem = None
+--- before/planner_runtime.py
++++ after/planner_runtime.py
+@@ -12,6 +12,7 @@
+ 
+ from context_registry import resolve_context_text
+ from gigachat_transport import CHAT_URL, extract_usage, get_access_token
++from gigachat_admission import guarded_client, offline_access_token
+ from model_registry import get_model_spec
+ from provider_accounting import (
+     build_provider_attempt_started,
+@@ -648,8 +649,8 @@
+             )
+ 
+         try:
+-            token = await get_access_token()
+-            async with httpx.AsyncClient(timeout=PLANNER_TIMEOUT_SECONDS) as client:
++            token = await offline_access_token()
++            async with guarded_client('planner_session', timeout=PLANNER_TIMEOUT_SECONDS) as client:
+                 provider_started = build_provider_attempt_started(
+                     role="planner",
+                     mode=mode,
+@@ -667,7 +668,7 @@
+                 self._diagnostic("provider_attempt_started", provider_started)
+                 try:
+                     response = await client.post(
+-                        CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body,
++                        CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body, attempt=provider_started,
+                     )
+                     response.raise_for_status()
+                     provider_http_status = getattr(response, "status_code", None)
+@@ -764,7 +765,7 @@
+             "system": body["messages"][0]["content"],
+             "user": body["messages"][1]["content"],
+         })
+-        token = await get_access_token()
++        token = await offline_access_token()
+         model = get_model_spec(planner_model_id)
+         provider_started = None
+         provider_started_at = None
+@@ -789,7 +790,7 @@
+                 ),
+             )
+ 
+-        async with httpx.AsyncClient(timeout=PLANNER_TIMEOUT_SECONDS) as client:
++        async with guarded_client('planner_direct', timeout=PLANNER_TIMEOUT_SECONDS) as client:
+             provider_started = build_provider_attempt_started(
+                 role="planner",
+                 mode=mode,
+@@ -804,7 +805,7 @@
+             diagnostic("provider_attempt_started", provider_started)
+             try:
+                 response = await client.post(
+-                    CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body
++                    CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body, attempt=provider_started
+                 )
+                 response.raise_for_status()
+                 provider_http_status = getattr(response, "status_code", None)
+--- before/verifier_runtime.py
++++ after/verifier_runtime.py
+@@ -11,6 +11,7 @@
+ 
+ from agent_global_context import APP_DATA_ROOT
+ from gigachat_transport import CHAT_URL, extract_usage, get_access_token
++from gigachat_admission import guarded_client, offline_access_token
+ from model_registry import get_model_spec
+ from provider_accounting import (
+     build_provider_attempt_started,
+@@ -211,9 +212,11 @@
+     }
+ 
+ 
+-async def _request_gigachat(body: dict[str, Any]) -> tuple[str, dict]:
+-    try:
+-        token = await get_access_token()
++async def _request_gigachat(body: dict[str, Any], *, _route="verifier_final", _attempt=None) -> tuple[str, dict]:
++    if _route not in {"verifier_final", "verifier_permission", "planner_review"}:
++        raise ValueError("invalid_verifier_route")
++    try:
++        token = await offline_access_token()
+     except Exception as exc:
+         raise _provider_call_error(
+             "Не удалось получить GigaChat access token.",
+@@ -225,8 +228,8 @@
+         "Accept": "application/json",
+     }
+     try:
+-        async with httpx.AsyncClient(timeout=VERIFIER_TIMEOUT_SECONDS) as client:
+-            response = await client.post(CHAT_URL, headers=headers, json=body)
++        async with guarded_client(_route, timeout=VERIFIER_TIMEOUT_SECONDS) as client:
++            response = await client.post(CHAT_URL, headers=headers, json=body, attempt=_attempt)
+             response.raise_for_status()
+     except asyncio.CancelledError:
+         raise
+@@ -272,7 +275,7 @@
+         raise VerifierProtocolError("Verifier вернул пустой или не-текстовый ответ.")
+     if finish_reason and finish_reason not in {"stop", "eos"}:
+         raise VerifierProtocolError(
+-            f"Verifier завершился нештатно: finish_reason={finish_reason!r}."
++            "Verifier завершился нештатно: finish_reason=unsupported."
+         )
+     return content, extract_usage(data)
+ 
+@@ -487,7 +490,7 @@
+         )
+         try:
+             content, provider_usage = _content_and_usage(
+-                await _request_gigachat(body)
++                await _request_gigachat(body, _route="verifier_final" if check_type=="FINAL" else "verifier_permission", _attempt=provider_started)
+             )
+         except asyncio.CancelledError:
+             finish_provider_attempt("cancelled", "CancelledError")
+@@ -675,7 +678,7 @@
+             diagnostic_callback, "provider_attempt_started", provider_started
+         )
+         try:
+-            content, usage = _content_and_usage(await _request_gigachat(body))
++            content, usage = _content_and_usage(await _request_gigachat(body, _route="planner_review", _attempt=provider_started))
+         except asyncio.CancelledError:
+             finish_provider_attempt("cancelled", "CancelledError")
+             raise
+--- before/compressor_runtime.py
++++ after/compressor_runtime.py
+@@ -23,6 +23,7 @@
+     probe_existing_workspace,
+ )
+ from gigachat_transport import extract_usage
++from gigachat_admission import guarded_client, offline_access_token
+ from model_registry import get_model_spec
+ from provider_accounting import (
+     build_provider_attempt_started,
+@@ -348,7 +349,7 @@
+ 
+     notify("provider_attempt_started", provider_started)
+     try:
+-        token = await get_access_token()
++        token = await offline_access_token()
+     except asyncio.CancelledError:
+         finish_provider_attempt("cancelled", "CancelledError")
+         raise
+@@ -361,8 +362,8 @@
+         "Accept": "application/json",
+     }
+     try:
+-        async with httpx.AsyncClient(timeout=180.0) as client:
+-            response = await client.post(CHAT_URL, headers=headers, json=body)
++        async with guarded_client('compressor', timeout=180.0) as client:
++            response = await client.post(CHAT_URL, headers=headers, json=body, attempt=provider_started)
+             response.raise_for_status()
+             provider_http_status = getattr(response, "status_code", None)
+     except asyncio.CancelledError:
+@@ -396,15 +397,15 @@
+         finish_reason = choice.get("finish_reason")
+     except (KeyError, IndexError, TypeError) as exc:
+         finish_provider_attempt("parse_error", type(exc).__name__)
+-        raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
++        raise RuntimeError("Неожиданная структура ответа GigaChat.") from exc
+     if not isinstance(content, str):
+         finish_provider_attempt("parse_error", "RuntimeError")
+-        raise RuntimeError(f"GigaChat вернул не-текстовый ответ: {data}")
++        raise RuntimeError("GigaChat вернул не-текстовый ответ.")
+     if finish_reason and finish_reason not in ("stop", "eos"):
+         finish_provider_attempt("parse_error", "RuntimeError")
+         raise RuntimeError(
+             "Ответ GigaChat завершён нештатно. "
+-            f"finish_reason={finish_reason}."
++            "finish_reason=unsupported."
+         )
+     finish_provider_attempt("completed")
+     return content
+--- before/gigachat_transport.py
++++ after/gigachat_transport.py
+@@ -29,6 +29,8 @@
+ 
+ 
+ async def get_access_token() -> str:
++    from gigachat_admission import require_real_authority
++    require_real_authority()  # Before cache/env/HTTP. H34 grants no REAL OAuth.
+     global _access_token, _access_token_valid_until
+ 
+     if _access_token and time.time() < _access_token_valid_until:
+@@ -58,7 +60,7 @@
+     token = data.get("access_token")
+ 
+     if not token:
+-        raise RuntimeError(f"GigaChat не вернул access_token: {data}")
++        raise RuntimeError("GigaChat не вернул корректный access_token.")
+ 
+     _access_token = token
+     _access_token_valid_until = time.time() + 25 * 60
+--- before/ordinary_gigachat_transport.py
++++ after/ordinary_gigachat_transport.py
+@@ -54,8 +54,9 @@
+ 
+     async def send_bytes(self, wire, *, timeout_seconds, max_response_bytes, admission=None):
+         from web_alarm.turn_service import _TurnAdmission
++        from gigachat_admission import _ServerAttempt
+         if (type(self) is not GigaChatTransport or type(self._fixture) is not OfflineHTTPFixture
+-                or type(admission) is not _TurnAdmission or type(wire) is not bytes
++                or type(admission) not in (_TurnAdmission, _ServerAttempt) or type(wire) is not bytes
+                 or type(max_response_bytes) is not int or max_response_bytes <= 0
+                 or type(timeout_seconds) not in (int, float)
+                 or not math.isfinite(timeout_seconds) or timeout_seconds <= 0):
+--- before/test_rt002_s1_routes.py
++++ after/test_rt002_s1_routes.py
+@@ -136,7 +136,7 @@
+     "R031RawMatrixTests.test_large_blocks_follow_eight_plus_three",
+     "R031RawMatrixTests.test_negative_control_oracle_detects_a_missing_resend",
+     "R031RawMatrixTests.test_tokens_from_raw_terminals_without_summary",
+-    "RouteTransportTests.test_accounting_storage_failure_does_not_stop_a_paid_send",
++    "RouteTransportTests.test_legacy_observer_failure_cannot_erase_durable_s3b_send",
+     "RouteTransportTests.test_executor_transport_failures_are_recorded_as_unknown_not_zero",
+     "RouteTransportTests.test_negative_control_synchronous_transport_is_rejected",
+     "RouteTransportTests.test_negative_control_unexpected_destination_is_rejected",
+@@ -308,7 +308,23 @@
+             capture.violations.append(f"synchronous transport used for {request.method} {request.url}")
+             raise httpx.ConnectError("S1 fake transport: synchronous transport is not inventoried", request=request)
+ 
+-        return _Patches([patch.object(httpx.AsyncHTTPTransport, "handle_async_request", handle_async_request),
++        # H34 keeps capture at the actual H33 MockTransport boundary, after its
++        # byte/owner/SENT checks. This is explicit synthetic test instrumentation.
++        from test_gigachat_admission import capture_owner
++        original_mock=httpx.MockTransport.handle_async_request
++        async def mock_request(mock, request):
++            await original_mock(mock,request)
++            from gigachat_admission import _OWNER
++            owner=_OWNER.get()
++            proof,envelope=owner.ledger.reservation(owner.inflight)
++            _OBSERVATIONS.setdefault('h34_admitted_requests',[]).append(dict(
++                route=envelope['route_id'],attempt=proof.record.attempt_id,state=proof.record.state,
++                binding=envelope['binding'],workspace_id=owner.workspace_id,policy_sha256=owner.policy_hash,
++                endpoint=str(request.url),wire_bytes=len(request.content),wire_sha256=_sha256(request.content)))
++            return await capture.handle(request)
++        return _Patches([capture_owner(self),
++                         patch.object(httpx.MockTransport, "handle_async_request", mock_request),
++                         patch.object(httpx.AsyncHTTPTransport, "handle_async_request", handle_async_request),
+                          patch.object(httpx.HTTPTransport, "handle_request", handle_request)])
+ 
+ def token_patches():
+@@ -483,7 +499,7 @@
+     """C/E on current run_store code with disposable workspaces only."""
+ 
+     def setUp(self):
+-        self.temp = Path(tempfile.mkdtemp(dir=_SANDBOX))
++        self.temp = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir())))
+         self.workspace = self.temp / "workspace"
+         self.workspace.mkdir()
+ 
+@@ -638,7 +654,7 @@
+             n.attr for n in ast.walk(fn) if isinstance(n, ast.Attribute)}
+         self.assertFalse({"build_provider_attempt_started", "build_provider_attempt_terminal",
+                           "extract_usage", "_emit"} & names)
+-        _OBSERVATIONS["route1_unaccounted_wire_bytes"] = len(capture.requests[0]["content"])
++        _OBSERVATIONS["route1_guarded_wire_bytes"] = len(capture.requests[0]["content"])
+ 
+     async def test_route2_audit_diagnostic_forks_full_executor_context(self):
+         import httpx
+@@ -650,7 +666,7 @@
+         events = []
+         capture = WireCapture(lambda _b, _n: (200, chat_response("because")))
+         with _Patches([capture.patch()]):
+-            async with httpx.AsyncClient(timeout=5.0) as client:
++            async with server.guarded_client("executor", timeout=5.0) as client:
+                 answer = await server._request_audit_diagnostic(
+                     client, {"Authorization": "Bearer x"}, "GigaChat-3-Ultra", messages, "CANDIDATE", "Why?",
+                     model_id="gigachat_ultra", diagnostic_callback=lambda k, p: events.append({"event": k, **p}))
+@@ -674,6 +690,7 @@
+         agent_global_context.save_agent_global_context("S1 TEST GLOBAL CONTEXT", "ultra")
+         events: list[dict] = []
+         capture = WireCapture(responder)
++        capture.workspace = workspace
+         permissions = {"allow_read": True, "allow_write": False, "allow_delete": False, "allow_verify": False,
+                        "allow_guard_p1": True, "read_scope": ".", "write_scope": ".", "delete_scope": ".",
+                        "tool_limit": tool_limit, "auto_backup": True}
+@@ -687,7 +704,7 @@
+         return result, events, capture
+ 
+     async def test_route3_executor_direct_accumulates_tool_results_without_reset(self):
+-        workspace = Path(tempfile.mkdtemp(dir=_SANDBOX)) / "ws"
++        workspace = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()))) / "ws"
+         workspace.mkdir()
+         big = "S1BIG-" + ("строка данных " * 8000)
+         (workspace / "big.txt").write_text(big, encoding="utf-8", newline="\n")
+@@ -717,7 +734,7 @@
+         _OBSERVATIONS["route3_direct_request_bytes"] = sizes
+ 
+     async def test_route3_route4_planner_on_resets_executor_context_at_stage_boundary(self):
+-        workspace = Path(tempfile.mkdtemp(dir=_SANDBOX)) / "ws"
++        workspace = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()))) / "ws"
+         workspace.mkdir()
+         (workspace / "big.txt").write_text("S1STAGE-" + ("контекст " * 6000), encoding="utf-8", newline="\n")
+         plan = {"stages": [
+@@ -776,10 +793,11 @@
+         import run_store
+         for status, outcome in (("timeout", "timeout"), (500, "provider_error")):
+             with self.subTest(status=status):
+-                workspace = Path(tempfile.mkdtemp(dir=_SANDBOX)) / "ws"
++                workspace = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()))) / "ws"
+                 workspace.mkdir()
+                 events: list[dict] = []
+                 capture = WireCapture(lambda _b, _n, s=status: (s, {"error": "fake"}))
++                capture.workspace = workspace
+                 import agent_global_context
+                 import server
+                 agent_global_context.save_agent_global_context("S1 TEST GLOBAL CONTEXT", "ultra")
+@@ -804,7 +822,7 @@
+                                  (1, 1, False))
+                 self.assertIsNone(summary["usage"]["total"]["total_tokens"])
+ 
+-    async def test_accounting_storage_failure_does_not_stop_a_paid_send(self):
++    async def test_legacy_observer_failure_cannot_erase_durable_s3b_send(self):
+         import audit_storage
+         import run_store
+         original = audit_storage.AuditThreadRecorder.observe
+@@ -814,7 +832,7 @@
+                 raise OSError("S1 simulated accounting storage failure")
+             return original(recorder, event, *args, **kwargs)
+ 
+-        workspace = Path(tempfile.mkdtemp(dir=_SANDBOX)) / "ws"
++        workspace = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()))) / "ws"
+         workspace.mkdir()
+         with patch.object(audit_storage.AuditThreadRecorder, "observe", failing_observe):
+             result, events, capture = await self.run_executor(
+@@ -825,10 +843,19 @@
+         self.assertEqual({e.get("audit_storage_error") for e in flagged}, {"OSError"})
+         run_id = next(e["run_id"] for e in events if e.get("event") == "run_started")
+         summary = run_store.load_run_summary(workspace, run_id)
+-        # one physical paid request happened, yet the durable summary records no attempt at all
++        # Legacy callback summary still lacks the event, but shared S3a persists
++        # the actual admitted attempt and supplied usage independently.
+         self.assertEqual(summary["usage"]["executor"]["attempts_started"], 0)
+         self.assertEqual(summary["usage"]["total"]["calls"], 0)
+         self.assertEqual(summary["provider_accounting"]["started_ids"], [])
++        from ultra_budget_ledger import BudgetLedger
++        import ultra_budget_policy as budget
++        from context_storage import read_workspace_identity_bounded
++        wid=read_workspace_identity_bounded(workspace)['workspace_id']
++        records=BudgetLedger(workspace,wid).recover().attempts
++        self.assertEqual(len(records),1)
++        self.assertEqual(records[0].state,budget.KNOWN_TERMINAL)
++        self.assertEqual(records[0].usage.prompt_tokens,11)
+         self.assertIn("готово", result)
+ 
+     async def test_route5_direct_run_planner_is_accounted_but_has_no_production_caller(self):
+@@ -915,22 +942,19 @@
+                 "provider_accounting": run_store.empty_provider_accounting_summary()}, "compressor", "pa_c")
+ 
+     async def test_oauth_token_traffic_is_distinct_from_llm_traffic(self):
++        # H34 safety change: unowned OAuth is denied even when cached. The
++        # physical OAuth site remains separately inventoried; no fake cache
++        # success is misreported as permission to run the real function.
+         import gigachat_transport
+-        capture = WireCapture(lambda _b, _n: (200, chat_response()),
+-                              oauth_responder=lambda body, _n: (200, {"access_token": "s1-oauth-token",
+-                                                                      "expires_at": 0}))
+-        with _Patches([capture.patch(),
+-                       patch.dict(os.environ, {"GIGACHAT_CREDENTIALS": "s1-dummy-credentials"}),
+-                       patch.object(gigachat_transport, "_access_token", None),
+-                       patch.object(gigachat_transport, "_access_token_valid_until", 0.0)]):
+-            first = await gigachat_transport.get_access_token()
+-            second = await gigachat_transport.get_access_token()  # cached: no second physical request
+-        self.assertEqual((first, second), ("s1-oauth-token", "s1-oauth-token"))
++        from ordinary_chat_service import PreSendDenied
++        capture = WireCapture(lambda _b, _n: (200, chat_response()))
++        with capture.patch(), patch.object(gigachat_transport, "_access_token", "synthetic-cached"), patch.object(
++                gigachat_transport, "_access_token_valid_until", float("inf")):
++            with self.assertRaises(PreSendDenied): await gigachat_transport.get_access_token()
++            with self.assertRaises(PreSendDenied): await gigachat_transport.get_access_token()
++        self.assertEqual(capture.requests, [])
+         self.assertEqual(capture.violations, [])
+-        self.assertEqual([(r["method"], r["traffic"]) for r in capture.requests], [("POST", "OAUTH")])
+-        self.assertEqual(capture.requests[0]["url"], gigachat_transport.OAUTH_URL)
+-        self.assertNotEqual(capture.requests[0]["url"], gigachat_transport.CHAT_URL)
+-        self.assertEqual(capture.requests[0]["content"], b"scope=GIGACHAT_API_PERS")
++        _OBSERVATIONS["h34_oauth_default_denied_before_cache"] = True
+ 
+     async def test_negative_control_synchronous_transport_is_rejected(self):
+         import httpx
+@@ -1025,14 +1049,30 @@
+                              'offline_policy': '7fcc4593b411d2dd7e04e59792c6628cec7cdf039e94e496c914cd634d58ac90',
+                              'admission_snapshot': '0c18157fa4fe9919629d1980733fbf17f6f93258162d22104724964e84374136',
+                              'FIXTURE_ENDPOINT': 'b403ecd484783ae6681f878a32e02e2098fa5ba6addc77158191ee17e870ab7b'},
+- 'ordinary_gigachat_transport.py': {'GigaChatTransport': '58228cc2c74e9803f2dfa3a120bb4d361a1a9d53887c3861985d0c5d61242379',
+-                                    'OfflineHTTPFixture': '82b9145bddd93541eaabc6b8ca186d3d7c7412df636b44fcb2b7bd5e15b8adbc'}}
++ 'ordinary_gigachat_transport.py': {'GigaChatTransport': 'af503c4b01309c78cbe6611186a909a08c2fa18a5926992807fb2b7ce56ba841',
++                                    'OfflineHTTPFixture': '82b9145bddd93541eaabc6b8ca186d3d7c7412df636b44fcb2b7bd5e15b8adbc'},
++ 'gigachat_admission.py': {'_digest': '315a115797befe462c27b877f21f8dbe25debb83b3d1243318297c0dc47a6d3c',
++                           'ProviderProfile': 'f245a85f835c3a9c1d833145f470319abe04c21ff47ef88497e1fb4b403de20f',
++                           'synthetic_profiles': '3991e10ae85d3ce8ecfee8c5343f87ae0021991085d9181b81c94fabfa81af85',
++                           'require_real_authority': '5105a6204d0b53c06858e345ae0ed400d75c71f5a51c5c80d29acfc375b31393',
++                           '_ServerOwner': 'a0edff35d524bb9721641abb4c32767f2b89892b5aa12f17580b47abe50aa383',
++                           'offline_server_owner': 'f18045425e5277a8b68e65ec564dc0fab22e55c2002bf25de77d5a6f3b646660',
++                           '_require_owner': 'a500722e46c0dbc40b7ac16f365fa7adf560e963d11693922bbec5608280a371',
++                           'bind_server_run': '79646b1c24b0dbf0b4070df1633baac5685fa9f991bcbb80bc475da41ff423b8',
++                           'offline_access_token': '7a19ce61f6230707b9bb06e64351a13e78339bcbaddadfffdde154428b5cfc97',
++                           '_ServerAttempt': '40bd7ea30a2416828dad04080b354ea63f4d3184de15462a58d3dfb06b12d1bc',
++                           '_GuardedClient': '8bb6ed0a2c2283b057cf2e76ee059883070ea2b7773bfc759c874f5d2aba58a6',
++                           'guarded_client': '59bb0b99a624e1f417cfeee68a12a1ce40fa26a20668dc601e14356729df89f3',
++                           '_OWNER': '65b4002088fe478ce0d70282539edf5421f34cff1f9c58bc5bc8a12b832749d5',
++                           '_ROUTES': 'd285cfd2881e3e040d56dc427511d62302c032e18476093ccc6625ca007f13c3',
++                           '_VERSION': '912bf4b3e3c7e2d6ab5d1ebb8cc254055fd7c34ba0e9d5b1d0f6da4b84728b2e'}}
+ RECON_REFERENCES = {'launcher.py': '4f4f60619368656989a3c750c60da2168ec18d776d5303daa36d3ec06a1cd0ae',
+  'ordinary_chat_service.py': '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945',
+  'model_cards.py': '84bd9a33d00a64020534df64f250eb1461cd122e5562da91d3747da9b1758243',
+  'ordinary_chat_test_adapter.py': '1d5ff808d35be09490e20b71681faf7b4b949b94bfe3d5e7edc9bd71865a6c04',
+  'ordinary_chat_bridge.py': '3b5abf8d7e78f3311f02edb3e2fbd1180636385259cdb37fe813f30061b5c06a',
+- 'ordinary_gigachat_transport.py': 'f06d5c8b38315be9447b7d669eeffe92819a0dc97873260d50452f22f8cba991'}
++ 'ordinary_gigachat_transport.py': 'b47dc34b8f3cfe1379a04a4151fe4478dc9f3efe5a6392ee67727993f3a6b0c1',
++ 'gigachat_admission.py': 'b9c12295f18eb3e9ac11b80eec51b0b8f5bf63f28d6c63e5821d7d1072abdc28'}
+ RECON_SYMBOLS = frozenset({"_get", "_already_running", "_self_test", "run_web_alarm", "execute_request"})
+ METADATA_FIELDS = frozenset({"api_url", "oauth_url"})
+ 
+@@ -1049,6 +1089,8 @@
+         symbols |= {"HOST", "urllib"}
+     if module_name == "model_cards.py":
+         symbols |= {"Provider", "BUILTIN_PROVIDERS"}
++    if module_name == "gigachat_admission.py":
++        symbols |= {"CHAT_URL", "guarded_client", "offline_access_token", "bind_server_run", "_OWNER"}
+     if module_name == "ordinary_gigachat_transport.py":
+         symbols |= {"CHAT_URL", "ProviderResponse", "httpx", "_TurnAdmission"}
+     for node in ast.walk(tree):
+@@ -1198,6 +1240,8 @@
+                 if alias.name == "httpx":
+                     httpx_names.add(alias.asname or "httpx")
+         elif isinstance(node, ast.ImportFrom):
++            if node.module == "gigachat_admission":
++                factory_names |= {a.asname or a.name for a in node.names if a.name == "guarded_client"}
+             if node.module == "httpx":
+                 factory_names |= {a.asname or a.name for a in node.names if a.name in CLIENT_FACTORIES}
+             for alias in node.names:  # from ANY module: re-exports keep the constant's name or an alias
+@@ -1354,6 +1398,9 @@
+     # Only this node is reconciled; all other endpoint flows remain unexplained.
+     if reconciled and module_name == "ordinary_gigachat_transport.py":
+         allowed.update(id(ref) for ref, owner in references if owner == "GigaChatTransport.endpoint")
++    if reconciled and module_name == "gigachat_admission.py":
++        allowed.update(id(ref) for ref, owner in references if owner in {
++            "synthetic_profiles", "_ServerOwner.profile", "_GuardedClient.post"})
+     unexplained = []
+     seen = set()
+     for ref, owner in references:
+@@ -1437,7 +1484,7 @@
+                     importers.add(module.name)
+         self.assertEqual(importers - NON_PRODUCTION_MODULES, {
+             "server.py", "planner_runtime.py", "verifier_runtime.py", "compressor_runtime.py",
+-            "gigachat_transport.py", "ordinary_gigachat_transport.py"})
++            "gigachat_transport.py", "ordinary_gigachat_transport.py", "gigachat_admission.py"})
+ 
+     def test_every_endpoint_constant_read_is_an_inventoried_send_url(self):
+         """Second, receiver-independent net: an LLM/OAuth endpoint read anywhere else is unexplained."""
+@@ -1530,8 +1577,8 @@
+     def test_negative_control_real_source_mutations_are_detected(self):
+         import server
+         source = Path(server.__file__).read_text(encoding="utf-8")
+-        opener = "    async with httpx.AsyncClient(timeout=180.0) as client:\n"
+-        self.assertGreaterEqual(source.count(opener), 2)  # first occurrence is ask_gigachat
++        opener = "    async with guarded_client('mcp_chat', timeout=180.0) as client:\n"
++        self.assertEqual(source.count(opener), 1)  # first occurrence is ask_gigachat
+         baseline = site_multiset(scan_send_sites("server.py", source))
+         mutations = {
+             "second_post_in_ask_gigachat": (
+@@ -1733,7 +1780,7 @@
+         import verifier_runtime
+         verifier = Path(verifier_runtime.__file__).read_text(encoding="utf-8")
+         srv = Path(server.__file__).read_text(encoding="utf-8")
+-        send = "            response = await client.post(CHAT_URL, headers=headers, json=body)\n"
++        send = "            response = await client.post(CHAT_URL, headers=headers, json=body, attempt=_attempt)\n"
+         self.assertEqual(verifier.count(send), 1)
+         self.assertEqual(unexplained_endpoint_reads("verifier_runtime.py", verifier), [])
+         self.assertEqual(unexplained_endpoint_reads("server.py", srv), [])
+@@ -1924,7 +1971,7 @@
+             self.assertEqual((len(data), _sha256(data)), (size, digest), name)
+ 
+     def test_snapshot_reports_missing_and_mismatched_sources(self):
+-        root = Path(tempfile.mkdtemp(dir=_SANDBOX))
++        root = Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir())))
+         evidence, problems = snapshot_evidence(root / "empty", root / "out1", EVIDENCE_PINS)
+         self.assertEqual((evidence, len(problems)), ({}, len(EVIDENCE_PINS)))
+         self.assertTrue(all(p.endswith("source missing") for p in problems))
+--- before/test_rt002_s2_budget_policy.py
++++ after/test_rt002_s2_budget_policy.py
+@@ -1575,7 +1575,8 @@
+ # A changed gate, or any direct/unreviewed consumer of policy/ledger, still fails.
+ OFFLINE_ADMISSION_GATES = {'web_alarm.ordinary_chat_bridge': 'cf7f550ccee87c1a6368bdc1ab7126a6b360427aace1134aa0d9f753be7db4d3',
+  'web_alarm.turn_service': 'c2a8a6412594816165ed843e78fead02d9821891c03677e9317b560cab6b10d5',
+- 'web_alarm.ultra_chat': '1caf0c05a9addeb9e08652566dbea5c15c3a1805b4e39b3ed59ad01cc3a38681'}
++ 'web_alarm.ultra_chat': '1caf0c05a9addeb9e08652566dbea5c15c3a1805b4e39b3ed59ad01cc3a38681',
++ 'gigachat_admission': 'c9f0295e9592c6be7a0fc7c81a00266bfd15189bc15723ee183d36b535b9d73c'}
+ OFFLINE_GUARD_BOOTSTRAPS = {
+     "web_alarm.ordinary_test_fixture": "30fcea6895cdc7a410465566a4cf389ec59f2fee362ea93cc3744fa8288aab03",
+ }
+--- before/test_final_audit.py
++++ after/test_final_audit.py
+@@ -123,7 +123,7 @@
+     async def __aexit__(self, exc_type, exc, tb):
+         return False
+ 
+-    async def post(self, _url, *, headers, json):
++    async def post(self, _url, *, headers, json, attempt=None):
+         self.post_count += 1
+         self.bodies.append(copy.deepcopy(json))
+         if self.responses:
+@@ -255,7 +255,7 @@
+         }
+         with ExitStack() as stack:
+             stack.enter_context(
+-                patch.object(server, "get_access_token", AsyncMock(return_value="token"))
++                patch.object(server, "offline_access_token", AsyncMock(return_value="token"))
+             )
+             stack.enter_context(
+                 patch.object(server, "ensure_workspace_storage", return_value=workspace_info)
+@@ -278,7 +278,7 @@
+                 patch.object(server, "_create_backup_session", return_value=backup)
+             )
+             stack.enter_context(
+-                patch.object(server.httpx, "AsyncClient", return_value=client)
++                patch.object(server, "guarded_client", return_value=client)
+             )
+             if mock_git:
+                 stack.enter_context(
+@@ -287,6 +287,11 @@
+                 stack.enter_context(
+                     patch.object(server, "_agent_git_diff", return_value=dict(git_result))
+                 )
++            else:
++                unavailable={"ok":False,"exit_code":128,"stdout":"","stderr":"synthetic: not a Git workspace",
++                             "truncated":False,"stdout_bytes":0,"stderr_bytes":30}
++                stack.enter_context(patch.object(server,"_agent_git_status",return_value=dict(unavailable)))
++                stack.enter_context(patch.object(server,"_agent_git_diff",return_value=dict(unavailable)))
+             stack.enter_context(
+                 patch.object(
+                     server, "_request_audit_diagnostic",
+@@ -418,12 +423,14 @@
+         policy = server._prepare_policy_for_workspace(
+             self.workspace, server._normalize_permissions(self.permissions)
+         )
+-        _context, metadata = server._collect_final_audit_evidence(
+-            root=self.workspace, candidate_final="Done", policy=policy,
+-            run_id="test", api_request_count=1, tool_call_count=1,
+-            verification_state={"write_revision": 1}, backup_session=None,
+-            run_owned_state=expected,
+-        )
++        unavailable={"ok":False,"exit_code":128,"stdout":"","stderr":"synthetic: not a Git workspace","truncated":False}
++        with patch.object(server,"_agent_git_status",return_value=dict(unavailable)),patch.object(server,"_agent_git_diff",return_value=dict(unavailable)):
++            _context, metadata = server._collect_final_audit_evidence(
++                root=self.workspace, candidate_final="Done", policy=policy,
++                run_id="test", api_request_count=1, tool_call_count=1,
++                verification_state={"write_revision": 1}, backup_session=None,
++                run_owned_state=expected,
++            )
+         self.assertTrue(metadata["critical_for_success"])
+         self.assertTrue(metadata["critical_for_mutating_run"])
+ 
+@@ -2007,18 +2014,20 @@
+                 }],
+             }],
+         }
+-        _context, metadata = server._collect_final_audit_evidence(
+-            root=self.workspace,
+-            candidate_final="Done",
+-            policy=policy,
+-            run_id="run-test",
+-            api_request_count=1,
+-            tool_call_count=1,
+-            verification_state={"write_revision": 0},
+-            backup_session=None,
+-            task_plan_evidence=task_plan,
+-            freshness_snapshot=freshness,
+-        )
++        unavailable={"ok":False,"exit_code":128,"stdout":"","stderr":"synthetic: not a Git workspace","truncated":False}
++        with patch.object(server,"_agent_git_status",return_value=dict(unavailable)),patch.object(server,"_agent_git_diff",return_value=dict(unavailable)):
++            _context, metadata = server._collect_final_audit_evidence(
++                root=self.workspace,
++                candidate_final="Done",
++                policy=policy,
++                run_id="run-test",
++                api_request_count=1,
++                tool_call_count=1,
++                verification_state={"write_revision": 0},
++                backup_session=None,
++                task_plan_evidence=task_plan,
++                freshness_snapshot=freshness,
++            )
+         self.assertTrue(metadata["critical_for_success"])
+         self.assertIn(
+             "requirement_evidence_missing:evidence:verify:readback",
+--- before/test_planner_diagnostics.py
++++ after/test_planner_diagnostics.py
+@@ -55,14 +55,14 @@
+     async def __aexit__(self, *_args):
+         return False
+ 
+-    async def post(self, _url, *, headers, json):
++    async def post(self, _url, *, headers, json, attempt=None):
+         self.body = json
+         self.headers = headers
+         return self.response
+ 
+ 
+ class FailingClient(FakeClient):
+-    async def post(self, _url, *, headers, json):
++    async def post(self, _url, *, headers, json, attempt=None):
+         raise RuntimeError("provider-sensitive-detail")
+ 
+ 
+@@ -72,9 +72,9 @@
+         client = FakeClient(content)
+         diagnostics = []
+         with patch.object(
+-            planner_runtime, "get_access_token", AsyncMock(return_value="secret")
++            planner_runtime, "offline_access_token", AsyncMock(return_value="secret")
+         ), patch.object(
+-            planner_runtime.httpx, "AsyncClient", return_value=client
++            planner_runtime, "guarded_client", return_value=client
+         ):
+             result = await planner_runtime.run_planner(
+                 mode="INITIAL",
+@@ -115,9 +115,9 @@
+         client = FakeClient(content)
+         diagnostics = []
+         with patch.object(
+-            planner_runtime, "get_access_token", AsyncMock(return_value="secret")
++            planner_runtime, "offline_access_token", AsyncMock(return_value="secret")
+         ), patch.object(
+-            planner_runtime.httpx, "AsyncClient", return_value=client
++            planner_runtime, "guarded_client", return_value=client
+         ):
+             with self.assertRaisesRegex(
+                 planner_runtime.PlannerError,
+@@ -151,9 +151,9 @@
+             raise RuntimeError("diagnostics unavailable")
+ 
+         with patch.object(
+-            planner_runtime, "get_access_token", AsyncMock(return_value="secret")
++            planner_runtime, "offline_access_token", AsyncMock(return_value="secret")
+         ), patch.object(
+-            planner_runtime.httpx, "AsyncClient", return_value=client
++            planner_runtime, "guarded_client", return_value=client
+         ):
+             result = await planner_runtime.run_planner(
+                 mode="INITIAL",
+@@ -166,10 +166,10 @@
+     async def test_runtime_error_diagnostic_uses_safe_message(self):
+         diagnostics = []
+         with patch.object(
+-            planner_runtime, "get_access_token", AsyncMock(return_value="secret")
++            planner_runtime, "offline_access_token", AsyncMock(return_value="secret")
+         ), patch.object(
+-            planner_runtime.httpx,
+-            "AsyncClient",
++            planner_runtime,
++            "guarded_client",
+             return_value=FailingClient("unused"),
+         ):
+             with self.assertRaisesRegex(
+--- before/test_planner_session.py
++++ after/test_planner_session.py
+@@ -64,7 +64,7 @@
+     async def __aexit__(self, *_args):
+         return False
+ 
+-    async def post(self, _url, *, headers, json):
++    async def post(self, _url, *, headers, json, attempt=None):
+         self.bodies.append(copy.deepcopy(json))
+         return _Response(self.outputs.pop(0))
+ 
+@@ -77,9 +77,9 @@
+         })]
+         bodies = []
+         session = PlannerSession(raw_task="UNIQUE RAW TASK")
+-        with (patch.object(planner_runtime, "get_access_token", AsyncMock(return_value="token")),
+-              patch.object(planner_runtime.httpx, "AsyncClient",
+-                           side_effect=lambda **_kwargs: _Client(outputs, bodies))):
++        with (patch.object(planner_runtime, "offline_access_token", AsyncMock(return_value="token")),
++              patch.object(planner_runtime, "guarded_client",
++                           side_effect=lambda _route=None, **_kwargs: _Client(outputs, bodies))):
+             await session.call(
+                 mode="INITIAL", raw_task="UNIQUE RAW TASK",
+                 context={"permissions": {"READ": True}, "tools": [{"name": "read_file"}]},
+@@ -101,9 +101,9 @@
+     async def test_invalid_raw_assistant_response_remains_before_repair(self):
+         outputs = ["not json", json.dumps(analysis_plan())]
+         session = PlannerSession(raw_task="task")
+-        with (patch.object(planner_runtime, "get_access_token", AsyncMock(return_value="token")),
+-              patch.object(planner_runtime.httpx, "AsyncClient",
+-                           side_effect=lambda **_kwargs: _Client(outputs, []))):
++        with (patch.object(planner_runtime, "offline_access_token", AsyncMock(return_value="token")),
++              patch.object(planner_runtime, "guarded_client",
++                           side_effect=lambda _route=None, **_kwargs: _Client(outputs, []))):
+             with self.assertRaises(PlannerError):
+                 await session.call(mode="INITIAL", raw_task="task", context={})
+             session.add_control_message(
+@@ -174,12 +174,12 @@
+         session = PlannerSession(raw_task="Create exact text:\nline1\nline2\n")
+         with (
+             patch.object(
+-                planner_runtime, "get_access_token",
++                planner_runtime, "offline_access_token",
+                 AsyncMock(return_value="token"),
+             ),
+             patch.object(
+-                planner_runtime.httpx, "AsyncClient",
+-                side_effect=lambda **_kwargs: _Client(outputs, []),
++                planner_runtime, "guarded_client",
++                side_effect=lambda _route=None, **_kwargs: _Client(outputs, []),
+             ),
+         ):
+             with self.assertRaisesRegex(PlannerError, "double-escaped"):
+--- before/test_provider_attempt_integration.py
++++ after/test_provider_attempt_integration.py
+@@ -83,10 +83,10 @@
+             diagnostic_callback=lambda kind, data: diagnostics.append((kind, data)),
+         )
+         with (
+-            patch.object(planner_runtime, "get_access_token", AsyncMock(return_value="token")),
++            patch.object(planner_runtime, "offline_access_token", AsyncMock(return_value="token")),
+             patch.object(
+-                planner_runtime.httpx,
+-                "AsyncClient",
++                planner_runtime,
++                "guarded_client",
+                 return_value=FakeClient(payload),
+             ),
+         ):
+@@ -197,12 +197,12 @@
+         with (
+             patch.object(
+                 compressor_runtime,
+-                "get_access_token",
++                "offline_access_token",
+                 AsyncMock(return_value="token"),
+             ),
+             patch.object(
+-                compressor_runtime.httpx,
+-                "AsyncClient",
++                compressor_runtime,
++                "guarded_client",
+                 return_value=FakeClient(payload),
+             ),
+         ):
+@@ -248,18 +248,19 @@
+                 "total_tokens": 50,
+             },
+         }
+-        answer = await server._request_audit_diagnostic(
+-            FakeClient(payload),
+-            {"Authorization": "token"},
+-            "provider-model",
+-            [{"role": "user", "content": "Task context"}],
+-            "Rejected candidate",
+-            "Why was it wrong?",
+-            model_id="gigachat_ultra",
+-            provider="gigachat",
+-            diagnostic_callback=lambda event, data: events.append((event, data)),
+-            source_references=["run:r1", "task_block:tb1"],
+-        )
++        with patch.object(server,"guarded_client",return_value=FakeClient(payload)):
++            answer = await server._request_audit_diagnostic(
++                FakeClient(payload),
++                {"Authorization": "token"},
++                "provider-model",
++                [{"role": "user", "content": "Task context"}],
++                "Rejected candidate",
++                "Why was it wrong?",
++                model_id="gigachat_ultra",
++                provider="gigachat",
++                diagnostic_callback=lambda event, data: events.append((event, data)),
++                source_references=["run:r1", "task_block:tb1"],
++            )
+ 
+         self.assertEqual(answer, "diagnosis")
+         self.assertEqual(
+@@ -287,7 +288,7 @@
+ 
+     async def test_audit_diagnostic_parse_error_closes_attempt(self):
+         events = []
+-        with self.assertRaises(ValueError):
++        with patch.object(server,"guarded_client",return_value=FakeClient({})),self.assertRaises(ValueError):
+             await server._request_audit_diagnostic(
+                 FakeClient({}),
+                 {"Authorization": "token"},
+--- before/test_task_planner.py
++++ after/test_task_planner.py
+@@ -1697,8 +1697,8 @@
+ 
+     async def test_runtime_parses_one_shot_without_executor_session(self):
+         client = legacy.FakeClient([legacy.FakeResponse(json.dumps(plan(False)))])
+-        with patch.object(planner_runtime, "get_access_token", AsyncMock(return_value="secret")), \
+-                patch.object(planner_runtime.httpx, "AsyncClient", return_value=client):
++        with patch.object(planner_runtime, "offline_access_token", AsyncMock(return_value="secret")), \
++                patch.object(planner_runtime, "guarded_client", return_value=client):
+             result = await planner_runtime.run_planner(mode="INITIAL", raw_task="Explain", context={})
+         self.assertEqual(result, plan(False))
+         self.assertEqual(client.post_count, 1)
+--- before/ordinary_chat_service.py
++++ after/ordinary_chat_service.py
+@@ -7,7 +7,7 @@
+ from __future__ import annotations
+ 
+ import asyncio
+-from dataclasses import dataclass
++from dataclasses import dataclass, field
+ from enum import Enum
+ import hashlib
+ import json
+@@ -39,7 +39,7 @@
+ class ProviderResponse:
+     """Bounded decoded HTTP reply; status errors cannot become successful text."""
+     status: int
+-    data: object
++    data: object = field(repr=False)
+     error_code: str | None = None
+ 
+ 
+--- before/gigachat_admission.py
++++ after/gigachat_admission.py
+@@ -0,0 +1,360 @@
++"""H34 server-owned S3b adapter for legacy GigaChat call sites.
++
++One existing S2/S3a ledger, Run Store and H33 HTTP boundary. Only explicit TEMP
++owners with exact synthetic profiles/fixtures exist; REAL has no factory/switch.
++Capabilities are private process objects, never browser/config/receipt inputs.
++"""
++from contextlib import contextmanager
++from contextvars import ContextVar
++from dataclasses import dataclass
++import asyncio
++import hashlib
++import json as json_codec
++import math
++from pathlib import Path
++import tempfile
++import uuid
++
++import httpx
++import context_storage as core
++import run_store as runs
++import ultra_budget_policy as policy
++from ultra_budget_ledger import BudgetLedger, Receipt
++from gigachat_transport import CHAT_URL
++from model_registry import MODEL_REGISTRY, get_model_spec
++from ordinary_chat_service import PreSendDenied, PreSendUncertain, _usage
++from provider_accounting import canonical_json_text
++
++_OWNER = ContextVar('gigachat_server_owner', default=None)
++_ROUTES = frozenset({'mcp_chat','executor','audit_diagnostic','planner_session',
++                     'planner_direct','verifier_final','verifier_permission','planner_review','compressor'})
++_VERSION = 'H34-OFFLINE-ONLY-v1'
++
++
++def _digest(value):
++    return hashlib.sha256(json_codec.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False).encode()).hexdigest()
++
++
++@dataclass(frozen=True)
++class ProviderProfile:
++    model_id: str
++    provider_model_id: str
++    endpoint: str
++    context_tokens: int | None
++    output_tokens: int | None
++    evidence: str
++    kind: str = 'UNVERIFIED'
++
++
++def synthetic_profiles():
++    # Fixture bounds, NOT real provider capabilities or H29 preferences.
++    return tuple(ProviderProfile(m.model_id,m.provider_model_id,CHAT_URL,2_000_000,65536,
++                                 'H34 synthetic fixture only','SYNTHETIC')
++                 for m in MODEL_REGISTRY.values() if m.enabled and m.provider=='gigachat' and not m.is_local)
++
++
++def require_real_authority():
++    """No cached token, env, receipt, Boolean or verified-looking profile enables REAL."""
++    raise PreSendDenied('real_provider_authority_unavailable')
++
++
++class _ServerOwner:
++    def __init__(self, root, workspace_id, raw_policy, fixture, profiles, *, run_id=None, chat_id=None, turn_id=None):
++        from ordinary_gigachat_transport import OfflineHTTPFixture
++        self.root=Path(root).absolute()
++        if (type(fixture) is not OfflineHTTPFixture or Path(tempfile.gettempdir()).resolve() not in self.root.parents
++                or self.root.resolve()!=self.root or _OWNER.get() is not None):
++            raise PreSendDenied('explicit_offline_server_owner_required')
++        self.workspace_id=workspace_id
++        self.raw_policy=json_codec.loads(json_codec.dumps(raw_policy,allow_nan=False))
++        self.policy_hash=policy.validate_policy(self.raw_policy).revision_sha256
++        self.fixture=fixture
++        self.profiles=tuple(profiles)
++        self.profile_hash=_digest([vars(p) for p in self.profiles])
++        if turn_id is not None:
++            raise PreSendDenied('turn_requires_existing_turn_service_admission')
++        self.run_id=None;self.chat_id=chat_id;self.turn_id=turn_id;self.final_audit_enabled=False
++        self.owner_id='owner_'+uuid.uuid4().hex
++        self.active=True;self.cancelled=False;self.inflight=None
++        self.ledger=BudgetLedger(self.root,workspace_id)
++        self.ledger.recover()  # Never initialize/adopt/reset at send or owner entry.
++        if run_id is not None:self.bind(self.root,run_id,chat_id)
++
++    def _owner_record(self,state='ACTIVE'):
++        return dict(version=_VERSION,owner_id=self.owner_id,state=state,policy_sha256=self.policy_hash,
++                    profiles_sha256=self.profile_hash,workspace_id=self.workspace_id,
++                    run_id=self.run_id,chat_id=self.chat_id,turn_id=self.turn_id,inflight=self.inflight,
++                    final_audit_enabled=self.final_audit_enabled)
++
++    def bind(self, root, run_id, chat_id=None):
++        if Path(root).absolute()!=self.root or not self.active or self.cancelled:
++            raise PreSendDenied('server_run_scope_changed')
++        if self.run_id is not None:
++            if self.run_id!=run_id or self.chat_id!=chat_id:raise PreSendDenied('server_run_binding_changed')
++            return
++        with core._existing_workspace_writer(self.root,self.workspace_id):
++            summary=runs.load_run_summary(self.root,run_id,chat_id)
++            if not summary or summary.get('workspace_id')!=self.workspace_id or summary.get('chat_id')!=chat_id:
++                raise PreSendDenied('server_run_identity_unavailable')
++            prior=summary.get('s3b_owner')
++            if prior is not None and (type(prior) is not dict or prior.get('state')!='CLOSED'
++                    or set(prior)!=set(self._owner_record()) or prior.get('version')!=_VERSION
++                    or prior.get('workspace_id')!=self.workspace_id or prior.get('run_id')!=run_id
++                    or prior.get('chat_id')!=chat_id or prior.get('turn_id') is not None
++                    or prior.get('inflight') is not None or type(prior.get('owner_id')) is not str
++                    or not prior['owner_id'].startswith('owner_') or len(prior['owner_id'])!=38
++                    or prior.get('policy_sha256')!=self.policy_hash or prior.get('profiles_sha256')!=self.profile_hash
++                    or prior.get('final_audit_enabled')!=self.final_audit_enabled):
++                raise PreSendDenied('server_run_owner_unresolved')
++            recovered=self.ledger.recover()
++            for record in recovered.attempts:
++                _,envelope=self.ledger.reservation(record.attempt_id)
++                if envelope['binding']['run_id']==run_id and (record.state in (policy.RESERVED,policy.SENT)
++                        or any(o in ('timeout','cancelled','transport_error') for o in record.terminal_outcomes)):
++                    raise PreSendDenied('server_run_attempt_unresolved')
++            self.run_id=run_id;self.chat_id=chat_id
++            runs.update_run_summary_index(self.root,run_id,{'s3b_owner':self._owner_record()})
++            self.check()
++
++    def check(self):
++        if not self.active or self.cancelled or self.run_id is None:
++            raise PreSendDenied('server_owner_inactive')
++        try:
++            current_policy=policy.validate_policy(self.raw_policy).revision_sha256
++            current_profiles=_digest([vars(p) for p in self.profiles])
++        except Exception:raise PreSendDenied('server_policy_or_profile_invalid') from None
++        if (current_policy!=self.policy_hash or current_profiles!=self.profile_hash):
++            raise PreSendDenied('server_policy_or_profile_changed')
++        summary=runs.load_run_summary(self.root,self.run_id,self.chat_id)
++        if not summary or summary.get('s3b_owner')!=self._owner_record():
++            raise PreSendDenied('server_owner_not_durable')
++        self.ledger.recover()
++
++    def profile(self, provider_model_id, wire):
++        profiles=[p for p in self.profiles if type(p) is ProviderProfile and p.provider_model_id==provider_model_id]
++        if len(profiles)!=1:raise PreSendDenied('provider_profile_unavailable')
++        p=profiles[0];m=get_model_spec(p.model_id)
++        body=json_codec.loads(wire)
++        if (p.kind!='SYNTHETIC' or p.evidence!='H34 synthetic fixture only' or p.endpoint!=CHAT_URL
++                or m.provider!='gigachat' or m.is_local or m.provider_model_id!=p.provider_model_id
++                or type(p.context_tokens) is not int or p.context_tokens<=0
++                or type(p.output_tokens) is not int or p.output_tokens<=0
++                or type(body.get('max_tokens')) is not int or not 0<body['max_tokens']<=p.output_tokens
++                or len(wire)+body['max_tokens']>p.context_tokens):
++            raise PreSendDenied('provider_caps_unverified_or_exceeded')
++        return p
++
++    def cancel(self):
++        with core._existing_workspace_writer(self.root,self.workspace_id):
++            self.check();self.cancelled=True
++            runs.update_run_summary_index(self.root,self.run_id,{'s3b_owner':self._owner_record('CANCELLED')})
++
++    def close(self, *, failed=False):
++        try:
++            if self.run_id is not None:
++                with core._existing_workspace_writer(self.root,self.workspace_id):
++                    summary=runs.load_run_summary(self.root,self.run_id,self.chat_id)
++                    if summary and summary.get('s3b_owner')==self._owner_record():
++                        runs.update_run_summary_index(self.root,self.run_id,
++                            {'s3b_owner':self._owner_record('UNRESOLVED' if failed else 'CLOSED')})
++        finally:self.active=False
++
++
++@contextmanager
++def offline_server_owner(root, workspace_id, raw_policy, fixture, *, profiles=None, run_id=None, chat_id=None, turn_id=None):
++    owner=_ServerOwner(root,workspace_id,raw_policy,fixture,
++                       synthetic_profiles() if profiles is None else profiles,run_id=run_id,chat_id=chat_id,turn_id=turn_id)
++    token=_OWNER.set(owner)
++    try:
++        yield owner
++    except BaseException:
++        owner.close(failed=True)
++        raise
++    else:owner.close()
++    finally:_OWNER.reset(token)
++
++
++def _require_owner(route):
++    owner=_OWNER.get()
++    if route not in _ROUTES or type(owner) is not _ServerOwner or not owner.active:
++        raise PreSendDenied('server_admission_required')
++    return owner
++
++
++def bind_server_run(root, run_id, chat_id=None, *, final_audit_enabled=False):
++    owner=_OWNER.get()
++    if owner is not None:
++        if type(owner) is not _ServerOwner:raise PreSendDenied('server_owner_forged')
++        if type(final_audit_enabled) is not bool or owner.run_id is not None:
++            raise PreSendDenied('server_effective_policy_binding_changed')
++        owner.final_audit_enabled=final_audit_enabled
++        owner.bind(root,run_id,chat_id)
++
++
++async def offline_access_token():
++    # Compatibility placeholder only. The actual synthetic token boundary is in
++    # H33 AFTER reserve/SENT. No real OAuth function/cache/env is consulted here.
++    owner=_OWNER.get()
++    if type(owner) is not _ServerOwner or not owner.active or owner.cancelled:
++        raise PreSendDenied('real_oauth_disabled')
++    return 'H34-SYNTHETIC-NON-CREDENTIAL'
++
++
++class _ServerAttempt:
++    def __init__(self,owner,route,wire,attempt,logical,timeout):
++        from ordinary_gigachat_transport import GigaChatTransport
++        if type(owner) is not _ServerOwner or _OWNER.get() is not owner:
++            raise PreSendDenied('server_attempt_owner_forged')
++        owner.check();profile=owner.profile(json_codec.loads(wire).get('model'),wire)
++        self.endpoint=profile.endpoint
++        self.owner=owner;self.route=route;self.wire=wire;self.attempt=attempt
++        self.timeout=timeout;self.response_limit=4*1024*1024
++        self.deadline=asyncio.get_running_loop().time()+timeout
++        self.parent_task=asyncio.current_task();self.parent_cancels=self.parent_task.cancelling()
++        self.transport=GigaChatTransport(owner.fixture)
++        self.used=False;self.dispatched=False;self.sent=False
++        scope=owner.run_id if policy.ROUTES[route].scope==policy.SCOPE_RUN else 'scope:'+_digest([owner.run_id,route])
++        self.context=policy.RunContext(scope,owner.final_audit_enabled if policy.ROUTES[route].scope==policy.SCOPE_RUN else False)
++        binding=dict(run_id=owner.run_id,chat_id=owner.chat_id,turn_id=owner.turn_id,
++            logical_call_id=logical+':'+_digest(dict(endpoint=profile.endpoint,profile=vars(profile),
++                owner=owner._owner_record(),route=route,wire=hashlib.sha256(wire).hexdigest())))
++        self.envelope=dict(policy=owner.raw_policy,route_id=route,wire_utf8=wire.decode(),
++                           context=vars(self.context),binding=binding)
++
++    def limits(self,timeout_seconds,max_response_bytes):
++        if timeout_seconds!=self.timeout or max_response_bytes!=self.response_limit:
++            raise PreSendDenied('transport_limits_changed')
++
++    def authorize(self,wire,transport):
++        if (self.used or wire!=self.wire or transport is not self.transport or _OWNER.get() is not self.owner
++                or transport.endpoint!=self.endpoint):
++            raise PreSendDenied('server_attempt_replayed_or_forged')
++        self.used=True;marking=False
++        try:
++            with core._existing_workspace_writer(self.owner.root,self.owner.workspace_id):
++                self.owner.check();self.owner.profile(json_codec.loads(wire)['model'],wire)
++                if self.owner.inflight is not None:raise PreSendDenied('server_call_inflight')
++                ledger=self.owner.ledger
++                receipt=ledger.reserve(self.attempt,self.envelope['policy'],self.route,wire,self.context,self.envelope['binding'])
++                proof,saved=ledger.reservation(self.attempt)
++                if (type(receipt) is not Receipt or receipt.replayed or receipt.record.state!=policy.RESERVED
++                        or proof.record!=receipt.record or proof.revision!=receipt.revision or saved!=self.envelope):
++                    raise PreSendDenied('server_reserve_not_fresh')
++                self.owner.check()
++                self.owner.inflight=self.attempt
++                runs.update_run_summary_index(self.owner.root,self.owner.run_id,{'s3b_owner':self.owner._owner_record()})
++                self.owner.check();marking=True
++                sent=ledger.mark_sent(self.attempt);proof,saved=ledger.reservation(self.attempt)
++                if (type(sent) is not Receipt or sent.replayed or sent.record.state!=policy.SENT
++                        or proof.record!=sent.record or proof.revision!=sent.revision or saved!=self.envelope):
++                    raise PreSendUncertain('server_sent_unverified')
++                self.sent=True;self.check(wire,transport)
++        except PreSendDenied:raise
++        except Exception:
++            if marking:raise PreSendUncertain('server_sent_commit_uncertain') from None
++            raise PreSendDenied('server_reserve_unavailable') from None
++
++    def check(self,wire,transport,*,physical=False):
++        try:
++            with core._existing_workspace_writer(self.owner.root,self.owner.workspace_id):
++                self.owner.check();self.owner.profile(json_codec.loads(wire)['model'],wire)
++                receipt,saved=self.owner.ledger.reservation(self.attempt)
++                if (not self.used or self.dispatched or wire!=self.wire or transport is not self.transport
++                        or _OWNER.get() is not self.owner or self.owner.fixture is not transport._fixture
++                        or transport.endpoint!=self.endpoint
++                        or receipt.record.state!=policy.SENT or saved!=self.envelope
++                        or asyncio.get_running_loop().time()>=self.deadline
++                        or self.parent_task.cancelling()>self.parent_cancels):
++                    raise ValueError('server_attempt_changed')
++                if physical:self.dispatched=True
++        except Exception:raise PreSendUncertain('physical_server_admission_unverified') from None
++
++    def terminal(self,outcome,usage=None):
++        with core._existing_workspace_writer(self.owner.root,self.owner.workspace_id):
++            summary=runs.load_run_summary(self.owner.root,self.owner.run_id,self.owner.chat_id)
++            if (not summary or summary.get('s3b_owner')!=self.owner._owner_record('CANCELLED' if self.owner.cancelled else 'ACTIVE')
++                    or self.owner.inflight!=self.attempt):
++                raise PreSendUncertain('terminal_owner_unverified')
++            receipt,saved=self.owner.ledger.reservation(self.attempt)
++            if receipt.record.state!=policy.SENT or saved!=self.envelope:
++                raise PreSendUncertain('terminal_binding_unverified')
++            expected=policy.apply_terminal(receipt.record,outcome,usage)
++            terminal=self.owner.ledger.terminal(self.attempt,outcome,usage)
++            proof,saved=self.owner.ledger.reservation(self.attempt)
++            if (type(terminal) is not Receipt or terminal.record!=expected or proof.record!=expected
++                    or proof.revision!=terminal.revision or saved!=self.envelope):
++                raise PreSendUncertain('server_terminal_unverified')
++            if outcome in ('completed','provider_error','parse_error') and not self.owner.cancelled:
++                self.owner.inflight=None
++                runs.update_run_summary_index(self.owner.root,self.owner.run_id,{'s3b_owner':self.owner._owner_record()})
++                self.owner.check()
++
++
++class _GuardedClient:
++    def __init__(self,route,timeout,owner):
++        if type(timeout) not in (int,float) or not math.isfinite(timeout) or not 0<timeout<=180:
++            raise PreSendDenied('invalid_transport_timeout')
++        self.route=route;self.timeout=float(timeout);self.owner=owner
++
++    async def __aenter__(self):return self
++    async def __aexit__(self,*args):return False
++
++    async def post(self,url,*,json,headers=None,attempt=None):
++        if (type(self) is not _GuardedClient or _require_owner(self.route) is not self.owner or url!=CHAT_URL):
++            raise PreSendDenied('server_endpoint_or_client_invalid')
++        wire=policy.serialize_request_body(json)
++        metadata=attempt or {}
++        if type(metadata) is not dict:raise PreSendDenied('invalid_attempt_metadata')
++        if attempt is not None:
++            try:
++                selected=get_model_spec(metadata['model_id'])
++                snapshot=canonical_json_text(json).encode('utf-8')
++                if (metadata['provider']!='gigachat' or metadata['role']!=policy.ROUTES[self.route].role
++                        or metadata['provider_model_id']!=json['model'] or selected.provider_model_id!=json['model']
++                        or metadata['request_snapshot_sha256']!=hashlib.sha256(snapshot).hexdigest()
++                        or metadata['request_utf8_bytes']!=len(wire)):
++                    raise ValueError('provider_snapshot_changed')
++            except Exception:raise PreSendDenied('provider_event_model_or_snapshot_changed') from None
++        logical=metadata.get('logical_call_id') or 'direct:'+_digest([self.owner.run_id,self.route,hashlib.sha256(wire).hexdigest()])
++        attempt_id=metadata.get('provider_attempt_id') or 'pa_'+_digest([self.owner.run_id,logical])
++        if any(type(v) is not str or not v or len(v)>512 for v in (attempt_id,logical)):
++            raise PreSendDenied('invalid_attempt_identity')
++        cap=_ServerAttempt(self.owner,self.route,wire,attempt_id,logical,self.timeout)
++        timer=asyncio.timeout(self.timeout)
++        try:
++            async with timer:
++                # Separate transport task: a token/HTTP callback can uncancel
++                # itself, but cannot erase cancellation on its owning caller.
++                reply=await asyncio.create_task(cap.transport.send_bytes(wire,timeout_seconds=self.timeout,
++                    max_response_bytes=cap.response_limit,admission=cap))
++        except PreSendDenied:raise
++        except BaseException as error:
++            if isinstance(error,(Exception,asyncio.CancelledError)) and cap.sent:
++                cap.terminal('cancelled' if isinstance(error,asyncio.CancelledError)
++                    or cap.parent_task.cancelling()>cap.parent_cancels and not timer.expired() else
++                    'timeout' if isinstance(error,TimeoutError) or timer.expired() else 'transport_error')
++            if isinstance(error,TimeoutError):raise httpx.ReadTimeout('provider_timeout') from None
++            if isinstance(error,(PreSendUncertain,asyncio.CancelledError)):raise
++            if isinstance(error,Exception):raise httpx.TransportError('provider_transport_failed') from None
++            raise
++        usage=_usage(reply.data)
++        supplied={k:getattr(usage,k) for k in ('prompt_tokens','completion_tokens','total_tokens')} if usage.status=='complete' else None
++        raw_usage=reply.data.get('usage') if type(reply.data) is dict else None
++        if supplied is not None:
++            status,_,_=policy.validate_usage(raw_usage)
++            if status!='KNOWN':supplied=None
++            elif 'precached_prompt_tokens' in raw_usage:supplied['precached_prompt_tokens']=raw_usage['precached_prompt_tokens']
++        cancelled=self.owner.cancelled or cap.parent_task.cancelling()>cap.parent_cancels and not timer.expired()
++        if timer.expired() or asyncio.get_running_loop().time()>=cap.deadline or cancelled:
++            cap.terminal('cancelled' if cancelled else 'timeout',supplied)
++            raise httpx.ReadTimeout('late_or_cancelled_provider_response')
++        cap.terminal('provider_error' if not 200<=reply.status<300 else 'parse_error' if reply.error_code else 'completed',supplied)
++        content=b'INVALID JSON' if reply.error_code else json_codec.dumps(reply.data,ensure_ascii=False,allow_nan=False).encode()
++        return httpx.Response(reply.status,content=content,request=httpx.Request('POST',CHAT_URL))
++
++
++def guarded_client(route,*,timeout,parent=None):
++    owner=_require_owner(route)
++    if parent is not None and (type(parent) is not _GuardedClient or parent.owner is not owner):
++        raise PreSendDenied('injected_client_not_authorized')
++    return _GuardedClient(route,timeout,owner)
+--- before/test_gigachat_admission.py
++++ after/test_gigachat_admission.py
+@@ -0,0 +1,487 @@
++"""H34 common server admission, seven-site safety and synthetic fixture helpers."""
++import asyncio
++import ast
++from contextlib import contextmanager
++from dataclasses import replace
++import hashlib
++import json
++import os
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++from uuid import uuid4
++
++import httpx
++import context_storage as core
++import run_store as runs
++import gigachat_admission as admission
++import gigachat_transport as oauth
++import ordinary_gigachat_transport as http_transport
++import ultra_budget_policy as policy
++from ultra_budget_ledger import BudgetLedger, LedgerDenied
++from web_alarm.ordinary_chat_bridge import offline_policy
++from ordinary_chat_service import PreSendDenied, PreSendUncertain
++
++BODY={'model':'GigaChat-2-Pro','messages':[{'role':'user','content':'synthetic 🌍'}],
++      'max_tokens':128,'stream':False}
++REPLY={'choices':[{'message':{'role':'assistant','content':'ok'},'finish_reason':'stop'}],
++       'usage':{'prompt_tokens':7,'completion_tokens':5,'total_tokens':12}}
++
++LEGACY_SITES={'server.py':{'ask_gigachat':'mcp_chat','_run_agent_task_impl':'executor','_request_audit_diagnostic':'audit_diagnostic'},
++              'planner_runtime.py':{'call':'planner_session','run_planner':'planner_direct'},
++              'verifier_runtime.py':{'_request_gigachat':'_route'},'compressor_runtime.py':{'_request_gigachat':'compressor'}}
++
++def legacy_contract_issues(sources):
++    issues=[]
++    for module,expected in LEGACY_SITES.items():
++        tree=ast.parse(sources[module])
++        for name,route in expected.items():
++            function=next(n for n in ast.walk(tree) if isinstance(n,ast.AsyncFunctionDef) and n.name==name)
++            calls=[n for n in ast.walk(function) if isinstance(n,ast.Call)]
++            factories=[n for n in calls if isinstance(n.func,ast.Name) and n.func.id=='guarded_client']
++            valid=len(factories)==1 and bool(factories[0].args)
++            if valid:
++                arg=factories[0].args[0]
++                valid=(isinstance(arg,ast.Name) and arg.id=='_route') if route=='_route' else (isinstance(arg,ast.Constant) and arg.value==route)
++            if not valid:issues.append((module,name,'unguarded_or_wrong_route_factory'))
++            if any((isinstance(n.func,ast.Attribute) and n.func.attr in {'AsyncClient','Client'})
++                   or (isinstance(n.func,ast.Name) and n.func.id=='get_access_token') for n in calls):
++                issues.append((module,name,'raw_http_or_oauth'))
++    return issues
++
++
++def synthetic_policy():
++    raw=offline_policy();raw['revision_label']='H34 SYNTHETIC OFFLINE ONLY'
++    raw['run'].update(max_request_bytes=2_000_000,max_request_input_tokens_est=2_000_000,
++        max_verification_request_bytes=2_000_000,max_verification_request_input_tokens_est=2_000_000,
++        max_run_liability_tokens=50_000_000,max_run_attempts=100)
++    for scope in ('compressor','mcp'):
++        raw[scope]=dict(mode='BUDGET',max_request_bytes=2_000_000,max_request_input_tokens_est=2_000_000,
++                       max_scope_liability_tokens=50_000_000,max_scope_attempts=100)
++    return raw
++
++
++@contextmanager
++def synthetic_owner(*,root=None,run_id='h34_run',fixture=None,raw=None,profiles=None):
++    with tempfile.TemporaryDirectory(prefix='h34_owner_') as directory:
++        location=Path(directory) if root is None else Path(root)
++        location.mkdir(parents=True,exist_ok=True)
++        wid=core.ensure_workspace_storage(location)['workspace_id']
++        ledger=BudgetLedger(location,wid);ledger.initialize()  # explicit fresh fixture provisioning
++        if run_id is not None:runs.create_run_summary(location,wid,None,'h34_task',run_id)
++        fixture=fixture or http_transport.OfflineHTTPFixture(body=json.dumps(REPLY).encode())
++        with admission.offline_server_owner(location,wid,synthetic_policy() if raw is None else raw,fixture,
++                                             run_id=run_id,profiles=profiles) as owner:
++            yield owner
++
++
++@contextmanager
++def capture_owner(capture):
++    """S1 explicit fixture authority, not installed in production or by config."""
++    root=getattr(capture,'workspace',None)
++    with synthetic_owner(root=root,run_id=None if root is not None else 'h34_s1_run') as owner:
++        yield owner
++
++
++class ServerAdmissionTests(unittest.IsolatedAsyncioTestCase):
++    async def send(self,owner,route='executor',*,body=None,attempt='pa_h34',timeout=8):
++        from provider_accounting import build_provider_attempt_started
++        payload=BODY if body is None else body
++        model=next(m for m in admission.MODEL_REGISTRY.values() if m.provider_model_id==payload['model'])
++        started=build_provider_attempt_started(role=policy.ROUTES[route].role,mode='H34',provider='gigachat',
++            model_id=model.model_id,provider_model_id=model.provider_model_id,body=payload,blocks=[],
++            provider_attempt_id=attempt,logical_call_id='logical:'+attempt)
++        async with admission.guarded_client(route,timeout=timeout) as client:
++            return await client.post(oauth.CHAT_URL,json=payload,attempt=started)
++
++    async def test_all_routes_exact_wire_sent_and_terminal_readback(self):
++        trace=[]
++        for route in sorted(admission._ROUTES):
++            with self.subTest(route=route),synthetic_owner() as owner:
++                original=httpx.MockTransport.handle_async_request
++                async def capture(mock,request):
++                    proof,envelope=owner.ledger.reservation('pa_h34')
++                    self.assertEqual(proof.record.state,policy.SENT)
++                    self.assertEqual(envelope['wire_utf8'].encode(),request.content)
++                    self.assertEqual(envelope['route_id'],route)
++                    self.assertEqual(envelope['binding']['run_id'],owner.run_id)
++                    self.assertEqual(request.content,policy.serialize_request_body(BODY))
++                    return await original(mock,request)
++                with patch.object(httpx.MockTransport,'handle_async_request',capture):
++                    response=await self.send(owner,route)
++                self.assertEqual(response.json(),REPLY);self.assertEqual(len(owner.fixture.requests),1)
++                record=owner.ledger.recover().attempts[0]
++                self.assertEqual(record.state,policy.KNOWN_TERMINAL)
++                self.assertEqual(record.terminal_outcomes,('completed',))
++                self.assertIsNone(owner.inflight)
++                trace.append(dict(route=route,workspace_id=owner.workspace_id,run_id=owner.run_id,
++                    attempt=record.attempt_id,policy_sha256=owner.policy_hash,model=BODY['model'],
++                    terminal_state=record.state,**owner.fixture.requests[0]))
++        if os.environ.get('H34_TRACE'):
++            Path(os.environ['H34_TRACE']).write_text(json.dumps(dict(real_enabled=False,routes=trace,
++                token_kind='synthetic only',physical_POST_count=len(trace)),indent=2),encoding='utf-8')
++
++    async def test_seven_real_call_sites_without_owner_are_zero_http_oauth(self):
++        import server, planner_runtime, verifier_runtime, compressor_runtime, agent_global_context
++        agent_global_context.save_agent_global_context('H34 SYNTHETIC GLOBAL CONTEXT','ultra')
++        with tempfile.TemporaryDirectory(prefix='h34_unowned_') as directory:
++            root=Path(directory)
++            calls=[('mcp',lambda:server.ask_gigachat('synthetic')),
++                ('executor',lambda:server.run_agent_task('synthetic',str(root),planner_enabled=False,final_audit_enabled=False,
++                    permissions=dict(allow_read=True,allow_write=False,allow_delete=False,allow_verify=False,allow_guard_p1=True,
++                        read_scope='.',write_scope='.',delete_scope='.',tool_limit=1,auto_backup=True))),
++                ('audit',lambda:server._request_audit_diagnostic(object(),{},'GigaChat-2-Pro',[],'candidate','why')),
++                ('planner_session',lambda:planner_runtime.PlannerSession(raw_task='synthetic').call(mode='INITIAL',raw_task='synthetic',context={})),
++                ('planner_direct',lambda:planner_runtime.run_planner(mode='INITIAL',raw_task='synthetic',context={})),
++                ('verifier',lambda:verifier_runtime._request_gigachat(BODY)),
++                ('compressor',lambda:compressor_runtime._request_gigachat(BODY))]
++            with patch.object(httpx,'AsyncClient',side_effect=AssertionError('HTTP factory reached')) as client:
++                for name,call in calls:
++                    with self.subTest(site=name):
++                        with self.assertRaises(Exception) as denied:await call()
++                        chain=[];error=denied.exception
++                        while error is not None:
++                            chain.append(str(error));error=error.__cause__
++                        self.assertTrue(any(code in message for message in chain
++                            for code in ('real_oauth_disabled','server_admission_required')),chain)
++                client.assert_not_called()
++
++    async def test_all_seven_sources_have_guarded_factories_and_no_direct_oauth(self):
++        root=Path(__file__).resolve().parent
++        sources={n:(root/n).read_text() for n in LEGACY_SITES}
++        self.assertEqual(legacy_contract_issues(sources),[])
++        changed=dict(sources);changed['server.py']=changed['server.py'].replace(
++            "guarded_client('mcp_chat', timeout=180.0)","httpx.AsyncClient(timeout=180.0)",1)
++        self.assertTrue(legacy_contract_issues(changed))
++
++    async def test_fresh_process_cannot_replace_durable_owner_after_sent(self):
++        import subprocess,sys
++        class PowerLoss(BaseException):pass
++        with synthetic_owner() as owner:
++            original=BudgetLedger.mark_sent
++            def crash(ledger,attempt):original(ledger,attempt);raise PowerLoss()
++            with patch.object(BudgetLedger,'mark_sent',crash):
++                with self.assertRaises(PowerLoss):await self.send(owner)
++            code='''import sys
++from gigachat_admission import offline_server_owner
++from ordinary_gigachat_transport import OfflineHTTPFixture
++from ordinary_chat_service import PreSendDenied
++from test_gigachat_admission import synthetic_policy
++try:
++    with offline_server_owner(sys.argv[1],sys.argv[2],synthetic_policy(),OfflineHTTPFixture(),run_id=sys.argv[3]):
++        raise AssertionError('second process obtained owner')
++except PreSendDenied:
++    print('DENIED / SENT retained')
++'''
++            result=await asyncio.to_thread(subprocess.run,[sys.executable,'-B','-c',code,str(owner.root),owner.workspace_id,owner.run_id],capture_output=True,timeout=15)
++            self.assertEqual(result.returncode,0,result.stderr.decode(errors='replace'))
++            self.assertIn(b'DENIED',result.stdout)
++            self.assertEqual(owner.ledger.recover().attempts[0].state,policy.SENT)
++
++    async def test_no_authority_or_forged_context_zero_http_token(self):
++        for fake in (None,{},True,object()):
++            token=admission._OWNER.set(fake)
++            try:
++                with self.assertRaises(PreSendDenied):admission.guarded_client('executor',timeout=2)
++                with self.assertRaises(PreSendDenied):await admission.offline_access_token()
++                with self.assertRaises(PreSendDenied):await oauth.get_access_token()
++            finally:admission._OWNER.reset(token)
++
++    async def test_unknown_profiles_caps_endpoint_model_zero_http(self):
++        for mode in ('unknown','caps','endpoint','model','real_kind'):
++            with self.subTest(mode=mode):
++                profiles=admission.synthetic_profiles();p=next(p for p in profiles if p.model_id=='gigachat_2_pro')
++                p=replace(p,**{'unknown':{'context_tokens':None},'caps':{'output_tokens':1},
++                    'endpoint':{'endpoint':'https://invalid.example'},'model':{'provider_model_id':'Unknown'},
++                    'real_kind':{'kind':'VERIFIED_REAL'}}[mode])
++                profiles=tuple(p if q.model_id==p.model_id else q for q in profiles)
++                with synthetic_owner(profiles=profiles) as owner:
++                    with self.assertRaises(PreSendDenied):await self.send(owner)
++                    self.assertEqual(owner.fixture.requests,[]);self.assertEqual(owner.fixture.token_calls,0)
++
++    async def test_model_snapshot_substitution_before_admission_is_denied(self):
++        from provider_accounting import build_provider_attempt_started
++        with synthetic_owner() as owner:
++            body=json.loads(json.dumps(BODY))
++            started=build_provider_attempt_started(role='executor',mode='H34',provider='gigachat',
++                model_id='gigachat_2_pro',provider_model_id=body['model'],body=body,blocks=[])
++            body['model']='GigaChat-2-Max'
++            with self.assertRaises(PreSendDenied):
++                await admission.guarded_client('executor',timeout=2).post(oauth.CHAT_URL,json=body,attempt=started)
++            self.assertEqual(owner.fixture.requests,[]);self.assertEqual(owner.fixture.token_calls,0)
++
++    async def test_external_cancel_suppressed_by_token_provider_is_zero_http(self):
++        with synthetic_owner() as owner:
++            entered=asyncio.Event();release=asyncio.Event();original=http_transport.OfflineHTTPFixture.token
++            async def token(fixture):
++                entered.set()
++                try:await release.wait()
++                except asyncio.CancelledError:asyncio.current_task().uncancel()
++                return await original(fixture)
++            with patch.object(http_transport.OfflineHTTPFixture,'token',token):
++                pending=asyncio.create_task(self.send(owner))
++                await entered.wait();pending.cancel()
++                with self.assertRaises(PreSendUncertain):await pending
++            self.assertEqual(owner.fixture.requests,[])
++            self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++
++    async def test_budget_deny_missing_corrupt_upgrade_ledger_zero_http(self):
++        for mode in ('deny','missing','corrupt','upgrade'):
++            with self.subTest(mode=mode),synthetic_owner() as owner:
++                if mode=='deny':
++                    owner.raw_policy['run']['max_run_liability_tokens']=1
++                    # A policy substitution is itself denied, before admission.
++                marker=owner.root/'.ultra/audit/budget.enrollment.json'
++                if mode=='missing':marker.unlink()
++                if mode=='corrupt':marker.write_text('{}')
++                if mode=='upgrade':
++                    data=json.loads(marker.read_text());data['policy_engine_sha256']='0'*64;marker.write_text(json.dumps(data))
++                with self.assertRaises((PreSendDenied,LedgerDenied)):await self.send(owner)
++                self.assertEqual(owner.fixture.requests,[]);self.assertEqual(owner.fixture.token_calls,0)
++
++    async def test_s2_real_denial_zero_http(self):
++        raw=synthetic_policy();raw['run']['max_request_bytes']=1
++        with synthetic_owner(raw=raw) as owner:
++            with self.assertRaises(PreSendDenied):await self.send(owner)
++            self.assertEqual(owner.fixture.requests,[]);self.assertEqual(owner.fixture.token_calls,0)
++            self.assertEqual(owner.ledger.recover().attempts,())
++
++    async def test_replay_same_attempt_cannot_post_again(self):
++        with synthetic_owner() as owner:
++            await self.send(owner)
++            with self.assertRaises(PreSendDenied):await self.send(owner)
++            self.assertEqual(len(owner.fixture.requests),1)
++            self.assertEqual(len(owner.ledger.recover().attempts),1)
++
++    async def test_injected_client_wrong_endpoint_and_direct_transport_denied(self):
++        with synthetic_owner() as owner:
++            with self.assertRaises(PreSendDenied):admission.guarded_client('audit_diagnostic',timeout=2,parent=object())
++            client=admission.guarded_client('executor',timeout=2)
++            with self.assertRaises(PreSendDenied):await client.post('https://invalid.example',json=BODY)
++            transport=http_transport.GigaChatTransport(owner.fixture)
++            with self.assertRaises(PreSendDenied):await transport.send_bytes(b'{}',timeout_seconds=2,max_response_bytes=8192,admission={})
++            self.assertEqual(owner.fixture.token_calls,0)
++
++    async def test_cancel_before_reserve_and_after_reserve_zero_http(self):
++        for point in ('before','reserved'):
++            with self.subTest(point=point),synthetic_owner() as owner:
++                original=BudgetLedger.reserve
++                def reserve(ledger,*args):
++                    receipt=original(ledger,*args);owner.cancel();return receipt
++                if point=='before':owner.cancel()
++                with patch.object(BudgetLedger,'reserve',reserve) if point=='reserved' else patch.object(owner.fixture,'delay',0):
++                    with self.assertRaises(PreSendDenied):await self.send(owner)
++                self.assertEqual(owner.fixture.requests,[])
++                if point=='reserved':self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++
++    async def test_cancel_after_sent_in_token_boundary_zero_http(self):
++        with synthetic_owner() as owner:
++            original=http_transport.OfflineHTTPFixture.token
++            async def token(fixture):
++                value=await original(fixture);owner.cancel();return value
++            with patch.object(http_transport.OfflineHTTPFixture,'token',token):
++                with self.assertRaises(PreSendUncertain):await self.send(owner)
++            self.assertEqual(owner.fixture.requests,[])
++            self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++
++    async def test_post_admission_wire_substitution_is_blocked(self):
++        with synthetic_owner() as owner:
++            original=httpx.MockTransport.handle_async_request
++            async def change(mock,request):
++                request._content=request.content+b' ';return await original(mock,request)
++            with patch.object(httpx.MockTransport,'handle_async_request',change):
++                with self.assertRaises(PreSendUncertain):await self.send(owner)
++            self.assertEqual(owner.fixture.requests,[])
++            self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++
++    async def test_terminal_commit_failure_cannot_publish_response(self):
++        with synthetic_owner() as owner:
++            with patch.object(BudgetLedger,'terminal',side_effect=OSError('synthetic')):
++                with self.assertRaises(OSError):await self.send(owner)
++            self.assertEqual(len(owner.fixture.requests),1)
++            self.assertEqual(owner.ledger.recover().attempts[0].state,policy.SENT)
++            with self.assertRaises(PreSendDenied):await self.send(owner,attempt='pa_next')
++
++    async def test_timeout_and_transport_error_do_not_zero_or_retry(self):
++        for mode in ('timeout','transport'):
++            with self.subTest(mode=mode),synthetic_owner() as owner:
++                owner.fixture.error=mode
++                with self.assertRaises(httpx.HTTPError):await self.send(owner)
++                self.assertEqual(len(owner.fixture.requests),1)
++                self.assertEqual(owner.ledger.recover().attempts[0].state,policy.UNKNOWN_TERMINAL)
++                self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++                with self.assertRaises(PreSendDenied):await self.send(owner,attempt='pa_next')
++
++    async def test_late_response_after_suppressed_cancellation_is_discarded(self):
++        with synthetic_owner() as owner:
++            original=httpx.MockTransport.handle_async_request
++            async def late(mock,request):
++                response=await original(mock,request)
++                try:await asyncio.sleep(3)
++                except asyncio.CancelledError:pass
++                return response
++            with patch.object(httpx.MockTransport,'handle_async_request',late):
++                with self.assertRaises(httpx.ReadTimeout):await self.send(owner,timeout=2)
++            record=owner.ledger.recover().attempts[0]
++            self.assertGreater(record.liability_tokens,0)
++            self.assertEqual(record.terminal_outcomes,('timeout',))
++
++    async def test_concurrent_requests_and_second_owner_fail_closed(self):
++        with synthetic_owner() as owner:
++            entered=asyncio.Event();release=asyncio.Event();original=http_transport.OfflineHTTPFixture.token
++            async def token(fixture):
++                entered.set();await release.wait();return await original(fixture)
++            with patch.object(http_transport.OfflineHTTPFixture,'token',token):
++                pending=asyncio.create_task(self.send(owner))
++                await entered.wait()
++                try:
++                    with self.assertRaises(PreSendDenied):await self.send(owner,attempt='pa_other')
++                    with self.assertRaises(PreSendDenied):
++                        with admission.offline_server_owner(owner.root,owner.workspace_id,owner.raw_policy,owner.fixture,run_id=owner.run_id):pass
++                finally:release.set()
++                await pending
++            self.assertEqual(len(owner.fixture.requests),1)
++
++    async def test_oauth_cache_and_env_cannot_grant_real(self):
++        with patch.object(oauth,'_access_token','SYNTHETIC-CACHED'),patch.object(oauth,'_access_token_valid_until',float('inf')):
++            with patch.object(oauth.os,'getenv',side_effect=AssertionError('credential read')),patch.object(oauth.httpx,'AsyncClient',side_effect=AssertionError('HTTP')):
++                with self.assertRaises(PreSendDenied):await oauth.get_access_token()
++        with self.assertRaises(PreSendDenied):admission.require_real_authority()
++
++    async def test_provider_envelope_repr_hides_raw_secret_fields(self):
++        from ordinary_chat_service import ProviderResponse
++        secret='SYNTHETIC-SECRET-DO-NOT-LOG'
++        self.assertNotIn(secret,repr(ProviderResponse(200,{'access_token':secret})))
++
++    async def test_legacy_protocol_errors_do_not_echo_raw_provider_fields(self):
++        import server,compressor_runtime,verifier_runtime
++        secret='SYNTHETIC-SECRET-DO-NOT-LOG'
++        calls=[lambda:server.ask_gigachat('synthetic'),
++               lambda:compressor_runtime._request_gigachat(BODY,model_id='gigachat_2_pro'),
++               lambda:verifier_runtime._request_gigachat(BODY)]
++        for call in calls:
++            with self.subTest(site=call),synthetic_owner() as owner:
++                owner.fixture.body=json.dumps({'access_token':secret,'untrusted_field':secret}).encode()
++                with self.assertRaises(Exception) as error:await call()
++                self.assertNotIn(secret,str(error.exception))
++
++    async def test_legacy_success_status_preserves_httpx_contract(self):
++        with synthetic_owner() as owner:
++            owner.fixture.status=201
++            response=await self.send(owner)
++            response.raise_for_status()
++            self.assertEqual(owner.ledger.recover().attempts[0].terminal_outcomes,('completed',))
++
++    async def test_durable_second_owner_and_reopen_after_sent_denied(self):
++        class PowerLoss(BaseException):pass
++        with synthetic_owner() as owner:
++            original=BudgetLedger.mark_sent
++            def crash(ledger,attempt):original(ledger,attempt);raise PowerLoss()
++            with patch.object(BudgetLedger,'mark_sent',crash):
++                with self.assertRaises(PowerLoss):await self.send(owner)
++            self.assertEqual(owner.ledger.recover().attempts[0].state,policy.SENT)
++            self.assertEqual(owner.fixture.requests,[])
++            token=admission._OWNER.set(None)  # simulate independent process context; durable owner still ACTIVE
++            try:
++                with self.assertRaises(PreSendDenied):
++                    with admission.offline_server_owner(owner.root,owner.workspace_id,owner.raw_policy,owner.fixture,run_id=owner.run_id):pass
++            finally:admission._OWNER.reset(token)
++            self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++
++    async def test_clean_reopen_can_read_but_cannot_replay_old_attempt(self):
++        with tempfile.TemporaryDirectory(prefix='h34_reopen_') as directory:
++            root=Path(directory);fixture=http_transport.OfflineHTTPFixture(body=json.dumps(REPLY).encode())
++            with synthetic_owner(root=root,fixture=fixture) as owner:
++                wid=owner.workspace_id;raw=owner.raw_policy;await self.send(owner)
++            with admission.offline_server_owner(root,wid,raw,fixture,run_id='h34_run') as reopened:
++                with self.assertRaises(PreSendDenied):await self.send(reopened)
++            self.assertEqual(len(fixture.requests),1)
++
++    async def test_corrupt_or_old_closed_owner_is_not_silently_adopted(self):
++        for mode in ('version','run','chat','missing','inflight'):
++            with self.subTest(mode=mode),tempfile.TemporaryDirectory(prefix='h34_old_owner_') as folder:
++                root=Path(folder);fixture=http_transport.OfflineHTTPFixture(body=json.dumps(REPLY).encode())
++                with synthetic_owner(root=root,fixture=fixture) as owner:
++                    wid=owner.workspace_id;raw=owner.raw_policy;await self.send(owner)
++                summary=runs.load_run_summary(root,'h34_run');saved=summary['s3b_owner']
++                if mode=='version':saved['version']='OLD'
++                if mode=='run':saved['run_id']='different_run'
++                if mode=='chat':saved['chat_id']='different_chat'
++                if mode=='missing':del saved['owner_id']
++                if mode=='inflight':saved['inflight']='unresolved_attempt'
++                runs.update_run_summary_index(root,'h34_run',{'s3b_owner':saved})
++                with self.assertRaises(PreSendDenied):
++                    with admission.offline_server_owner(root,wid,raw,fixture,run_id='h34_run'):pass
++                self.assertEqual(len(fixture.requests),1)
++
++    async def test_forged_reserve_and_sent_ack_zero_http(self):
++        for mode in ('replay','wrong_wire','sent_ack'):
++            with self.subTest(mode=mode),synthetic_owner() as owner:
++                reserve=BudgetLedger.reserve;mark=BudgetLedger.mark_sent
++                def changed(ledger,attempt,raw,route,wire,context,binding):
++                    if mode=='wrong_wire':wire=policy.serialize_request_body({**json.loads(wire),'max_tokens':1})
++                    receipt=reserve(ledger,attempt,raw,route,wire,context,binding)
++                    return replace(receipt,replayed=True) if mode=='replay' else receipt
++                def sent_ack(ledger,attempt):
++                    receipt,_=ledger.reservation(attempt)
++                    return replace(receipt,record=policy.mark_sent(receipt.record),replayed=False)
++                with patch.object(BudgetLedger,'reserve',changed),patch.object(BudgetLedger,'mark_sent',sent_ack if mode=='sent_ack' else mark):
++                    with self.assertRaises((PreSendDenied,PreSendUncertain)):await self.send(owner)
++                self.assertEqual(owner.fixture.requests,[]);self.assertEqual(owner.fixture.token_calls,0)
++                self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++
++    async def test_owner_policy_profile_endpoint_tamper_after_sent_zero_http(self):
++        for mode in ('policy','profile','endpoint','owner'):
++            with self.subTest(mode=mode),synthetic_owner() as owner:
++                mark=BudgetLedger.mark_sent;patches=[]
++                def changed(ledger,attempt):
++                    receipt=mark(ledger,attempt)
++                    if mode=='policy':owner.raw_policy['revision_label']='CHANGED'
++                    if mode=='profile':owner.profiles=()
++                    if mode=='endpoint':
++                        p=patch.object(http_transport,'CHAT_URL','https://invalid.example');p.start();patches.append(p)
++                    if mode=='owner':runs.update_run_summary_index(owner.root,owner.run_id,{'s3b_owner':{}})
++                    return receipt
++                try:
++                    with patch.object(BudgetLedger,'mark_sent',changed):
++                        with self.assertRaises(PreSendUncertain):await self.send(owner)
++                finally:
++                    for p in patches:p.stop()
++                self.assertEqual(owner.fixture.requests,[]);self.assertEqual(owner.fixture.token_calls,0)
++                self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++
++    async def test_capacity_failure_preserves_reserved_liability_zero_http(self):
++        import ultra_budget_ledger as ledger_module
++        with synthetic_owner() as owner,patch.object(ledger_module,'MAX_EVENTS',1):
++            with self.assertRaises(PreSendUncertain):await self.send(owner)
++            self.assertEqual(owner.fixture.requests,[])
++            self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++
++    async def test_terminal_fake_ack_and_owner_tamper_cannot_publish(self):
++        for mode in ('ack','owner'):
++            with self.subTest(mode=mode),synthetic_owner() as owner:
++                original=httpx.MockTransport.handle_async_request
++                async def response(mock,request):
++                    reply=await original(mock,request)
++                    if mode=='owner':runs.update_run_summary_index(owner.root,owner.run_id,{'s3b_owner':{}})
++                    return reply
++                def fake(ledger,attempt,outcome,usage):
++                    receipt,_=ledger.reservation(attempt)
++                    return replace(receipt,record=policy.apply_terminal(receipt.record,outcome,usage))
++                with patch.object(httpx.MockTransport,'handle_async_request',response),patch.object(BudgetLedger,'terminal',fake) if mode=='ack' else patch.object(owner.fixture,'delay',0):
++                    with self.assertRaises(PreSendUncertain):await self.send(owner)
++                self.assertEqual(len(owner.fixture.requests),1)
++                self.assertEqual(owner.ledger.recover().attempts[0].state,policy.SENT)
++
++    async def test_unknown_usage_keeps_liability_and_error_status_never_retries(self):
++        for status,body in ((200,{'choices':REPLY['choices']}),(401,{'error':'SYNTHETIC-SECRET'}),(200,{'usage':{'prompt_tokens':True}})):
++            with self.subTest(status=status),synthetic_owner() as owner:
++                owner.fixture.status=status;owner.fixture.body=json.dumps(body).encode()
++                response=await self.send(owner)
++                self.assertEqual(response.status_code,status)
++                self.assertGreater(owner.ledger.recover().attempts[0].liability_tokens,0)
++                self.assertEqual(len(owner.fixture.requests),1)
++
++
++if __name__=='__main__':unittest.main()
