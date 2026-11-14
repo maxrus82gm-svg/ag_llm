@@ -1291,7 +1291,8 @@ class _JsonHandler(BaseHTTPRequestHandler):
                 if path == ULTRA_CHAT_CAPABILITY_PATH:
                     offline = getattr(self.server, "web_alarm_offline_chat", None)
                     turn_test = ({**offline.capability(), 'models': offline_test_models()}
-                                 if offline else service.turns.capability())
+                                 if offline else service.capability() if hasattr(service, 'capability')
+                                 else service.turns.capability())
                     self._send_json(200, {'ultra_chat': access.capability(), 'turn_test': turn_test})
                 else:
                     self._send_json(200, {'ultra_chat_write': self.server.web_alarm_ultra_chat_write_access.capability()})
@@ -1448,6 +1449,7 @@ def create_server(
     enable_ultra_chat_write: bool = True,
     test_turn_roots: Sequence[str | Path] = (),
     offline_chat: OfflineUltraChatService | None = None,
+    ordinary_factory=None,
 ) -> ThreadingHTTPServer:
     if not allow_non_loopback and host not in LOOPBACK_HOSTS:
         raise ValueError(
@@ -1459,6 +1461,14 @@ def create_server(
                 or allow_non_loopback or not enable_ultra_chat or not enable_ultra_chat_write
                 or test_turn_roots or enable_folder_picker):
             raise ValueError("Stage 5 needs its disposable registry and a local TEST server")
+
+    from .ordinary_provider import OrdinaryApplicationChatService, OrdinaryProviderFactory
+    if ordinary_factory is not None:
+        if (type(ordinary_factory) is not OrdinaryProviderFactory or offline_chat is not None
+                or test_turn_roots or host not in LOOPBACK_HOSTS or allow_non_loopback
+                or not enable_ultra_chat or not enable_ultra_chat_write):
+            raise ValueError("Ordinary factory requires the normal local Chat application")
+        ordinary_factory.validate_server(api.registry)
 
     class Handler(_JsonHandler):
         pass
@@ -1475,8 +1485,11 @@ def create_server(
     server.web_alarm_ultra_chat_write_access = UltraChatWriteAccess(  # type: ignore[attr-defined]
         enabled=enable_ultra_chat and enable_ultra_chat_write, loopback=host in LOOPBACK_HOSTS)
     server.web_alarm_offline_chat = offline_chat  # type: ignore[attr-defined]
-    server.web_alarm_ultra_chat = offline_chat or UltraChatService(api.registry, test_turn_roots=
-        test_turn_roots if enable_ultra_chat and enable_ultra_chat_write and host in LOOPBACK_HOSTS else ())  # type: ignore[attr-defined]
+    server.web_alarm_ultra_chat = offline_chat or (
+        UltraChatService(api.registry, test_turn_roots=
+            test_turn_roots if enable_ultra_chat and enable_ultra_chat_write and host in LOOPBACK_HOSTS else ())
+        if test_turn_roots else OrdinaryApplicationChatService(
+            api.registry, ordinary_factory if ordinary_factory is not None else OrdinaryProviderFactory()))  # type: ignore[attr-defined]
     return server
 
 

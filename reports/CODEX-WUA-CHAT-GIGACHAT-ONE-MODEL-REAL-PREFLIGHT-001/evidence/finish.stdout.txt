@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "1dfb5046cba2d58cf0c6158b161e2ade86023164ad2934161035675cc0e4d7cc",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 205,
+    "b11b": 211,
+    "b11e": 559
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+    "problems": [],
+    "title": "Web Alarm Ultra — подготовка одного реального GigaChat через штатный веб-чат",
+    "lines": 156
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+    "copy_sha256": "df167b0de0c377f420b33c48ffce54398b5583664c87703632b3f91ffc1da9f2",
+    "history_id": "H-CODEX-000034",
+    "history_record": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "1dfb5046cba2d58cf0c6158b161e2ade86023164ad2934161035675cc0e4d7cc",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+    "copy_sha256": "df167b0de0c377f420b33c48ffce54398b5583664c87703632b3f91ffc1da9f2",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/handoff_task.md",
+    "archive_sha256": "4df11828d31b20e9a5f9e899da53a2251b51d1a1df8fac7481541685f8d7ded9"
+   },
+   "history_id": "H-CODEX-000035",
+   "new_card_sha256": "fbb758f969579a27a4d774d97af18f327ca7f731d407524532ef89143e5c6b57",
+   "copy_sha256_lf": "0b8c557896c0102b48bcf46c34212a7761f18559677df8516b3ccfad6342ffe7",
+   "copy_lines": 156,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 1,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "1dfb5046cba2d58cf0c6158b161e2ade86023164ad2934161035675cc0e4d7cc",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001",
+    "copy_sha256": "df167b0de0c377f420b33c48ffce54398b5583664c87703632b3f91ffc1da9f2",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/handoff_task.md",
+    "archive_sha256": "4df11828d31b20e9a5f9e899da53a2251b51d1a1df8fac7481541685f8d7ded9"
+   },
+   "history_id": "H-CODEX-000035",
+   "new_card_sha256": "fbb758f969579a27a4d774d97af18f327ca7f731d407524532ef89143e5c6b57",
+   "copy_sha256_lf": "0b8c557896c0102b48bcf46c34212a7761f18559677df8516b3ccfad6342ffe7",
+   "copy_lines": 156,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "CRLF",
+   "snapshot": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 1,
+   "history": {
+    "id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+    "history_id": "H-CODEX-000035",
+    "record": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "dd937f1090c0be500eb8262d0310df50eb868f16b6cd19e10082bc4750c78b06",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "fbb758f969579a27a4d774d97af18f327ca7f731d407524532ef89143e5c6b57",
+   "eol": "CRLF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 215
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+    "copy_sha256": "0b8c557896c0102b48bcf46c34212a7761f18559677df8516b3ccfad6342ffe7",
+    "history_id": "H-CODEX-000035",
+    "history_record": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+ "history": {
+  "id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+  "history_id": "H-CODEX-000035",
+  "record": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

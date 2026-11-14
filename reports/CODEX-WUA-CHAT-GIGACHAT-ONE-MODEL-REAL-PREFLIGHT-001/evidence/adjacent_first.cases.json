@@ -1,0 +1,1275 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "subtest:passed": 108,
+    "test:passed": 94,
+    "test:failed": 2
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_bad_ids_model_and_config_cannot_read_or_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_complete_history_and_system_context_use_existing_core",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_context_limit_refuses_whole_request_without_silent_truncation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_cross_owner_new_turn_is_refused_during_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_invalid_response_is_failed_and_not_reexecuted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_late_cancel_retains_usage_but_never_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_many_chats_and_model_selection_are_independent",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_ready_replay_keeps_original_system_and_does_not_rebuild_context",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_real_transport_object_is_never_dispatched",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_tampered_assistant_is_not_projected_as_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_transport_failure_does_not_replay_or_enter_next_context",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_missing_invalid_and_unsupported_reasoning_remain_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_reasoning_is_nested_and_survives_reopen_and_replay",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_core_bridge.py::CoreBridgeHttpTests::test_existing_web_page_routes_and_standard_denial",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_active_profile_uses_bridge_and_old_stage5_is_available",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_missing_test_config_cannot_fall_back_to_standard",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_permanent_cmd_chat_flow_and_cleanup",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_cancel_before_admission_and_late_known_answer",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_commit_then_io_error_is_unknown_without_send_or_release",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_corrupt_or_missing_enrollment_never_bootstraps_zero",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_crash_at_each_boundary_reopen_never_sends_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_exact_bytes_receipts_binding_usage_replay_and_reopen",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_fake_transport_timeout_and_missing_usage_keep_unknown_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_foreign_owner_same_key_competes_for_one_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_historical_audit_requires_explicit_migration",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_mutations_after_mark_sent_deny_and_keep_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_old_policy_has_no_implicit_ordinary_admission",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_request_and_output_reserve_exceeding_synthetic_cap_deny",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_s2_deny_is_zero_send_failed_zero_usage_attempts",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_s2a_enrollment_failure_is_not_implicitly_repaired",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_terminal_failure_cannot_publish_success_or_drop_sent_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_terminal_fake_ack_cannot_publish_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_transport_error_is_not_misreported_as_timeout",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ordinary_admission.py::AdmissionTests::test_unavailable_reserve_and_forged_receipt_are_zero_send",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_browser_config_unknown_models_and_env_do_not_enable_real",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_budget_denials_and_invalid_enrollment_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_budget_denials_and_invalid_enrollment_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_budget_denials_and_invalid_enrollment_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_budget_denials_and_invalid_enrollment_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_budget_denials_and_invalid_enrollment_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_budget_denials_and_invalid_enrollment_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_cancel_during_token_wait_zero_http_no_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_concurrent_duplicate_has_single_http_and_no_second_owner",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_crash_after_sent_or_after_http_reopen_no_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_crash_after_sent_or_after_http_reopen_no_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_crash_after_sent_or_after_http_reopen_no_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_deadline_after_http_preserves_unknown_liability",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_direct_untrusted_authority_and_real_factory_are_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_direct_untrusted_authority_and_real_factory_are_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_direct_untrusted_authority_and_real_factory_are_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_direct_untrusted_authority_and_real_factory_are_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_direct_untrusted_authority_and_real_factory_are_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_direct_untrusted_authority_and_real_factory_are_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_exact_http_bytes_headers_sent_binding_usage_and_reopen",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_forged_missing_replay_wrongwire_receipt_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_forged_missing_replay_wrongwire_receipt_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_forged_missing_replay_wrongwire_receipt_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_forged_missing_replay_wrongwire_receipt_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_forged_missing_replay_wrongwire_receipt_zero_token_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_http_status_json_size_and_provider_errors_no_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_low_level_forged_turn_and_replayed_capability_are_denied",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_multi_chat_context_and_partial_invalid_missing_reasoning_usage",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_admission_http_byte_substitution_is_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_sent_changes_block_before_token",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_sent_changes_block_before_token",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_sent_changes_block_before_token",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_sent_changes_block_before_token",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_sent_changes_block_before_token",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_token_binding_or_client_url_changes_are_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_token_binding_or_client_url_changes_are_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_token_binding_or_client_url_changes_are_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_token_binding_or_client_url_changes_are_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_post_token_binding_or_client_url_changes_are_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_terminal_failure_reopen_does_not_resend",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_transport_timeout_token_failure_no_automatic_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_transport_timeout_token_failure_no_automatic_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_transport_timeout_token_failure_no_automatic_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::HTTPTransportTests::test_transport_timeout_token_failure_no_automatic_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_transport.py::WebHTTPTransportTests::test_loopback_web_two_workspaces_four_chats_replay_f5",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_routes_exact_wire_sent_and_terminal_readback",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_all_seven_sources_have_guarded_factories_and_no_direct_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_budget_deny_missing_corrupt_upgrade_ledger_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_budget_deny_missing_corrupt_upgrade_ledger_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_budget_deny_missing_corrupt_upgrade_ledger_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_budget_deny_missing_corrupt_upgrade_ledger_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_budget_deny_missing_corrupt_upgrade_ledger_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_cancel_after_sent_in_token_boundary_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_cancel_before_reserve_and_after_reserve_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_cancel_before_reserve_and_after_reserve_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_cancel_before_reserve_and_after_reserve_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_capacity_failure_preserves_reserved_liability_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_clean_reopen_can_read_but_cannot_replay_old_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_concurrent_requests_and_second_owner_fail_closed",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_corrupt_or_old_closed_owner_is_not_silently_adopted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_corrupt_or_old_closed_owner_is_not_silently_adopted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_corrupt_or_old_closed_owner_is_not_silently_adopted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_corrupt_or_old_closed_owner_is_not_silently_adopted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_corrupt_or_old_closed_owner_is_not_silently_adopted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_corrupt_or_old_closed_owner_is_not_silently_adopted",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_durable_second_owner_and_reopen_after_sent_denied",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_external_cancel_suppressed_by_token_provider_is_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_forged_reserve_and_sent_ack_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_forged_reserve_and_sent_ack_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_forged_reserve_and_sent_ack_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_forged_reserve_and_sent_ack_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_fresh_process_cannot_replace_durable_owner_after_sent",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_injected_client_wrong_endpoint_and_direct_transport_denied",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_late_response_after_suppressed_cancellation_is_discarded",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_legacy_protocol_errors_do_not_echo_raw_provider_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_legacy_protocol_errors_do_not_echo_raw_provider_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_legacy_protocol_errors_do_not_echo_raw_provider_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_legacy_protocol_errors_do_not_echo_raw_provider_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_legacy_success_status_preserves_httpx_contract",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_model_snapshot_substitution_before_admission_is_denied",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_no_authority_or_forged_context_zero_http_token",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_oauth_cache_and_env_cannot_grant_real",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_owner_policy_profile_endpoint_tamper_after_sent_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_owner_policy_profile_endpoint_tamper_after_sent_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_owner_policy_profile_endpoint_tamper_after_sent_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_owner_policy_profile_endpoint_tamper_after_sent_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_owner_policy_profile_endpoint_tamper_after_sent_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_post_admission_wire_substitution_is_blocked",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_provider_envelope_repr_hides_raw_secret_fields",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_replay_same_attempt_cannot_post_again",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_s2_real_denial_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_seven_real_call_sites_without_owner_are_zero_http_oauth",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_terminal_commit_failure_cannot_publish_response",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_terminal_fake_ack_and_owner_tamper_cannot_publish",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_terminal_fake_ack_and_owner_tamper_cannot_publish",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_terminal_fake_ack_and_owner_tamper_cannot_publish",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_timeout_and_transport_error_do_not_zero_or_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_timeout_and_transport_error_do_not_zero_or_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_timeout_and_transport_error_do_not_zero_or_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_profiles_caps_endpoint_model_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_profiles_caps_endpoint_model_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_profiles_caps_endpoint_model_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_profiles_caps_endpoint_model_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_profiles_caps_endpoint_model_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_profiles_caps_endpoint_model_zero_http",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_usage_keeps_liability_and_error_status_never_retries",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_usage_keeps_liability_and_error_status_never_retries",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_usage_keeps_liability_and_error_status_never_retries",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_gigachat_admission.py::ServerAdmissionTests::test_unknown_usage_keeps_liability_and_error_status_never_retries",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_context_isolation_model_binding_restart_and_conflict",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_error_and_unavailable_storage",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_explicit_repeat_recovers_pending_result",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_model_refusal_leaves_no_turn_or_raw",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_new_process_reuses_original_key_without_transport",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_refuses_foreign_registered_path_before_reading_history",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_tampered_assistant_is_not_projected_as_success",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::OfflineChatTests::test_two_messages_save_fake_answers",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_guard_and_provider_controls",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_http_cancel_reopen_usage_and_standard_gate",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_tk_cancel_control_and_reopen_unknown",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_tk_controls_and_history_shared_with_web",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 3,
+  "guard_events": [
+    {
+      "test": "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_permanent_cmd_chat_flow_and_cleanup",
+      "phase": "call",
+      "expected": false,
+      "events": [
+        {
+          "event": "subprocess.Popen",
+          "boundary": "non_python_process",
+          "pid": 10488,
+          "monotonic": 120573.703
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_guard_and_provider_controls",
+      "phase": "call",
+      "expected": true,
+      "events": [
+        {
+          "event": "socket.connect",
+          "boundary": "physical_network",
+          "pid": 10488,
+          "monotonic": 120688.328
+        },
+        {
+          "event": "socket.getaddrinfo",
+          "boundary": "dns",
+          "pid": 10488,
+          "monotonic": 120688.328
+        },
+        {
+          "event": "credential_read",
+          "boundary": "credentials",
+          "pid": 10488,
+          "monotonic": 120688.328
+        }
+      ]
+    }
+  ]
+}

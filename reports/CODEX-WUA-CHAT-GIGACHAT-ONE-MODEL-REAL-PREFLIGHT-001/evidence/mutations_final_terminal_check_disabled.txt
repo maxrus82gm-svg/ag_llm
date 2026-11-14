@@ -1,0 +1,26 @@
+test_terminal_fake_ack_and_owner_tamper_cannot_publish (test_gigachat_admission.ServerAdmissionTests.test_terminal_fake_ack_and_owner_tamper_cannot_publish) ... 
+  test_terminal_fake_ack_and_owner_tamper_cannot_publish (test_gigachat_admission.ServerAdmissionTests.test_terminal_fake_ack_and_owner_tamper_cannot_publish) (mode='ack') ... FAIL
+  test_terminal_fake_ack_and_owner_tamper_cannot_publish (test_gigachat_admission.ServerAdmissionTests.test_terminal_fake_ack_and_owner_tamper_cannot_publish) (mode='owner') ... FAIL
+
+======================================================================
+FAIL: test_terminal_fake_ack_and_owner_tamper_cannot_publish (test_gigachat_admission.ServerAdmissionTests.test_terminal_fake_ack_and_owner_tamper_cannot_publish) (mode='ack')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 473, in test_terminal_fake_ack_and_owner_tamper_cannot_publish
+    with self.assertRaises(PreSendUncertain):await self.send(owner)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PreSendUncertain not raised
+
+======================================================================
+FAIL: test_terminal_fake_ack_and_owner_tamper_cannot_publish (test_gigachat_admission.ServerAdmissionTests.test_terminal_fake_ack_and_owner_tamper_cannot_publish) (mode='owner')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 473, in test_terminal_fake_ack_and_owner_tamper_cannot_publish
+    with self.assertRaises(PreSendUncertain):await self.send(owner)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PreSendUncertain not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 1.431s
+
+FAILED (failures=2)

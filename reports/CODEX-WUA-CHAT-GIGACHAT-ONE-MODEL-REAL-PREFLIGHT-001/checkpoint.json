@@ -1,0 +1,26 @@
+{
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+  "status": "SUBMITTED / REVIEW PENDING / PARTIAL",
+  "result": "PARTIAL / TECHNICAL NOT READY / REAL FACTORY BLOCKED / RELEASE HOLD",
+  "finished": [
+    "actual STANDARD application integration",
+    "9 new application tests (one added after first broad collection)",
+    "61 JS PASS",
+    "legacy 244+110 PASS",
+    "S1 69 PASS",
+    "S2 73 PASS",
+    "quality 52+7 PASS",
+    "4 expected RED mutations",
+    "compile/Tk constructor PASS",
+    "final core 263+266 PASS / unexpected guard 0"
+  ],
+  "pending": [],
+  "not_run": [
+    "real OAuth/API/paid",
+    "physical CMD/browser/F5",
+    "independent Windows CI",
+    "remote main verification"
+  ],
+  "history_id": "H-CODEX-000035",
+  "next": "Independent Windows review; authoritative contract and mandatory gates, then REAL factory successor; no LIVE"
+}

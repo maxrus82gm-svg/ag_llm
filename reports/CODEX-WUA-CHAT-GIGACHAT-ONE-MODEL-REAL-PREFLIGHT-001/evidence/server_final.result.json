@@ -1,0 +1,66 @@
+{
+  "compile": {
+    "ok": true,
+    "exit_code": 0,
+    "stdout": "OK: server.py\nOK: planner_runtime.py\nOK: verifier_runtime.py\nOK: compressor_runtime.py\nOK: gigachat_transport.py\nOK: ordinary_gigachat_transport.py\nOK: gigachat_admission.py\nOK: ordinary_chat_service.py\nOK: web_alarm/server.py\nOK: web_alarm/ui.py\nOK: web_alarm/ordinary_provider.py\nOK: test_web_alarm_ordinary_application.py\n",
+    "stderr": "",
+    "truncated": false,
+    "stdout_bytes": 325,
+    "stderr_bytes": 0,
+    "paths": [
+      "server.py",
+      "planner_runtime.py",
+      "verifier_runtime.py",
+      "compressor_runtime.py",
+      "gigachat_transport.py",
+      "ordinary_gigachat_transport.py",
+      "gigachat_admission.py",
+      "ordinary_chat_service.py",
+      "web_alarm/server.py",
+      "web_alarm/ui.py",
+      "web_alarm/ordinary_provider.py",
+      "test_web_alarm_ordinary_application.py"
+    ],
+    "check": "python_compile"
+  },
+  "ui_smoke": {
+    "ok": true,
+    "exit_code": 0,
+    "stdout": "OK: UltraApp constructed\n",
+    "stderr": "",
+    "truncated": false,
+    "stdout_bytes": 25,
+    "stderr_bytes": 0,
+    "check": "ui_smoke_test",
+    "target": "ultra_ui.UltraApp"
+  },
+  "guard_denials": 0,
+  "commands": [
+    {
+      "args": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-E",
+        "-B",
+        "-c",
+        "import runpy,sys;runpy.run_path('M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\\\\guard\\\\sitecustomize.py');sys.path.append('M:\\\\GitHub\\\\ag_llm')\nimport json, py_compile, sys\nfrom pathlib import Path\nitems = json.loads(sys.argv[1])\nout_dir = Path(sys.argv[2])\nout_dir.mkdir(parents=True, exist_ok=True)\nfor index, item in enumerate(items):\n    source = item[\"absolute\"]\n    target = out_dir / f\"verify_{index}.pyc\"\n    py_compile.compile(source, cfile=str(target), doraise=True)\n    print(f\"OK: {item['relative']}\")\n",
+        "[{\"relative\": \"server.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\server.py\"}, {\"relative\": \"planner_runtime.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\planner_runtime.py\"}, {\"relative\": \"verifier_runtime.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\verifier_runtime.py\"}, {\"relative\": \"compressor_runtime.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\compressor_runtime.py\"}, {\"relative\": \"gigachat_transport.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\gigachat_transport.py\"}, {\"relative\": \"ordinary_gigachat_transport.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\ordinary_gigachat_transport.py\"}, {\"relative\": \"gigachat_admission.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\gigachat_admission.py\"}, {\"relative\": \"ordinary_chat_service.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\ordinary_chat_service.py\"}, {\"relative\": \"web_alarm/server.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\web_alarm\\\\server.py\"}, {\"relative\": \"web_alarm/ui.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\web_alarm\\\\ui.py\"}, {\"relative\": \"web_alarm/ordinary_provider.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\web_alarm\\\\ordinary_provider.py\"}, {\"relative\": \"test_web_alarm_ordinary_application.py\", \"absolute\": \"M:\\\\GitHub\\\\ag_llm\\\\test_web_alarm_ordinary_application.py\"}]",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_verify_u8jgfpem"
+      ],
+      "cwd": "M:\\GitHub\\ag_llm"
+    },
+    {
+      "args": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-E",
+        "-B",
+        "-c",
+        "import runpy,sys;runpy.run_path('M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\\\\guard\\\\sitecustomize.py');sys.path.append('M:\\\\GitHub\\\\ag_llm')\nimport ultra_ui\napp = None\ntry:\n    app = ultra_ui.UltraApp()\n    app.withdraw()\n    app.update_idletasks()\n    print(\"OK: UltraApp constructed\")\nfinally:\n    if app is not None:\n        app.destroy()\n"
+      ],
+      "cwd": "C:\\Users\\REX\\AppData\\Local\\Temp\\h35_gates_97ve0d5h\\ui"
+    }
+  ],
+  "ui_source_sha256": "9b0b7fa52b82e9612f181ce4ec0620c1e6d37376bbe8f9e7ee92728875cb9033",
+  "ui_cwd": "explicit synthetic TEMP",
+  "guard_before_runtime_imports": true,
+  "exit_code": 0
+}

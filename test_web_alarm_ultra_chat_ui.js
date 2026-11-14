@@ -1282,3 +1282,52 @@ test('per-chat preferences: ordinary history refresh preserves unsaved preferenc
  assert.equal(h.el('chatAnswerTokens').value,'9876');
  assert.equal(h.calls.filter(c=>c.url==='/ultra/chat/workspaces/ws_a/chats/chat_a/settings'&&c.method==='GET').length,1);
 });
+
+function ordinaryRoutes(available=true, extra={}) {
+  return {...offlineRoutes(),
+    '/ui/ultra-chat/capability':()=>({...cap(),turn_test:{available,mode:'ORDINARY',
+      execution_mode:available?'OFFLINE_APPLICATION':'HOLD',real_available:false,chat_preferences:true,
+      models:[{model_id:'gigachat_2_pro',display_name:'GigaChat Pro'}]}}),
+    '/ultra/chat/workspaces/ws_a/chats/chat_a/model':()=>({model_ref:'gigachat_2_pro',persisted:true}),
+    '/ultra/chat/workspaces/ws_a/chats/chat_a/settings':()=>({settings:{compression_threshold_tokens:250000,answer_tokens:10000}}),
+    [S5_TURN+'/latest']:()=>({turn:null,text:null}),...extra};
+}
+test('STANDARD Ordinary sends selected model without local-test refs through normal page',async()=>{
+  const h=harness({routes:ordinaryRoutes(true,{[S5_TURN]:opts=>({...offlineTurn(JSON.parse(opts.body),'SUCCEEDED'),mode:'ORDINARY'})})});
+  await settle();assert.equal(h.context.document.body.getAttribute('data-stage5-offline'),null);
+  assert.equal(h.el('chatInput').disabled,false);assert.match(h.el('chatModel').textContent,/GigaChat Pro/);
+  h.el('chatInput').value='H35 text';await h.el('chatSend').onclick();
+  const sent=JSON.parse(h.calls.find(c=>c.url===S5_TURN&&c.method==='POST').body);
+  assert.equal(sent.model_ref,'gigachat_2_pro');assert.equal(sent.text,'H35 text');
+  assert.equal(Object.keys(sent).sort().join(','),'idempotency_key,model_ref,text');
+  assert.equal(h.run('turnScope()'),'webAlarm.ordinaryTurn.ws_a.chat_a');
+});
+test('STANDARD HOLD keeps per-chat model/preferences but sends nothing',async()=>{
+  const h=harness({routes:ordinaryRoutes(false)});await settle();
+  assert.equal(h.el('chatInput').disabled,true);assert.equal(h.el('chatSend').disabled,true);
+  assert.match(h.el('chatComposerNote').textContent,/Отправка GigaChat закрыта/);
+  assert.equal(h.el('chatPreferences').hidden,false);assert.match(h.el('chatUsage').textContent,/UNKNOWN/);
+  h.el('chatInput').value='forged enabled';await h.el('chatSend').onclick();
+  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
+});
+test('STANDARD model selection saves to this chat and is restored after page recreation',async()=>{
+  let stored=null;
+  const model='/ultra/chat/workspaces/ws_a/chats/chat_a/model';
+  const routes=ordinaryRoutes(false,{[model]:opts=>{if(opts.method==='POST')stored=JSON.parse(opts.body);return {model_ref:stored?.model_ref||'gigachat_2_pro',persisted:!!stored}}});
+  const storage=new Map();const h=harness({routes,storage});await settle();
+  await h.el('chatModelPick').onclick();await h.el('chatModelMenu').children[0].onclick();
+  assert.equal(stored.model_ref,'gigachat_2_pro');
+  assert.equal(h.calls.filter(c=>c.method==='POST')[0].url,model);
+  const reopened=harness({routes,storage});await settle();
+  assert.equal(reopened.run('chatTurn.model'),'gigachat_2_pro');
+  assert.equal(reopened.calls.filter(c=>c.method==='POST').length,0);
+});
+test('STANDARD delayed per-chat model cannot replace the next chat selection',async()=>{
+  let release;const model='/ultra/chat/workspaces/ws_a/chats/chat_a/model';
+  const h=harness({routes:ordinaryRoutes(false)});await settle();
+  h.routes.set(model,()=>new Promise(resolve=>release=resolve));
+  const pending=h.run('loadChatModel()');await settle();
+  h.run("chat.epoch++;chat.chat='chat_b';chatTurn.model=null");
+  release({model_ref:'gigachat_2_pro'});await pending;
+  assert.equal(h.run('chatTurn.model'),null);
+});

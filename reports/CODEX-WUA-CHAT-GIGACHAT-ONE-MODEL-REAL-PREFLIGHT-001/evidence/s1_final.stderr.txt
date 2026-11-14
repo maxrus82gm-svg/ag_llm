@@ -1,0 +1,1090 @@
+[11/14/26 17:45:42] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-2'                                     
+                             coro=<RouteTransportTests.test                    
+                             _executor_transport_failures_a                    
+                             re_recorded_as_unknown_not_zer                    
+                             o() running at                                    
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:809> wait_for=<Task                    
+                             pending name='Task-3'                             
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.859 seconds                                     
+[11/14/26 17:45:43] WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-3'                                     
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             exception=TimeoutError('provid                    
+                             er_timeout') created at                           
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.282                     
+                             seconds                                           
+[11/14/26 17:45:44] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-2'                                     
+                             coro=<RouteTransportTests.test                    
+                             _executor_transport_failures_a                    
+                             re_recorded_as_unknown_not_zer                    
+                             o() running at                                    
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:809> wait_for=<Task                    
+                             pending name='Task-4'                             
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.953 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 500 Internal                    
+                             Server Error"                                     
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-4'                                     
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.234                     
+                             seconds                                           
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-2'                                     
+                             coro=<RouteTransportTests.test                    
+                             _executor_transport_failures_a                    
+                             re_recorded_as_unknown_not_zer                    
+                             o() done, defined at                              
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:792> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.266 seconds                                     
+[11/14/26 17:45:45] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-9'                                     
+                             coro=<RouteTransportTests.test                    
+                             _legacy_observer_failure_canno                    
+                             t_erase_durable_s3b_send()                        
+                             running at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:838> wait_for=<Task                    
+                             pending name='Task-10'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.578 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-10'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.234                     
+                             seconds                                           
+[11/14/26 17:45:46] WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-9'                                     
+                             coro=<RouteTransportTests.test                    
+                             _legacy_observer_failure_canno                    
+                             t_erase_durable_s3b_send()                        
+                             done, defined at                                  
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:825> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.719 seconds                                     
+[11/14/26 17:45:47] WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-15'                                    
+                             coro=<RouteTransportTests.test                    
+                             _negative_control_synchronous_                    
+                             transport_is_rejected() done,                     
+                             defined at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:959> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.094 seconds                                     
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-20'                                    
+                             coro=<RouteTransportTests.test                    
+                             _negative_control_unexpected_d                    
+                             estination_is_rejected() done,                    
+                             defined at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:969> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.656 seconds                                     
+[11/14/26 17:45:48] WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-25'                                    
+                             coro=<RouteTransportTests.test                    
+                             _oauth_token_traffic_is_distin                    
+                             ct_from_llm_traffic() done,                       
+                             defined at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:944> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.203 seconds                                     
+                    WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-30'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route1_mcp_ask_gigachat_sends                    
+                             _without_any_accounting()                         
+                             running at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:644> wait_for=<Task                    
+                             pending name='Task-31'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.219 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-31'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.250                     
+                             seconds                                           
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-30'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route1_mcp_ask_gigachat_sends                    
+                             _without_any_accounting()                         
+                             done, defined at                                  
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:640> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.203 seconds                                     
+[11/14/26 17:45:49] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-36'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route2_audit_diagnostic_forks                    
+                             _full_executor_context()                          
+                             running at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:670> wait_for=<Task                    
+                             pending name='Task-37'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.187 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-37'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.219                     
+                             seconds                                           
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-36'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route2_audit_diagnostic_forks                    
+                             _full_executor_context() done,                    
+                             defined at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:659> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.110 seconds                                     
+[11/14/26 17:45:50] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-42'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_executor_direct_accumu                    
+                             lates_tool_results_without_res                    
+                             et() running at                                   
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:717> wait_for=<Task                    
+                             pending name='Task-43'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.719 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-43'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.250                     
+                             seconds                                           
+[11/14/26 17:45:51] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-42'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_executor_direct_accumu                    
+                             lates_tool_results_without_res                    
+                             et() running at                                   
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:717> wait_for=<Task                    
+                             pending name='Task-44'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.172 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-44'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.359                     
+                             seconds                                           
+[11/14/26 17:45:53] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-42'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_executor_direct_accumu                    
+                             lates_tool_results_without_res                    
+                             et() running at                                   
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:717> wait_for=<Task                    
+                             pending name='Task-45'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.313 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-45'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.390                     
+                             seconds                                           
+[11/14/26 17:45:54] WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-42'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_executor_direct_accumu                    
+                             lates_tool_results_without_res                    
+                             et() done, defined at                             
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:706> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.063 seconds                                     
+[11/14/26 17:45:55] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-50'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_route4_planner_on_rese                    
+                             ts_executor_context_at_stage_b                    
+                             oundary() running at                              
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:770> wait_for=<Task                    
+                             pending name='Task-51'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.063 seconds                                     
+[11/14/26 17:45:56] INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-51'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.250                     
+                             seconds                                           
+[11/14/26 17:45:57] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-50'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_route4_planner_on_rese                    
+                             ts_executor_context_at_stage_b                    
+                             oundary() running at                              
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:770> wait_for=<Task                    
+                             pending name='Task-52'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.390 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-52'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.265                     
+                             seconds                                           
+[11/14/26 17:45:58] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-50'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_route4_planner_on_rese                    
+                             ts_executor_context_at_stage_b                    
+                             oundary() running at                              
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:770> wait_for=<Task                    
+                             pending name='Task-53'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.297 seconds                                     
+[11/14/26 17:45:59] INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-53'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.313                     
+                             seconds                                           
+[11/14/26 17:46:00] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-50'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_route4_planner_on_rese                    
+                             ts_executor_context_at_stage_b                    
+                             oundary() running at                              
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:770> wait_for=<Task                    
+                             pending name='Task-54'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.187 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-54'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.328                     
+                             seconds                                           
+[11/14/26 17:46:02] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-50'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_route4_planner_on_rese                    
+                             ts_executor_context_at_stage_b                    
+                             oundary() running at                              
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:770> wait_for=<Task                    
+                             pending name='Task-55'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.735 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-55'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.344                     
+                             seconds                                           
+[11/14/26 17:46:04] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-50'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_route4_planner_on_rese                    
+                             ts_executor_context_at_stage_b                    
+                             oundary() running at                              
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:770> wait_for=<Task                    
+                             pending name='Task-56'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.234 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-56'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.343                     
+                             seconds                                           
+[11/14/26 17:46:05] WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-50'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route3_route4_planner_on_rese                    
+                             ts_executor_context_at_stage_b                    
+                             oundary() done, defined at                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:736> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             1.485 seconds                                     
+[11/14/26 17:46:06] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-61'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route5_direct_run_planner_is_                    
+                             accounted_but_has_no_productio                    
+                             n_caller() running at                             
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:870> wait_for=<Task                    
+                             pending name='Task-62'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.219 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-62'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.250                     
+                             seconds                                           
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-61'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route5_direct_run_planner_is_                    
+                             accounted_but_has_no_productio                    
+                             n_caller() done, defined at                       
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:861> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.125 seconds                                     
+                    WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-67'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route6_verifier_final_and_per                    
+                             mission_and_planner_review()                      
+                             running at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:889> wait_for=<Task                    
+                             pending name='Task-68'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.203 seconds                                     
+[11/14/26 17:46:07] INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-68'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.235                     
+                             seconds                                           
+                    WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-67'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route6_verifier_final_and_per                    
+                             mission_and_planner_review()                      
+                             running at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:889> wait_for=<Task                    
+                             pending name='Task-69'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.312 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-69'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.235                     
+                             seconds                                           
+                    WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-67'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route6_verifier_final_and_per                    
+                             mission_and_planner_review()                      
+                             running at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:901> wait_for=<Task                    
+                             pending name='Task-70'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.343 seconds                                     
+[11/14/26 17:46:08] INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-70'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.235                     
+                             seconds                                           
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-67'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route6_verifier_final_and_per                    
+                             mission_and_planner_review()                      
+                             done, defined at                                  
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:880> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.125 seconds                                     
+                    WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-75'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route6_verifier_protocol_erro                    
+                             r_discards_returned_usage()                       
+                             running at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:916> wait_for=<Task                    
+                             pending name='Task-76'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.204 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-76'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.234                     
+                             seconds                                           
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-75'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route6_verifier_protocol_erro                    
+                             r_discards_returned_usage()                       
+                             done, defined at                                  
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:909> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.141 seconds                                     
+[11/14/26 17:46:09] WARNING  Executing <Task pending        base_events.py:1994
+                             name='Task-81'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route7_compressor_is_accounte                    
+                             d_outside_run_store() running                     
+                             at                                                
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:931> wait_for=<Task                    
+                             pending name='Task-82'                            
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() running at                                 
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             cb=[Task.task_wakeup()]                           
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420>                                
+                             cb=[_run_until_complete_cb()                      
+                             at                                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\base_events.py:181]                          
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.218 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-82'                                    
+                             coro=<GigaChatTransport.send_b                    
+                             ytes() done, defined at                           
+                             M:\GitHub\ag_llm\ordinary_giga                    
+                             chat_transport.py:55>                             
+                             result=ProviderRespo...ror_cod                    
+                             e=None) created at                                
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\tasks.py:420> took 0.266                     
+                             seconds                                           
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-81'                                    
+                             coro=<RouteTransportTests.test                    
+                             _route7_compressor_is_accounte                    
+                             d_outside_run_store() done,                       
+                             defined at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:925> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.187 seconds                                     
+[11/14/26 17:46:20] INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-87'                                    
+                             coro=<WireEvidenceTests.test_c                    
+                             anonical_snapshot_length_match                    
+                             es_wire_but_hash_does_not()                       
+                             done, defined at                                  
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:588> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.672 seconds                                     
+[11/14/26 17:46:21] INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-92'                                    
+                             coro=<WireEvidenceTests.test_c                    
+                             ontent_length_header_equals_bo                    
+                             dy_bytes() done, defined at                       
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:621> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.657 seconds                                     
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-97'                                    
+                             coro=<WireEvidenceTests.test_n                    
+                             egative_control_different_body                    
+                             _breaks_binding() done,                           
+                             defined at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:611> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.719 seconds                                     
+[11/14/26 17:46:22] INFO     HTTP Request: POST                 _client.py:1740
+                             https://api.giga.chat/v1/chat/comp                
+                             letions "HTTP/1.1 200 OK"                         
+                    WARNING  Executing <Task finished       base_events.py:1994
+                             name='Task-102'                                   
+                             coro=<WireEvidenceTests.test_s                    
+                             orted_key_body_is_the_only_cas                    
+                             e_where_hashes_match() done,                      
+                             defined at                                        
+                             M:\GitHub\ag_llm\test_rt002_s1                    
+                             _routes.py:602> result=None                       
+                             created at                                        
+                             C:\Users\REX\AppData\Local\Pro                    
+                             grams\Python\Python312\Lib\asy                    
+                             ncio\runners.py:100> took                         
+                             0.640 seconds                                     

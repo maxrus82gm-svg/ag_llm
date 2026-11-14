@@ -1,0 +1,21 @@
+test_post_admission_wire_substitution_is_blocked (test_gigachat_admission.ServerAdmissionTests.test_post_admission_wire_substitution_is_blocked) ... FAIL
+
+======================================================================
+FAIL: test_post_admission_wire_substitution_is_blocked (test_gigachat_admission.ServerAdmissionTests.test_post_admission_wire_substitution_is_blocked)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_gigachat_admission.py", line 294, in test_post_admission_wire_substitution_is_blocked
+    with self.assertRaises(PreSendUncertain):await self.send(owner)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PreSendUncertain not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.722s
+
+FAILED (failures=1)

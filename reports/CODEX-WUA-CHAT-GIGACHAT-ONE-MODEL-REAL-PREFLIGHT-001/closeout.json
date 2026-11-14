@@ -1,0 +1,49 @@
+{
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+  "history_id": "H-CODEX-000035",
+  "result": "AUTHOR RESULT READY / PARTIAL",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "independent_review": "NOT VERIFIED",
+  "finish": "ROTATED / CHECK DRY-RUN APPLY READBACK PASS",
+  "sources_sha256": "VERIFIED",
+  "report_sha256": "5373a0cc2f9d16afb81ad1b5fdb1efbfbf8c5fff212568da58d545ae3123a67d",
+  "technical": "NOT READY",
+  "provider_contract": "PARTIAL",
+  "real_factory": "BLOCKED",
+  "real_application_offline": "PASS / SYNTHETIC ONLY",
+  "user_ux": "PENDING",
+  "live": "NOT RUN",
+  "release": "HOLD",
+  "git": "NOT RUN",
+  "remote_main": "NOT VERIFIED",
+  "readbacks": {
+    "history_read": {
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/task_history.py",
+        "--max-tokens",
+        "2000",
+        "read",
+        "--id",
+        "H-CODEX-000035"
+      ],
+      "exit_code": 0
+    },
+    "slot_readback": {
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/task_slot_rotate.py",
+        "check",
+        "--card",
+        "Документация/000_Задачи Codex.md"
+      ],
+      "exit_code": 0
+    }
+  }
+}

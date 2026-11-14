@@ -87,7 +87,11 @@ class TurnHttpTests(Base):
         standard=self.start(name='standard')
         standard.api.registry.register('Same synthetic',self.root)
         ws=standard.api.registry.list()[0].workspace_id
-        code,_,_=standard.post(self.path.replace(self.ws,ws),self.body);self.assertEqual(code,403)
+        # H35 normal Chat accepts Ordinary body shape only, then enforces HOLD.
+        path=self.path.replace(self.ws,ws)
+        code,_,_=standard.post(path,self.body);self.assertEqual(code,400)
+        ordinary={k:v for k,v in self.body.items() if k in {'idempotency_key','text'}}
+        code,_,_=standard.post(path,{**ordinary,'model_ref':'gigachat_2_pro'});self.assertEqual(code,403)
         _,result=self.send()
         read_token=self.server.capability('/ui/ultra-chat/capability','ultra_chat')['token']
         code,_,_=self.server.post(self.path+'/'+result['turn_id']+'/cancel',{},token=read_token);self.assertEqual(code,403)

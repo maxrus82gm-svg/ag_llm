@@ -1,0 +1,26 @@
+test_default_standard_hold_before_turn_raw_token_or_network (test_web_alarm_ordinary_application.ApplicationTests.test_default_standard_hold_before_turn_raw_token_or_network) ... 
+  test_default_standard_hold_before_turn_raw_token_or_network (test_web_alarm_ordinary_application.ApplicationTests.test_default_standard_hold_before_turn_raw_token_or_network) (extra={}) ... FAIL
+test_default_standard_hold_before_turn_raw_token_or_network (test_web_alarm_ordinary_application.ApplicationTests.test_default_standard_hold_before_turn_raw_token_or_network) ... FAIL
+
+======================================================================
+FAIL: test_default_standard_hold_before_turn_raw_token_or_network (test_web_alarm_ordinary_application.ApplicationTests.test_default_standard_hold_before_turn_raw_token_or_network) (extra={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ordinary_application.py", line 108, in test_default_standard_hold_before_turn_raw_token_or_network
+    self.assertIn(status,(400,403))
+AssertionError: 200 not found in (400, 403)
+
+======================================================================
+FAIL: test_default_standard_hold_before_turn_raw_token_or_network (test_web_alarm_ordinary_application.ApplicationTests.test_default_standard_hold_before_turn_raw_token_or_network)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ordinary_application.py", line 110, in test_default_standard_hold_before_turn_raw_token_or_network
+    self.assertEqual(before,after); self.assertEqual(self.fixture.token_calls,0)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'.ul[322 chars]n': '9ddf6174c9c61211fbb41a20759384dd11295e1da[257 chars]b76'} != {'.ul[322 chars]n': '036215d052de91a043cfafebfa43833f7385c54e8[1243 chars]5a7'}
+Diff is 1754 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 1 test in 1.982s
+
+FAILED (failures=2)

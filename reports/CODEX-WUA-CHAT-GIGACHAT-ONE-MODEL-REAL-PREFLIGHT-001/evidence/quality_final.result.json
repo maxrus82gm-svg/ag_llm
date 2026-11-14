@@ -1,0 +1,24 @@
+{
+  "exit_code": 2,
+  "counts": {},
+  "cases": [],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001\\run_checks.py",
+    "--child",
+    "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py",
+    "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/isolation_checks.py",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h35_0rs7_ysm\\p"
+  ],
+  "elapsed_seconds": 1.110000000000582,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 2,
+  "runner_exit_code": 2
+}

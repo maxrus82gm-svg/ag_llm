@@ -1573,7 +1573,10 @@ class SyntheticRunTests(unittest.TestCase):
 OFFLINE_POLICY_CAPSULES = {"ultra_budget_ledger": "9a2cb9a04480f3ecb95c6f94a57b6142d94ea599cfa63f3eae6b98991457f56d"}
 # H32: exact reviewed OFFLINE ingress edges, not an exclusion of the Web graph.
 # A changed gate, or any direct/unreviewed consumer of policy/ledger, still fails.
-OFFLINE_ADMISSION_GATES = {'web_alarm.ordinary_chat_bridge': 'cf7f550ccee87c1a6368bdc1ab7126a6b360427aace1134aa0d9f753be7db4d3',
+# H35: reviewed normal-app wrapper, REAL unconditionally denied; fixture-only
+# first-chat enrollment. Keep this node/edge in the graph and pin its full AST.
+OFFLINE_ADMISSION_GATES = {'web_alarm.ordinary_provider': '2471366340563da38afa76c50b684381b72220428283327c200ae778d2f2b35c',
+ 'web_alarm.ordinary_chat_bridge': 'cf7f550ccee87c1a6368bdc1ab7126a6b360427aace1134aa0d9f753be7db4d3',
  'web_alarm.turn_service': 'c2a8a6412594816165ed843e78fead02d9821891c03677e9317b560cab6b10d5',
  'web_alarm.ultra_chat': '1caf0c05a9addeb9e08652566dbea5c15c3a1805b4e39b3ed59ad01cc3a38681',
  'gigachat_admission': 'c9f0295e9592c6be7a0fc7c81a00266bfd15189bc15723ee183d36b535b9d73c'}

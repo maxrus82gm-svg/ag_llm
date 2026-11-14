@@ -1,0 +1,32 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "test:passed": 1
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_ordinary_application.py::ApplicationTests::test_application_cancel_during_http_keeps_unknown_and_no_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001\\run_checks.py",
+    "--child",
+    "test_web_alarm_ordinary_application.py::ApplicationTests::test_application_cancel_during_http_keeps_unknown_and_no_retry",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h35_3c4n_o1o\\p"
+  ],
+  "elapsed_seconds": 3.8280000000086147,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 0,
+  "runner_exit_code": 0
+}

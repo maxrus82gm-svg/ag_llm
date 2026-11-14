@@ -1,0 +1,12 @@
+# Minimal successor / REAL gates
+
+H35 does not request OWNER GO. A code/transport-only continuation cannot manufacture the missing approvals.
+
+1. Coordinator verifies the actual synchronized source and accepts H35 independently on Windows, including S1's historical RAW evidence availability. Physical owner UX uses the existing STANDARD/TEST entrypoints. H34's bounded independent PASS is a predecessor, not a full S3b acceptance.
+2. Obtain authoritative, dated caps/output and usage/cache/reasoning/rate/cost semantics for GigaChat-2-Pro, plus the owner's account/scope/model availability and TLS trust/proxy policy. These must be supplied or separately authorized: H35 was allowed only four pages, without authenticated probes or additional links. Nothing here asks for credentials in chat.
+3. Resolve applicable №20 §5а gates S3b/S3c/S9/S13a, ledger adoption/production enrollment, capacity/durability/fencing/RAW retention/privacy and every still-open safety decision from the independent H34 review. Keep seven-site denial and owner/identity/attempt/wire/endpoint/reserve/SENT/terminal invariants.
+4. Implement the small missing REAL construction boundary in OrdinaryProviderFactory using the existing H33 byte HTTP path and sole existing get_access_token/cache. It must issue only opaque server authority bound to the approved contract, one model, exact owner/root/attempt/policy and verified TLS transport; no JSON/env/URL/client switch. Scope/cache isolation, redaction, OAuth failure, proxy/redirect handling and a final physical check require OFFLINE adversarial acceptance before admission. Do not activate the cold legacy OAuth code as a shortcut.
+5. Reuse the normal application adapter and existing Turn lifecycle; do not replace the Chat core or serializer. Support verified production Turn/usage/recovery projection rather than treating a temporary fixture's provenance as REAL. Default H35 usage is unavailable for non-admitted production sends and is never fabricated.
+6. Only then prepare the one-attempt short LIVE smoke and ask the owner for a distinct GO. The current package grants no OAuth/API/network/paid permission.
+
+DOC IMPACT for the coordinator: factual bounded H35 progress and remaining REAL factory blocker in №34/40 and the personal review block; №37 §3а CHAT FIRST remains the route, №20 §5а gates remain OPEN. No normative document, other agent task, CI configuration or Git publication was edited by the author.

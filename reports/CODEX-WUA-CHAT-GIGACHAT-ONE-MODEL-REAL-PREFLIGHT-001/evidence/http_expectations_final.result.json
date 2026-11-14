@@ -1,0 +1,141 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "subtest:passed": 11,
+    "test:passed": 8
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_auth_origin_size_schema_and_unknown_references_do_not_write",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_foreign_chat_registered_root_not_allowlisted_and_methods",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_http_cancel_rejects_late_result",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_lost_physical_http_reply_replays_saved_turn",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_send_read_tokens_history_and_restart",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_standard_has_no_send_and_read_capability_cannot_cancel",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_turn_read_requires_read_authority_and_valid_scope",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_turn_read_requires_read_authority_and_valid_scope",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_turn_read_requires_read_authority_and_valid_scope",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_turn_read_requires_read_authority_and_valid_scope",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_two_clients_one_key_one_attempt",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001\\run_checks.py",
+    "--child",
+    "test_web_alarm_ultra_chat_turn_http.py",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\h35_0ba8mkfq\\p"
+  ],
+  "elapsed_seconds": 11.21799999999348,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 0,
+  "runner_exit_code": 0
+}

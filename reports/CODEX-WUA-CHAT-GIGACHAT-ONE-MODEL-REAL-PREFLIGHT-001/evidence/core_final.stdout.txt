@@ -1,0 +1,14 @@
+.......................... [  9%]
+........................................ [ 25%]
+......................................................................................... [ 59%]
+..............................F...................................................................... [ 97%]
+......                                                 [100%]
+================================== FAILURES ===================================
+__ TurnHttpTests.test_standard_has_no_send_and_read_capability_cannot_cancel __
+test_web_alarm_ultra_chat_turn_http.py:90: in test_standard_has_no_send_and_read_capability_cannot_cancel
+    code,_,_=standard.post(self.path.replace(self.ws,ws),self.body);self.assertEqual(code,403)
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: 400 != 403
+=========================== short test summary info ===========================
+FAILED test_web_alarm_ultra_chat_turn_http.py::TurnHttpTests::test_standard_has_no_send_and_read_capability_cannot_cancel
+1 failed, 261 passed, 266 subtests passed in 243.76s (0:04:03)

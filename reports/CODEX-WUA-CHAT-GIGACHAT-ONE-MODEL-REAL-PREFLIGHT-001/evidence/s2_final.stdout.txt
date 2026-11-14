@@ -1,0 +1,53 @@
+{
+  "task": "CLAUDE-RT002-S2-001",
+  "mode": "core",
+  "sandbox": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s2-fxc3209b",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "FAILURES:1"
+    ]
+  },
+  "counts": {
+    "run": 73,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 73,
+  "failures": [
+    "__main__.IsolationTests.test_no_production_module_imports_the_policy_yet"
+  ],
+  "errors": [],
+  "skipped": [],
+  "isolation_violations": [],
+  "problems": [],
+  "selected": null,
+  "dataset_sha256": "8a3ea10b75280ece550138af9a912b161997e17f5f3f17c894686961babf90ce",
+  "elapsed_seconds": 9.477,
+  "log": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s2-fxc3209b\\unittest.log",
+  "log_sha256": "a8fcb1d52278667385c58cf9dc8febc8c1bbc446f8769de939364efdc0005122"
+}
+
+FAIL: test_no_production_module_imports_the_policy_yet (__main__.IsolationTests.test_no_production_module_imports_the_policy_yet)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s2_budget_policy.py", line 1881, in test_no_production_module_imports_the_policy_yet
+    self.assertEqual(result["issues"], [])
+AssertionError: Lists differ: [('ultra_ui', 0, 'PRODUCTION_REACHES_POLIC[1439 chars]cy')] != []
+
+First list contains 9 additional elements.
+First extra element 0:
+('ultra_ui', 0, 'PRODUCTION_REACHES_POLICY:ultra_ui -> web_alarm.server -> web_alarm.ordinary_provider -> ultra_budget_ledger -> ultra_budget_policy')
+
+Diff is 1667 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 73 tests in 9.474s
+
+FAILED (failures=1)
+

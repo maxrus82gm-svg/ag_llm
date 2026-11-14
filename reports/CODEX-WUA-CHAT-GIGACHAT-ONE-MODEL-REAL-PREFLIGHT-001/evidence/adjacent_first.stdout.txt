@@ -1,0 +1,22 @@
+................F...........................................................................F...             [100%]
+================================== FAILURES ===================================
+__________ ActivationTests.test_permanent_cmd_chat_flow_and_cleanup ___________
+test_web_alarm_ordinary_test_activation.py:53: in test_permanent_cmd_chat_flow_and_cleanup
+    process = subprocess.Popen(command, cwd=ROOT, env=env, stdin=subprocess.PIPE,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+reports\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\guard\sitecustomize.py:82: in _audit
+    _deny(event, "non_python_process")
+reports\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\guard\sitecustomize.py:22: in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+E   PermissionError: OFFLINE guard: non_python_process
+_______ HttpAndTkTests.test_http_cancel_reopen_usage_and_standard_gate ________
+test_web_alarm_ultra_chat_s5.py:276: in test_http_cancel_reopen_usage_and_standard_gate
+    self.assertEqual(self.http(standard, "POST", base, body, write)[0], 400)
+E   AssertionError: 403 != 400
+=========================== short test summary info ===========================
+FAILED test_web_alarm_ordinary_test_activation.py::ActivationTests::test_permanent_cmd_chat_flow_and_cleanup
+FAILED test_web_alarm_ultra_chat_s5.py::HttpAndTkTests::test_http_cancel_reopen_usage_and_standard_gate
+2 failed, 94 passed, 108 subtests passed in 147.21s (0:02:27)

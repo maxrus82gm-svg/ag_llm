@@ -273,9 +273,13 @@ class HttpAndTkTests(Fixture):
         cap, _, write = self.tokens(standard)
         self.assertFalse(cap["available"])
         self.assertNotIn('data-stage5-offline="true"', self.http(standard, "GET", "/")[1])
-        self.assertEqual(self.http(standard, "POST", base, body, write)[0], 400)
+        # H35 STANDARD now accepts Ordinary-shaped requests at its route, then
+        # refuses provider execution behind the unchanged REAL HOLD.
+        self.assertEqual(cap["mode"], "ORDINARY")
+        self.assertFalse(cap["real_available"])
+        self.assertEqual(self.http(standard, "POST", base, body, write)[0], 403)
         from web_alarm.turn_service import REFERENCES
-        self.assertEqual(self.http(standard, "POST", base, {**body, **REFERENCES}, write)[0], 403)
+        self.assertEqual(self.http(standard, "POST", base, {**body, **REFERENCES}, write)[0], 400)
 
     def test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat(self):
         from web_alarm.server import _JsonHandler
