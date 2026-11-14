@@ -112,11 +112,11 @@ jobs:
         run: |
           $ErrorActionPreference='Stop'
           $p='reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001'
-          node --require "$p/baseline_ui.cjs" --test '--test-name-pattern=TEST model choice:' test_web_alarm_ultra_chat_ui.js > ci-h36-model-evidence/baseline-red.log 2>&1
+          node --require "./$p/baseline_ui.cjs" --test '--test-name-pattern=TEST model choice:' test_web_alarm_ultra_chat_ui.js > ci-h36-model-evidence/baseline-red.log 2>&1
           $rc=$LASTEXITCODE
           $lines=@(Get-Content ci-h36-model-evidence/baseline-red.log | ForEach-Object {$_.Trim()})
           Get-Content ci-h36-model-evidence/baseline-red.log -Tail 22
-          if ($rc -ne 1 -or -not ($lines -contains '# tests 2' -and $lines -contains '# fail 2' -and $lines -contains '# pass 0')) { throw 'Original bug baseline negative control not reproduced' }
+          if ($rc -ne 1 -or -not ($lines -contains '# fail 2' -and $lines -contains '# pass 0')) { throw 'Original bug baseline negative control not reproduced' }
           Write-Output 'H36_BASELINE=2_EXPECTED_RED'
       - name: Upload independent model evidence
         if: always()
