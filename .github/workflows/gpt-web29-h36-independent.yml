@@ -125,6 +125,8 @@ jobs:
           Get-Content ci-h36-model-evidence/baseline-red.log -Tail 22
           if ($rc -ne 1 -or -not ($lines -contains '# fail 2' -and $lines -contains '# pass 0')) { throw 'Original bug baseline negative control not reproduced' }
           Write-Output 'H36_BASELINE=2_EXPECTED_RED'
+          $global:LASTEXITCODE=0
+          exit 0
       - name: Upload independent model evidence
         if: always()
         uses: actions/upload-artifact@v4
