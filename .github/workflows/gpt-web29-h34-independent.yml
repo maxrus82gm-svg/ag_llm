@@ -60,7 +60,7 @@ jobs:
         run: |
           $ErrorActionPreference='Stop'
           $p='reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001'
-          & .\.venv\Scripts\python.exe -c "import json,pathlib,hashlib,sys; m=json.loads(pathlib.Path('$p/manifest.json').read_text(encoding='utf-8')); pins=m['source_before_after']; matches=[(name, (lambda b,w: hashlib.sha256(b).hexdigest()==w or hashlib.sha256(b.replace(bytes([13,10]),bytes([10])).replace(bytes([10]),bytes([13,10]))).hexdigest()==w)(pathlib.Path(name).read_bytes(), record['after'])) for name,record in pins.items()]; print('H34_SOURCE_PINS:',len(matches),'MATCH',sum(ok for _,ok in matches)); print('MISMATCH:',[name for name,ok in matches if not ok]); sys.exit(0 if len(matches)==16 and all(ok for _,ok in matches) else 1)" > ci-h34-evidence/pins.log 2>&1
+          & .\.venv\Scripts\python.exe -c "import json,pathlib,hashlib,sys; m=json.loads(pathlib.Path('$p/manifest.json').read_text(encoding='utf-8')); pins=m['source_before_after']; matches=[(name, (lambda b,w: any(hashlib.sha256(v).hexdigest()==w for v in (b,b.replace(bytes([13,10]),bytes([10])),b.replace(bytes([13,10]),bytes([10])).replace(bytes([10]),bytes([13,10])))))(pathlib.Path(name).read_bytes(), record['after'])) for name,record in pins.items()]; print('H34_SOURCE_PINS:',len(matches),'MATCH',sum(ok for _,ok in matches)); print('MISMATCH:',[name for name,ok in matches if not ok]); sys.exit(0 if len(matches)==16 and all(ok for _,ok in matches) else 1)" > ci-h34-evidence/pins.log 2>&1
           $rc=$LASTEXITCODE
           Get-Content ci-h34-evidence/pins.log
           if ($rc -ne 0) { throw 'SOURCE SHA mismatch; stop before runtime tests' }
