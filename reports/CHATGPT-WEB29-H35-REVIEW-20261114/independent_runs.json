@@ -1,0 +1,72 @@
+{
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+  "history_id": "H-CODEX-000035",
+  "source_main": "cd0e4d943bb8d341baf07eef2a1d5c2a1619035a",
+  "ci_commit": "1c2930e0aedcebbcae01dd6455e8a6a532cf1d6e",
+  "ci_run": 43598906253,
+  "ci_conclusion": "success",
+  "jobs": [
+    {
+      "id": 132459230325,
+      "name": "core-and-ui",
+      "conclusion": "success"
+    },
+    {
+      "id": 132459230479,
+      "name": "safety-and-quality",
+      "conclusion": "success"
+    },
+    {
+      "id": 132459230529,
+      "name": "application-and-legacy",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14116335068,
+      "name": "h35-independent-core-ui"
+    },
+    {
+      "id": 14116086031,
+      "name": "h35-independent-application-legacy"
+    },
+    {
+      "id": 14114534744,
+      "name": "h35-independent-safety"
+    }
+  ],
+  "counts": {
+    "source_pins": 18,
+    "application": [
+      9,
+      10
+    ],
+    "core": [
+      263,
+      266
+    ],
+    "legacy": [
+      244,
+      110
+    ],
+    "s2": 73,
+    "quality": [
+      52,
+      7
+    ],
+    "ui": 61,
+    "mutants_red": 4,
+    "expected_guard_controls": 9,
+    "unexpected_guard_denials": 0
+  },
+  "diagnostic_failures": [
+    43598557934,
+    43598736087
+  ],
+  "unrelated_full_checkout_failure": 43598557901,
+  "independent_s1": "NOT RUN",
+  "real": "NOT RUN",
+  "user_ux": "PENDING",
+  "verdict": "BOUNDED INDEPENDENT WINDOWS OFFLINE PASS; AUTHOR PARTIAL; REAL HOLD"
+}

@@ -1,0 +1,360 @@
+# Independent H35 NORMAL application + legacy + safety Windows CI. REAL IS DISABLED.
+name: WEB29 H35 independent Windows OFFLINE
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-web29-h35-independent.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  application-and-legacy:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/
+            /reports/task_history_sequences.json
+            /reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /Документация/000_Задачи Codex.md
+            /.github/workflows/gpt-web29-h35-independent.yml
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare isolated TEMP, virtualenv and immutable source record
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path 'C:\h35_independent') { throw 'Unexpected CI TEMP exists' }
+          New-Item -ItemType Directory 'C:\h35_independent\la' -Force | Out-Null
+          'TEMP=C:\h35_independent' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h35_independent' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h35_independent' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h35_independent\la' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory ci-h35-evidence -Force | Out-Null
+          git rev-parse HEAD | Set-Content ci-h35-evidence/source_commit.txt
+          python --version
+          node --version
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'Venv failure' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'Offline test dependencies unavailable' }
+      - name: Verify all H35 manifest source pins
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $code=@'
+          import hashlib, json, pathlib, sys
+          p=pathlib.Path('reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/manifest.json')
+          pins=json.loads(p.read_text(encoding='utf-8'))['sources']
+          result=[]
+          for path,entry in pins.items():
+              try:
+                  b=pathlib.Path(path).read_bytes()
+                  candidates=(b,b.replace(b'\r\n',b'\n'),b.replace(b'\r\n',b'\n').replace(b'\n',b'\r\n'))
+                  ok=any(hashlib.sha256(v).hexdigest()==entry['after'] for v in candidates)
+              except OSError:
+                  ok=False
+              result.append((path,ok))
+          print('H35_SOURCE_PINS:',len(result),'MATCH',sum(ok for _,ok in result))
+          print('MISMATCH:',[p for p,ok in result if not ok])
+          sys.exit(0 if len(result)==18 and all(ok for _,ok in result) else 1)
+          '@
+          $code | & .\.venv\Scripts\python.exe -B - > ci-h35-evidence/pins.log 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content ci-h35-evidence/pins.log
+          if ($rc -ne 0) { throw 'H35 source SHA mismatched' }
+      - name: H35_application
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h35_application test_web_alarm_ordinary_application.py > "ci-h35-evidence/H35_application.log" 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content "ci-h35-evidence/H35_application.log" -Tail 30
+          if ($rc -ne 0) { throw 'H35_application runner exited '+$rc }
+          $x=Get-Content "$p/evidence/ci_h35_application.result.json" -Raw | ConvertFrom-Json
+          if ($x.exit_code -ne 0 -or $x.runner_exit_code -ne 0 -or $x.unexpected_guard_denials -ne 0 -or $x.counts.'test:passed' -ne 9 -or $x.counts.'subtest:passed' -ne 10 -or $x.expected_guard_denials -ne 0 -or $x.counts.'test:failed' -or $x.counts.'test:error' -or $x.counts.'test:skipped') { throw 'Unexpected counts, exit or guard deviations' }
+          Write-Output 'H35_application=9_TESTS_10_SUBTESTS_0_EXPECTED_GUARDS'
+      - name: H35_legacy
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h35_legacy test_gigachat_admission.py test_planner_session.py test_planner_diagnostics.py test_provider_attempt_integration.py test_verifier_runtime.py test_final_audit.py test_task_planner.py > "ci-h35-evidence/H35_legacy.log" 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content "ci-h35-evidence/H35_legacy.log" -Tail 30
+          if ($rc -ne 0) { throw 'H35_legacy runner exited '+$rc }
+          $x=Get-Content "$p/evidence/ci_h35_legacy.result.json" -Raw | ConvertFrom-Json
+          if ($x.exit_code -ne 0 -or $x.runner_exit_code -ne 0 -or $x.unexpected_guard_denials -ne 0 -or $x.counts.'test:passed' -ne 244 -or $x.counts.'subtest:passed' -ne 110 -or $x.expected_guard_denials -ne 0 -or $x.counts.'test:failed' -or $x.counts.'test:error' -or $x.counts.'test:skipped') { throw 'Unexpected counts, exit or guard deviations' }
+          Write-Output 'H35_legacy=244_TESTS_110_SUBTESTS_0_EXPECTED_GUARDS'
+      - name: Capture H35 independent evidence
+        if: always()
+        shell: pwsh
+        run: |
+          $src='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/evidence'
+          New-Item -ItemType Directory ci-h35-evidence -Force | Out-Null
+          Get-ChildItem $src -File -Filter 'ci_h35_*' -ErrorAction SilentlyContinue | ForEach-Object {
+            Copy-Item -LiteralPath $_.FullName -Destination ci-h35-evidence -Force
+          }
+          'H35_S1_PINNED_RAW=NOT_RUN (historical RAW missing from GitHub checkout)' | Set-Content ci-h35-evidence/S1_not_run.txt
+          Write-Output ('EVIDENCE_FILES='+(Get-ChildItem ci-h35-evidence -File).Count)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: h35-independent-application-legacy
+          path: ci-h35-evidence/
+          retention-days: 14
+          if-no-files-found: warn
+
+  core-and-ui:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/
+            /reports/task_history_sequences.json
+            /reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /Документация/000_Задачи Codex.md
+            /.github/workflows/gpt-web29-h35-independent.yml
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare isolated TEMP, virtualenv and immutable source record
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path 'C:\h35_independent') { throw 'Unexpected CI TEMP exists' }
+          New-Item -ItemType Directory 'C:\h35_independent\la' -Force | Out-Null
+          'TEMP=C:\h35_independent' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h35_independent' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h35_independent' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h35_independent\la' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory ci-h35-evidence -Force | Out-Null
+          git rev-parse HEAD | Set-Content ci-h35-evidence/source_commit.txt
+          python --version
+          node --version
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'Venv failure' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'Offline test dependencies unavailable' }
+      - name: H35_core
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h35_core test_web_alarm_ordinary_application.py test_web_alarm_gigachat_transport.py test_web_alarm_ordinary_admission.py test_web_alarm_ordinary_core_bridge.py test_web_alarm_perchat_usage_settings.py test_rt002_s3a_ledger.py test_ordinary_chat_service.py test_web_alarm_ultra_chat_turn.py test_web_alarm_ultra_chat_turn_service.py test_web_alarm_ultra_chat_turn_s4b.py test_web_alarm_ultra_chat_turn_http.py test_web_alarm_ultra_chat_s5.py test_run_store_v2.py test_web_alarm_launcher.py::StableEntryTests test_web_alarm_ordinary_test_activation.py::ActivationTests::test_active_profile_uses_bridge_and_old_stage5_is_available test_web_alarm_ordinary_test_activation.py::ActivationTests::test_missing_test_config_cannot_fall_back_to_standard > "ci-h35-evidence/H35_core.log" 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content "ci-h35-evidence/H35_core.log" -Tail 30
+          if ($rc -ne 0) { throw 'H35_core runner exited '+$rc }
+          $x=Get-Content "$p/evidence/ci_h35_core.result.json" -Raw | ConvertFrom-Json
+          if ($x.exit_code -ne 0 -or $x.runner_exit_code -ne 0 -or $x.unexpected_guard_denials -ne 0 -or $x.counts.'test:passed' -ne 263 -or $x.counts.'subtest:passed' -ne 266 -or $x.expected_guard_denials -ne 9 -or $x.counts.'test:failed' -or $x.counts.'test:error' -or $x.counts.'test:skipped') { throw 'Unexpected counts, exit or guard deviations' }
+          Write-Output 'H35_core=263_TESTS_266_SUBTESTS_9_EXPECTED_GUARDS'
+      - name: H35_s2
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_standalone.py" ci_h35_s2 test_rt002_s2_budget_policy.py > "ci-h35-evidence/H35_s2.log" 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content "ci-h35-evidence/H35_s2.log" -Tail 30
+          if ($rc -ne 0) { throw 'H35_s2 runner exited '+$rc }
+          $x=Get-Content "$p/evidence/ci_h35_s2.result.json" -Raw | ConvertFrom-Json
+          if ($x.exit_code -ne 0 -or $x.counts.run -ne 73 -or $x.counts.failures -or $x.counts.errors -or $x.counts.skipped -or $x.isolation_violations.Count) { throw 'S2 acceptance mismatch' }
+          Write-Output 'H35_S2=73_PASS'
+      - name: H35_node_ui
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001'
+          node --test test_web_alarm_ultra_chat_ui.js > "ci-h35-evidence/H35_node_ui.log" 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content "ci-h35-evidence/H35_node_ui.log" -Tail 30
+          if ($rc -ne 0) { throw 'H35_node_ui runner exited '+$rc }
+          $lines=@(Get-Content 'ci-h35-evidence/H35_node_ui.log' | ForEach-Object {$_.Trim()})
+          if (-not ($lines -contains '# tests 61' -and $lines -contains '# pass 61' -and $lines -contains '# fail 0' -and $lines -contains '# skipped 0')) { throw 'Node UI test counts mismatch' }
+          Write-Output 'H35_NODE_UI=61_PASS'
+      - name: Capture H35 independent evidence
+        if: always()
+        shell: pwsh
+        run: |
+          $src='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/evidence'
+          New-Item -ItemType Directory ci-h35-evidence -Force | Out-Null
+          Get-ChildItem $src -File -Filter 'ci_h35_*' -ErrorAction SilentlyContinue | ForEach-Object {
+            Copy-Item -LiteralPath $_.FullName -Destination ci-h35-evidence -Force
+          }
+          'H35_S1_PINNED_RAW=NOT_RUN (historical RAW missing from GitHub checkout)' | Set-Content ci-h35-evidence/S1_not_run.txt
+          Write-Output ('EVIDENCE_FILES='+(Get-ChildItem ci-h35-evidence -File).Count)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: h35-independent-core-ui
+          path: ci-h35-evidence/
+          retention-days: 14
+          if-no-files-found: warn
+
+  safety-and-quality:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/
+            /reports/task_history_sequences.json
+            /reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /Документация/000_Задачи Codex.md
+            /.github/workflows/gpt-web29-h35-independent.yml
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare isolated TEMP, virtualenv and immutable source record
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path 'C:\h35_independent') { throw 'Unexpected CI TEMP exists' }
+          New-Item -ItemType Directory 'C:\h35_independent\la' -Force | Out-Null
+          'TEMP=C:\h35_independent' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h35_independent' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h35_independent' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h35_independent\la' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory ci-h35-evidence -Force | Out-Null
+          git rev-parse HEAD | Set-Content ci-h35-evidence/source_commit.txt
+          python --version
+          node --version
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'Venv failure' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'Offline test dependencies unavailable' }
+      - name: H35_quality
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h35_quality --import-mode=importlib reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/isolation_checks.py > "ci-h35-evidence/H35_quality.log" 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content "ci-h35-evidence/H35_quality.log" -Tail 30
+          if ($rc -ne 0) { throw 'H35_quality runner exited '+$rc }
+          $x=Get-Content "$p/evidence/ci_h35_quality.result.json" -Raw | ConvertFrom-Json
+          if ($x.exit_code -ne 0 -or $x.runner_exit_code -ne 0 -or $x.unexpected_guard_denials -ne 0 -or $x.counts.'test:passed' -ne 52 -or $x.counts.'subtest:passed' -ne 7 -or $x.expected_guard_denials -ne 0 -or $x.counts.'test:failed' -or $x.counts.'test:error' -or $x.counts.'test:skipped') { throw 'Unexpected counts, exit or guard deviations' }
+          Write-Output 'H35_quality=52_TESTS_7_SUBTESTS_0_EXPECTED_GUARDS'
+      - name: H35_mutations
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/mutation_checks.py" ci_h35_mutations > "ci-h35-evidence/H35_mutations.log" 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content "ci-h35-evidence/H35_mutations.log" -Tail 30
+          if ($rc -ne 0) { throw 'H35_mutations runner exited '+$rc }
+          $x=Get-Content "$p/evidence/ci_h35_mutations.result.json" -Raw | ConvertFrom-Json
+          if ($x.exit_code -ne 0 -or $x.cases.Count -ne 4 -or ($x.cases | Where-Object {$_.observed -ne 'RED' -or $_.errors -ne 0 -or $_.failures -lt 1}).Count -ne 0 -or $x.guard_denials -ne 0) { throw 'Expected four negative RED controls' }
+          Write-Output 'H35_NEGATIVE_MUTATIONS=4_EXPECTED_RED'
+      - name: H35_compile_smoke
+        shell: pwsh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/server_gates.py" ci_h35_gates > "ci-h35-evidence/H35_compile_smoke.log" 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content "ci-h35-evidence/H35_compile_smoke.log" -Tail 30
+          if ($rc -ne 0) { throw 'H35_compile_smoke runner exited '+$rc }
+          $x=Get-Content "$p/evidence/ci_h35_gates.result.json" -Raw | ConvertFrom-Json
+          if ($x.exit_code -ne 0 -or $x.guard_denials -ne 0 -or -not $x.compile.ok -or -not $x.ui_smoke.ok) { throw 'H35 compile/Tk smoke failed' }
+          Write-Output 'H35_COMPILE_TK=PASS'
+      - name: Capture H35 independent evidence
+        if: always()
+        shell: pwsh
+        run: |
+          $src='reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/evidence'
+          New-Item -ItemType Directory ci-h35-evidence -Force | Out-Null
+          Get-ChildItem $src -File -Filter 'ci_h35_*' -ErrorAction SilentlyContinue | ForEach-Object {
+            Copy-Item -LiteralPath $_.FullName -Destination ci-h35-evidence -Force
+          }
+          'H35_S1_PINNED_RAW=NOT_RUN (historical RAW missing from GitHub checkout)' | Set-Content ci-h35-evidence/S1_not_run.txt
+          Write-Output ('EVIDENCE_FILES='+(Get-ChildItem ci-h35-evidence -File).Count)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: h35-independent-safety
+          path: ci-h35-evidence/
+          retention-days: 14
+          if-no-files-found: warn
+
