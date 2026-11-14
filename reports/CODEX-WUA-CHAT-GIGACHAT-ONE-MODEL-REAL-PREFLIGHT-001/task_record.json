@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
   "date": "2026-11-14",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC RECORDED / H35 BOUNDED INDEPENDENT WINDOWS OFFLINE PASS; AUTHOR PARTIAL; USER UX PENDING; REAL FACTORY/RELEASE HOLD",
+  "review": "PASS / BOUNDED INDEPENDENT WINDOWS OFFLINE for STANDARD→Ordinary application; overall H35 PARTIAL / TECHNICAL NOT READY / REAL HOLD; USER GUI NOT RUN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/handoff_task.md",
@@ -15,7 +15,66 @@
     "report": {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/report.md",
       "sha256": "5373a0cc2f9d16afb81ad1b5fdb1efbfbf8c5fff212568da58d545ae3123a67d"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB29-H35-REVIEW-20261114/review.md",
+      "sha256": "c5bb487241670f1a0c1e1ddb26bf126c4cd4db6866ae56d554a803edad063ad2"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+      "history_id": "H-CODEX-000035",
+      "agent": "codex",
+      "title": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
+      "date": "2026-11-14",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/handoff_task.md",
+          "sha256": "dd937f1090c0be500eb8262d0310df50eb868f16b6cd19e10082bc4750c78b06"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/report.md",
+          "sha256": "5373a0cc2f9d16afb81ad1b5fdb1efbfbf8c5fff212568da58d545ae3123a67d"
+        }
+      },
+      "previous": []
+    }
+  ],
+  "independent_review": {
+    "date": "2026-11-14",
+    "source_commit": "cd0e4d943bb8d341baf07eef2a1d5c2a1619035a",
+    "ci_commit": "1c2930e0aedcebbcae01dd6455e8a6a532cf1d6e",
+    "run_id": 43598906253,
+    "diagnostic_runs": [
+      43598557934,
+      43598736087
+    ],
+    "job_ids": [
+      132459230325,
+      132459230479,
+      132459230529
+    ],
+    "artifact_ids": [
+      14116335068,
+      14116086031,
+      14114534744
+    ],
+    "review_path": "reports/CHATGPT-WEB29-H35-REVIEW-20261114/review.md",
+    "evidence_path": "reports/CHATGPT-WEB29-H35-REVIEW-20261114/independent_runs.json",
+    "verdict": "BOUNDED INDEPENDENT WINDOWS OFFLINE PASS / AUTHOR PARTIAL",
+    "user_ux": "PENDING physical STANDARD/TEST",
+    "real_authorized": false,
+    "remaining": [
+      "account-model-scope/caps/cost/usage/TLS unverified",
+      "server REAL factory blocked",
+      "S3b/S3c/S9/S13a unaccepted",
+      "independent historical S1 RAW NOT RUN",
+      "global smoke full Windows checkout filename too long",
+      "USER UX pending"
+    ]
+  }
 }

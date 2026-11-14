@@ -216,28 +216,32 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
 
-Предыдущие БЛОКИ 2–4 сохранены в reports/CHATGPT-WEB29-H34-REVIEW-20261114/prior_closeout_snapshot.md. B1/1.1 неизменны.
+Старые БЛОКИ 2–4 сохранены в `reports/CHATGPT-WEB29-H35-REVIEW-20261114/prior_closeout_snapshot.md`; B1/1.1 неизменны. Авторский `finish` H35 не означает полной REAL/UX-приёмки.
 
-- **14.11 / H-CODEX-000034:** семь legacy GigaChat send-site, guarded admission, independent Windows 244+110 / 254+256 PASS; REAL HOLD.
-- **13.11 / H-CODEX-000033:** GigaChat MockTransport immutable bytes Windows PASS.
-- **13.11 / H-CODEX-000032:** Ordinary fake one-send S2/S3a/Turn/RAW PASS.
-- **12.11 / H-CODEX-000031:** launcher F-01 guard 21 PASS, physical CMD NOT RUN.
-- **10.11 / H-CODEX-000030:** READ-ONLY pre-send PASS, all S3b OPEN.
+- **14.11 / H-CODEX-000035:** STANDARD → Ordinary Core per-chat model/settings/history, actual HTTP fixture; independent Windows 3 jobs PASS, author PARTIAL, REAL/USER UX HOLD.
+- **14.11 / H-CODEX-000034:** seven legacy GigaChat send-site bounded independent Windows OFFLINE PASS; REAL HOLD.
+- **13.11 / H-CODEX-000033:** GigaChat MockTransport exact bytes/Turn/usage bounded OFFLINE PASS.
+- **13.11 / H-CODEX-000032:** Ordinary fake send S2/S3a/Turn/RAW bounded OFFLINE PASS.
+- **12.11 / H-CODEX-000031:** launcher F-01 guard PASS, physical CMD NOT RUN.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **H34:** shared server owner only OFFLINE, seven legacy sends protected; SHA16/16; CI run43576129606 SUCCESS. REAL OAuth gate DENY, full S3b/S3c/S9/S13a and physical user smoke OPEN.
-- **H33:** GigaChat MockTransport immutable bytes → S2/S3a → terminal/Turn/RAW/reopen PASS.
-- **H32:** Ordinary synthetic one-send accepted, real transport absent.
-- **H31:** TEST launcher guard accepted; physical GUI NOT RUN.
-- **H30:** READ-ONLY preflight accepted; full S3b OPEN.
+- **H35:** standard `create_server` now builds `OrdinaryApplicationChatService`; one `GigaChat 2 Pro` model, per-chat persisted preference/settings, history/usage UNKNOWN when not known, real HOLD fail-closed. Source18/18; CI 43598906253 3/3 PASS. **USER UX PENDING; TECHNICAL REAL NOT READY**.
+- **H34:** all seven legacy send-sites synthetic owner-gated through S2/S3a/H33; REAL blocked.
+- **H33:** byte-accurate GigaChat HTTP mock→durable terminal/Turn/RAW accepted.
+- **H32:** Ordinary fake one-send guard accepted.
+- **H31:** launcher F-01 guard accepted; physical GUI still separate.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
+
+## WEB29 / 14.11.2026 — H-CODEX-000035 — STANDARD Ordinary Core bounded independent review
+
+**TASK:** `CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001`, published source `main@cd0e4d943bb8d341baf07eef2a1d5c2a1619035a` №604; independent CI-only #605–607 `GPT@1c2930e0aedcebbcae01dd6455e8a6a532cf1d6e`. [Windows run 43598906253](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43598906253) **SUCCESS / 3 jobs + 3 artifacts**: source18/18, actual STANDARD9+10, Core263+266, legacy244+110, S2 73, quality52+7, JS61, 4 expected RED, no unexpected guard; compile/Tk PASS. First CI RED from missing sparse history source, second from stale app count, both independently fixed in CI only; product code unchanged. **Verdict: PASS BOUNDED INDEPENDENT WINDOWS OFFLINE for STANDARD integration; author PARTIAL, TECHNICAL REAL NOT READY/FACTORY BLOCKED/RELEASE HOLD. USER UX PENDING; physical CMD/Chrome/F5, real OAuth/API/paid/provider caps, S1 historical RAW, full S3b/S3c/S9/S13a NOT RUN.** Separate global full smoke checkout long path FOLLOWUP. Review `reports/CHATGPT-WEB29-H35-REVIEW-20261114/review.md` and `reports/CHATGPT-WEB29-H35-REVIEW-20261114/independent_runs.json`. B1 WAITING, B1.1 H35 immutable; no automatic OWNER GO.
 
 ## WEB29 / 14.11.2026 — H-CODEX-000034 — seven legacy sends bounded independent PASS
 
