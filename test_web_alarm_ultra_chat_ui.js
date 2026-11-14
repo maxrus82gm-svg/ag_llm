@@ -1331,3 +1331,103 @@ test('STANDARD delayed per-chat model cannot replace the next chat selection',as
   release({model_ref:'gigachat_2_pro'});await pending;
   assert.equal(h.run('chatTurn.model'),null);
 });
+
+// TEST model state is server-owned Chat metadata; recreating this harness is F5.
+function testModelRoutes(store, extra={}) {
+  const routes=offlineRoutes({
+    '/ui/ultra-chat/capability':()=>({...cap(),turn_test:{available:true,mode:'TEST_OFFLINE',
+      chat_model_preferences:true,models:[{model_id:'gigachat_2_pro',display_name:'TEST Pro'},
+      {model_id:'gigachat_3_lightning',display_name:'TEST Lightning'},
+      {model_id:'gigachat_ultra',display_name:'TEST Ultra'}]}}),
+    '/ultra/chat/workspaces/ws_a/chats':()=>({state:'ok',chats:[chatItem('chat_a','A'),chatItem('chat_b','B')],excluded:{}}),
+    '/ultra/chat/workspaces/ws_a/chats/chat_b/messages?limit=50':()=>page([]),
+    '/ultra/chat/workspaces/ws_a/chats/chat_b/turns/latest':()=>({turn:null,text:null}),
+  });
+  for(const cid of ['chat_a','chat_b']){
+    const url='/ultra/chat/workspaces/ws_a/chats/'+cid+'/model';
+    routes[url]=opts=>{if(opts.method==='POST')store.set(cid,JSON.parse(opts.body).model_ref);
+      return {model_ref:store.get(cid)||'gigachat_2_pro',persisted:store.has(cid)}};
+  }
+  return {...routes,...extra};
+}
+async function pickTestModel(h, index){await h.el('chatModelPick').onclick();await h.el('chatModelMenu').children[index].onclick();}
+test('TEST model choice: two chats restore their own selection after switching and F5',async()=>{
+  const store=new Map(),storage=new Map(),routes=testModelRoutes(store);
+  const h=harness({offline:true,storage,routes});await settle();
+  await h.run("selectChat('chat_a')");
+  await pickTestModel(h,1);
+  await h.run("selectChat('chat_b')");await pickTestModel(h,2);
+  await h.run("selectChat('chat_a')");
+  assert.equal(h.run('chatTurn.model'),'gigachat_3_lightning','A must restore Lightning instead of page-global Ultra');
+  const reopened=harness({offline:true,storage,routes});await settle();
+  assert.equal(reopened.run('chatTurn.model'),'gigachat_3_lightning','F5 restores A');
+  await reopened.run("selectChat('chat_b')");
+  assert.equal(reopened.run('chatTurn.model'),'gigachat_ultra');
+  assert.deepEqual([...store],[['chat_a','gigachat_3_lightning'],['chat_b','gigachat_ultra']]);
+  assert.equal(h.calls.some(c=>c.url.startsWith('/ultra/connections')),false);
+});
+test('TEST model choice: F5 alone restores Lightning from durable state',async()=>{
+  const store=new Map(),storage=new Map(),routes=testModelRoutes(store);
+  const h=harness({offline:true,storage,routes});await settle();await h.run("selectChat('chat_a')");await pickTestModel(h,1);
+  const reopened=harness({offline:true,storage,routes});await settle();
+  assert.equal(reopened.run('chatTurn.model'),'gigachat_3_lightning');
+});
+test('TEST model errors: failed save never claims the new choice and reselect repairs it',async()=>{
+  const store=new Map(),url='/ultra/chat/workspaces/ws_a/chats/chat_a/model';
+  const routes=testModelRoutes(store),normal=routes[url];let fail=true;
+  routes[url]=opts=>{if(opts.method==='POST'&&fail)throw Error('synthetic storage failure');return normal(opts)};
+  const h=harness({offline:true,routes});await settle();await h.run("selectChat('chat_a')");
+  await pickTestModel(h,1);
+  assert.equal(store.has('chat_a'),false);assert.equal(h.run('chatTurn.model'),null);
+  assert.equal(h.el('chatSend').disabled,true);assert.equal(h.el('chatModelError').hidden,false);
+  assert.match(h.el('chatModelError').textContent,/не подтверждён/);
+  fail=false;await h.el('chatModelMenu').children[1].onclick();
+  assert.equal(h.run('chatTurn.model'),'gigachat_3_lightning');assert.equal(h.el('chatSend').disabled,false);
+});
+test('TEST model errors: corrupt or missing catalog choice is explicit, never a silent default',async()=>{
+  for(const reply of [{model_ref:'removed'}, {httpError:true,status:409,data:{error:{code:'test_chat_model_invalid'}}}]){
+    const routes=testModelRoutes(new Map(),{'/ultra/chat/workspaces/ws_a/chats/chat_a/model':()=>reply});
+    const h=harness({offline:true,routes});await settle();await h.run("selectChat('chat_a')");
+    assert.equal(h.run('chatTurn.model'),null);assert.equal(h.el('chatSend').disabled,true);
+    assert.equal(h.el('chatModelError').hidden,false);assert.match(h.el('chatModelError').textContent,/не восстановлена/);
+  }
+});
+test('TEST model race: late GET from A cannot replace B and loading blocks a new send',async()=>{
+  const store=new Map([['chat_b','gigachat_ultra']]),routes=testModelRoutes(store);
+  const h=harness({offline:true,routes});await settle();let release;
+  h.routes.set('/ultra/chat/workspaces/ws_a/chats/chat_a/model',()=>new Promise(resolve=>release=resolve));
+  const old=h.run("selectChat('chat_a')");await settle();
+  assert.equal(h.el('chatSend').disabled,true);assert.equal(h.el('chatModelPick').disabled,true);
+  h.el('chatInput').value='not yet';await h.el('chatSend').onclick();
+  assert.equal(h.calls.some(c=>c.url===S5_TURN&&c.method==='POST'),false);
+  await h.run("selectChat('chat_b')");release({model_ref:'gigachat_3_lightning'});await old;
+  assert.equal(h.run('chatTurn.model'),'gigachat_ultra');
+});
+test('TEST model race: late save for A cannot select a model in B',async()=>{
+  const store=new Map([['chat_b','gigachat_ultra']]),routes=testModelRoutes(store);
+  const h=harness({offline:true,routes});await settle();await h.run("selectChat('chat_a')");let release;
+  const url='/ultra/chat/workspaces/ws_a/chats/chat_a/model',normal=routes[url];
+  h.routes.set(url,opts=>opts.method==='POST'?new Promise(resolve=>release=()=>resolve(normal(opts))):normal(opts));
+  const saving=pickTestModel(h,1);await settle();await h.run("selectChat('chat_b')");release();await saving;
+  assert.equal(h.run('chatTurn.model'),'gigachat_ultra');
+  assert.equal(h.el('chatModelMenu').hidden,true,'an old chat picker must not stay open over B');
+  assert.equal(store.get('chat_a'),'gigachat_3_lightning');
+});
+test('TEST model replay: saved next model does not change pending key text or model',async()=>{
+  const sent=[],store=new Map(),routes=testModelRoutes(store,{[S5_TURN]:opts=>{
+    const body=JSON.parse(opts.body);sent.push(body);if(sent.length===1)throw Error('synthetic lost reply');return offlineTurn(body,'SUCCEEDED');
+  }});
+  const h=harness({offline:true,routes});await settle();await h.run("selectChat('chat_a')");
+  h.el('chatInput').value='original';await h.el('chatSend').onclick();
+  const pending=h.run('turnPending()');
+  h.routes.set(S5_TURN+'/by-key/'+pending.key,()=>({httpError:true,status:404,data:{error:{code:'turn_not_found'}}}));
+  await pickTestModel(h,2);await h.el('chatSend').onclick();
+  assert.deepEqual(sent[1],sent[0]);assert.equal(store.get('chat_a'),'gigachat_ultra');
+  h.el('chatInput').value='next';await h.el('chatSend').onclick();assert.equal(sent[2].model_ref,'gigachat_ultra');
+});
+test('TEST model new base: browser selection does not import another server preference',async()=>{
+  const storage=new Map(),store=new Map(),h=harness({offline:true,storage,routes:testModelRoutes(store)});
+  await settle();await h.run("selectChat('chat_a')");await pickTestModel(h,1);
+  const fresh=harness({offline:true,storage,routes:testModelRoutes(new Map())});await settle();
+  assert.equal(fresh.run('chatTurn.model'),'gigachat_2_pro');
+});

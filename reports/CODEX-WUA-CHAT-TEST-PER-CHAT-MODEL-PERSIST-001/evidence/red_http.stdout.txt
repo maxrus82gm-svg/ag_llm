@@ -1,0 +1,9 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+__ ModelPersistenceTests.test_http_model_choice_survives_service_recreation ___
+test_web_alarm_test_model_persist.py:34: in test_http_model_choice_survives_service_recreation
+    self.assertEqual(code,200)
+E   AssertionError: 405 != 200
+=========================== short test summary info ===========================
+FAILED test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_http_model_choice_survives_service_recreation
+1 failed in 1.88s

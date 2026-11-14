@@ -1,0 +1,424 @@
+TAP version 13
+# Subtest: S5 UX manual check acknowledges pending and repeated unchanged status without POST
+ok 1 - S5 UX manual check acknowledges pending and repeated unchanged status without POST
+  ---
+  duration_ms: 27.8887
+  type: 'test'
+  ...
+# Subtest: S5 UX manual check reports no request and a check error explicitly
+ok 2 - S5 UX manual check reports no request and a check error explicitly
+  ---
+  duration_ms: 8.5942
+  type: 'test'
+  ...
+# Subtest: S5 recovery late check history cannot replace a newer send history
+ok 3 - S5 recovery late check history cannot replace a newer send history
+  ---
+  duration_ms: 13.8034
+  type: 'test'
+  ...
+# Subtest: S5 recovery stale Turn GET cannot overwrite a newer POST result or restore its old key
+ok 4 - S5 recovery stale Turn GET cannot overwrite a newer POST result or restore its old key
+  ---
+  duration_ms: 8.4319
+  type: 'test'
+  ...
+# Subtest: S5 recovery reload retains the selected cancelled Chat instead of silently opening the newest Chat
+ok 5 - S5 recovery reload retains the selected cancelled Chat instead of silently opening the newest Chat
+  ---
+  duration_ms: 17.0224
+  type: 'test'
+  ...
+# Subtest: S5 recovery obsolete history errors and older pages cannot damage a fresh same-chat snapshot
+ok 6 - S5 recovery obsolete history errors and older pages cannot damage a fresh same-chat snapshot
+  ---
+  duration_ms: 9.672
+  type: 'test'
+  ...
+# Subtest: S5 recovery invalid stored selection is ignored and late check error preserves successful send
+ok 7 - S5 recovery invalid stored selection is ignored and late check error preserves successful send
+  ---
+  duration_ms: 8.3652
+  type: 'test'
+  ...
+# Subtest: S5 recovery cancellation refreshes the message badge before the delayed POST returns
+ok 8 - S5 recovery cancellation refreshes the message badge before the delayed POST returns
+  ---
+  duration_ms: 11.8494
+  type: 'test'
+  ...
+# Subtest: Stage 5 model choice applies to new requests and retry keeps the original key, text and model
+ok 9 - Stage 5 model choice applies to new requests and retry keeps the original key, text and model
+  ---
+  duration_ms: 15.8372
+  type: 'test'
+  ...
+# Subtest: Stage 5 reopens durable UNKNOWN from the server without a new send
+ok 10 - Stage 5 reopens durable UNKNOWN from the server without a new send
+  ---
+  duration_ms: 9.1365
+  type: 'test'
+  ...
+# Subtest: Stage 5 Workspace creation sends a title to the TEST route without asking for a filesystem path
+ok 11 - Stage 5 Workspace creation sends a title to the TEST route without asking for a filesystem path
+  ---
+  duration_ms: 6.5219
+  type: 'test'
+  ...
+# Subtest: Stage 5 cancel stays accessible during send and late UNKNOWN never appears as success
+ok 12 - Stage 5 cancel stays accessible during send and late UNKNOWN never appears as success
+  ---
+  duration_ms: 7.1527
+  type: 'test'
+  ...
+# Subtest: Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view
+ok 13 - Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view
+  ---
+  duration_ms: 7.3669
+  type: 'test'
+  ...
+# Subtest: cancelled or unavailable folder picker does not register a workspace or reveal secret paths
+ok 14 - cancelled or unavailable folder picker does not register a workspace or reveal secret paths
+  ---
+  duration_ms: 10.333
+  type: 'test'
+  ...
+# Subtest: Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+ok 15 - Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+  ---
+  duration_ms: 6.6217
+  type: 'test'
+  ...
+# Subtest: a failed catalog request hides raw server details and can be retried
+ok 16 - a failed catalog request hides raw server details and can be retried
+  ---
+  duration_ms: 7.9854
+  type: 'test'
+  ...
+# Subtest: U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+ok 17 - U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+  ---
+  duration_ms: 7.6201
+  type: 'test'
+  ...
+# Subtest: U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+ok 18 - U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+  ---
+  duration_ms: 5.9723
+  type: 'test'
+  ...
+# Subtest: U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+ok 19 - U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+  ---
+  duration_ms: 7.9198
+  type: 'test'
+  ...
+# Subtest: U4 every data state is told apart: workspaces, chats and history
+ok 20 - U4 every data state is told apart: workspaces, chats and history
+  ---
+  duration_ms: 38.2376
+  type: 'test'
+  ...
+# Subtest: U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+ok 21 - U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+  ---
+  duration_ms: 6.1392
+  type: 'test'
+  ...
+# Subtest: U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+ok 22 - U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+  ---
+  duration_ms: 13.5333
+  type: 'test'
+  ...
+# Subtest: U7 an unavailable capability is explained and the other sections keep working
+ok 23 - U7 an unavailable capability is explained and the other sections keep working
+  ---
+  duration_ms: 13.6368
+  type: 'test'
+  ...
+# Subtest: U8 the composer is visibly read-only and nothing is ever posted
+ok 24 - U8 the composer is visibly read-only and nothing is ever posted
+  ---
+  duration_ms: 11.7027
+  type: 'test'
+  ...
+# Subtest: S3 TEST composer sends one stable key on double click and renders a saved reply
+ok 25 - S3 TEST composer sends one stable key on double click and renders a saved reply
+  ---
+  duration_ms: 9.2238
+  type: 'test'
+  ...
+# Subtest: S3 lost reply retains key across reload; GET restores result without POST
+ok 26 - S3 lost reply retains key across reload; GET restores result without POST
+  ---
+  duration_ms: 15.4793
+  type: 'test'
+  ...
+# Subtest: S3 unknown outcome is visible, Enter sends, Shift+Enter and IME do not send
+ok 27 - S3 unknown outcome is visible, Enter sends, Shift+Enter and IME do not send
+  ---
+  duration_ms: 6.8421
+  type: 'test'
+  ...
+# Subtest: U9 sections switch both ways and \#operator / \#evm open a section directly
+ok 28 - U9 sections switch both ways and \#operator / \#evm open a section directly
+  ---
+  duration_ms: 14.5235
+  type: 'test'
+  ...
+# Subtest: U10 a late answer for a Workspace that is no longer selected is ignored
+ok 29 - U10 a late answer for a Workspace that is no longer selected is ignored
+  ---
+  duration_ms: 8.5404
+  type: 'test'
+  ...
+# Subtest: U11 malformed server answers show an error and invent nothing
+ok 30 - U11 malformed server answers show an error and invent nothing
+  ---
+  duration_ms: 16.564
+  type: 'test'
+  ...
+# Subtest: U12 the EVM model badge tells every saved-choice state
+ok 31 - U12 the EVM model badge tells every saved-choice state
+  ---
+  duration_ms: 30.65
+  type: 'test'
+  ...
+# Subtest: U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+ok 32 - U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+  ---
+  duration_ms: 8.647
+  type: 'test'
+  ...
+# Subtest: U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+ok 33 - U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+  ---
+  duration_ms: 6.6951
+  type: 'test'
+  ...
+# Subtest: U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+ok 34 - U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+  ---
+  duration_ms: 5.8363
+  type: 'test'
+  ...
+# Subtest: U16 an unavailable write capability is explained and nothing is posted
+ok 35 - U16 an unavailable write capability is explained and nothing is posted
+  ---
+  duration_ms: 12.1225
+  type: 'test'
+  ...
+# Subtest: U17 after a server restart one new write capability is fetched and the refused request repeated once
+ok 36 - U17 after a server restart one new write capability is fetched and the refused request repeated once
+  ---
+  duration_ms: 11.6417
+  type: 'test'
+  ...
+# Subtest: U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+ok 37 - U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+  ---
+  duration_ms: 36.7487
+  type: 'test'
+  ...
+# Subtest: U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+ok 38 - U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+  ---
+  duration_ms: 11.0812
+  type: 'test'
+  ...
+# Subtest: Workspace pencil renames registry display name via write token and keeps the Ultra history, never the real path
+ok 39 - Workspace pencil renames registry display name via write token and keeps the Ultra history, never the real path
+  ---
+  duration_ms: 7.4452
+  type: 'test'
+  ...
+# Subtest: LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+ok 40 - LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+  ---
+  duration_ms: 5.8318
+  type: 'test'
+  ...
+# Subtest: LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+ok 41 - LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+  ---
+  duration_ms: 4.66
+  type: 'test'
+  ...
+# Subtest: LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+ok 42 - LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+  ---
+  duration_ms: 7.3467
+  type: 'test'
+  ...
+# Subtest: LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+ok 43 - LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+  ---
+  duration_ms: 5.569
+  type: 'test'
+  ...
+# Subtest: LIVE registration separates confirmation from catalog/list/history failure, rejection and an unknown POST outcome
+ok 44 - LIVE registration separates confirmation from catalog/list/history failure, rejection and an unknown POST outcome
+  ---
+  duration_ms: 34.3022
+  type: 'test'
+  ...
+# Subtest: LIVE empty, single and multiple dialogue trees survive repeated collapse, refresh and Workspace switches
+ok 45 - LIVE empty, single and multiple dialogue trees survive repeated collapse, refresh and Workspace switches
+  ---
+  duration_ms: 39.2265
+  type: 'test'
+  ...
+# Subtest: LIVE Workspace rename conflict refreshes the label and keeps the typed title for an explicit second Save
+ok 46 - LIVE Workspace rename conflict refreshes the label and keeps the typed title for an explicit second Save
+  ---
+  duration_ms: 7.537
+  type: 'test'
+  ...
+# Subtest: LIVE both rename forms keep server errors as safe text and can be cancelled and reopened
+ok 47 - LIVE both rename forms keep server errors as safe text and can be cancelled and reopened
+  ---
+  duration_ms: 6.8203
+  type: 'test'
+  ...
+# Subtest: LIVE a failed Workspace-conflict readback never claims the list was refreshed
+ok 48 - LIVE a failed Workspace-conflict readback never claims the list was refreshed
+  ---
+  duration_ms: 7.6291
+  type: 'test'
+  ...
+# Subtest: LIVE a late plus-click for another Workspace cannot open an editor in the new selection
+ok 49 - LIVE a late plus-click for another Workspace cannot open an editor in the new selection
+  ---
+  duration_ms: 9.3336
+  type: 'test'
+  ...
+# Subtest: AMENDMENT first chat: missing_history allows plus, asks for explicit create, then refreshes identity and tree
+ok 50 - AMENDMENT first chat: missing_history allows plus, asks for explicit create, then refreshes identity and tree
+  ---
+  duration_ms: 8.4707
+  type: 'test'
+  ...
+# Subtest: AMENDMENT first chat: only ok and missing_history enable creation; unsafe states remain read-only
+ok 51 - AMENDMENT first chat: only ok and missing_history enable creation; unsafe states remain read-only
+  ---
+  duration_ms: 29.583
+  type: 'test'
+  ...
+# Subtest: AMENDMENT first chat: a lost reply keeps the pending id and consent; retry creates no second dialogue
+ok 52 - AMENDMENT first chat: a lost reply keeps the pending id and consent; retry creates no second dialogue
+  ---
+  duration_ms: 5.551
+  type: 'test'
+  ...
+# Subtest: per-chat usage: nested reasoning is displayed separately from total and marked synthetic
+ok 53 - per-chat usage: nested reasoning is displayed separately from total and marked synthetic
+  ---
+  duration_ms: 2.4048
+  type: 'test'
+  ...
+# Subtest: per-chat usage: missing stays UNKNOWN and clearing selection removes prior totals
+ok 54 - per-chat usage: missing stays UNKNOWN and clearing selection removes prior totals
+  ---
+  duration_ms: 3.0759
+  type: 'test'
+  ...
+# Subtest: per-chat preferences: save/reopen and model switch retain values without applying provider caps
+ok 55 - per-chat preferences: save/reopen and model switch retain values without applying provider caps
+  ---
+  duration_ms: 8.729
+  type: 'test'
+  ...
+# Subtest: per-chat preferences: delayed response from old chat cannot overwrite new chat inputs
+ok 56 - per-chat preferences: delayed response from old chat cannot overwrite new chat inputs
+  ---
+  duration_ms: 5.4166
+  type: 'test'
+  ...
+# Subtest: per-chat preferences: ordinary history refresh preserves unsaved preference edits
+ok 57 - per-chat preferences: ordinary history refresh preserves unsaved preference edits
+  ---
+  duration_ms: 3.5596
+  type: 'test'
+  ...
+# Subtest: STANDARD Ordinary sends selected model without local-test refs through normal page
+ok 58 - STANDARD Ordinary sends selected model without local-test refs through normal page
+  ---
+  duration_ms: 8.7046
+  type: 'test'
+  ...
+# Subtest: STANDARD HOLD keeps per-chat model/preferences but sends nothing
+ok 59 - STANDARD HOLD keeps per-chat model/preferences but sends nothing
+  ---
+  duration_ms: 5.4904
+  type: 'test'
+  ...
+# Subtest: STANDARD model selection saves to this chat and is restored after page recreation
+ok 60 - STANDARD model selection saves to this chat and is restored after page recreation
+  ---
+  duration_ms: 12.3816
+  type: 'test'
+  ...
+# Subtest: STANDARD delayed per-chat model cannot replace the next chat selection
+ok 61 - STANDARD delayed per-chat model cannot replace the next chat selection
+  ---
+  duration_ms: 5.7004
+  type: 'test'
+  ...
+# Subtest: TEST model choice: two chats restore their own selection after switching and F5
+ok 62 - TEST model choice: two chats restore their own selection after switching and F5
+  ---
+  duration_ms: 21.2163
+  type: 'test'
+  ...
+# Subtest: TEST model choice: F5 alone restores Lightning from durable state
+ok 63 - TEST model choice: F5 alone restores Lightning from durable state
+  ---
+  duration_ms: 16.3706
+  type: 'test'
+  ...
+# Subtest: TEST model errors: failed save never claims the new choice and reselect repairs it
+ok 64 - TEST model errors: failed save never claims the new choice and reselect repairs it
+  ---
+  duration_ms: 9.1215
+  type: 'test'
+  ...
+# Subtest: TEST model errors: corrupt or missing catalog choice is explicit, never a silent default
+ok 65 - TEST model errors: corrupt or missing catalog choice is explicit, never a silent default
+  ---
+  duration_ms: 16.5591
+  type: 'test'
+  ...
+# Subtest: TEST model race: late GET from A cannot replace B and loading blocks a new send
+ok 66 - TEST model race: late GET from A cannot replace B and loading blocks a new send
+  ---
+  duration_ms: 10.4823
+  type: 'test'
+  ...
+# Subtest: TEST model race: late save for A cannot select a model in B
+ok 67 - TEST model race: late save for A cannot select a model in B
+  ---
+  duration_ms: 11.561
+  type: 'test'
+  ...
+# Subtest: TEST model replay: saved next model does not change pending key text or model
+ok 68 - TEST model replay: saved next model does not change pending key text or model
+  ---
+  duration_ms: 14.1601
+  type: 'test'
+  ...
+# Subtest: TEST model new base: browser selection does not import another server preference
+ok 69 - TEST model new base: browser selection does not import another server preference
+  ---
+  duration_ms: 14.4528
+  type: 'test'
+  ...
+1..69
+# tests 69
+# suites 0
+# pass 69
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 918.3538

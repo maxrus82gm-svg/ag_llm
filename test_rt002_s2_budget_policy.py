@@ -1578,7 +1578,7 @@ OFFLINE_POLICY_CAPSULES = {"ultra_budget_ledger": "9a2cb9a04480f3ecb95c6f94a57b6
 OFFLINE_ADMISSION_GATES = {'web_alarm.ordinary_provider': '2471366340563da38afa76c50b684381b72220428283327c200ae778d2f2b35c',
  'web_alarm.ordinary_chat_bridge': 'cf7f550ccee87c1a6368bdc1ab7126a6b360427aace1134aa0d9f753be7db4d3',
  'web_alarm.turn_service': 'c2a8a6412594816165ed843e78fead02d9821891c03677e9317b560cab6b10d5',
- 'web_alarm.ultra_chat': '1caf0c05a9addeb9e08652566dbea5c15c3a1805b4e39b3ed59ad01cc3a38681',
+ 'web_alarm.ultra_chat': '59d1c18d7e66aabd710498d6cc2049f0f432bc7bbf3f39386c376489b2b54bcb',
  'gigachat_admission': 'c9f0295e9592c6be7a0fc7c81a00266bfd15189bc15723ee183d36b535b9d73c'}
 OFFLINE_GUARD_BOOTSTRAPS = {
     "web_alarm.ordinary_test_fixture": "30fcea6895cdc7a410465566a4cf389ec59f2fee362ea93cc3744fa8288aab03",

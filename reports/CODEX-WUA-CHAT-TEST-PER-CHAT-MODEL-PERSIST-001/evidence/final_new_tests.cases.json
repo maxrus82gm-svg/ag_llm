@@ -1,0 +1,113 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "subtest:passed": 8,
+    "test:passed": 9
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_corrupt_or_removed_model_is_explicit_and_can_be_repaired",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_corrupt_or_removed_model_is_explicit_and_can_be_repaired",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_corrupt_or_removed_model_is_explicit_and_can_be_repaired",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_corrupt_or_removed_model_is_explicit_and_can_be_repaired",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_default_get_is_read_only_and_unauthorized_or_unknown_writes_are_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_default_get_is_read_only_and_unauthorized_or_unknown_writes_are_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_default_get_is_read_only_and_unauthorized_or_unknown_writes_are_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_default_get_is_read_only_and_unauthorized_or_unknown_writes_are_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_default_get_is_read_only_and_unauthorized_or_unknown_writes_are_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_default_get_is_read_only_and_unauthorized_or_unknown_writes_are_refused",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_http_model_choice_survives_service_recreation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_http_send_and_unknown_replay_keep_original_model_binding",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_model_write_preserves_raw_usage_preferences_and_completed_turn",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_save_failure_never_acknowledges_success_or_alters_history",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_standard_still_rejects_test_model_method_and_ultra_choice",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_two_chats_two_workspaces_and_new_base",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_test_model_persist.py::PermanentProfileTests::test_existing_test_profile_python_entrypoint_persists_models_and_cleans_up",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": []
+}

@@ -1,0 +1,32 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "test:passed": 1
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_test_model_persist.py::PermanentProfileTests::test_existing_test_profile_python_entrypoint_persists_models_and_cleans_up",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001\\run_checks.py",
+    "--child",
+    "test_web_alarm_test_model_persist.py::PermanentProfileTests",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\model_persist_e6gvy70d\\p"
+  ],
+  "elapsed_seconds": 10.344000000011874,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 0,
+  "runner_exit_code": 0
+}

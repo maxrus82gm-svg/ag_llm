@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: TEST model choice: two chats restore their own selection after switching and F5
+not ok 1 - TEST model choice: two chats restore their own selection after switching and F5
+  ---
+  duration_ms: 26.3425
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:1354:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    A must restore Lightning instead of page-global Ultra
+    + actual - expected
+    
+    + 'gigachat_ultra'
+    - 'gigachat_3_lightning'
+                ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'gigachat_3_lightning'
+  actual: 'gigachat_ultra'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:1360:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 108.9787

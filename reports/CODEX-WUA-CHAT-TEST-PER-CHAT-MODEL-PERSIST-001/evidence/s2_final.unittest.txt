@@ -1,0 +1,88 @@
+test_bytes_div_4_underestimates_audit_packets (__main__.CalibrationTests.test_bytes_div_4_underestimates_audit_packets) ... ok
+test_calibrated_estimate_covers_every_observation_and_hard_bound_holds (__main__.CalibrationTests.test_calibrated_estimate_covers_every_observation_and_hard_bound_holds) ... ok
+test_calibrated_lower_envelopes (__main__.CalibrationTests.test_calibrated_lower_envelopes) ... ok
+test_calibration_and_estimate_inputs_are_validated (__main__.CalibrationTests.test_calibration_and_estimate_inputs_are_validated) ... ok
+test_calibration_input_validation (__main__.CalibrationTests.test_calibration_input_validation) ... ok
+test_embedded_dataset_is_pinned (__main__.CalibrationTests.test_embedded_dataset_is_pinned) ... ok
+test_estimate_is_the_exact_ceiling_never_float_rounded_down (__main__.CalibrationTests.test_estimate_is_the_exact_ceiling_never_float_rounded_down) ... ok
+test_estimation_modes (__main__.CalibrationTests.test_estimation_modes) ... ok
+test_hand_built_profile_numbers_are_input_errors (__main__.CalibrationTests.test_hand_built_profile_numbers_are_input_errors)
+validate_policy is the only constructor of a sound snapshot; a hand-built one must not crash oddly. ... ok
+test_leave_one_out_coverage_by_margin (__main__.CalibrationTests.test_leave_one_out_coverage_by_margin) ... ok
+test_profile_divisor_is_never_rounded_up (__main__.CalibrationTests.test_profile_divisor_is_never_rounded_up) ... ok
+test_tiny_positive_divisors_never_overflow_and_fail_closed (__main__.CalibrationTests.test_tiny_positive_divisors_never_overflow_and_fail_closed)
+A positive divisor down to the smallest subnormal is a legal (if absurd) profile: the estimate stays an ... ok
+test_attempt_budget_counts_retries_replans_and_unknown_attempts (__main__.DecisionTests.test_attempt_budget_counts_retries_replans_and_unknown_attempts) ... ok
+test_breached_profile_is_not_trusted_again (__main__.DecisionTests.test_breached_profile_is_not_trusted_again) ... ok
+test_corrupt_records_block_instead_of_crashing (__main__.DecisionTests.test_corrupt_records_block_instead_of_crashing)
+Records will be rehydrated by S3a: any malformed field must become LEDGER_ANOMALY, not an exception. ... ok
+test_dredd_role_cap_never_silently_disables_final_audit (__main__.DecisionTests.test_dredd_role_cap_never_silently_disables_final_audit) ... ok
+test_final_audit_flag_changes_only_the_reserve (__main__.DecisionTests.test_final_audit_flag_changes_only_the_reserve) ... ok
+test_full_read_contract_for_s4 (__main__.DecisionTests.test_full_read_contract_for_s4) ... ok
+test_malformed_measure_is_denied_not_trusted (__main__.DecisionTests.test_malformed_measure_is_denied_not_trusted)
+evaluate_request is public: a hand-built measure must not lower liability or skip the estimate. ... ok
+test_malformed_run_context_is_denied (__main__.DecisionTests.test_malformed_run_context_is_denied) ... ok
+test_per_role_attempt_cap (__main__.DecisionTests.test_per_role_attempt_cap) ... ok
+test_preflight_warnings_for_ui_preview (__main__.DecisionTests.test_preflight_warnings_for_ui_preview) ... ok
+test_record_with_malformed_scope_blocks_every_scope (__main__.DecisionTests.test_record_with_malformed_scope_blocks_every_scope)
+Its owner cannot be established, so it may be ours: never silently dropped, never an ALLOW. ... ok
+test_request_byte_and_token_caps_with_exact_boundaries (__main__.DecisionTests.test_request_byte_and_token_caps_with_exact_boundaries) ... ok
+test_reserve_is_not_a_bypass_of_the_run_cap (__main__.DecisionTests.test_reserve_is_not_a_bypass_of_the_run_cap) ... ok
+test_route_registry_matches_the_s1_inventory (__main__.DecisionTests.test_route_registry_matches_the_s1_inventory) ... ok
+test_routes_and_scopes (__main__.DecisionTests.test_routes_and_scopes) ... ok
+test_run_liability_includes_unknown_and_in_flight (__main__.DecisionTests.test_run_liability_includes_unknown_and_in_flight) ... ok
+test_small_greeting_request_is_allowed (__main__.DecisionTests.test_small_greeting_request_is_allowed) ... ok
+test_unhashable_or_oversized_measure_is_denied_not_raised (__main__.DecisionTests.test_unhashable_or_oversized_measure_is_denied_not_raised) ... ok
+test_unknown_model_needs_calibration_or_hard_bound (__main__.DecisionTests.test_unknown_model_needs_calibration_or_hard_bound) ... ok
+test_verification_reserve_is_protected_from_work_but_available_to_final_audit (__main__.DecisionTests.test_verification_reserve_is_protected_from_work_but_available_to_final_audit) ... ok
+test_well_formed_scopes_stay_isolated (__main__.DecisionTests.test_well_formed_scopes_stay_isolated) ... ok
+test_manifest_matches_the_loaded_collection (__main__.IsolationTests.test_manifest_matches_the_loaded_collection) ... ok
+test_no_production_module_imports_the_policy_yet (__main__.IsolationTests.test_no_production_module_imports_the_policy_yet) ... ok
+test_policy_evaluation_does_not_mutate_inputs (__main__.IsolationTests.test_policy_evaluation_does_not_mutate_inputs) ... ok
+test_policy_module_is_pure (__main__.IsolationTests.test_policy_module_is_pure) ... ok
+test_conflicting_claims_never_lower_liability (__main__.LiabilityTests.test_conflicting_claims_never_lower_liability) ... ok
+test_conflicting_or_invalid_usage_is_an_anomaly (__main__.LiabilityTests.test_conflicting_or_invalid_usage_is_an_anomaly) ... ok
+test_estimate_breach_is_detected (__main__.LiabilityTests.test_estimate_breach_is_detected) ... ok
+test_estimate_breach_without_reported_precached (__main__.LiabilityTests.test_estimate_breach_without_reported_precached) ... ok
+test_known_terminal_settles_to_provider_processed_tokens (__main__.LiabilityTests.test_known_terminal_settles_to_provider_processed_tokens) ... ok
+test_late_known_reconciles_and_duplicates_are_idempotent (__main__.LiabilityTests.test_late_known_reconciles_and_duplicates_are_idempotent) ... ok
+test_missing_precached_is_not_zero (__main__.LiabilityTests.test_missing_precached_is_not_zero) ... ok
+test_orphan_terminal_blocks_the_scope (__main__.LiabilityTests.test_orphan_terminal_blocks_the_scope) ... ok
+test_parse_error_with_usage_is_known (__main__.LiabilityTests.test_parse_error_with_usage_is_known) ... ok
+test_r026_shaped_second_terminal_is_an_anomaly (__main__.LiabilityTests.test_r026_shaped_second_terminal_is_an_anomaly) ... ok
+test_reconciled_attempt_accepts_only_replays_of_its_own_events (__main__.LiabilityTests.test_reconciled_attempt_accepts_only_replays_of_its_own_events) ... ok
+test_reservation_release_requires_proven_not_sent (__main__.LiabilityTests.test_reservation_release_requires_proven_not_sent) ... ok
+test_terminal_event_matrix (__main__.LiabilityTests.test_terminal_event_matrix)
+One physical attempt has one terminal truth. Only a replay of an already seen (outcome, usage) event is ... ok
+test_unknown_is_never_zero (__main__.LiabilityTests.test_unknown_is_never_zero) ... ok
+test_unrecognized_or_silent_record_state_is_an_anomaly (__main__.LiabilityTests.test_unrecognized_or_silent_record_state_is_an_anomaly)
+S3a will rehydrate records from storage: a corrupt state must block, never drop its liability. ... ok
+test_cross_field_rules (__main__.PolicyValidationTests.test_cross_field_rules) ... ok
+test_errors_are_human_readable_with_field_paths (__main__.PolicyValidationTests.test_errors_are_human_readable_with_field_paths) ... ok
+test_no_implicit_defaults_every_section_is_required (__main__.PolicyValidationTests.test_no_implicit_defaults_every_section_is_required) ... ok
+test_policy_has_no_switch_for_planner_history_or_final_audit (__main__.PolicyValidationTests.test_policy_has_no_switch_for_planner_history_or_final_audit) ... ok
+test_profiles_are_validated (__main__.PolicyValidationTests.test_profiles_are_validated) ... ok
+test_reviewer_profile_type_cases_are_policy_errors_naming_the_field (__main__.PolicyValidationTests.test_reviewer_profile_type_cases_are_policy_errors_naming_the_field) ... ok
+test_scopes_and_output_reserve_modes (__main__.PolicyValidationTests.test_scopes_and_output_reserve_modes) ... ok
+test_units_types_and_ranges_are_strict (__main__.PolicyValidationTests.test_units_types_and_ranges_are_strict) ... ok
+test_unknown_fields_and_versions_are_rejected (__main__.PolicyValidationTests.test_unknown_fields_and_versions_are_rejected) ... ok
+test_valid_policy_and_revision_identity (__main__.PolicyValidationTests.test_valid_policy_and_revision_identity) ... ok
+test_wrong_json_types_anywhere_are_policy_errors_never_crashes (__main__.PolicyValidationTests.test_wrong_json_types_anywhere_are_policy_errors_never_crashes)
+Every node of a valid policy replaced by every JSON-shaped wrong value: either a complete snapshot ... ok
+test_candidate_reserves_cover_observed_final_audits_only_up_to_their_size (__main__.SyntheticRunTests.test_candidate_reserves_cover_observed_final_audits_only_up_to_their_size)
+Mock-calibration fact for the USER DECISION: no candidate reserve fits the largest observed audits. ... ok
+test_candidates_stop_the_heavy_runs_and_never_block_normal_ones (__main__.SyntheticRunTests.test_candidates_stop_the_heavy_runs_and_never_block_normal_ones) ... ok
+test_greetings_and_live_benches_complete_under_every_candidate (__main__.SyntheticRunTests.test_greetings_and_live_benches_complete_under_every_candidate) ... ok
+test_unknown_terminal_keeps_liability_in_replay (__main__.SyntheticRunTests.test_unknown_terminal_keeps_liability_in_replay) ... ok
+test_without_separate_verification_caps_normal_runs_lose_their_final_audit (__main__.SyntheticRunTests.test_without_separate_verification_caps_normal_runs_lose_their_final_audit) ... ok
+test_bytes_are_not_characters_and_not_tokens (__main__.WireMeasureTests.test_bytes_are_not_characters_and_not_tokens) ... ok
+test_invalid_output_reserve_or_model_is_rejected (__main__.WireMeasureTests.test_invalid_output_reserve_or_model_is_rejected) ... ok
+test_measure_is_exact_and_bound_to_the_sent_bytes (__main__.WireMeasureTests.test_measure_is_exact_and_bound_to_the_sent_bytes) ... ok
+test_serialized_body_is_byte_identical_to_the_httpx_wire (__main__.WireMeasureTests.test_serialized_body_is_byte_identical_to_the_httpx_wire) ... ok
+test_unserializable_body_is_a_policy_input_error (__main__.WireMeasureTests.test_unserializable_body_is_a_policy_input_error)
+httpx would refuse these bodies too; the measure must fail in its own documented way. ... ok
+
+----------------------------------------------------------------------
+Ran 73 tests in 16.514s
+
+OK

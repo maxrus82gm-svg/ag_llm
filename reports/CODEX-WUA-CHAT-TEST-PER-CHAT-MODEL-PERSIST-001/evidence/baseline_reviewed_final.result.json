@@ -1,0 +1,21 @@
+{
+  "command": [
+    "node",
+    "--require",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001\\baseline_ui.cjs",
+    "--test",
+    "--test-name-pattern=TEST model choice:",
+    "test_web_alarm_ultra_chat_ui.js"
+  ],
+  "exit_code": 1,
+  "counts": {
+    "tests": 2,
+    "pass": 0,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "baseline_negative_control": true,
+  "source_sha256": "6223f9f1f710eb670e60ae771209f70c505afbd0d47a3f237e8e32736b64ce89",
+  "test_sha256": "c67e854e366c6d461678b9cb19601fd902a3fef69792faa89a095585713b7d55"
+}

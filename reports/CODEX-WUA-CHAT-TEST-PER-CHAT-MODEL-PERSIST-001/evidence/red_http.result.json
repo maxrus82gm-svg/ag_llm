@@ -1,0 +1,32 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "test:failed": 1
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_http_model_choice_survives_service_recreation",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001\\run_checks.py",
+    "--child",
+    "test_web_alarm_test_model_persist.py",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\model_persist_n5vv3y5g\\p"
+  ],
+  "elapsed_seconds": 3.187999999994645,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 1,
+  "runner_exit_code": 1
+}

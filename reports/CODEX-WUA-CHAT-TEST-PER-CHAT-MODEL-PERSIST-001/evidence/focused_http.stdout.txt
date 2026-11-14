@@ -1,0 +1,28 @@
+.F..F.F                                                               [100%]
+================================== FAILURES ===================================
+_ ModelPersistenceTests.test_default_get_is_read_only_and_unauthorized_or_unknown_writes_are_refused _
+test_web_alarm_test_model_persist.py:69: in test_default_get_is_read_only_and_unauthorized_or_unknown_writes_are_refused
+    self.assertEqual(self.http(self.server,'GET',path,headers=self.read)[1],{'model_ref':'gigachat_2_pro','persisted':False})
+E   AssertionError: {'model_ref': 'gigachat_2', 'persisted': False} != {'model_ref': 'gigachat_2_pro', 'persisted': False}
+E   - {'model_ref': 'gigachat_2', 'persisted': False}
+E   + {'model_ref': 'gigachat_2_pro', 'persisted': False}
+E   ?                          ++++
+_ ModelPersistenceTests.test_save_failure_never_acknowledges_success_or_alters_history _
+test_web_alarm_test_model_persist.py:98: in test_save_failure_never_acknowledges_success_or_alters_history
+    self.assertEqual(self.http(self.server,'GET',path,headers=self.read)[1]['model_ref'],'gigachat_2_pro')
+E   AssertionError: 'gigachat_2' != 'gigachat_2_pro'
+E   - gigachat_2
+E   + gigachat_2_pro
+E   ?           ++++
+______ ModelPersistenceTests.test_two_chats_two_workspaces_and_new_base _______
+test_web_alarm_test_model_persist.py:60: in test_two_chats_two_workspaces_and_new_base
+    self.assertEqual(service.test_chat_model(w['wa_workspace_id'],a),{'model_ref':'gigachat_2_pro','persisted':False})
+E   AssertionError: {'model_ref': 'gigachat_2', 'persisted': False} != {'model_ref': 'gigachat_2_pro', 'persisted': False}
+E   - {'model_ref': 'gigachat_2', 'persisted': False}
+E   + {'model_ref': 'gigachat_2_pro', 'persisted': False}
+E   ?                          ++++
+=========================== short test summary info ===========================
+FAILED test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_default_get_is_read_only_and_unauthorized_or_unknown_writes_are_refused
+FAILED test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_save_failure_never_acknowledges_success_or_alters_history
+FAILED test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_two_chats_two_workspaces_and_new_base
+3 failed, 4 passed, 3 subtests passed in 7.72s

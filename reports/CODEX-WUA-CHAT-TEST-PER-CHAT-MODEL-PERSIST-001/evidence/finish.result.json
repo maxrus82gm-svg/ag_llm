@@ -1,0 +1,22 @@
+{
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001",
+    "--no-chat-amendment",
+    "--date",
+    "2026-11-15",
+    "--headless",
+    "--expected-card-sha256",
+    "b8815f95bac117ca9efd5aa569fbc90b283475ebcb87beb66a95ef88b8979459",
+    "--apply"
+  ],
+  "exit_code": 0
+}

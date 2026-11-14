@@ -1,0 +1,45 @@
+{
+  "task_id": "CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001",
+  "history_id": "H-CODEX-000036",
+  "result": "AUTHOR RESULT READY / TECHNICAL PASS OFFLINE",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED",
+  "finish": "ROTATED / CHECK DRY-RUN APPLY READBACK PASS",
+  "report_sha256": "07fc50cb38e2882ebbbe934fce319dd5aa983fd471eabb1860afd4607156a6e0",
+  "registered_sources_sha256": "VERIFIED",
+  "user_ux": "PENDING",
+  "physical_cmd_browser_f5": "NOT RUN",
+  "independent_ci": "NOT RUN",
+  "real": "HOLD / NOT RUN",
+  "git": "NOT RUN",
+  "checks": {
+    "history_read": {
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/task_history.py",
+        "--max-tokens",
+        "2000",
+        "read",
+        "--id",
+        "H-CODEX-000036"
+      ],
+      "exit_code": 0
+    },
+    "slot_readback": {
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/task_slot_rotate.py",
+        "check",
+        "--card",
+        "Документация/000_Задачи Codex.md"
+      ],
+      "exit_code": 0
+    }
+  }
+}

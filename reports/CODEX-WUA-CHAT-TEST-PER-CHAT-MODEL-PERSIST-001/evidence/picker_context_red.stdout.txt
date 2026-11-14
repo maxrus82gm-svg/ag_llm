@@ -1,0 +1,32 @@
+TAP version 13
+# Subtest: TEST model race: late save for A cannot select a model in B
+not ok 1 - TEST model race: late save for A cannot select a model in B
+  ---
+  duration_ms: 23.8752
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:1406:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    an old chat picker must not stay open over B
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:1413:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 93.6817

@@ -671,7 +671,14 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
 
     def capability(self):
         return {**super().capability(), "core_bridge": True, "real_available": False,
-                "real_denial_reason": "provider_admission_required", "chat_preferences": True}
+                "real_denial_reason": "provider_admission_required", "chat_preferences": True,
+                "chat_model_preferences": True}
+
+    @staticmethod
+    def _test_model_path(path):
+        parts = path.split("/")[1:]
+        return (len(parts) == 7 and parts[:3] == ["ultra", "chat", "workspaces"]
+                and parts[4] == "chats" and parts[6] == "model")
 
     @staticmethod
     def _settings_path(path):
@@ -681,7 +688,8 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
 
     @staticmethod
     def is_write_path(path):
-        return OrdinaryCoreChatService._settings_path(path) or OfflineUltraChatService.is_write_path(path)
+        return (OrdinaryCoreChatService._settings_path(path) or OrdinaryCoreChatService._test_model_path(path)
+                or OfflineUltraChatService.is_write_path(path))
 
     def _settings_route(self, path, query):
         parse_query(query, frozenset())
@@ -691,16 +699,50 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
         return _wa_id(parts[3]), parts[5]
 
     def route(self, path, raw_query):
+        if self._test_model_path(path):
+            ws, chat = self._settings_route(path, raw_query)
+            return lambda: self.test_chat_model(ws, chat)
         if self._settings_path(path):
             ws, chat = self._settings_route(path, raw_query)
             return lambda: self.chat_preferences(ws, chat)
         return super().route(path, raw_query)
 
     def write_route(self, path, raw_query):
+        if self._test_model_path(path):
+            ws, chat = self._settings_route(path, raw_query)
+            return lambda body: (200, self.test_chat_model(ws, chat, body))
         if self._settings_path(path):
             ws, chat = self._settings_route(path, raw_query)
             return lambda body: (200, self.chat_preferences(ws, chat, body))
         return super().write_route(path, raw_query)
+
+    def test_chat_model(self, wa_workspace_id, chat_id, update=...):
+        # STANDARD has its own route/method/metadata. Never extend its model scope
+        # through inheritance or enroll existing data while reading a preference.
+        if type(self) is not OrdinaryCoreChatService:
+            raise UltraChatError(403, "test_model_unavailable", "TEST model selection is unavailable")
+        from model_registry import MODEL_REGISTRY
+        allowed = [m.model_id for m in MODEL_REGISTRY.values()
+                   if m.enabled and m.provider == "gigachat" and not m.is_local]
+        if not allowed:
+            raise UltraChatError(503, "test_models_unavailable", "TEST model catalog is unavailable")
+        if update is not ... and (type(update) is not dict or set(update) != {"model_ref"}
+                or type(update["model_ref"]) is not str or update["model_ref"] not in allowed):
+            raise UltraChatError(400, "invalid_test_model", "Select an available TEST model")
+        core = _core()
+        root, workspace_id = self._writable_workspace(core, wa_workspace_id)
+        try:
+            with core._existing_workspace_writer(root, workspace_id) as writer:
+                parts, metadata = core._require_chat_for_write(writer, chat_id)
+                selected = metadata.get("test_chat_model", allowed[0]) if update is ... else update["model_ref"]
+                if type(selected) is not str or selected not in allowed:
+                    raise UltraChatError(409, "test_chat_model_invalid", "Saved TEST model requires a new selection")
+                if update is not ... and metadata.get("test_chat_model") != selected:
+                    core._replace_verified(writer.anchor, parts + ("metadata.json",),
+                        core._json_bytes({**metadata, "test_chat_model": selected}))
+                return {"model_ref": selected, "persisted": "test_chat_model" in metadata or update is not ...}
+        except (core.ChatNotFoundError, core.StorageWriteError, ValueError, OSError) as error:
+            raise _write_error(core, error) from None
 
     def chat_preferences(self, wa_workspace_id, chat_id, update=...):
         defaults = {"compression_threshold_tokens": 250000, "answer_tokens": 10000}

@@ -1,0 +1,14 @@
+{
+  "entrypoint": "web_alarm/ordinary_test_fixture.py --no-browser",
+  "mode": "TEST_OFFLINE",
+  "models": [
+    "gigachat_3_lightning",
+    "gigachat_ultra"
+  ],
+  "fake_turn": "SUCCEEDED",
+  "repeat_same_turn": true,
+  "guard_denials": 0,
+  "cleanup": true,
+  "physical_cmd": false,
+  "physical_browser": false
+}
