@@ -1,0 +1,219 @@
+# Independent H36 TEST per-chat model persistence. Synthetic OFFLINE only.
+name: WEB29 H36 independent Windows OFFLINE
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-web29-h36-independent.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+jobs:
+  model-http-and-ui:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 9dd93ba09408217781c9b8f423a9cecf5bd264aa
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /reports/task_history_sequences.json
+            /Документация/000_Задачи Codex.md
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare guarded Windows TEST
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          if ((git rev-parse HEAD).Trim() -ne '9dd93ba09408217781c9b8f423a9cecf5bd264aa') { throw 'Unexpected source SHA' }
+          New-Item -ItemType Directory 'C:\h36_ci\la' -Force | Out-Null
+          'TEMP=C:\h36_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h36_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h36_ci' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h36_ci\la' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory ci-h36-model-evidence -Force | Out-Null
+          git rev-parse HEAD | Set-Content ci-h36-model-evidence/source_commit.txt
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'Venv failed' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'Dependencies failed' }
+      - name: Independent H36 manifest SHA verification
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $code=@'
+          import json,hashlib,pathlib,sys
+          p=pathlib.Path('reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001/manifest.json')
+          pins=json.loads(p.read_text(encoding='utf-8'))['sources']
+          results=[]
+          for path,item in pins.items():
+              try:
+                  b=pathlib.Path(path).read_bytes()
+                  variants=(b,b.replace(b'\r\n',b'\n'),b.replace(b'\r\n',b'\n').replace(b'\n',b'\r\n'))
+                  ok=any(hashlib.sha256(c).hexdigest()==item['after'] for c in variants)
+              except OSError: ok=False
+              results.append((path,ok))
+          print('H36 pins:',len(results),'matched',sum(x[1] for x in results))
+          print('Mismatches:',[path for path,ok in results if not ok])
+          sys.exit(0 if len(results)==7 and all(ok for _,ok in results) else 1)
+          '@
+          $code | & .\.venv\Scripts\python.exe -B - > ci-h36-model-evidence/source-pins.log 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content ci-h36-model-evidence/source-pins.log
+          if ($rc -ne 0) { throw 'Manifest SHA mismatch' }
+      - name: H36 true TEST HTTP and local Python entrypoint
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h36_new test_web_alarm_test_model_persist.py > ci-h36-model-evidence/new-tests.log 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content ci-h36-model-evidence/new-tests.log -Tail 35
+          if ($rc -ne 0) { throw 'New TEST model runner failed' }
+          $x=Get-Content "$p/evidence/ci_h36_new.result.json" -Raw | ConvertFrom-Json
+          if ($x.runner_exit_code -ne 0 -or $x.unexpected_guard_denials -ne 0 -or $x.counts.'test:passed' -ne 9 -or $x.counts.'subtest:passed' -ne 8 -or $x.counts.'test:failed' -or $x.counts.'test:error' -or $x.counts.'test:skipped') { throw 'Unexpected H36 test counts or guard outcomes' }
+          Write-Output 'H36_NEW_TESTS=9_PASS_8_SUBTESTS'
+      - name: H36 independent Node shipped UI
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          node --test test_web_alarm_ultra_chat_ui.js > ci-h36-model-evidence/ui.log 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content ci-h36-model-evidence/ui.log -Tail 30
+          if ($rc -ne 0) { throw 'UI suite failed' }
+          $lines=@(Get-Content ci-h36-model-evidence/ui.log | ForEach-Object {$_.Trim()})
+          if (-not ($lines -contains '# tests 69' -and $lines -contains '# pass 69' -and $lines -contains '# fail 0' -and $lines -contains '# skipped 0')) { throw 'UI suite counts mismatch' }
+          Write-Output 'H36_UI=69_PASS'
+      - name: H36 baseline original bug is RED
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $p='reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001'
+          node --require "$p/baseline_ui.cjs" --test '--test-name-pattern=TEST model choice:' test_web_alarm_ultra_chat_ui.js > ci-h36-model-evidence/baseline-red.log 2>&1
+          $rc=$LASTEXITCODE
+          $lines=@(Get-Content ci-h36-model-evidence/baseline-red.log | ForEach-Object {$_.Trim()})
+          Get-Content ci-h36-model-evidence/baseline-red.log -Tail 22
+          if ($rc -ne 1 -or -not ($lines -contains '# tests 2' -and $lines -contains '# fail 2' -and $lines -contains '# pass 0')) { throw 'Original bug baseline negative control not reproduced' }
+          Write-Output 'H36_BASELINE=2_EXPECTED_RED'
+      - name: Upload independent model evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h36-independent-model-http-ui
+          path: ci-h36-model-evidence/
+          retention-days: 14
+          if-no-files-found: warn
+
+  core-and-safety:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 9dd93ba09408217781c9b8f423a9cecf5bd264aa
+          persist-credentials: false
+          sparse-checkout: |
+            /*.py
+            /*.js
+            /*.json
+            /web_alarm/
+            /reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/
+            /reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/
+            /reports/CODEX-WUA-CHAT-S3B-ORDINARY-FAKE-ADMISSION-001/
+            /reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001/
+            /reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/
+            /reports/CODEX-RT002-B2-S3A-DURABLE-LEDGER-001/
+            /reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py
+            /reports/task_history_sequences.json
+            /Документация/000_Задачи Codex.md
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare guarded Windows regression
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          if ((git rev-parse HEAD).Trim() -ne '9dd93ba09408217781c9b8f423a9cecf5bd264aa') { throw 'Unexpected source SHA' }
+          New-Item -ItemType Directory 'C:\h36_core\la' -Force | Out-Null
+          'TEMP=C:\h36_core' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMP=C:\h36_core' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'TMPDIR=C:\h36_core' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          'LOCALAPPDATA=C:\h36_core\la' | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+          New-Item -ItemType Directory ci-h36-core-evidence -Force | Out-Null
+          git rev-parse HEAD | Set-Content ci-h36-core-evidence/source_commit.txt
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'Venv failed' }
+          & .\.venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-input 'httpx==0.28.1' 'mcp==2.2.0' 'pytest==9.1.1'
+          if ($LASTEXITCODE -ne 0) { throw 'Dependencies failed' }
+      - name: H36 regression selected application, TEST, Turn, RAW, HOLD
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          Get-ChildItem Env:GIGACHAT_* -ErrorAction SilentlyContinue | ForEach-Object { Remove-Item ('Env:'+$_.Name) }
+          $p='reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h36_regression test_web_alarm_test_model_persist.py test_web_alarm_ordinary_application.py test_web_alarm_gigachat_transport.py test_web_alarm_ordinary_admission.py test_web_alarm_ordinary_core_bridge.py test_web_alarm_perchat_usage_settings.py test_rt002_s3a_ledger.py test_ordinary_chat_service.py test_web_alarm_ultra_chat_turn.py test_web_alarm_ultra_chat_turn_service.py test_web_alarm_ultra_chat_turn_s4b.py test_web_alarm_ultra_chat_turn_http.py test_web_alarm_ultra_chat_s5.py test_run_store_v2.py test_web_alarm_launcher.py::StableEntryTests test_web_alarm_ordinary_test_activation.py::ActivationTests::test_active_profile_uses_bridge_and_old_stage5_is_available test_web_alarm_ordinary_test_activation.py::ActivationTests::test_missing_test_config_cannot_fall_back_to_standard > ci-h36-core-evidence/regression.log 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content ci-h36-core-evidence/regression.log -Tail 30
+          if ($rc -ne 0) { throw 'Guarded H36 regression failed' }
+          $x=Get-Content "$p/evidence/ci_h36_regression.result.json" -Raw | ConvertFrom-Json
+          if ($x.runner_exit_code -ne 0 -or $x.unexpected_guard_denials -ne 0 -or $x.expected_guard_denials -ne 9 -or $x.counts.'test:passed' -ne 271 -or $x.counts.'subtest:passed' -ne 274 -or $x.counts.'test:failed' -or $x.counts.'test:error' -or $x.counts.'test:skipped') { throw 'Core regression mismatch' }
+          Write-Output 'H36_REGRESSION=271_PASS_274_SUBTESTS_9_EXPECTED_GUARDS'
+      - name: H36 standalone S2 guard
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $p='reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_standalone.py" ci_h36_s2 test_rt002_s2_budget_policy.py > ci-h36-core-evidence/s2.log 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content ci-h36-core-evidence/s2.log -Tail 25
+          if ($rc -ne 0) { throw 'S2 failed' }
+          $x=Get-Content "$p/evidence/ci_h36_s2.result.json" -Raw | ConvertFrom-Json
+          if ($x.exit_code -ne 0 -or $x.counts.run -ne 73 -or $x.counts.failures -or $x.counts.errors -or $x.counts.skipped -or $x.isolation_violations.Count) { throw 'S2 negative policy gate mismatched' }
+          Write-Output 'H36_S2=73_PASS'
+      - name: H36 isolation quality gates
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $p='reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001'
+          & .\.venv\Scripts\python.exe -B -X utf8 "$p/run_checks.py" ci_h36_quality --import-mode=importlib reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/isolation_checks.py > ci-h36-core-evidence/quality.log 2>&1
+          $rc=$LASTEXITCODE
+          Get-Content ci-h36-core-evidence/quality.log -Tail 25
+          if ($rc -ne 0) { throw 'Quality gates failed' }
+          $x=Get-Content "$p/evidence/ci_h36_quality.result.json" -Raw | ConvertFrom-Json
+          if ($x.runner_exit_code -ne 0 -or $x.unexpected_guard_denials -ne 0 -or $x.counts.'test:passed' -ne 52 -or $x.counts.'subtest:passed' -ne 7 -or $x.counts.'test:failed' -or $x.counts.'test:error' -or $x.counts.'test:skipped') { throw 'Quality count mismatch' }
+          Write-Output 'H36_QUALITY=52_PASS_7_SUBTESTS'
+      - name: Upload independent regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h36-independent-core-safety
+          path: ci-h36-core-evidence/
+          retention-days: 14
+          if-no-files-found: warn
