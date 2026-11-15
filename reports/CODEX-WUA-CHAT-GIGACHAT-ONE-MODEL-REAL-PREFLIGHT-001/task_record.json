@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001",
   "date": "2026-11-14",
-  "status": "DOC RECORDED / H35 BOUNDED INDEPENDENT WINDOWS OFFLINE PASS; AUTHOR PARTIAL; USER UX PENDING; REAL FACTORY/RELEASE HOLD",
-  "review": "PASS / BOUNDED INDEPENDENT WINDOWS OFFLINE for STANDARD→Ordinary application; overall H35 PARTIAL / TECHNICAL NOT READY / REAL HOLD; USER GUI NOT RUN",
+  "status": "DOC RECORDED / H35 BOUNDED INDEPENDENT WINDOWS OFFLINE PASS + OWNER STANDARD GUI BOUNDED ACCEPTED; AUTHOR PARTIAL / REAL HOLD",
+  "review": "PASS / BOUNDED INDEPENDENT WINDOWS OFFLINE for STANDARD; OWNER GUI BOUNDED ACCEPTED for chat settings/history/F5; overall REAL TECHNICAL NOT READY",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/handoff_task.md",
@@ -66,7 +66,7 @@
     "review_path": "reports/CHATGPT-WEB29-H35-REVIEW-20261114/review.md",
     "evidence_path": "reports/CHATGPT-WEB29-H35-REVIEW-20261114/independent_runs.json",
     "verdict": "BOUNDED INDEPENDENT WINDOWS OFFLINE PASS / AUTHOR PARTIAL",
-    "user_ux": "PENDING physical STANDARD/TEST",
+    "user_ux": "BOUNDED ACCEPTED / owner STANDARD history + per-chat settings + F5, 2026-11-15",
     "real_authorized": false,
     "remaining": [
       "account-model-scope/caps/cost/usage/TLS unverified",
@@ -74,7 +74,14 @@
       "S3b/S3c/S9/S13a unaccepted",
       "independent historical S1 RAW NOT RUN",
       "global smoke full Windows checkout filename too long",
-      "USER UX pending"
+      "Remaining physical GUI/usage/model matrix not fully checked; owner accepted only history/per-chat settings/F5"
     ]
+  },
+  "owner_gui_review": {
+    "date": "2026-11-15",
+    "path": "reports/CHATGPT-WEB30-H35-OWNER-GUI-20261115/review.md",
+    "sha256": "72ff987339e176ec72305c593cdd48fe36b848afc9bdd3d04734c4181e5fd315",
+    "status": "BOUNDED ACCEPTED, no REAL/paid",
+    "independent_physical_observation": false
   }
 }

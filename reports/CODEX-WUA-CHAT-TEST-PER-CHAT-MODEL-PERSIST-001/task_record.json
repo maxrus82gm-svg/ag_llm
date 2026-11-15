@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001",
   "date": "2026-11-15",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / H36 BOUNDED INDEPENDENT WINDOWS OFFLINE PASS + USER TEST GUI ACCEPTED; REAL HOLD",
+  "review": "PASS / BOUNDED INDEPENDENT WINDOWS OFFLINE + OWNER TEST GUI ACCEPTED; FULL REAL/RELEASE HOLD",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001/handoff_task.md",
@@ -15,7 +15,54 @@
     "report": {
       "path": "reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001/report.md",
       "sha256": "07fc50cb38e2882ebbbe934fce319dd5aa983fd471eabb1860afd4607156a6e0"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB30-H36-REVIEW-20261115/review.md",
+      "sha256": "2c0ce8f5eb56e2f03e7526afb7998b844994c4fd045ca77633e07eb9ecc0dc64"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001",
+      "history_id": "H-CODEX-000036",
+      "agent": "codex",
+      "title": "CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001",
+      "date": "2026-11-15",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001/handoff_task.md",
+          "sha256": "ea4800884fffbad7eeb647926df976aa0aee7d79abdddfaa8f257181d1d45366"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001/report.md",
+          "sha256": "07fc50cb38e2882ebbbe934fce319dd5aa983fd471eabb1860afd4607156a6e0"
+        }
+      },
+      "previous": []
+    }
+  ],
+  "independent_review": {
+    "date": "2026-11-15",
+    "verifier": "ChatGPT WEB29 (Windows CI), WEB30 (review/readback and owner GUI)",
+    "source_commit": "9dd93ba09408217781c9b8f423a9cecf5bd264aa",
+    "ci_commit": "ab05ee811a3cd12a59db054b40872acea6f89519",
+    "run_id": 43635085454,
+    "ci_jobs": "2/2 success",
+    "verdict": "PASS / BOUNDED INDEPENDENT OFFLINE",
+    "owner_gui_date": "2026-11-15",
+    "user_ux": "BOUNDED ACCEPTED — TEST two chats/model persistence/F5/synthetic message (owner reported)",
+    "real_authorized": false,
+    "release": "HOLD",
+    "review_path": "reports/CHATGPT-WEB30-H36-REVIEW-20261115/review.md",
+    "not_run": [
+      "REAL GigaChat/OAuth/API/paid",
+      "STANDARD multi-model switching",
+      "full browser a11y / clean deployment",
+      "full S3b/S3c/S9/S13a",
+      "independent historical S1 RAW"
+    ]
+  }
 }
