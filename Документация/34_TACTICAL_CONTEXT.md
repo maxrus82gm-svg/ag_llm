@@ -1,4 +1,14 @@
-## CURRENT / WEB30 15.11.2026 — H36 TEST DOC CLOSED bounded; H35 STANDARD owner GUI bounded accepted; REAL HOLD
+## CURRENT / WEB31 15.11.2026 — FIRST REAL GIGACHAT REPLY PASS (bounded); permanent LIVE OPEN
+
+**FACT / OWNER-APPROVED REAL, TASK ACTIVE:** `CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001` остаётся в Codex БЛОКЕ 1, HISTORY ID ещё нет, `finish`/финальный closeout НЕ выполнены. Codex подготовил одноразовый `web_alarm/live_bootstrap.py`, H38 provider/transport/admission/ledger, проверил 37/37 OFFLINE, S1 69/69, S2 73/73 (авторские результаты). Stage A под отдельный USER GO: 1 OAuth + 1 каталог, 0 inference; в каталоге аккаунта все **6 текстовых GigaChat ID** (+4 embeddings). Это **не** шесть проверенных генераций.
+
+**INDEPENDENT PHYSICAL LIVE 15.11 / ChatGPT через Desktop Commander на DESKTOP-SC96D3U:** по новому отдельному USER GO и одному отдельному grant, после проверки исправленного `turn_test.real_available`, выполнились ровно **1 OAuth POST, 1 GET /v1/models, 1 inference POST**, без retry. `GigaChat-2` ответил **«Готово»**, observed model **`GigaChat-2:2.0.30.01`**, Turn **SUCCEEDED**, prompt **100**, completion **4**, total **104** токена; консервативная liability **783 / 1056** — не фактический usage. Оба RAW, user/assistant история, latest Turn и отдельный свежий процесс чтения истории PASS. Ledger **3 события / 1 попытка / KNOWN_TERMINAL**; grant **CLOSED**, сервер/порт 8765 закрыты. Evidence `reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/stage-b-user-retry-success.md`, `evidence/stage_b_user_retry_result.json`; первая ошибочная Stage B попытка отдельно сохранена в `stage-b-live-stop.md` (0 inference). Секреты не копировались/не выводились.
+
+**OPEN / STOP:** реальный первый ответ **не означает** готовность постоянного пользовательского LIVE-режима и не снимает общие release/production HOLD. Нет штатного self-service включения REAL через `Start_WebAlarm_Standard.cmd`; `Start_WebAlarm_Test.cmd` остаётся OFFLINE. Пять остальных текстовых моделей обнаружены каталогом, их inference NOT RUN. Физический Chromium/F5 с LIVE-сессией, полный S3b/S3c/S9/S13a, all-model caps/version, тариф/остаток и clean Windows остаются OPEN. Не повторять потраченный grant; другие paid/live вызовы только по отдельному USER GO. **NEXT:** безопасный пользовательский Start/Stop REAL с сохранением тех же двух CMD и одного Ultra core, доступом к шести моделям и честной модельной доступностью; затем проверка REAL браузера и независимая регрессия. Не ротировать БЛОК 1 до полной сдачи/проверки, не делать промежуточного closeout-коммита. См. №05 FOLLOWUP и №40.
+
+---
+
+## PREVIOUS / WEB30 15.11.2026 — H36 TEST DOC CLOSED bounded; H35 STANDARD owner GUI bounded accepted; REAL HOLD
 
 **PROJECT / WHY:** Web Alarm Ultra / `maxrus82gm-svg/ag_llm`. Приоритет CHAT FIRST: привычный веб-чат на существующем Ultra Core (не создавать второе ядро); история, выбор модели и индивидуальные настройки чатов, адресные pre-send/recovery, затем первый REAL GigaChat **только после отдельного USER GO**. Workspace-less chat UX remains separate OPEN/unassigned.
 

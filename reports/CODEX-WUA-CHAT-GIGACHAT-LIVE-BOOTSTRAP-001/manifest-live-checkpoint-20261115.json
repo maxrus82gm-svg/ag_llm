@@ -1,0 +1,337 @@
+{
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001",
+  "status": "PARTIAL_STAGE_A_PASS_STAGE_B_FIRST_LIVE_REPLY_PASS_PERMANENT_LIVE_OPEN",
+  "provider_calls": {
+    "stage_a": {
+      "oauth": 1,
+      "catalog": 1,
+      "inference": 0
+    },
+    "stage_b_old_preflight_and_amendment": {
+      "oauth": 0,
+      "catalog": 0,
+      "inference": 0
+    },
+    "stage_b_live": {
+      "oauth": 1,
+      "catalog": 1,
+      "inference": 0,
+      "liability": 0
+    },
+    "stage_b_user_retry": {
+      "oauth": 1,
+      "catalog": 1,
+      "inference": 1,
+      "liability": 783
+    }
+  },
+  "files": [
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/before_amendment/gigachat_runtime.py",
+      "sha256": "5e17f1baf75979f7c9f417ac6df3833b69eec66603a0a1c5310c34efe82e0146",
+      "bytes": 17603,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/before_amendment/rt002_multimodel_reconciliation.json",
+      "sha256": "657015b9ee469a0192f7594d8dbe844dcacd532b1e00444f8953cc1fda478035",
+      "bytes": 2130,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/before_amendment/test_web_alarm_gigachat_multimodel.py",
+      "sha256": "f839fc087e67b1a773d0f84c32953b591f736cb80e179abb1f1897876a74a0ab",
+      "bytes": 18019,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/before_amendment/turn_service.py",
+      "sha256": "5200b181eff9a03f67d34b6960825d36e2bd1c8dd15040b654df4366a6e61e39",
+      "bytes": 43602,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/bootstrap.md",
+      "sha256": "5fd1f0176d6c095b8d7ef2ba3c8158286d55fac6abd02e56d5a8683466f46869",
+      "bytes": 4339,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/contract-amendment.md",
+      "sha256": "23d426eeed9ca58a4c837b39a4178c91eb5903211e487acc44f33303f47de169",
+      "bytes": 3311,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/amendment_offline.txt",
+      "sha256": "bc2f016c1d4ecf49b2c4d46f789157719e7736788de3249a68722cf43d452cbf",
+      "bytes": 7230,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/amendment_offline_final.txt",
+      "sha256": "0ff6ceaa4964083f99395fb49896b5ba3bfc353a72cd92f841a6a51ef4ae7ba0",
+      "bytes": 6154,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/amendment_offline_sealed.txt",
+      "sha256": "c4cf9d345663e859acfc9c285592c2ed123a4c8e5e993e63c845188141f79c1d",
+      "bytes": 6504,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/amendment_s1.txt",
+      "sha256": "12d816f3a2a2a338ebaed9b568b5fbdcb1467d4ae4aac7a98f71a9aa87c7f49b",
+      "bytes": 89081,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/amendment_s2.txt",
+      "sha256": "1580d41f83d77428a9223ac219302738a622d19d62acbf30e52134bc068d7a04",
+      "bytes": 1941,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/amendment_s2_final.txt",
+      "sha256": "10c5ac05bf56bf9131eb84179cb8643495872d3c7200fb9648841f2cd565c656",
+      "bytes": 840,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/bootstrap_final.txt",
+      "sha256": "4eb7378ad3432de54175a5f751b875cad3cc10630df7c5653d80433417da184d",
+      "bytes": 1033,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/combined_offline.txt",
+      "sha256": "fd34d914f83177736c7854ceb934cce80992c9100ec55f1b56606ba021bf0d85",
+      "bytes": 5434,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/prepared_workspace.json",
+      "sha256": "9259ae5646c7c398718d45759b8fe29877cc4a82d8d8789f88d2ba9a5552aa70",
+      "bytes": 370,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_a_attempt.json",
+      "sha256": "26df620ddaa3934adacf916d99d648744fa8ab2391647e7dd939f92fced01559",
+      "bytes": 134,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_a_result.json",
+      "sha256": "18c50eeeb499fc4add578a63d786a0b7e66bb9645bc822fbea3df4b7182726d5",
+      "bytes": 564,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_b_attempt.json",
+      "sha256": "6fc591ca96a821a0ae5eddd246772c74b4ef7aec1a595fa357e9ec92e5ec8693",
+      "bytes": 134,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_b_preflight.json",
+      "sha256": "d0f72b0f16126b48cf185f1032361dfb8d1f2e37ca147e69a9739d1415cd142b",
+      "bytes": 953,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_b_result.json",
+      "sha256": "23732d109685e50f7f83806e43570c8c704a3686b7465cf12ead5a8a32a735f6",
+      "bytes": 616,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/go-stage-b-updated.md",
+      "sha256": "ad287a648299d816dff1bcaeb25c5cc9d0e5ef0a46703408a366cd62f82cd85f",
+      "bytes": 2102,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/live-evidence.md",
+      "sha256": "24c766068023c1832b8cb79ba79e8203762e1d3116e33c2ed0cc8217792ed5e0",
+      "bytes": 3401,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/models.md",
+      "sha256": "89efa0b1b203c2d713027efef0afee665cbf43af0768f2126836633087f76299",
+      "bytes": 2340,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/report.md",
+      "sha256": "89e804e2e962a43106636a84ec72ccb14e7ac6aa6c26de177ac63d2585352a90",
+      "bytes": 7024,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/reuse-check.md",
+      "sha256": "0562a6cb5652c4fb7dc8a886e1e6784d8db78eb14de6c1e0d9d440238e20a4ef",
+      "bytes": 1600,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/run_stage_a_once.py",
+      "sha256": "50ddecfe9494e73cdb76ed1b18640a18163f3063be598b078cd6fe3df3e9370e",
+      "bytes": 3770,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/run_stage_b_once.py",
+      "sha256": "ad50addbc5daf71887b24ead4cee6fcb088471f5bb99b04941198a1043579976",
+      "bytes": 10639,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/stage-b-blocker.md",
+      "sha256": "de746e118b3e1aaa4166af484f85d9ab8cf989da51f5aebb4f4d32d2def93e1e",
+      "bytes": 3086,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/stage-b-live-stop.md",
+      "sha256": "ede339a00b02568e10d97ee9b36c4b46a1ddbc46d076f309ab52b49b366db375",
+      "bytes": 1621,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/test-results.md",
+      "sha256": "60f755c838b9de182316b12d9bb2e70fa8a058824b7e6238b7e9ec07f61b1644",
+      "bytes": 3603,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "gigachat_runtime.py",
+      "sha256": "38da2a339b24316fbd97224da40257c0de1cd5bd84b83912e82b972aaf333d47",
+      "bytes": 21830,
+      "role": "amended_source"
+    },
+    {
+      "path": "web_alarm/turn_service.py",
+      "sha256": "addc7d1f20de5c51c2b55ae00de50ae280c0565a9d321e76ba69f7a321688829",
+      "bytes": 43733,
+      "role": "amended_source"
+    },
+    {
+      "path": "test_web_alarm_gigachat_multimodel.py",
+      "sha256": "e271b5dcc3febd1ade72e193c2e4bc86e37329778b8f5fe3e75d01a324b5e4b2",
+      "bytes": 25156,
+      "role": "amended_source"
+    },
+    {
+      "path": "rt002_multimodel_reconciliation.json",
+      "sha256": "4616c33ef84b6afb9f8756c0d584d6b40c40018214f43d7e2cf9ebb83616b989",
+      "bytes": 2430,
+      "role": "amended_source"
+    },
+    {
+      "path": "web_alarm/live_bootstrap.py",
+      "sha256": "d3546c24dad193900625ed73bdba46a5b05d34c2fa4d07e539af842997547d56",
+      "bytes": 3503,
+      "role": "reused_reference"
+    },
+    {
+      "path": "test_web_alarm_live_bootstrap.py",
+      "sha256": "02b8e78576970229cc55c914e23f75f24f62c8aba29275642a28db3aa247a7d7",
+      "bytes": 5157,
+      "role": "reused_reference"
+    },
+    {
+      "path": "gigachat_transport.py",
+      "sha256": "b128e4011b7724ac0eefcc52e36e088c9e8b9fd9b9d562604daef2ad2729b808",
+      "bytes": 4701,
+      "role": "reused_reference"
+    },
+    {
+      "path": "ordinary_gigachat_transport.py",
+      "sha256": "b3f423a81d56146b52459ba7d9a6c29aa775264f8499b39ad3e201e420cb4c09",
+      "bytes": 6303,
+      "role": "reused_reference"
+    },
+    {
+      "path": "gigachat_admission.py",
+      "sha256": "a8ae4e2f2eac9f85e8b7d3f391e38cb35b264e0a11cc63116bb1e7aa5a78e3be",
+      "bytes": 21826,
+      "role": "reused_reference"
+    },
+    {
+      "path": "web_alarm/ordinary_provider.py",
+      "sha256": "096c574f536bf509e28d56b5da7883ad85f4d9f0bdb35e9afc9315feca03f059",
+      "bytes": 14937,
+      "role": "reused_reference"
+    },
+    {
+      "path": "web_alarm/server.py",
+      "sha256": "3a4cc8e5f4bbf31ce38ddcc9d8b8529df500c12ade78f4e3646f9491e29ac7e7",
+      "bytes": 78024,
+      "role": "reused_reference"
+    },
+    {
+      "path": "model_registry.py",
+      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+      "bytes": 2519,
+      "role": "reused_reference"
+    },
+    {
+      "path": "ultra_budget_ledger.py",
+      "sha256": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592",
+      "bytes": 13219,
+      "role": "reused_reference"
+    },
+    {
+      "path": "Start_WebAlarm_Standard.cmd",
+      "sha256": "79468ca15e53bc595521278f67ed147304787a2789567ab33096e3075e3dc372",
+      "bytes": 922,
+      "role": "reused_reference"
+    },
+    {
+      "path": "Start_WebAlarm_Test.cmd",
+      "sha256": "157091918484c159ecef497a60c78e95b45068fbc42c38c2682b6709a12bb6e3",
+      "bytes": 1199,
+      "role": "reused_reference"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/run_stage_b_user_retry_once.py",
+      "sha256": "a23dfc0aa0392d929b30aad1624c0346c7380a57c9a6fb76fbcea35ea29e2110",
+      "bytes": 10673,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/stage-b-user-retry-success.md",
+      "sha256": "506dbee3964a1b547f2ceedb59fea88803668e1eb17aed2f64aa6588ad295322",
+      "bytes": 2803,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_b_user_retry_attempt.json",
+      "sha256": "3c620839631ba698e0abc996fced5376034ca7d130126c857a2b9bce98e42515",
+      "bytes": 134,
+      "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_b_user_retry_result.json",
+      "sha256": "e83a0b3c0cedbdcf68428d02d77e73b66b39c2f8034337cafac2568181e44e8b",
+      "bytes": 1820,
+      "role": "report_or_evidence"
+    }
+  ],
+  "verified_live_checkpoint": {
+    "date": "2026-11-15",
+    "model": "GigaChat-2",
+    "response_model": "GigaChat-2:2.0.30.01",
+    "answer": "Готово",
+    "prompt_tokens": 100,
+    "completion_tokens": 4,
+    "total_tokens": 104,
+    "raw_and_history_verified": true,
+    "terminal_ledger_events": 3,
+    "grant_state": "CLOSED",
+    "scope": "one physical response, not permanent LIVE or general release"
+  }
+}
