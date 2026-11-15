@@ -140,9 +140,11 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 active = bool(session._available)
             except PreSendDenied:
                 pass
+        admitted = {c.model_id for c in session.approval.contracts} if session is not None else set()
         models = [dict(model_id=m.model_id, display_name=m.display_name, provider_model_id=m.provider_model_id,
-            availability=('AVAILABLE' if m.provider_model_id in session._available else 'UNAVAILABLE')
-                         if session is not None else 'UNVERIFIED')
+            availability=(('UNAVAILABLE' if m.provider_model_id not in session._available else
+                           'AVAILABLE' if m.model_id in admitted else 'NOT_APPROVED')
+                         if session is not None else 'UNVERIFIED'))
             for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local]
         return {**contract, 'available': fixture or active, 'real_available': active and not session.synthetic if session else False,
                 'mode': 'ORDINARY', 'core_bridge': True, 'chat_preferences': True,
@@ -185,7 +187,9 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         try:
             with core._existing_workspace_writer(root, wid) as writer:
                 parts, metadata = core._require_chat_for_write(writer, chat_id)
-                selected = metadata.get("ordinary_chat_model", MODEL_ID) if update is ... else update['model_ref']
+                fallback = (self._factory._session.approval.contracts[0].model_id
+                            if self._factory._session is not None and not self._factory._session.synthetic else MODEL_ID)
+                selected = metadata.get("ordinary_chat_model", fallback) if update is ... else update['model_ref']
                 if selected not in allowed:
                     raise UltraChatError(409, "ordinary_model_invalid", "Saved model requires review")
                 if update is not ... and metadata.get('ordinary_chat_model') != selected:
@@ -254,12 +258,12 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 return super()._fixture_turns(root, context, context_ref, response_text)
             return TurnService(test_roots=[root])  # Read-only recovery; no sender.
         chat_id = context_ref.removeprefix('stage5:') if context_ref.startswith('stage5:') else None
-        model_id = MODEL_ID
+        model_id = session.approval.contracts[0].model_id if not session.synthetic else MODEL_ID
         answer = session.approval.max_answer_tokens
         if chat_id:
             with _core()._existing_workspace_writer(root, session.workspace_id) as writer:
                 _, metadata = _core()._require_chat_for_write(writer, chat_id)
-                model_id = metadata.get('ordinary_chat_model', MODEL_ID)
+                model_id = metadata.get('ordinary_chat_model', session.approval.contracts[0].model_id if not session.synthetic else MODEL_ID)
                 answer = metadata.get('ordinary_chat_settings', {}).get('answer_tokens', answer)
         if not chat_id:
             return TurnService(test_roots=[root])

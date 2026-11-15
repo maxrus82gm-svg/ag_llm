@@ -2005,6 +2005,10 @@ function renderTurnComposer(){
         $('chatSend').disabled=true;
         text('chatComposerNote','Эта модель недоступна в подтверждённом каталоге аккаунта. Выберите другую модель.');
       }
+      if(chatTurn.executionMode==='REAL'&&selected?.availability==='NOT_APPROVED'){
+        $('chatSend').disabled=true;
+        text('chatComposerNote','Эта модель найдена в каталоге, но пока не разрешена в текущем LIVE-сеансе.');
+      }
     }
   }
   else if(chatTurn.available){text('chatComposerNote','TEST · локальный имитатор. Выбранная модель не вызывается. Enter — отправить, Shift+Enter — новая строка.');$('chatInput').placeholder='Сообщение TEST-имитатору';text('chatModel','TEST · локальный имитатор');text('chatModelPick','TEST · без LLM');text('chatSidebarNote','TEST: ответы создаёт локальный имитатор. История хранится общим ядром Ultra.')}

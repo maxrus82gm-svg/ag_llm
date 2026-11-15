@@ -14,6 +14,7 @@ environment variable WEB_ALARM_PORT; no user path is written anywhere in the rep
 from __future__ import annotations
 
 import argparse
+import asyncio
 import hashlib
 import html
 import json
@@ -320,12 +321,33 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
     bind_port = launch.port if port is None else port
     expected_page = mark_page(wa_server.INDEX_HTML, launch)
     claim = _claim_port(bind_port) if bind_port else None
+    live_session = None
+    server = None
     try:
         if bind_port and (claim is None or _port_in_use(bind_port)):
             raise OSError("port busy")
-        server = create_server(WebAlarmApi(storage_root), host=HOST, port=bind_port,
-                               enable_folder_picker=launch.folder_picker, enable_ultra_chat=launch.ultra_chat)
+        api = WebAlarmApi(storage_root)
+        if launch.standard and self_test is None and sys.stdin.isatty():
+            from .standard_live import offer_standard_live
+            live_session = offer_standard_live(api, input, out)
+        factory = None
+        if live_session is not None:
+            from .ordinary_provider import OrdinaryProviderFactory
+            factory = OrdinaryProviderFactory.for_session(api.registry, live_session)
+        server = create_server(api, host=HOST, port=bind_port,
+                               enable_folder_picker=launch.folder_picker,
+                               enable_ultra_chat=launch.ultra_chat, ordinary_factory=factory)
+        if live_session is not None:
+            available = asyncio.run(live_session.discover_models())
+            if "GigaChat-2" not in available:
+                raise LaunchConfigError("GigaChat-2 unavailable in confirmed account catalog")
+            out.write("[LIVE] GigaChat-2 разрешён каталогом, отправка только в выбранном Workspace.\n")
     except OSError:
+        if live_session is not None:
+            try:
+                live_session.close()
+            except Exception:
+                out.write("[LIVE] Grant unresolved after port error; manual review required.\n")
         if claim is not None:
             claim.release()
         _remove_temp_storage(storage_root)
@@ -340,6 +362,19 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
         out.write("\n" + paint(f"Порт {bind_port} занят другой программой, другой версией или другим режимом "
                                "Web Alarm. Закройте прежнее окно Web Alarm и запустите снова.", 41, colors) + "\n")
         return 3
+    except Exception as exc:
+        if server is not None:
+            server.server_close()
+        if live_session is not None:
+            try:
+                live_session.close()
+            except Exception:
+                out.write("[LIVE] Grant could not be closed; do not retry before review.\n")
+        if claim is not None:
+            claim.release()
+        _remove_temp_storage(storage_root)
+        out.write("[LIVE] Запуск остановлен до отправки Turn: " + type(exc).__name__ + ".\n")
+        return 5
     server.RequestHandlerClass = _MarkedHandler
     server.web_alarm_launch = launch
     url = f"http://{HOST}:{server.server_port}/"
@@ -370,6 +405,13 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
         pass
     finally:
         server.server_close()
+        if live_session is not None:
+            try:
+                live_session.close()
+                out.write("[LIVE] Серверный допуск закрыт.\n")
+            except Exception:
+                out.write("[LIVE] Grant не подтверждён как CLOSED. "
+                          "Не повторяйте запросы до проверки журнала.\n")
         if claim is not None:
             claim.release()
         _remove_temp_storage(storage_root)

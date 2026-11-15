@@ -1,0 +1,63 @@
+name: WUA STANDARD LIVE bounded OFFLINE Windows
+on:
+  push:
+    branches: [GPT, 'review/wua-standard-live-onramp']
+    paths:
+      - 'web_alarm/**'
+      - 'test_web_alarm_standard_live.py'
+      - '.github/workflows/wua-standard-live-offline.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guarded-offline:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            /*.py
+            /web_alarm/
+            /Start_WebAlarm_Standard.cmd
+            /Start_WebAlarm_Test.cmd
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test-only HTTP dependency
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check httpx==0.28.1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Confirm isolated source and no live credentials
+        shell: pwsh
+        run: |
+          git rev-parse HEAD
+          if (Test-Path 'reports') { throw 'Legacy report tree must not be included in Windows checkout' }
+          foreach ($name in @('web_alarm/launcher.py','web_alarm/standard_live.py','test_web_alarm_standard_live.py','gigachat_runtime.py')) {
+            if (!(Test-Path $name)) { throw "Required file missing: $name" }
+            Get-FileHash -Algorithm SHA256 $name
+          }
+      - name: New guarded launch and existing provider regressions (NO REAL)
+        shell: pwsh
+        env:
+          GIGACHAT_CREDENTIALS: ''
+          GIGACHAT_SCOPE: ''
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          python -B -X utf8 -m unittest -v test_web_alarm_standard_live test_web_alarm_live_bootstrap test_web_alarm_gigachat_multimodel 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP\standard-live-offline.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload independent Windows log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: standard-live-offline-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/standard-live-offline.log
+          if-no-files-found: warn
+          retention-days: 14
