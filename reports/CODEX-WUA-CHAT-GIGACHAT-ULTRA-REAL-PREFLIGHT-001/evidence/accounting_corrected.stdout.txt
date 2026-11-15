@@ -1,0 +1,16 @@
+....F                                                                 [100%]
+================================== FAILURES ===================================
+_ CachedTurnContract.test_turn_stores_billable_total_and_separate_full_liability_without_replay _
+reports\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\accounting_oracle.py:91: in test_turn_stores_billable_total_and_separate_full_liability_without_replay
+    self.assertEqual((records[0].known_input_tokens, records[0].liability_tokens), (9, 14))
+E   AssertionError: Tuples differ: (732, 737) != (9, 14)
+E   
+E   First differing element 0:
+E   732
+E   9
+E   
+E   - (732, 737)
+E   + (9, 14)
+=========================== short test summary info ===========================
+FAILED reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedTurnContract::test_turn_stores_billable_total_and_separate_full_liability_without_replay
+1 failed, 4 passed, 3 subtests passed in 1.90s

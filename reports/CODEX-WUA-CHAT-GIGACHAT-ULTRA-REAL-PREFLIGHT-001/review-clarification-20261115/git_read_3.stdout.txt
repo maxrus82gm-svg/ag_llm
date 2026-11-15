@@ -1,0 +1,641 @@
+diff --git a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py
+index d07826ca..4a587f4e 100644
+--- a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py
++++ b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py
+@@ -1,17 +1,104 @@
+-"""Expected RED: published cached-token billing versus the sealed current contract.
++"""H37 corrected oracle: billed tokens differ from full processed input.
+ 
+-This is a diagnostic acceptance oracle; do not weaken it to make LIVE look ready.
+-Source: public api.yml Usage schema checked 2026-11-15, no provider request.
++The 2026-07-17 counting-tokens guide says prompt_tokens is already uncached.
++The historical 7/5/cached2/total10 RED is preserved as a mistaken oracle, not a
++shared accounting defect. This suite uses synthetic data under OFFLINE guards.
+ """
++import json
+ import unittest
+ from ordinary_chat_service import _usage
++import ultra_budget_policy as policy
++from ultra_budget_ledger import BudgetLedger
++import context_storage as core
++import test_web_alarm_gigachat_transport as h33
++from ordinary_gigachat_transport import OfflineHTTPFixture
++from web_alarm.ultra_chat import OrdinaryCoreChatService
+ 
+ 
+ class CachedUsageContract(unittest.TestCase):
+-    def test_documented_billable_total_can_be_preserved(self):
+-        # Exact synthetic example under the documented subtract-cache semantics.
+-        # Current policy instead requires 7+5=12 and therefore reports invalid.
+-        result = _usage({'usage': dict(prompt_tokens=7, completion_tokens=5,
+-                                      precached_prompt_tokens=2, total_tokens=10)})
+-        self.assertEqual(result.status, 'complete', 'REAL BLOCKER: shared accounting contract mismatch')
+-        self.assertEqual(result.total_tokens, 10)
++    @staticmethod
++    def sent():
++        measure = policy.RequestMeasure('executor', 'GigaChat-3-Ultra', 400, '0' * 64, 50)
++        reserved = policy.reserve_attempt('h37_cached', measure,
++            policy.TokenEstimate(100, policy.EST_CALIBRATED, None, ''), 'h37_scope')
++        return policy.mark_sent(reserved)
++
++    def test_documented_example_preserves_billing_and_full_input(self):
++        # Published usage example: net input 1, output 4, cached input 37.
++        raw = dict(prompt_tokens=1, completion_tokens=4, precached_prompt_tokens=37, total_tokens=5)
++        parsed = _usage({'usage': raw})
++        self.assertEqual((parsed.status, parsed.total_tokens), ('complete', 5))
++        status, usage, _ = policy.validate_usage(raw)
++        self.assertEqual(status, 'KNOWN')
++        self.assertEqual((usage.prompt_tokens, usage.completion_tokens, usage.precached_prompt_tokens), (1, 4, 37))
++        settled = policy.apply_terminal(self.sent(), 'completed', raw)
++        self.assertEqual(settled.state, policy.KNOWN_TERMINAL)
++        self.assertEqual(settled.known_input_tokens, 38)
++        self.assertEqual(settled.liability_tokens, 42)  # processed load, not billable 5
++
++    def test_corrected_synthetic_vectors_do_not_subtract_cache_twice(self):
++        for prompt, completion, cached, total, full_input, processed in (
++            (7, 5, 2, 12, 9, 14),  # prompt=7 is already net of cache
++            (5, 5, 2, 10, 7, 12),  # if original gross input was 7, net prompt must be 5
++            (7, 5, 0, 12, 7, 12),
++        ):
++            with self.subTest(prompt=prompt, cached=cached):
++                raw = dict(prompt_tokens=prompt, completion_tokens=completion,
++                           precached_prompt_tokens=cached, total_tokens=total)
++                self.assertEqual(_usage({'usage': raw}).total_tokens, total)
++                self.assertEqual(policy.validate_usage(raw)[0], 'KNOWN')
++                settled = policy.apply_terminal(self.sent(), 'completed', raw)
++                self.assertEqual(settled.state, policy.KNOWN_TERMINAL)
++                self.assertEqual(settled.known_input_tokens, full_input)
++                self.assertEqual(settled.liability_tokens, processed)
++
++    def test_old_vector_is_invalid_in_both_existing_parsers(self):
++        raw = dict(prompt_tokens=7, completion_tokens=5, precached_prompt_tokens=2, total_tokens=10)
++        self.assertEqual(_usage({'usage': raw}).status, 'invalid')
++        self.assertEqual(policy.validate_usage(raw)[0], 'INVALID')
++        settled = policy.apply_terminal(self.sent(), 'completed', raw)
++        self.assertEqual(settled.state, policy.ANOMALY)
++        self.assertGreaterEqual(settled.liability_tokens, self.sent().reserved_liability_tokens)
++
++    def test_missing_cached_preserves_unknown_and_conservative_reservation(self):
++        raw = dict(prompt_tokens=7, completion_tokens=5, total_tokens=12)
++        self.assertEqual(_usage({'usage': raw}).total_tokens, 12)
++        status, usage, _ = policy.validate_usage(raw)
++        self.assertEqual(status, 'KNOWN')
++        self.assertIsNone(usage.precached_prompt_tokens)
++        settled = policy.apply_terminal(self.sent(), 'completed', raw)
++        # Missing cache does not prove exact gross context; current liability
++        # retains max(reported net input, reserved estimate), then output.
++        self.assertEqual(settled.known_input_tokens, 100)
++        self.assertEqual(settled.liability_tokens, 105)
++        self.assertIsNone(settled.usage.precached_prompt_tokens)
++
++
++class CachedTurnContract(h33.s5.Fixture):
++    def test_turn_preserves_billing_and_conservative_missing_cache_liability(self):
++        raw = dict(prompt_tokens=7, completion_tokens=5, precached_prompt_tokens=2, total_tokens=12)
++        fixture = OfflineHTTPFixture(body=json.dumps(h33.reply(raw)).encode())
++        self.service = OrdinaryCoreChatService(self.registry, self.root, http_fixture=fixture)
++        ws, cid = self.create_chat('H37 cache correction OFFLINE')
++        root = h33.Path(self.registry.get(ws).workspace_root)
++        wid = core.read_workspace_identity_bounded(root)['workspace_id']
++        ledger = BudgetLedger(root, wid)
++        body = self.body('synthetic cached request', 'gigachat_ultra')
++        result = self.service.submit_turn(ws, cid, body)
++        self.assertEqual(result['state'], 'SUCCEEDED')
++        records = ledger.recover().attempts
++        self.assertEqual(len(records), 1)
++        # Existing Ordinary Usage does not forward the optional cached field.
++        # Do not invent exact gross context 9 at this layer: ledger retains the
++        # reserved estimate as a conservative fallback, not a billed total.
++        self.assertIsNone(records[0].usage.precached_prompt_tokens)
++        reserved_input = records[0].reserved_input_tokens_est
++        self.assertGreaterEqual(reserved_input, 9)
++        self.assertEqual(records[0].known_input_tokens, reserved_input)
++        self.assertEqual(records[0].liability_tokens, reserved_input + 5)
++        known = self.service.messages(ws, cid, None, 50)['usage_summary']['known']
++        self.assertEqual((known['prompt_tokens'], known['completion_tokens'], known['total_tokens']), (7, 5, 12))
++        self.service = OrdinaryCoreChatService(self.registry, self.root, http_fixture=fixture)
++        self.assertEqual(self.service.submit_turn(ws, cid, body), result)
++        self.assertEqual(ledger.recover().attempts, records)
++        self.assertEqual((fixture.token_calls, len(fixture.requests)), (1, 1))
+diff --git a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/manifest.json b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/manifest.json
+index ef9106d3..b2734d02 100644
+--- a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/manifest.json
++++ b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/manifest.json
+@@ -378,12 +378,115 @@
+       "baseline_negative_control": false,
+       "source_sha256": "21b80cf689f05d68bcca06da407fa4a7e54dd1c5356ac854b614b19eae54d233",
+       "test_sha256": "c67e854e366c6d461678b9cb19601fd902a3fef69792faa89a095585713b7d55"
++    },
++    "accounting_corrected.result.json": {
++      "exit_code": 1,
++      "counts": {
++        "subtest:passed": 3,
++        "test:passed": 4,
++        "test:failed": 1
++      },
++      "expected_guard_denials": 0,
++      "command": [
++        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
++        "-B",
++        "-X",
++        "utf8",
++        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
++        "--child",
++        "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py",
++        "--basetemp",
++        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_n9ngsfjk\\p"
++      ],
++      "elapsed_seconds": 3.359000000025844,
++      "guard_denials": 0,
++      "unexpected_guard_denials": 0,
++      "pytest_exit_code": 1,
++      "runner_exit_code": 1
++    },
++    "accounting_corrected_final.result.json": {
++      "exit_code": 0,
++      "counts": {
++        "subtest:passed": 3,
++        "test:passed": 5
++      },
++      "expected_guard_denials": 0,
++      "command": [
++        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
++        "-B",
++        "-X",
++        "utf8",
++        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
++        "--child",
++        "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py",
++        "--basetemp",
++        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_ng41hfy1\\p"
++      ],
++      "elapsed_seconds": 2.39000000001397,
++      "guard_denials": 0,
++      "unexpected_guard_denials": 0,
++      "pytest_exit_code": 0,
++      "runner_exit_code": 0
++    },
++    "accounting_hold_recheck.result.json": {
++      "exit_code": 0,
++      "counts": {
++        "test:passed": 54,
++        "subtest:passed": 123
++      },
++      "expected_guard_denials": 3,
++      "command": [
++        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
++        "-B",
++        "-X",
++        "utf8",
++        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
++        "--child",
++        "test_web_alarm_gigachat_ultra_preflight.py",
++        "test_ordinary_chat_service.py",
++        "--basetemp",
++        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_q3qrw4ns\\p"
++      ],
++      "elapsed_seconds": 4.952999999979511,
++      "guard_denials": 3,
++      "unexpected_guard_denials": 0,
++      "pytest_exit_code": 0,
++      "runner_exit_code": 0
++    },
++    "accounting_s2_recheck.result.json": {
++      "command": [
++        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
++        "-B",
++        "-X",
++        "utf8",
++        "test_rt002_s2_budget_policy.py"
++      ],
++      "exit_code": 0,
++      "elapsed_seconds": 8.85999999998603,
++      "counts": {
++        "run": 73,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0,
++        "expected_failures": 0,
++        "unexpected_successes": 0
++      },
++      "gate": {
++        "status": "PASS",
++        "exit_code": 0,
++        "reasons": []
++      },
++      "isolation_violations": []
+     }
+   },
+   "artifacts": {
++    "accounting-clarification.md": {
++      "bytes": 9048,
++      "sha256": "79bff74e74e953b2357d4f6380886b2bac1022fc3c8442591434d46b774395ba"
++    },
+     "accounting_oracle.py": {
+-      "bytes": 893,
+-      "sha256": "712b3cc491487e41d6aefd60d6a3c1c4289163fe81c7da435bead02dd6a41322"
++      "bytes": 6191,
++      "sha256": "45fd190ff9fb283e8fa1add745979fd9c8791924dc7824079e24e3159968597d"
+     },
+     "before/gigachat_admission.py.txt": {
+       "bytes": 21628,
+@@ -417,6 +520,50 @@
+       "bytes": 366,
+       "sha256": "81c87f5e80e78f5413472a26ec16a3b6bc95c1f1ad6058cd88e571ed98922c03"
+     },
++    "correction_closeout.json": {
++      "bytes": 845,
++      "sha256": "d28237541a81f3f98e88bb7f58a4cf4e7a10b8d3b80121203b16a6b6e4e3f27a"
++    },
++    "evidence/accounting_corrected.cases.current.json": {
++      "bytes": 263,
++      "sha256": "7fae60dc32c2f360b7bd7572d787e850a0afc4622bfd8299953cff5fce821edb"
++    },
++    "evidence/accounting_corrected.cases.json": {
++      "bytes": 2347,
++      "sha256": "650993f3c36a42384d5aaa39722542dcc1ab60d67272c7ad4e8865fa25ae9ac5"
++    },
++    "evidence/accounting_corrected.result.json": {
++      "bytes": 2904,
++      "sha256": "407bb61e70e4e8a7c8229069e4aca3e61f2cc3467127ff6e07dd61e1a5de1069"
++    },
++    "evidence/accounting_corrected.stderr.txt": {
++      "bytes": 0,
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
++    },
++    "evidence/accounting_corrected.stdout.txt": {
++      "bytes": 974,
++      "sha256": "db1a64b7bb0dae7920b719c42d3a923f72210a8b011c4b862d0f6e26d797443c"
++    },
++    "evidence/accounting_corrected_final.cases.current.json": {
++      "bytes": 257,
++      "sha256": "911515ce3ac103b2fe0d267c6d8d92183207fabc9c10112743f9395132e8a0e2"
++    },
++    "evidence/accounting_corrected_final.cases.json": {
++      "bytes": 2318,
++      "sha256": "01e83f69db2780bc1f6490d25e6a846367c9b8a2b36966d2727f17eeee97edcc"
++    },
++    "evidence/accounting_corrected_final.result.json": {
++      "bytes": 2874,
++      "sha256": "38523f0704fad670f3de00dad925efc3fbfab66a1c81b84cda585369d7b30436"
++    },
++    "evidence/accounting_corrected_final.stderr.txt": {
++      "bytes": 0,
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
++    },
++    "evidence/accounting_corrected_final.stdout.txt": {
++      "bytes": 116,
++      "sha256": "693350898a728c331ef6e06cda35ffded6fce93bb0def494340ee5e598673111"
++    },
+     "evidence/accounting_expected_red.cases.current.json": {
+       "bytes": 200,
+       "sha256": "e4e09fbd8d070b7b0382eb8ac73bec28810a3e71679bf9232cc34170b42b5bcf"
+@@ -437,6 +584,46 @@
+       "bytes": 869,
+       "sha256": "5e5b4e17096a80cddeb523ff6b8764cbc6e50f35f086e2fb7b77c4835d6a4481"
+     },
++    "evidence/accounting_hold_recheck.cases.current.json": {
++      "bytes": 210,
++      "sha256": "0d1b9a493af8f4704c9e2b57a70f646f4a7cdaee557348e6fca65c398397eb02"
++    },
++    "evidence/accounting_hold_recheck.cases.json": {
++      "bytes": 37948,
++      "sha256": "970fa3c62d0531ad2e8f1e894b7a3b2d195119d61a648ee480286258c7592bf2"
++    },
++    "evidence/accounting_hold_recheck.guard.jsonl": {
++      "bytes": 287,
++      "sha256": "23c6cc4deb6235e1b1a448ffeaf354872401bf1bfb8721c5e49c5214042a72a8"
++    },
++    "evidence/accounting_hold_recheck.result.json": {
++      "bytes": 38508,
++      "sha256": "a9b56b0448f6b06aface9c2927c071649f88fbcd5fc820504d178a993bcf5554"
++    },
++    "evidence/accounting_hold_recheck.stderr.txt": {
++      "bytes": 0,
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
++    },
++    "evidence/accounting_hold_recheck.stdout.txt": {
++      "bytes": 152,
++      "sha256": "2927f347aa6049a7a6ec4dd46040334ca70d1aa9e4e91256bdf31cde8a9c279d"
++    },
++    "evidence/accounting_s2_recheck.result.json": {
++      "bytes": 479,
++      "sha256": "c4850ca1c3b6bdf973062c55e34276c29e85376c16d124bf5ffda54d268c975f"
++    },
++    "evidence/accounting_s2_recheck.stderr.txt": {
++      "bytes": 0,
++      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
++    },
++    "evidence/accounting_s2_recheck.stdout.txt": {
++      "bytes": 840,
++      "sha256": "ed94c2cb4f89a3b8845a1fd8ebb9a1c286312025f6fc7fe7e06417da19d1ac82"
++    },
++    "evidence/accounting_s2_recheck.unittest.txt": {
++      "bytes": 10510,
++      "sha256": "b7a93cac392c81ee8a03667e98a0320a2544f6c965ab78489e4559b427c16c50"
++    },
+     "evidence/authority_mutation_red.cases.current.json": {
+       "bytes": 186,
+       "sha256": "06eae1a1cc957ec216f63c3208da97f537cba6f03d3f10f750a9b926feafac02"
+@@ -794,8 +981,8 @@
+       "sha256": "bb700c453bc105243cfc84cc1db4385196842037a832ec2b131cfef7bf32fda7"
+     },
+     "manual-review.md": {
+-      "bytes": 4712,
+-      "sha256": "6e5a23f6b30cc2ae75fe1746b911af7eb07ac48c55a3883d1c476aed4c0ff633"
++      "bytes": 4885,
++      "sha256": "6fee0e6ec4286f4176b5477f585b9716d64adc31cb0b7d93b7112123aed8aeae"
+     },
+     "negative_oracle.py": {
+       "bytes": 610,
+@@ -806,20 +993,84 @@
+       "sha256": "b4fab7f46bdd9ca16d290d09645b325cddd0c577d60ba87e513cd4a214653f25"
+     },
+     "provider-contract.md": {
++      "bytes": 8155,
++      "sha256": "83df701076758c8d4ecb6b1de5cc4b5479d70f1702ed0d96bf31621ce90267bc"
++    },
++    "real-readiness.md": {
++      "bytes": 3667,
++      "sha256": "dda012f05a5f763ce9abf23b722e304a3b4aa8197ad3a29c5f389f37b3f28cb4"
++    },
++    "report.md": {
++      "bytes": 17710,
++      "sha256": "471836ba2d8a935fbda9b308e9a40a7b2a168d06bc43d7099043573d07eaf6ab"
++    },
++    "reuse-check.md": {
++      "bytes": 3427,
++      "sha256": "3f9f010fcb26752420fed132db30d69577c0be1dc0fccab6a8e9bba3d46e2083"
++    },
++    "review-clarification-20261115/before/accounting_oracle.py.txt": {
++      "bytes": 893,
++      "sha256": "712b3cc491487e41d6aefd60d6a3c1c4289163fe81c7da435bead02dd6a41322"
++    },
++    "review-clarification-20261115/before/accounting_oracle_first_clarification.py.txt": {
++      "bytes": 5802,
++      "sha256": "71d93f8e29e0f753014dab2b324d04fca0c5cd141f531ea672e2698bb1d8882b"
++    },
++    "review-clarification-20261115/before/closeout.json.txt": {
++      "bytes": 366,
++      "sha256": "81c87f5e80e78f5413472a26ec16a3b6bc95c1f1ad6058cd88e571ed98922c03"
++    },
++    "review-clarification-20261115/before/manifest.json.txt": {
++      "bytes": 30246,
++      "sha256": "994361cd7b15f30bfdeb6cb9fe7c6f59b0858046fa2b811aecdf8d9d5d909f82"
++    },
++    "review-clarification-20261115/before/manual-review.md.txt": {
++      "bytes": 4712,
++      "sha256": "6e5a23f6b30cc2ae75fe1746b911af7eb07ac48c55a3883d1c476aed4c0ff633"
++    },
++    "review-clarification-20261115/before/provider-contract.md.txt": {
+       "bytes": 8475,
+       "sha256": "1b37c3c9d4fc22e4e27aeebae44ccd134c288b7bfa82fa30a2fbf52c694b98bf"
+     },
+-    "real-readiness.md": {
++    "review-clarification-20261115/before/real-readiness.md.txt": {
+       "bytes": 3461,
+       "sha256": "a7ea17ac3842eae904dc5cbc99e928f1d14ff91e17543f2671b9c12c9c0b6eca"
+     },
+-    "report.md": {
++    "review-clarification-20261115/before/report.md.txt": {
+       "bytes": 14979,
+       "sha256": "0bfe576890ff9204f582c9e9b717502be064871a1c5876d9b6b19f2c111979bd"
+     },
+-    "reuse-check.md": {
+-      "bytes": 3427,
+-      "sha256": "3f9f010fcb26752420fed132db30d69577c0be1dc0fccab6a8e9bba3d46e2083"
++    "review-clarification-20261115/before/safety-matrix.md.txt": {
++      "bytes": 3677,
++      "sha256": "0bd2db1f172e10c751b9b72c5d2543960e80313160b93a0b6edaaa6490fc108b"
++    },
++    "review-clarification-20261115/before/task_record.json.txt": {
++      "bytes": 716,
++      "sha256": "7f606c748b7cfb79f572a1f31e1011f147a25f34a83058a66e8e842e1013e369"
++    },
++    "review-clarification-20261115/history_refresh.json": {
++      "bytes": 678,
++      "sha256": "1e0b4b93f3c898e6752bcb961fbb03d402a2139ab143bf77b33f8f1809adffea"
++    },
++    "review-clarification-20261115/openapi_fetch.json": {
++      "bytes": 339,
++      "sha256": "e87109278da92546916e980a929f080b3f50dc1bcc76b99778bfc4fc25dc94bb"
++    },
++    "review-clarification-20261115/package_before.json": {
++      "bytes": 12483,
++      "sha256": "bdbb440685444af7622a25cde7da0e44064469b634abc61d245b7519f395c646"
++    },
++    "review-clarification-20261115/protected_before.json": {
++      "bytes": 35839,
++      "sha256": "576b48f1535d4b9182a80223fe75ff2bd8c17a58c1945465720cc7ff5ff99e8e"
++    },
++    "review-clarification-20261115/request.md": {
++      "bytes": 1453,
++      "sha256": "faf4dae33497993b67659c57f4564294f871b929d67d35b9977d1930bc39b4af"
++    },
++    "review-clarification-20261115/seal_clarification.py": {
++      "bytes": 3878,
++      "sha256": "327ba5f789868c65bbefca9d7d1b0bbea1f985754950ffb67987fd2742e458ad"
+     },
+     "run_checks.py": {
+       "bytes": 6515,
+@@ -834,16 +1085,46 @@
+       "sha256": "30502ea85568f3c233cbcbe1fe38f34e6ef2176091aa9eda7d1dde048842d27f"
+     },
+     "safety-matrix.md": {
+-      "bytes": 3677,
+-      "sha256": "0bd2db1f172e10c751b9b72c5d2543960e80313160b93a0b6edaaa6490fc108b"
++      "bytes": 3931,
++      "sha256": "0b914ad97337fc317ef313359527defa1c09a8982022613c093216919397ebff"
+     },
+     "seal_package.py": {
+       "bytes": 3005,
+       "sha256": "f8334dd9ae17a1d2baa24b094d34547da45b952c43cf7f1207a1d66667a32c69"
+     },
+     "task_record.json": {
+-      "bytes": 716,
+-      "sha256": "7f606c748b7cfb79f572a1f31e1011f147a25f34a83058a66e8e842e1013e369"
++      "bytes": 1538,
++      "sha256": "c36e5c6a55e160a824867685d829caf382cd494c16b55459a91e260b49c072d1"
+     }
++  },
++  "review_clarification_20261115": {
++    "task_id": "CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001",
++    "history_id": "H-CODEX-000037",
++    "correction": "AUTHOR CORRECTION READY / INDEPENDENT REVIEW PENDING",
++    "cached_accounting": "COMPATIBLE; previous blocker WITHDRAWN",
++    "ordinary_cached_forwarding": "optional field not forwarded; conservative reservation fallback",
++    "real": "HOLD / NOT RUN",
++    "git": "NOT RUN / COMMIT SHA UNVERIFIED",
++    "protected_files": 301,
++    "shared_runtime_changes": [],
++    "original_artifacts_unchanged": 110,
++    "previous_report_hash_verified": true,
++    "slot_and_sequence_unchanged": true,
++    "changed_package_files": [
++      "accounting_oracle.py",
++      "manual-review.md",
++      "provider-contract.md",
++      "real-readiness.md",
++      "report.md",
++      "safety-matrix.md",
++      "task_record.json"
++    ],
++    "original_red_retained": true,
++    "report": "accounting-clarification.md",
++    "source_urls": [
++      "https://developers.sber.ru/docs/ru/gigachat/guides/counting-tokens",
++      "https://developers.sber.ru/docs/files/openapi/gigachat/api.yml"
++    ],
++    "historical_accounting_red_classification": "incorrect original oracle; not a shared formula defect"
+   }
+ }
+\ No newline at end of file
+diff --git a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/manual-review.md b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/manual-review.md
+index 0a8e8b28..089d2a0a 100644
+--- a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/manual-review.md
++++ b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/manual-review.md
+@@ -8,7 +8,7 @@
+ 
+ Race/I/O: новая функция не имеет await, storage writes или token read; mutable preflight snapshot не меняет process owner. Existing transport/admission остаются immutable-byte и exact-type, no retry/redirect, terminal подтверждается до ответа; ошибки reserve/SENT/terminal в synthetic tests не публикуют неподтверждённый SUCCESS. При timeout/cancel/SENT ambiguity liability не сбрасывается. Реальная production fencing/crash/clone ownership здесь не доказана и не открыта.
+ 
+-Найден отдельный blocker: public schema total billed after cache и canonical prompt+completion/uncached assumption не имеют согласованного mapping. Expected RED использует synthetic vector под прямым прочтением документации; это **не наблюдение ответа реального Ultra** и не доказательство точной фактической формулы провайдера. Нужны адресное решение владельца accounting и versioned migration/test contract. Другая неопределённость — model/version в response, max output/reasoning bounds, один account stream, expires_at/cache identity и TLS/proxy. Не выдаём их за закрытые.
++Уточнение H37: прежний cached/total blocker отозван после сверки counting-tokens. Автор ошибочно вычел cache второй раз: prompt уже net. Shared policy разделяет billable total и полный вход; migration по этому замечанию не нужна. Actual Turn проверка установила отдельную особенность: optional cached теряется до `_ordinary_terminal`, поэтому ledger сохраняет резервную оценку, сохраняя billing. Это limitation интеграции точных метрик, не дефект общей формулы; runtime не менялся. Исторические report/oracle/RED и первый уточняющий integration FAIL сохранены. Другие неопределённости REAL (caps/account/model-version/reasoning/TLS/cache/recovery) остаются.
+ 
+ Test review: authority-before-contract проверяет конкретный недопустимый callback и exact PreSendDenied; bypass mutation в памяти обязан дать RED. Ultra success наблюдает actual MockTransport bytes и ledger SENT независимо от returned enum, exact model ID, один token/POST, RAW count/usage и no resend при reopen. Timeout сравнивает восстановленную запись ledger до/после replay, а не только ответ. Canary — только искусственная строка, проверяются фактические файлы root. UNKNOWN не равен нулю; reasoning subset не прибавляется к total. Guard callbacks не ослаблялись ради зелёного результата.
+ 
+diff --git a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/provider-contract.md b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/provider-contract.md
+index ae3a7842..c19bb953 100644
+--- a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/provider-contract.md
++++ b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/provider-contract.md
+@@ -10,7 +10,7 @@
+ | Конкретный аккаунт/проект/entitlement | UNVERIFIED | Аккаунт не открывался. [Справка models, ред. 07.10.2026](https://developers.sber.ru/docs/ru/gigachat/api/reference/rest/get-models) описывает получение доступных моделей, но документ не является account evidence. Сам endpoint НЕ вызывался. |
+ | Контекст | VERIFIED публичное описание / UNVERIFIED исполнимый предел | [Обновления моделей, ред. 24.07.2026](https://developers.sber.ru/docs/ru/gigachat/models/updates) указывает «128 тыс.» для Ultra. Не выводим точный tokenization/combined input+output bound и калибровку из округлённой таблицы. В диагностике machine cap `None`; user 250000 не подменяет его. |
+ | Output / reasoning bound | UNKNOWN | Схема допускает `max_tokens` положительный int32/null, но не задаёт подтверждённого model-specific максимума Ultra и полного reasoning liability. 10000/20000 не становятся provider caps. [Публичная OpenAPI](https://developers.sber.ru/docs/files/openapi/gigachat/api.yml), Chat properties. |
+-| Ответ / usage | VERIFIED публичная schema; runtime совместимость BLOCKED | OpenAPI описывает choices/message, finish_reason, model/version и usage: prompt/completion/precached/total. `total_tokens` назван оплачиваемым количеством **после вычета cached**. Текущий `_usage` и shared `validate_usage` требуют `total = prompt + completion`, что требует явного согласования с этой семантикой (фактическая формула Ultra без account-запроса неизвестна). Синтетический `7/5/cached2/total10` под прямым прочтением схемы даёт сохранённый expected RED; это диагностический оракул, не полученный ответ Ultra. Изменение shared policy/ledger/истории требует отдельного согласования. Отсутствующие метрики остаются UNKNOWN. Поле reasoning для публичного v1 Ultra здесь не подтверждено. Тот же api.yml. |
++| Ответ / usage | VERIFIED public semantics / shared kernel COMPATIBLE | OpenAPI описывает четыре поля; [руководство о токенах, ред. 17.07.2026](https://developers.sber.ru/docs/ru/gigachat/guides/counting-tokens) уточняет, что prompt уже исключает cached. `total = prompt + completion`; полный вход при известном cached — `prompt + precached`. Второе вычитание cache ошибочно. Текущие parsers/policy совместимы, прежний blocker отозван. Ordinary Turn optional cached не переносит: ledger сохраняет estimate, а не точный полный вход. Подробности — accounting-clarification.md; reasoning для Ultra остаётся неподтверждённым. |
+ | Model version в ответе | VERIFIED schema / UNVERIFIED Ultra фактический формат | OpenAPI допускает version-bearing model; текущий parser принимает только точное равенство provider ID. Фактический ответ Ultra неизвестен, совместимость нельзя объявить. Тот же api.yml. |
+ | SSE | VERIFIED общий протокол / UNVERIFIED Ultra runtime | [Потоковая генерация, ред. 17.07.2026](https://developers.sber.ru/docs/ru/gigachat/guides/response-token-streaming): stream true, text/event-stream, завершающий DONE. Текущий byte adapter намеренно non-streaming JSON; SSE не реализуется/не допускается этой задачей. |
+ | OAuth | VERIFIED публичный контракт | [Авторизация, ред. 17.07.2026](https://developers.sber.ru/docs/ru/gigachat/api/reference/rest/gigachat-api): POST `https://ngw.devices.sberbank.ru:9443/api/v2/oauth`, Basic, uuid4 RqUID, form scope. PERS — физлица, B2B/CORP — другие категории; категории не дают entitlement. |
+diff --git a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/real-readiness.md b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/real-readiness.md
+index cd3775b5..5d00ff0a 100644
+--- a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/real-readiness.md
++++ b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/real-readiness.md
+@@ -7,7 +7,7 @@
+ | Отказ до secret/cache/OAuth/HTTP | Авторский OFFLINE PASS | Не снимать gate по JSON, env, URL, cached token или VERIFIED-looking профилю. |
+ | Model contract | PARTIAL | Публичный ID подтверждён; exact executable context/output/reasoning bound и calibration ещё отсутствуют. |
+ | Account scope/entitlement | UNVERIFIED | Отдельная разрешённая account-проверка. PERS/Freemium нельзя предполагать. |
+-| Cached usage / S9 | BLOCKED | OpenAPI и `_usage`/`ultra_budget_policy.validate_usage` расходятся. Согласовать единую семантику, совместимость исторического ledger и late/duplicate usage; тесты и независимая приёмка. |
++| Cached usage / S9 | Shared contract COMPATIBLE; ошибочный blocker WITHDRAWN | Четыре поля согласуются с руководством. Billing total и полный вход/liability различаются. Ordinary optional cached forwarding пока отсутствует, применяется консервативная reserve fallback. Общий S9/REAL review этим не закрыт. |
+ | Version-bearing response model | UNVERIFIED | Согласовать identity binding/version handling, не разрешать произвольный другой model. |
+ | Reserve/SENT/final bytes/terminal/replay | BOUNDED synthetic PASS | Non-TEMP production ownership/enrollment и restart/fencing остаются OPEN. Не обходить exact TEMP-only gates. |
+ | OAuth/cache/TLS/proxy/redaction | BLOCKED | Реализовать безопасную адаптацию существующего владельца, account-bound cache и expires_at, отдельный разрешённый OAuth budget без скрытого refresh. |
+@@ -16,4 +16,4 @@
+ | S3b/S3c/S4/S5/C1/C2/S9/S13a | OPEN по применимому scope | Координатор явно определяет ordinary subset по №20 §5а; авторские tests не закрывают полный граф. |
+ | Независимый Windows review / USER GO | NOT RUN / отсутствует | После публикации пользовательского пакета — независимые GitHub-hosted Windows checks; затем отдельный ограниченный USER GO. |
+ 
+-**LIVE task сейчас не готова к исполнению.** Следующая безопасная работа — согласованный shared accounting contract и закрытый production factory/recovery OFFLINE successor. Текущая задача не просит разрешения на LIVE и не объявляет REAL READY.
++**LIVE task сейчас не готова к исполнению.** Следующая безопасная работа — проверенные provider/account/caps условия и закрытый production factory/recovery OFFLINE successor; shared cached rewrite этим замечанием не обоснован. Текущая задача не просит разрешения на LIVE и не объявляет REAL READY.
+diff --git a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/report.md b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/report.md
+index 920567b7..eb7d265d 100644
+--- a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/report.md
++++ b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/report.md
+@@ -2,9 +2,15 @@
+ 
+ **TASK ID:** `CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001`  
+ **Автор:** Codex 007, 15.11.2026, Windows / STRICT OFFLINE engineering.  
+-**HISTORY ID:** выдаёт штатный finish; окончательные номер/адрес — task_record.json и evidence/finish.json.  
++**HISTORY ID:** `H-CODEX-000037`; первоначальный finish — evidence/finish.json. Уточнение 15.11 сохраняет этот номер без повторной ротации.  
+ **Итог:** проверяемая закрытая подготовка Ultra сохранена; рабочий production REAL factory и LIVE **BLOCKED**. Авторская сдача ожидает независимой проверки, REAL READY не заявляется.
+ 
++## Уточнение независимой проверки H37 — 15.11.2026
++
++**WITHDRAWN: прежний shared accounting blocker по cached/total был ошибкой авторского оракула.** Руководство «Подсчёт токенов» уточняет недостающую семантику prompt: повторно вычитать cache нельзя. Текущие `_usage` и `validate_usage` совместимы; переданный ledger cached корректно восстанавливает полный вход. Исправлены только oracle и пакет H37; общий accounting/runtime не менялся. Итог REAL HOLD сохраняется по другим условиям.
++
++Исправленные tests: 5 PASS + 3 subtests; повтор HOLD/Ordinary: 54 PASS + 123 subtests; S2: 73 PASS. Первые исходники, ошибочный RED и original report/manifest/record сохранены в `review-clarification-20261115/before/` и неизменных evidence. Отдельно выявлено, что Ordinary Turn не переносит optional cached в ledger и сохраняет резервную оценку вместо точного полного входа; оплачиваемые счётчики при этом верны. Это ограничение точности интеграции, не доказательство несовместимости shared accounting. Полная сверка, формулы, границы и команды — [accounting-clarification.md](accounting-clarification.md).
++
+ ## Реализовано
+ 
+ Изменены только `gigachat_transport.py`, `ordinary_gigachat_transport.py`; добавлен адресный `test_web_alarm_gigachat_ultra_preflight.py`. Остальные изменения — этот пакет и штатные артефакты finish. Shared Turn/Run Store/schema/HTTP router/UI/CI/model registry/budget policy не менялись.
+@@ -19,7 +25,7 @@
+ 
+ 1. Публичные [документы Ultra](https://developers.sber.ru/docs/ru/gigachat/models/gigachat-3-ultra) подтверждают `GigaChat-3-Ultra` и категорию Freemium физлиц; конкретные account/scope/entitlement **UNVERIFIED**. Ни один account endpoint не вызван.
+ 2. Контекст публично описан как «128 тыс.», но exact executable combined/input/output/reasoning bounds и calibration **не подтверждены**. В runtime они не придуманы. Полная датированная таблица — [provider-contract.md](provider-contract.md).
+-3. **Shared accounting contract BLOCKED:** публичная [OpenAPI](https://developers.sber.ru/docs/files/openapi/gigachat/api.yml) описывает total после вычета cached; `_usage` и `ultra_budget_policy.validate_usage` требуют prompt+completion и имеют своё uncached assumption. Синтетический `7/5/cached2/total10` по прямому прочтению схемы даёт expected RED. Это выявленная несовместимость/неопределённость mapping, **не полученный ответ реального Ultra**. Нельзя нормализовать её скрытно или менять sealed ledger/policy в этой TASK. Реальная формула и migration требуют отдельного shared-scope решения и проверки.
++3. **Shared cached accounting COMPATIBLE; прежний blocker отозван.** Исправленный oracle подтверждает совместимость документированной семантики с `_usage` и `ultra_budget_policy.validate_usage`; изменять общий учёт или мигрировать историю по этому замечанию не требуется. Precaching в полном входе учитывается policy отдельно от оплачиваемого total. Ordinary Turn пока не переносит optional cached и использует консервативную reserve fallback; точная интеграционная метрика остаётся отдельным ограничением, без объявления нового billing blocker.
+ 4. Response model/version binding, единственный account stream, production enrollment/ownership/recovery, TLS/proxy/redaction и безопасная адаптация старого OAuth/cache/expires_at остаются OPEN. Старый OAuth за HOLD не признан готовым путём. Реальный клиент и выдача server authority не реализованы.
+ 5. Полный S3b/S3c/S9/S13a и применимость S4/S5/C1/C2 к ordinary MVP не закрываются этими авторскими тестами. Координатору требуется адресная сверка №20 §5а, независимый Windows OFFLINE review и отдельный USER GO; см. [real-readiness.md](real-readiness.md).
+ 
+@@ -48,7 +54,11 @@ Python 3.12.10, httpx 0.28.1, pytest 9.1.1 (subtests встроены), Node v22
+ | `quality` | 0, 47 PASS, guard 0 | Existing isolation quality selectors; не 52 метода другого исторического набора. |
+ | `ui` | 0, **69 PASS**, 0 fail/cancel/skip | Shipped unchanged JS/per-chat UI. |
+ | `authority_mutation_red`, `authority_mutation_revised_red` | 1, по 1 expected FAIL | In-memory bypass authority обнаружен oracle, source не мутировал. |
+-| `accounting_expected_red` | 1, **1 expected FAIL** | Неразрешённый REAL mapping blocker, не GREEN и не исключённая ошибка. |
++| `accounting_expected_red` | 1, **исторический ошибочный oracle FAIL** | Файл и RED неизменны; вывод о shared blocker отозван уточнением H37. |
++| `accounting_corrected` | 1, 4 PASS / 1 FAIL + 3 subtests | Первый уточняющий oracle выявил непередачу optional cached в Ordinary Turn. Источник и FAIL сохранены; это не billing mismatch. |
++| `accounting_corrected_final` | 0, **5 PASS + 3 subtests** | Биллинг, полный вход в policy, invalid old vector, missing-cache fallback и actual Turn/replay. |
++| `accounting_hold_recheck` | 0, **54 PASS + 123 subtests**, unexpected guard 0 | Существующий H37 HOLD и Ordinary regression без изменений runtime. |
++| `accounting_s2_recheck` | 0, **73 PASS**, isolation 0 | Неизменный shared policy/ledger contract. |
+ | `syntax_final`, pinned-class preservation | 0 / PASS | Final source/test compile без pyc, transport AST идентичен исходному. |
+ 
+ Наборы пересекаются, числа **не суммируются**. Полные exact commands/selected IDs/cases/counts/elapsed/exit, stdout/stderr и guard events лежат в `evidence/*.result.json`, `.cases.json`, `.stdout.txt`, `.stderr.txt`; S1/S2 имеют собственные `.unittest.txt` и physical trace. Матрица требований — [safety-matrix.md](safety-matrix.md), ручной анализ — [manual-review.md](manual-review.md). Broad initial и окончательный affected suite различены; после изменения формы constructor повторены именно затронутые transport/application и S1/S2 gates.
+@@ -61,8 +71,8 @@ NOT RUN: REAL GigaChat/OAuth/models/API/paid, реальный account probe, in
+ 
+ Локальный результат пригоден к независимой проверке **закрытой подготовки**, но **LIVE-task сейчас не готова к исполнению**. [next-live-procedure.md](next-live-procedure.md) — только проект будущего отдельно разрешённого one-attempt испытания, не разрешение его запустить.
+ 
+-**FOLLOWUP / NEXT:** (1) согласовать shared cached/total/reasoning и response-model contract с versioned migration и explicit scope; (2) получить недостающие caps/account/trust evidence разрешённым способом; (3) отдельно реализовать production authority/enrollment/factory/recovery на том же ядре и пройти independent OFFLINE; (4) лишь затем решать вопрос отдельного USER GO для LIVE. Workspace-less Chat остаётся отдельным незапущенным UX FOLLOWUP.
++**FOLLOWUP / NEXT:** shared cached/total rewrite и migration, предложенные прежним оракулом, **не требуются по этому замечанию**. Сохраняются caps/account/trust/response-model/reasoning и production authority/enrollment/factory/recovery с independent OFFLINE. Если требуется точное cached/full-input представление в Ordinary Turn, отдельно согласовать перенос optional поля без изменения billing-формулы. REAL USER GO и Workspace-less Chat остаются отдельными будущими решениями.
+ 
+-**DOC IMPACT / SHARED DOC DELTA:** координатору после независимой проверки адресно отразить PARTIAL/BLOCKED, новые account/cached-usage/model-version/constructor OPEN в №05/34/40, history review и БЛОКЕ 4. Не закрывать полный B2/REAL по synthetic PASS. Новые тесты уже в общей корневой коллекции test_web_alarm_*; каталог/профили/общие реестры здесь не редактировались. .gitignore прочитан локально: отчётный путь не подпадает под видимые root exclusions; Git check-ignore и опубликованность NOT VERIFIED, пользователь проверяет точный состав перед публикацией.
++**DOC IMPACT / SHARED DOC DELTA:** координатору после независимой проверки адресно отразить PARTIAL/BLOCKED, account/model-version/constructor OPEN и отзыв ошибочного cached-usage blocker в №05/34/40, history review и БЛОКЕ 4. Не закрывать полный B2/REAL по synthetic PASS. Новые тесты уже в общей корневой коллекции test_web_alarm_*; каталог/профили/общие реестры здесь не редактировались. .gitignore прочитан локально: отчётный путь не подпадает под видимые root exclusions; Git check-ignore и опубликованность NOT VERIFIED, пользователь проверяет точный состав перед публикацией.
+ 
+-Пакет: manifest.json, before, evidence, contract/readiness/procedure/reuse/matrix/review, сохранённые RED и финальные GREEN. После его готовности — штатный finish, check/readback HISTORY ID, обновление manifest без изменения этого отчёта. Локальная регистрация не означает независимого закрытия.
++Пакет: manifest.json, before, evidence, contract/readiness/procedure/reuse/matrix/review, сохранённые RED и финальные GREEN. Первоначальный finish завершён: H-CODEX-000037, БЛОК 1 WAITING. Уточнение независимого review сохранено как версия того же report с предыдущими источниками и без новой ротации. Локальная регистрация не означает независимого закрытия.
+diff --git a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/safety-matrix.md b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/safety-matrix.md
+index 6947017b..92b9a217 100644
+--- a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/safety-matrix.md
++++ b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/safety-matrix.md
+@@ -14,7 +14,7 @@ ARCH CLASS: Web Alarm Ultra transport / существующий Python core. П
+ | Per-chat модель/settings/history | H36 ModelPersistenceTests/PermanentProfileTests; H29 PerChatTests; Node 69 | OWNER GUI этой TASK NOT RUN; прежний owner PASS не присвоен повторно. |
+ | TEST не может выполнить REAL | Exact OfflineHTTPFixture/admission tests, actual TEST profile activation и global early guard | Нет browser/env REAL switch. |
+ | STANDARD Pro-only HOLD | Actual ApplicationTests + Node UI tests; unchanged factory/server/launcher | Ultra не добавлена в STANDARD. |
+-| Неизвестные usage/reasoning | H33/H29 known reasoning subset, absent usage UNKNOWN; сохранён accounting_oracle expected RED | Real cached/reasoning semantics OPEN. |
++| Usage/cache/reasoning | Исправленный accounting_oracle: billing/shared full-input semantics, invalid old vector, unknown-cache reserve fallback, actual Turn no replay | Старый RED сохранён как ошибка оракула; shared cached contract совместим. Optional cached forwarding в Ordinary и real reasoning остаются отдельными ограничениями. |
+ | Полнота send inventory / отсутствие bypass | Dedicated S1, dedicated S2, isolation quality, in-memory authority bypass expected RED | Первые S1 FAIL сохранены; итоговая сверка обязательна. |
+ 
+ Команды/OS/версии/counts/logs перечислены в evidence/*.result.json. Наборы пересекаются; counts не суммировать. Guard установлен до imports production; env GIGACHAT_* удалены у child, DNS/external sockets/credential reads/Git/non-Python process/repository-live storage запрещены. Localhost используется только синтетическим local HTTP/self-pipe. В engineering tests внешних HTTP-запросов нет; публичная документация читалась отдельно.
+diff --git a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/task_record.json b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/task_record.json
+index eba43f9b..14e0e24d 100644
+--- a/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/task_record.json
++++ b/reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/task_record.json
+@@ -14,8 +14,29 @@
+     },
+     "report": {
+       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/report.md",
+-      "sha256": "0bfe576890ff9204f582c9e9b717502be064871a1c5876d9b6b19f2c111979bd"
++      "sha256": "471836ba2d8a935fbda9b308e9a40a7b2a168d06bc43d7099043573d07eaf6ab"
+     }
+   },
+-  "previous": []
++  "previous": [
++    {
++      "schema": 1,
++      "id": "CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001",
++      "history_id": "H-CODEX-000037",
++      "agent": "codex",
++      "title": "CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001",
++      "date": "2026-11-15",
++      "status": "SUBMITTED / REVIEW PENDING",
++      "review": "NOT VERIFIED",
++      "sources": {
++        "assignment": {
++          "path": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/handoff_task.md",
++          "sha256": "bb700c453bc105243cfc84cc1db4385196842037a832ec2b131cfef7bf32fda7"
++        },
++        "report": {
++          "path": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/review-clarification-20261115/before/report.md.txt",
++          "sha256": "0bfe576890ff9204f582c9e9b717502be064871a1c5876d9b6b19f2c111979bd"
++        }
++      }
++    }
++  ]
+ }

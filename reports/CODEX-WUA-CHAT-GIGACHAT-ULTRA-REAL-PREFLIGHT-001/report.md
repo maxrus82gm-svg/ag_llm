@@ -2,8 +2,16 @@
 
 **TASK ID:** `CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001`  
 **Автор:** Codex 007, 15.11.2026, Windows / STRICT OFFLINE engineering.  
-**HISTORY ID:** выдаёт штатный finish; окончательные номер/адрес — task_record.json и evidence/finish.json.  
+**HISTORY ID:** `H-CODEX-000037`; первоначальный finish — evidence/finish.json. Уточнение 15.11 сохраняет этот номер без повторной ротации.  
 **Итог:** проверяемая закрытая подготовка Ultra сохранена; рабочий production REAL factory и LIVE **BLOCKED**. Авторская сдача ожидает независимой проверки, REAL READY не заявляется.
+
+## Уточнение независимой проверки H37 — 15.11.2026
+
+**WITHDRAWN: прежний shared accounting blocker по cached/total был ошибкой авторского оракула.** Руководство «Подсчёт токенов» уточняет недостающую семантику prompt: повторно вычитать cache нельзя. Текущие `_usage` и `validate_usage` совместимы; переданный ledger cached корректно восстанавливает полный вход. Исправлены только oracle и пакет H37; общий accounting/runtime не менялся. Итог REAL HOLD сохраняется по другим условиям.
+
+Исправленные tests: 5 PASS + 3 subtests; повтор HOLD/Ordinary: 54 PASS + 123 subtests; S2: 73 PASS. Первые исходники, ошибочный RED и original report/manifest/record сохранены в `review-clarification-20261115/before/` и неизменных evidence. Отдельно выявлено, что Ordinary Turn не переносит optional cached в ledger и сохраняет резервную оценку вместо точного полного входа; оплачиваемые счётчики при этом верны. Это ограничение точности интеграции, не доказательство несовместимости shared accounting. Полная сверка, формулы, границы и команды — [accounting-clarification.md](accounting-clarification.md).
+
+**Git read-only USER GO после уточнения:** проверены только HEAD/status/diff/log для H37. Локальный HEAD и последний коммит, затронувший исходный пакет H37: `81df1fc9e793f87f7533af3b1d69367b17b3bb79` (сообщение `615`). **Это коммит исходной H37, не исправления: текущее уточнение UNCOMMITTED.** Коммит/индекс/ветки/push/merge не менялись. Протокол — `review-clarification-20261115/git-readback.json`. Прежние NOT RUN для Git в основной исторической сдаче относятся к первоначальному этапу.
 
 ## Реализовано
 
@@ -19,7 +27,7 @@
 
 1. Публичные [документы Ultra](https://developers.sber.ru/docs/ru/gigachat/models/gigachat-3-ultra) подтверждают `GigaChat-3-Ultra` и категорию Freemium физлиц; конкретные account/scope/entitlement **UNVERIFIED**. Ни один account endpoint не вызван.
 2. Контекст публично описан как «128 тыс.», но exact executable combined/input/output/reasoning bounds и calibration **не подтверждены**. В runtime они не придуманы. Полная датированная таблица — [provider-contract.md](provider-contract.md).
-3. **Shared accounting contract BLOCKED:** публичная [OpenAPI](https://developers.sber.ru/docs/files/openapi/gigachat/api.yml) описывает total после вычета cached; `_usage` и `ultra_budget_policy.validate_usage` требуют prompt+completion и имеют своё uncached assumption. Синтетический `7/5/cached2/total10` по прямому прочтению схемы даёт expected RED. Это выявленная несовместимость/неопределённость mapping, **не полученный ответ реального Ultra**. Нельзя нормализовать её скрытно или менять sealed ledger/policy в этой TASK. Реальная формула и migration требуют отдельного shared-scope решения и проверки.
+3. **Shared cached accounting COMPATIBLE; прежний blocker отозван.** Исправленный oracle подтверждает совместимость документированной семантики с `_usage` и `ultra_budget_policy.validate_usage`; изменять общий учёт или мигрировать историю по этому замечанию не требуется. Precaching в полном входе учитывается policy отдельно от оплачиваемого total. Ordinary Turn пока не переносит optional cached и использует консервативную reserve fallback; точная интеграционная метрика остаётся отдельным ограничением, без объявления нового billing blocker.
 4. Response model/version binding, единственный account stream, production enrollment/ownership/recovery, TLS/proxy/redaction и безопасная адаптация старого OAuth/cache/expires_at остаются OPEN. Старый OAuth за HOLD не признан готовым путём. Реальный клиент и выдача server authority не реализованы.
 5. Полный S3b/S3c/S9/S13a и применимость S4/S5/C1/C2 к ordinary MVP не закрываются этими авторскими тестами. Координатору требуется адресная сверка №20 §5а, независимый Windows OFFLINE review и отдельный USER GO; см. [real-readiness.md](real-readiness.md).
 
@@ -48,7 +56,11 @@ Python 3.12.10, httpx 0.28.1, pytest 9.1.1 (subtests встроены), Node v22
 | `quality` | 0, 47 PASS, guard 0 | Existing isolation quality selectors; не 52 метода другого исторического набора. |
 | `ui` | 0, **69 PASS**, 0 fail/cancel/skip | Shipped unchanged JS/per-chat UI. |
 | `authority_mutation_red`, `authority_mutation_revised_red` | 1, по 1 expected FAIL | In-memory bypass authority обнаружен oracle, source не мутировал. |
-| `accounting_expected_red` | 1, **1 expected FAIL** | Неразрешённый REAL mapping blocker, не GREEN и не исключённая ошибка. |
+| `accounting_expected_red` | 1, **исторический ошибочный oracle FAIL** | Файл и RED неизменны; вывод о shared blocker отозван уточнением H37. |
+| `accounting_corrected` | 1, 4 PASS / 1 FAIL + 3 subtests | Первый уточняющий oracle выявил непередачу optional cached в Ordinary Turn. Источник и FAIL сохранены; это не billing mismatch. |
+| `accounting_corrected_final` | 0, **5 PASS + 3 subtests** | Биллинг, полный вход в policy, invalid old vector, missing-cache fallback и actual Turn/replay. |
+| `accounting_hold_recheck` | 0, **54 PASS + 123 subtests**, unexpected guard 0 | Существующий H37 HOLD и Ordinary regression без изменений runtime. |
+| `accounting_s2_recheck` | 0, **73 PASS**, isolation 0 | Неизменный shared policy/ledger contract. |
 | `syntax_final`, pinned-class preservation | 0 / PASS | Final source/test compile без pyc, transport AST идентичен исходному. |
 
 Наборы пересекаются, числа **не суммируются**. Полные exact commands/selected IDs/cases/counts/elapsed/exit, stdout/stderr и guard events лежат в `evidence/*.result.json`, `.cases.json`, `.stdout.txt`, `.stderr.txt`; S1/S2 имеют собственные `.unittest.txt` и physical trace. Матрица требований — [safety-matrix.md](safety-matrix.md), ручной анализ — [manual-review.md](manual-review.md). Broad initial и окончательный affected suite различены; после изменения формы constructor повторены именно затронутые transport/application и S1/S2 gates.
@@ -61,8 +73,8 @@ NOT RUN: REAL GigaChat/OAuth/models/API/paid, реальный account probe, in
 
 Локальный результат пригоден к независимой проверке **закрытой подготовки**, но **LIVE-task сейчас не готова к исполнению**. [next-live-procedure.md](next-live-procedure.md) — только проект будущего отдельно разрешённого one-attempt испытания, не разрешение его запустить.
 
-**FOLLOWUP / NEXT:** (1) согласовать shared cached/total/reasoning и response-model contract с versioned migration и explicit scope; (2) получить недостающие caps/account/trust evidence разрешённым способом; (3) отдельно реализовать production authority/enrollment/factory/recovery на том же ядре и пройти independent OFFLINE; (4) лишь затем решать вопрос отдельного USER GO для LIVE. Workspace-less Chat остаётся отдельным незапущенным UX FOLLOWUP.
+**FOLLOWUP / NEXT:** shared cached/total rewrite и migration, предложенные прежним оракулом, **не требуются по этому замечанию**. Сохраняются caps/account/trust/response-model/reasoning и production authority/enrollment/factory/recovery с independent OFFLINE. Если требуется точное cached/full-input представление в Ordinary Turn, отдельно согласовать перенос optional поля без изменения billing-формулы. REAL USER GO и Workspace-less Chat остаются отдельными будущими решениями.
 
-**DOC IMPACT / SHARED DOC DELTA:** координатору после независимой проверки адресно отразить PARTIAL/BLOCKED, новые account/cached-usage/model-version/constructor OPEN в №05/34/40, history review и БЛОКЕ 4. Не закрывать полный B2/REAL по synthetic PASS. Новые тесты уже в общей корневой коллекции test_web_alarm_*; каталог/профили/общие реестры здесь не редактировались. .gitignore прочитан локально: отчётный путь не подпадает под видимые root exclusions; Git check-ignore и опубликованность NOT VERIFIED, пользователь проверяет точный состав перед публикацией.
+**DOC IMPACT / SHARED DOC DELTA:** координатору после независимой проверки адресно отразить PARTIAL/BLOCKED, account/model-version/constructor OPEN и отзыв ошибочного cached-usage blocker в №05/34/40, history review и БЛОКЕ 4. Не закрывать полный B2/REAL по synthetic PASS. Новые тесты уже в общей корневой коллекции test_web_alarm_*; каталог/профили/общие реестры здесь не редактировались. .gitignore прочитан локально: отчётный путь не подпадает под видимые root exclusions; Git check-ignore и опубликованность NOT VERIFIED, пользователь проверяет точный состав перед публикацией.
 
-Пакет: manifest.json, before, evidence, contract/readiness/procedure/reuse/matrix/review, сохранённые RED и финальные GREEN. После его готовности — штатный finish, check/readback HISTORY ID, обновление manifest без изменения этого отчёта. Локальная регистрация не означает независимого закрытия.
+Пакет: manifest.json, before, evidence, contract/readiness/procedure/reuse/matrix/review, сохранённые RED и финальные GREEN. Первоначальный finish завершён: H-CODEX-000037, БЛОК 1 WAITING. Уточнение независимого review сохранено как версия того же report с предыдущими источниками и без новой ротации. Локальная регистрация не означает независимого закрытия.

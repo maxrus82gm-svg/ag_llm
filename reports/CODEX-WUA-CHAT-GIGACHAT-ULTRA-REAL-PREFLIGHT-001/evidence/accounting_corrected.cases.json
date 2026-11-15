@@ -1,0 +1,60 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "subtest:passed": 3,
+    "test:passed": 4,
+    "test:failed": 1
+  },
+  "cases": [
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedUsageContract::test_corrected_synthetic_vectors_do_not_subtract_cache_twice",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedUsageContract::test_corrected_synthetic_vectors_do_not_subtract_cache_twice",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedUsageContract::test_corrected_synthetic_vectors_do_not_subtract_cache_twice",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedUsageContract::test_corrected_synthetic_vectors_do_not_subtract_cache_twice",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedUsageContract::test_documented_example_preserves_billing_and_full_input",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedUsageContract::test_missing_cached_preserves_unknown_and_conservative_reservation",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedUsageContract::test_old_vector_is_invalid_in_both_existing_parsers",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedTurnContract::test_turn_stores_billable_total_and_separate_full_liability_without_replay",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": []
+}

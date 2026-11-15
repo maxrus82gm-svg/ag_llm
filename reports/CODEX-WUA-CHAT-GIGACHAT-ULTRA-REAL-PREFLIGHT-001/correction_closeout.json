@@ -1,0 +1,78 @@
+{
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001",
+  "history_id": "H-CODEX-000037",
+  "correction": "AUTHOR CORRECTION READY / INDEPENDENT REVIEW PENDING",
+  "cached_accounting": "COMPATIBLE; previous blocker WITHDRAWN",
+  "ordinary_cached_forwarding": "optional field not forwarded; conservative reservation fallback",
+  "real": "HOLD / NOT RUN",
+  "git": "READ ONLY USER GO / correction UNCOMMITTED",
+  "git_readback": {
+    "permission": "USER GO: only HEAD/status/diff/log for H37",
+    "head": "81df1fc9e793f87f7533af3b1d69367b17b3bb79",
+    "branch": "main",
+    "last_h37_commit": "81df1fc9e793f87f7533af3b1d69367b17b3bb79",
+    "last_h37_subject": "615",
+    "correction_commit": null,
+    "correction_state": "UNCOMMITTED",
+    "git_writes": 0,
+    "github_operations": 0,
+    "commands": [
+      {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "git",
+          "status",
+          "--short",
+          "--branch",
+          "--",
+          "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "git",
+          "log",
+          "-5",
+          "--format=%H %cs %s",
+          "--",
+          "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--no-ext-diff",
+          "--",
+          "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001"
+        ],
+        "exit_code": 0
+      }
+    ]
+  },
+  "protected_files": 301,
+  "shared_runtime_changes": [],
+  "original_artifacts_unchanged": 109,
+  "previous_report_hash_verified": true,
+  "slot_and_sequence_unchanged": true,
+  "changed_package_files": [
+    "accounting_oracle.py",
+    "manifest.json",
+    "manual-review.md",
+    "provider-contract.md",
+    "real-readiness.md",
+    "report.md",
+    "safety-matrix.md",
+    "task_record.json"
+  ],
+  "original_red_retained": true
+}

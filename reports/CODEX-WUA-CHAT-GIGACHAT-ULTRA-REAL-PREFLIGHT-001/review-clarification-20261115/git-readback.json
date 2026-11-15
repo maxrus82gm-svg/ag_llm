@@ -1,0 +1,53 @@
+{
+  "permission": "USER GO: only HEAD/status/diff/log for H37",
+  "head": "81df1fc9e793f87f7533af3b1d69367b17b3bb79",
+  "branch": "main",
+  "last_h37_commit": "81df1fc9e793f87f7533af3b1d69367b17b3bb79",
+  "last_h37_subject": "615",
+  "correction_commit": null,
+  "correction_state": "UNCOMMITTED",
+  "git_writes": 0,
+  "github_operations": 0,
+  "commands": [
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short",
+        "--branch",
+        "--",
+        "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "log",
+        "-5",
+        "--format=%H %cs %s",
+        "--",
+        "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--",
+        "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

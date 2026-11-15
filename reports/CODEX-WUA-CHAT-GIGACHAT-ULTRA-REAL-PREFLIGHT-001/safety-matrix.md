@@ -14,7 +14,7 @@ ARCH CLASS: Web Alarm Ultra transport / существующий Python core. П
 | Per-chat модель/settings/history | H36 ModelPersistenceTests/PermanentProfileTests; H29 PerChatTests; Node 69 | OWNER GUI этой TASK NOT RUN; прежний owner PASS не присвоен повторно. |
 | TEST не может выполнить REAL | Exact OfflineHTTPFixture/admission tests, actual TEST profile activation и global early guard | Нет browser/env REAL switch. |
 | STANDARD Pro-only HOLD | Actual ApplicationTests + Node UI tests; unchanged factory/server/launcher | Ultra не добавлена в STANDARD. |
-| Неизвестные usage/reasoning | H33/H29 known reasoning subset, absent usage UNKNOWN; сохранён accounting_oracle expected RED | Real cached/reasoning semantics OPEN. |
+| Usage/cache/reasoning | Исправленный accounting_oracle: billing/shared full-input semantics, invalid old vector, unknown-cache reserve fallback, actual Turn no replay | Старый RED сохранён как ошибка оракула; shared cached contract совместим. Optional cached forwarding в Ordinary и real reasoning остаются отдельными ограничениями. |
 | Полнота send inventory / отсутствие bypass | Dedicated S1, dedicated S2, isolation quality, in-memory authority bypass expected RED | Первые S1 FAIL сохранены; итоговая сверка обязательна. |
 
 Команды/OS/версии/counts/logs перечислены в evidence/*.result.json. Наборы пересекаются; counts не суммировать. Guard установлен до imports production; env GIGACHAT_* удалены у child, DNS/external sockets/credential reads/Git/non-Python process/repository-live storage запрещены. Localhost используется только синтетическим local HTTP/self-pipe. В engineering tests внешних HTTP-запросов нет; публичная документация читалась отдельно.
