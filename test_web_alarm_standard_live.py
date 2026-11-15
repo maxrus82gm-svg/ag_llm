@@ -1,4 +1,4 @@
-"""Offline, no-provider tests for the opt-in STANDARD onramp."""
+"""Offline checks: personal chats without Workspace selection and STANDARD LIVE fences."""
 import io
 import os
 import tempfile
@@ -7,24 +7,26 @@ from pathlib import Path
 from unittest.mock import patch
 
 import context_storage as core
+from ordinary_chat_service import PreSendDenied
 from ultra_budget_ledger import BudgetLedger
 from web_alarm.server import WebAlarmApi
 from web_alarm.standard_live import (
-    eligible_workspaces, offer_standard_live, MAX_SENDS, MAX_LIABILITY,
-    OBSERVED_MODEL, MODEL_ID,
+    eligible_workspaces, personal_chat_registration, prepare_personal_chat,
+    offer_standard_live, MAX_SENDS, MAX_LIABILITY, OBSERVED_MODEL, MODEL_ID,
+    PERSONAL_DIRNAME, PERSONAL_LABEL,
 )
 from web_alarm.ordinary_provider import OrdinaryProviderFactory, OrdinaryApplicationChatService
 
 
-class StandardLiveTests(unittest.TestCase):
+class PersonalChatTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.base = Path(self.temp.name)
-        self.root = self.base / "new_workspace"
+        self.root = self.base / "legacy_workspace"
         self.root.mkdir()
         self.api = WebAlarmApi(self.base / "web")
-        self.wa_id = self.api.registry.register("New LIVE workspace", self.root).workspace_id
+        self.wa_id = self.api.registry.register("Legacy Workspace", self.root).workspace_id
         self.wid = core.ensure_workspace_storage(self.root)["workspace_id"]
         self.out = io.StringIO()
         self.env = patch.dict(os.environ, {
@@ -34,65 +36,109 @@ class StandardLiveTests(unittest.TestCase):
         self.env.start()
         self.addCleanup(self.env.stop)
 
+    @property
+    def personal_path(self):
+        return self.api.registry.storage_root / PERSONAL_DIRNAME
+
     def attempt(self, *replies):
         iterator = iter(replies)
-        return offer_standard_live(self.api, lambda _prompt: next(iterator), self.out)
+        return offer_standard_live(self.api, lambda _: next(iterator), self.out)
 
-    def test_unenrolled_workspace_does_not_initialize_ledger(self):
+    def test_legacy_unenrolled_unchanged_on_decline(self):
         self.assertEqual(eligible_workspaces(self.api), [])
-        self.assertIsNone(self.attempt("1", "LIVE 12"))
+        self.assertIsNone(self.attempt(""))
+        self.assertIsNone(self.attempt("1"))
+        self.assertIsNone(self.attempt("LIVE 13"))
+        self.assertFalse(self.personal_path.exists())
+        self.assertIsNone(personal_chat_registration(self.api.registry))
         with self.assertRaises(Exception):
             BudgetLedger(self.root, self.wid).recover()
 
-    def test_decline_and_malformed_consent_do_not_create_grant(self):
-        BudgetLedger(self.root, self.wid).initialize()
-        self.assertIsNone(self.attempt(""))
-        self.assertIsNone(self.attempt("1", "LIVE"))
-        self.assertIsNone(self.attempt("1", "LIVE 13"))
-        self.assertFalse((self.root / ".ultra" / "provider_sessions").exists())
-
-    def test_missing_credentials_cannot_activate(self):
-        BudgetLedger(self.root, self.wid).initialize()
+    def test_missing_credentials_does_not_create_personal_root(self):
         with patch.dict(os.environ, {"GIGACHAT_CREDENTIALS": ""}):
-            self.assertIsNone(self.attempt("1", "LIVE 12"))
-        self.assertFalse((self.root / ".ultra" / "provider_sessions").exists())
+            self.assertIsNone(self.attempt("LIVE 12"))
+        self.assertFalse(self.personal_path.exists())
 
-    def test_exact_consent_creates_single_workspace_limited_grant_no_network(self):
-        BudgetLedger(self.root, self.wid).initialize()
+    def test_new_personal_chat_durable_single_chat_and_zero_provider_calls(self):
+        before = self.api.registry.list()
         with patch("gigachat_runtime.ProviderSession.discover_models",
-                   side_effect=AssertionError("unexpected network")):
-            session = self.attempt("1", "LIVE 12")
+                   side_effect=AssertionError("unexpected provider request")):
+            session = self.attempt("LIVE 12")
         self.assertIsNotNone(session)
-        self.assertEqual(session.root, self.root)
-        self.assertEqual(session.workspace_id, self.wid)
+        self.assertEqual(session.root, self.personal_path)
         self.assertEqual(session.approval.max_inference, MAX_SENDS)
         self.assertEqual(session.approval.max_oauth, 1)
         self.assertEqual(session.approval.max_catalog, 1)
         self.assertEqual(session.approval.max_liability_tokens, MAX_LIABILITY)
-        self.assertEqual(tuple(c.model_id for c in session.approval.contracts), (MODEL_ID,))
         self.assertEqual(session.approval.contracts[0].response_models, (OBSERVED_MODEL,))
-        self.assertEqual(session._counts["inference"], 0)
+        self.assertEqual(tuple(c.model_id for c in session.approval.contracts), (MODEL_ID,))
         self.assertEqual(session._counts["oauth"], 0)
-        session.close()
+        self.assertEqual(session._counts["catalog"], 0)
+        self.assertEqual(session._counts["inference"], 0)
+        personal = personal_chat_registration(self.api.registry)
+        self.assertIsNotNone(personal)
+        self.assertEqual(personal.display_name, PERSONAL_LABEL)
+        self.assertEqual(personal.workspace_root, str(self.personal_path))
+        self.assertEqual(self.api.registry.get(self.wa_id), before[0])
+        self.assertEqual(core.read_workspace_identity_bounded(self.root)["workspace_id"], self.wid)
         with self.assertRaises(Exception):
-            session.check()
+            BudgetLedger(self.root, self.wid).recover()
+        listing = core.list_chats_bounded(self.personal_path)["chats"]
+        self.assertEqual(len(listing), 1)
+        self.assertEqual(listing[0]["title"], "Первый диалог")
+        self.assertEqual(BudgetLedger(self.personal_path, session.workspace_id).recover().event_count, 0)
+        session.close()
 
-    def test_catalog_presence_without_contract_cannot_offer_other_models(self):
-        BudgetLedger(self.root, self.wid).initialize()
-        session = self.attempt("1", "LIVE 12")
+    def test_reopen_preserves_personal_identity_and_chat(self):
+        first = self.attempt("LIVE 12")
+        first_reg = self.api.registry.get(personal_chat_registration(self.api.registry).workspace_id)
+        first_chats = core.list_chats_bounded(self.personal_path)["chats"]
+        first.close()
+        second = self.attempt("LIVE 12")
+        self.assertEqual(second.workspace_id, first.workspace_id)
+        self.assertNotEqual(second.approval.grant_id, first.approval.grant_id)
+        self.assertEqual(self.api.registry.get(first_reg.workspace_id), first_reg)
+        self.assertEqual(core.list_chats_bounded(self.personal_path)["chats"], first_chats)
+        self.assertEqual(BudgetLedger(self.personal_path, second.workspace_id).recover().event_count, 0)
+        second.close()
+
+    def test_unregistered_preexisting_directory_refuses_adoption(self):
+        self.personal_path.mkdir()
+        self.assertIsNone(personal_chat_registration(self.api.registry))
+        with self.assertRaisesRegex(PreSendDenied, "personal_storage_existing_unregistered"):
+            self.attempt("LIVE 12")
+        self.assertEqual(list(self.personal_path.iterdir()), [])
+        self.assertEqual(len(self.api.registry.list()), 1)
+
+    def test_preexisting_file_refuses_adoption_and_is_not_deleted(self):
+        self.personal_path.write_text("UNTOUCHED", encoding="utf-8")
+        with self.assertRaisesRegex(PreSendDenied, "personal_storage_existing_unregistered"):
+            self.attempt("LIVE 12")
+        self.assertEqual(self.personal_path.read_text(encoding="utf-8"), "UNTOUCHED")
+
+    def test_registered_personal_root_with_missing_audit_refuses_reset(self):
+        self.personal_path.mkdir()
+        core.ensure_workspace_storage(self.personal_path)
+        self.api.registry.register(PERSONAL_LABEL, self.personal_path)
+        with self.assertRaises(Exception):
+            self.attempt("LIVE 12")
+        self.assertIsNone((self.personal_path / ".ultra" / "audit" / "ledger_marker.json").is_file() or None)
+
+    def test_unapproved_model_is_visible_but_cannot_be_sent(self):
+        session = self.attempt("LIVE 12")
         self.addCleanup(session.close)
         session._available = frozenset(("GigaChat-2", "GigaChat-3-Ultra"))
-        app = OrdinaryApplicationChatService(
-            self.api.registry, OrdinaryProviderFactory.for_session(self.api.registry, session))
+        app = OrdinaryApplicationChatService(self.api.registry,
+            OrdinaryProviderFactory.for_session(self.api.registry, session))
         models = {m["model_id"]: m for m in app.capability()["models"]}
         self.assertEqual(models["gigachat_2"]["availability"], "AVAILABLE")
         self.assertEqual(models["gigachat_ultra"]["availability"], "NOT_APPROVED")
+        self.assertEqual(app.capability()["personal_workspace_id"], personal_chat_registration(self.api.registry).workspace_id)
+        self.assertEqual(app.capability()["live_workspace_id"], personal_chat_registration(self.api.registry).workspace_id)
 
 
 class LauncherIsolationTests(unittest.TestCase):
-    """The real STANDARD entry never enables provider on unattended starts."""
-
-    def test_noninteractive_standard_is_offline_even_with_environment(self):
+    def test_noninteractive_standard_never_asks_for_live(self):
         from unittest import mock
         from web_alarm import launcher
         fake_server = mock.Mock()
@@ -108,7 +154,7 @@ class LauncherIsolationTests(unittest.TestCase):
         consent.assert_not_called()
         fake_server.server_close.assert_called_once()
 
-    def test_catalog_missing_keeps_the_browser_off_and_closes_grant(self):
+    def test_missing_catalog_closes_live_before_browser(self):
         from unittest import mock
         from web_alarm import launcher
         fake_server = mock.Mock()

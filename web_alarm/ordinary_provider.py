@@ -140,6 +140,14 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 active = bool(session._available)
             except PreSendDenied:
                 pass
+        from .standard_live import personal_chat_registration
+        personal = personal_chat_registration(self.registry)
+        selected_root = None
+        if active and session is not None and not session.synthetic:
+            try:
+                selected_root = self.registry.find_by_root(session.root)
+            except Exception:
+                pass
         admitted = {c.model_id for c in session.approval.contracts} if session is not None else set()
         models = [dict(model_id=m.model_id, display_name=m.display_name, provider_model_id=m.provider_model_id,
             availability=(('UNAVAILABLE' if m.provider_model_id not in session._available else
@@ -149,7 +157,9 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         return {**contract, 'available': fixture or active, 'real_available': active and not session.synthetic if session else False,
                 'mode': 'ORDINARY', 'core_bridge': True, 'chat_preferences': True,
                 'execution_mode': ('PROTOCOL_TEST' if session.synthetic else 'REAL') if active else 'OFFLINE_APPLICATION' if fixture else 'HOLD',
-                'models': models}
+                'models': models,
+                'personal_workspace_id': personal.workspace_id if personal else None,
+                'live_workspace_id': selected_root.workspace_id if selected_root else None}
 
     @staticmethod
     def _model_path(path):

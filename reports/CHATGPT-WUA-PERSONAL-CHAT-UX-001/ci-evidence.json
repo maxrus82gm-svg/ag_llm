@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "task_id": "CHATGPT-WUA-PERSONAL-CHAT-UX-001",
+  "candidate_sha": "4425a86e295e24c46831958abd9f3413a1d70c20",
+  "runner": "windows-latest",
+  "workflow": "WUA STANDARD LIVE bounded OFFLINE Windows",
+  "runs": [
+    {
+      "run_id": 43749501341,
+      "python": {
+        "pass": 38
+      },
+      "node": {
+        "pass": 72,
+        "fail": 2
+      },
+      "verdict": "FAIL"
+    },
+    {
+      "run_id": 43749746730,
+      "python": {
+        "pass": 38,
+        "fail": 0
+      },
+      "node": {
+        "pass": 74,
+        "fail": 0
+      },
+      "verdict": "PASS"
+    },
+    {
+      "run_id": 43750081610,
+      "python": {
+        "pass": 38,
+        "fail": 0
+      },
+      "node": {
+        "pass": 75,
+        "fail": 0
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "real_inference_calls": 0,
+  "physical_gui": "NOT_RUN",
+  "five_other_models": "NOT_RUN"
+}

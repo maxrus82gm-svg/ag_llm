@@ -1449,3 +1449,113 @@ test('TEST model new base: browser selection does not import another server pref
   const fresh=harness({offline:true,storage,routes:testModelRoutes(new Map())});await settle();
   assert.equal(fresh.run('chatTurn.model'),'gigachat_2_pro');
 });
+
+
+function approvedPersonalRoutes(defaultModel='gigachat_ultra') {
+  let stored=defaultModel;
+  const model='/ultra/chat/workspaces/ws_a/chats/chat_a/model';
+  const routes=ordinaryRoutes(true);
+  routes['/ui/ultra-chat/capability']=()=>({...cap(),turn_test:{
+    available:true,mode:'ORDINARY',execution_mode:'REAL',
+    real_available:true,chat_preferences:true,personal_workspace_id:'ws_a',
+    live_workspace_id:'ws_a',
+    models:[
+      {model_id:'gigachat_2',display_name:'GigaChat-2',availability:'AVAILABLE'},
+      {model_id:'gigachat_ultra',display_name:'GigaChat 3 Ultra',availability:'NOT_APPROVED'},
+    ]}});
+  routes[model]=opts=>{
+    if(opts.method==='POST')stored=JSON.parse(opts.body).model_ref;
+    return {model_ref:stored,persisted:true};
+  };
+  return {routes,model,saved:()=>stored};
+}
+
+test('REAL blocked model -> allowed model re-enables send without refreshing',async()=>{
+  const f=approvedPersonalRoutes(),h=harness({routes:f.routes});
+  await settle();
+  assert.equal(h.run('chatTurn.model'),'gigachat_ultra');
+  assert.equal(h.el('chatSend').disabled,true);
+  assert.match(h.el('chatComposerNote').textContent,/пока не разрешена/);
+  await h.el('chatModelPick').onclick();
+  assert.equal(h.el('chatModelMenu').children[1].disabled,true,'unapproved model must not be selectable');
+  assert.match(h.el('chatModelMenu').children[1].textContent,/ожидает проверки/);
+  await h.el('chatModelMenu').children[1].onclick();
+  assert.equal(f.saved(),'gigachat_ultra','blocked option click cannot POST model preference');
+  await h.el('chatModelMenu').children[0].onclick();
+  assert.equal(f.saved(),'gigachat_2');
+  assert.equal(h.run('chatTurn.model'),'gigachat_2');
+  assert.equal(h.el('chatSend').disabled,false,'allowed model must clear previous UI block');
+  assert.match(h.el('chatComposerNote').textContent,/серверный допуск/);
+  assert.equal(h.el('chatModelError').hidden,true);
+});
+
+test('REAL old late model GET cannot re-block a newer approved choice',async()=>{
+  const f=approvedPersonalRoutes(),h=harness({routes:f.routes});
+  await settle();
+  let release;
+  h.routes.set(f.model,opts=>opts.method!=='POST'
+    ? new Promise(resolve=>{release=resolve})
+    : f.routes[f.model](opts));
+  const outdated=h.run('loadChatModel()');
+  await settle();
+  await h.el('chatModelPick').onclick();
+  await h.el('chatModelMenu').children[0].onclick();
+  release({model_ref:'gigachat_ultra',persisted:true});
+  await outdated;
+  assert.equal(h.run('chatTurn.model'),'gigachat_2');
+  assert.equal(h.el('chatSend').disabled,false);
+});
+
+test('REAL live scope cannot send from a different Workspace and can return to personal',async()=>{
+  const f=approvedPersonalRoutes('gigachat_2'),h=harness({routes:f.routes});
+  await settle();
+  assert.equal(h.el('chatSend').disabled,false);
+  h.run("chat.workspace='ws_b';chat.chat='chat_b';renderTurnComposer()");
+  assert.equal(h.el('chatSend').disabled,true);
+  assert.equal(h.el('chatInput').disabled,true);
+  assert.match(h.el('chatComposerNote').textContent,/Личные чаты/);
+  h.el('chatInput').value='Should not send';
+  await h.el('chatSend').onclick();
+  assert.equal(h.chatCalls().some(c=>c.url.endsWith('/turns')&&c.method==='POST'),false);
+  h.run("chat.workspace='ws_a';chat.chat='chat_a';renderTurnComposer()");
+  assert.equal(h.el('chatInput').disabled,false);
+  assert.equal(h.el('chatSend').disabled,false);
+});
+
+test('Personal chat button creates direct chat without a Workspace picker or provider send',async()=>{
+  const f=approvedPersonalRoutes('gigachat_2');
+  const h=harness({routes:f.routes});
+  await settle();
+  assert.equal(h.run('chat.workspace'),'ws_a');
+  assert.equal(h.el('chatPersonalNew').hidden,false,'registered personal chat is available directly');
+  let created=null;
+  h.routes.set('/ultra/chat/workspaces/ws_a/chats',opts=>{
+    if(opts.method==='POST'){
+      const body=JSON.parse(opts.body);
+      created=body.chat_id;
+      assert.equal(body.initialize_workspace,undefined,'personal chat is already enrolled');
+      h.routes.set('/ultra/chat/workspaces/ws_a/chats/'+created+'/messages?limit=50',()=>page([]));
+      h.routes.set('/ultra/chat/workspaces/ws_a/chats/'+created+'/model',()=>({model_ref:'gigachat_2',persisted:true}));
+      h.routes.set('/ultra/chat/workspaces/ws_a/chats/'+created+'/settings',
+        ()=>({settings:{compression_threshold_tokens:250000,answer_tokens:10000}}));
+      h.routes.set('/ultra/chat/workspaces/ws_a/chats/'+created+'/turns/latest',()=>({turn:null,text:null}));
+      return {chat:{chat_id:created,title:'Чат 2'}};
+    }
+    return {state:'ok',chats:created?[chatItem('chat_a','Первый диалог'),chatItem(created,'Чат 2')]:[chatItem('chat_a','Первый диалог')],excluded:{}};
+  });
+  await h.el('chatPersonalNew').onclick();
+  assert.match(created||'',/^chat_[0-9a-f]{32}$/);
+  assert.equal(h.run('chat.chat'),created);
+  const posts=h.chatCalls().filter(x=>x.method==='POST');
+  assert.equal(posts.length,1);
+  assert.equal(posts[0].url,'/ultra/chat/workspaces/ws_a/chats');
+});
+
+test('REAL starts in personal chats even when previous selection was a technical Workspace',async()=>{
+  const f=approvedPersonalRoutes('gigachat_2');
+  const storage=new Map([['webAlarm.ordinaryChatSelection',JSON.stringify({workspace:'ws_b',chat:'chat_old'})]]);
+  const h=harness({routes:f.routes,storage});await settle();
+  assert.equal(h.run('chat.workspace'),'ws_a','first REAL view must prefer the approved personal scope');
+  assert.equal(h.el('chatPersonalNew').hidden,false);
+  assert.equal(h.el('chatSend').disabled,false);
+});

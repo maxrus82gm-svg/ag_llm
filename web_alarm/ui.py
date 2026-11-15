@@ -303,6 +303,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div class="section-head"><div><p class="side-title">ULTRA CHAT</p><h2 id="chatHeading" tabindex="-1">Диалоги Ultra</h2></div><button type="button" id="chatRefresh" title="Перечитать Workspace, диалоги и модель">↻</button></div>
 <p id="chatAccess" class="live" role="status">Проверяем доступ к истории…</p>
 <div id="chatError" class="notice error" role="alert" hidden></div>
+<div class="chat-personal-heading"><span class="side-title">ЛИЧНЫЕ ЧАТЫ</span><button type="button" id="chatPersonalNew" hidden>+ Новый чат</button></div>
 <div class="chat-workspace-heading"><span class="side-title">WORKSPACE</span><button type="button" id="chatRegisterWorkspace" title="Выбрать существующую папку или создать новую в окне Windows">+ Создать Workspace</button></div>
 <div id="chatWorkspaceResult" class="notice info" role="status" hidden></div>
 <p id="chatWorkspaceState" class="muted" role="status"></p>
@@ -1942,7 +1943,7 @@ function renderChatUsage(summary){
   target.textContent=prefix+'. Последняя попытка — '+last+'. Чат: известный расход — '+total+
     (summary.complete?'.':'. Общий расход известен не полностью.');
 }
-let chatPreferencesRevision=0,chatPreferencesLoadedFor=null;
+let chatPreferencesRevision=0,chatPreferencesLoadedFor=null,ordinaryModelRevision=0;
 function preferencesBase(){return turnBase().replace(/\/turns$/,'/settings')}
 function preferencesBusy(value){for(const id of ['chatContextTokens','chatAnswerTokens','chatAnswerExtended','chatPreferencesSave'])$(id).disabled=value}
 async function loadChatPreferences(){
@@ -1984,6 +1985,7 @@ function renderTurnComposer(){
   if(chatTurn.testModelPreferences)$('chatModelPick').disabled=chatTurn.testModelBusy||!chat.workspace||!chat.chat||!chatTurn.models.length;
   if(modelChat()){
     const selected=chatTurn.models.find(m=>m.model_id===chatTurn.model);
+    const pendingSelected=typeof pending?.model==='string'?chatTurn.models.find(m=>m.model_id===pending.model):null;
     $('chatInput').readOnly=typeof pending?.text==='string';
     $('chatSend').disabled=!enabled||chatTurn.busy||!selected;
     $('chatInput').placeholder='Сообщение TEST-имитатору';
@@ -2005,9 +2007,25 @@ function renderTurnComposer(){
         $('chatSend').disabled=true;
         text('chatComposerNote','Эта модель недоступна в подтверждённом каталоге аккаунта. Выберите другую модель.');
       }
-      if(chatTurn.executionMode==='REAL'&&selected?.availability==='NOT_APPROVED'){
-        $('chatSend').disabled=true;
-        text('chatComposerNote','Эта модель найдена в каталоге, но пока не разрешена в текущем LIVE-сеансе.');
+      if(chatTurn.executionMode==='REAL'){
+        const effective=pendingSelected||selected;
+        if(effective?.availability!=='AVAILABLE'){
+          $('chatSend').disabled=true;
+          text('chatComposerNote',effective?.availability==='NOT_APPROVED'?
+            'Эта модель есть в каталоге, но пока не разрешена. Выберите GigaChat-2.':
+            effective?.availability==='UNAVAILABLE'?
+            'Эта модель недоступна в подтверждённом каталоге аккаунта. Выберите другую модель.':
+            'Выбранная модель не подтверждена для этого LIVE-сеанса.');
+        }
+        if(pending?.model&&pending.model!==chatTurn.model){
+          $('chatSend').disabled=true;
+          text('chatComposerNote','Сохранённый незавершённый запрос привязан к другой модели. Проверьте его состояние.');
+        }
+        if(chatTurn.liveWorkspaceId&&chat.workspace!==chatTurn.liveWorkspaceId){
+          $('chatInput').disabled=true;
+          $('chatSend').disabled=true;
+          text('chatComposerNote','LIVE разрешён только для «Личные чаты». Другие Workspace остаются доступными для просмотра.');
+        }
       }
     }
   }
@@ -2069,6 +2087,10 @@ async function checkTurn(manual=false){
 async function sendTurn(){
   if(chatTurn.testModelPreferences&&(chatTurn.testModelBusy||(!chatTurn.testModelLoaded&&!turnPending()?.model)))return;
   if(!chatTurn.available||chatTurn.busy||!chat.workspace||!chat.chat||!$('chatInput').value.trim()||(modelChat()&&!chatTurn.model&&!(chatTurn.testModelPreferences&&turnPending()?.model)))return;
+  if(chatTurn.ordinary&&chatTurn.executionMode==='REAL'&&
+      ((chatTurn.liveWorkspaceId&&chat.workspace!==chatTurn.liveWorkspaceId)||
+       chatTurn.models.find(m=>m.model_id===chatTurn.model)?.availability!=='AVAILABLE'||
+       (turnPending()?.model&&turnPending().model!==chatTurn.model)))return;
   const epoch=chat.epoch,scope=turnScope(),base=turnBase(),value=$('chatInput').value;
   chatTurn.busy=true;renderTurnComposer();text('chatTurnStatus','Принимаем TEST-запрос…');
   try{
@@ -2112,6 +2134,8 @@ async function loadChatAccess(){
   const access=await api('/ui/ultra-chat/capability'),c=access?.ultra_chat;
   chatTurn.ordinary=access?.turn_test?.mode==='ORDINARY';
   chatTurn.executionMode=access?.turn_test?.execution_mode;
+  chatTurn.personalWorkspaceId=typeof access?.turn_test?.personal_workspace_id==='string'?access.turn_test.personal_workspace_id:null;
+  chatTurn.liveWorkspaceId=typeof access?.turn_test?.live_workspace_id==='string'?access.turn_test.live_workspace_id:null;
   chatTurn.testModelPreferences=stage5Offline&&access?.turn_test?.mode==='TEST_OFFLINE'&&access.turn_test.chat_model_preferences===true;
   chatTurn.available=access?.turn_test?.available===true&&access.turn_test.mode===(chatTurn.ordinary?'ORDINARY':stage5Offline?'TEST_OFFLINE':'TEST');
   chatTurn.preferencesEnabled=modelChat()&&access?.turn_test?.chat_preferences===true;
@@ -2152,6 +2176,9 @@ function chatIcon(label,title,onClick,enabled=true){
 }
 function renderChatWorkspaces(){
   const selected=chat.workspace;
+  const personal=chat.workspaces.find(w=>w.wa_workspace_id===chatTurn.personalWorkspaceId&&w.history==='ok');
+  $('chatPersonalNew').hidden=!personal;
+  $('chatPersonalNew').disabled=!personal||chatEdit.busy;
   // Park the shared controls in the connected, hidden dock BEFORE replacing the tree. Collapsing the
   // selected group otherwise detaches them: getElementById returns null and append prints "null".
   const nested=['chatWorkspaceNameForm','chatListState','chatList','chatNameForm'].map($);
@@ -2160,7 +2187,8 @@ function renderChatWorkspaces(){
     const active=w.wa_workspace_id===selected,open=active&&chat.expanded===selected;
     const group=element('div',null,'chat-workspace-group');group.dataset.active=String(active);
     const row=element('div',null,'chat-workspace-row');
-    const choose=chatPick(w.display_name,w.history==='ok'?'История Ultra найдена':chatReason(w.history),active,()=>selectChatWorkspace(w.wa_workspace_id));
+    const choose=chatPick(w.wa_workspace_id===chatTurn.personalWorkspaceId?'Личные чаты':w.display_name,
+      w.wa_workspace_id===chatTurn.personalWorkspaceId?'Без проекта · локальная история':w.history==='ok'?'История Ultra найдена':chatReason(w.history),active,()=>selectChatWorkspace(w.wa_workspace_id));
     choose.setAttribute('aria-expanded',String(open));row.append(choose);
     row.append(chatIcon('✎','Переименовать Workspace «'+w.display_name+'»',()=>openWorkspaceName(w.wa_workspace_id),!chat.renamingWorkspace?.busy&&!chatEdit.busy));
     row.append(chatIcon('+','Новый диалог в Workspace «'+w.display_name+'»',()=>{if(!active){selectChatWorkspace(w.wa_workspace_id).then(()=>{if(chat.workspace===w.wa_workspace_id)openChatName('create')})}else{chat.expanded=selected;renderChatWorkspaces();openChatName('create')}},['ok','missing_history'].includes(w.history)&&!chatEdit.busy));
@@ -2303,11 +2331,12 @@ async function loadChatModel(){
   if(chatTurn.testModelPreferences)return loadTestChatModel();
   if(modelChat()){
     if(chatTurn.ordinary&&chat.workspace&&chat.chat){
-      const epoch=chat.epoch;chatTurn.model=null;renderTurnComposer();
+      const epoch=chat.epoch,revision=++ordinaryModelRevision;chatTurn.model=null;renderTurnComposer();
       try{const selected=await chatGet(turnBase().replace(/\/turns$/,'/model'));
-        if(epoch===chat.epoch)chatTurn.model=chatTurn.models.find(m=>m.model_id===selected.model_ref)?.model_id??null;
-      }catch(_){if(epoch===chat.epoch)text('chatModelError','Выбор модели не подтверждён.');}
-      if(epoch!==chat.epoch)return;
+        if(epoch===chat.epoch&&revision===ordinaryModelRevision)
+          chatTurn.model=chatTurn.models.find(m=>m.model_id===selected.model_ref)?.model_id??null;
+      }catch(_){if(epoch===chat.epoch&&revision===ordinaryModelRevision)text('chatModelError','Выбор модели не подтверждён.');}
+      if(epoch!==chat.epoch||revision!==ordinaryModelRevision)return;
     }
     renderTurnComposer();return
   }
@@ -2334,18 +2363,34 @@ async function openPicker(){
   $('chatModelMenu').replaceChildren(element('p','Загружаем модели…','muted'));
   if(modelChat()){
     const options=chatTurn.models.map(m=>{
-      const button=element('button',m.display_name+(m.availability==='UNAVAILABLE'?' · недоступна':m.availability==='UNVERIFIED'?' · доступ не проверен':''));button.type='button';button.setAttribute('role','option');
+      const blocked=chatTurn.ordinary&&chatTurn.executionMode==='REAL'&&m.availability!=='AVAILABLE';
+      const suffix=m.availability==='UNAVAILABLE'?' · недоступна':
+        m.availability==='NOT_APPROVED'?' · ожидает проверки':
+        m.availability==='UNVERIFIED'?' · доступ не проверен':'';
+      const button=element('button',m.display_name+suffix);
+      button.type='button';button.setAttribute('role','option');
       button.setAttribute('aria-selected',String(m.model_id===chatTurn.model));
+      button.disabled=blocked;button.setAttribute('aria-disabled',String(blocked));
       button.onclick=async()=>{
+        if(blocked||picker.busy)return;
         if(chatTurn.testModelPreferences)return chooseTestChatModel(m.model_id);
-        const scope=turnScope(),epoch=chat.epoch;
-        if(chatTurn.ordinary){try{await chatPost(turnBase().replace(/\/turns$/,'/model'),{model_ref:m.model_id})}
-          catch(_){if(epoch===chat.epoch)text('chatModelError','Выбор модели не сохранён.');return}}
-        if(epoch===chat.epoch&&scope===turnScope()){chatTurn.model=m.model_id;closePicker(true);renderTurnComposer()}
+        const scope=turnScope(),epoch=chat.epoch,revision=chatTurn.ordinary?++ordinaryModelRevision:0;
+        picker.busy=true;
+        try{
+          if(chatTurn.ordinary){
+            const saved=await chatPost(turnBase().replace(/\/turns$/,'/model'),{model_ref:m.model_id});
+            if(saved?.model_ref!==m.model_id||saved?.persisted!==true)throw Error('model_not_confirmed');
+          }
+          if(epoch===chat.epoch&&scope===turnScope()&&(!chatTurn.ordinary||revision===ordinaryModelRevision)){
+            chatTurn.model=m.model_id;notice('chatModelError','');closePicker(true);renderTurnComposer();
+          }
+        }catch(_){if(epoch===chat.epoch&&revision===ordinaryModelRevision)
+          notice('chatModelError','Выбор модели не сохранён. Повторите выбор.');}
+        finally{picker.busy=false;renderTurnComposer()}
       };return button
     });
     $('chatModelMenu').replaceChildren(...options);
-    (options.find(b=>b.getAttribute('aria-selected')==='true')||options[0])?.focus();
+    (options.find(b=>b.getAttribute('aria-selected')==='true'&&!b.disabled)||options.find(b=>!b.disabled))?.focus();
     return
   }
   try{
@@ -2387,7 +2432,11 @@ async function loadChatWorkspaces(){
     renderChatWorkspaces();
     if(chat.workspace){await loadChatList();return true}
     const saved=modelChat()?testChatSelection():null;
-    const first=chat.workspaces.find(w=>w.history==='ok'&&w.wa_workspace_id===saved?.workspace)||chat.workspaces.find(w=>w.history==='ok');
+    const first=(chatTurn.executionMode==='REAL'?
+      chat.workspaces.find(w=>w.history==='ok'&&w.wa_workspace_id===chatTurn.liveWorkspaceId):null)||
+      chat.workspaces.find(w=>w.history==='ok'&&w.wa_workspace_id===saved?.workspace)||
+      chat.workspaces.find(w=>w.history==='ok'&&w.wa_workspace_id===chatTurn.personalWorkspaceId)||
+      chat.workspaces.find(w=>w.history==='ok');
     if(first)await selectChatWorkspace(first.wa_workspace_id);
     return true
   }catch(e){if(epoch===chat.epoch){text('chatWorkspaceState','Список Workspace не загружен');chatFailure(e)}return false}
@@ -2573,6 +2622,23 @@ async function createChatWorkspace(){
       'Не удалось выбрать папку Workspace. Проверьте доступность системного выбора папки.');
   }finally{chat.creatingWorkspace=false;$('chatRegisterWorkspace').disabled=false}
 }
+async function createPersonalChat(){
+  const target=chatTurn.personalWorkspaceId;
+  const personal=chat.workspaces.find(w=>w.wa_workspace_id===target&&w.history==='ok');
+  if(!personal||chatEdit.busy)return;
+  chatEdit.busy=true;$('chatPersonalNew').disabled=true;
+  const id=newChatId();
+  try{
+    const created=await chatPost('/ultra/chat/workspaces/'+encodeURIComponent(target)+'/chats',{chat_id:id});
+    if(created?.chat?.chat_id!==id)throw Error('Личный чат не подтверждён');
+    if(chat.workspace!==target){await selectChatWorkspace(target)}
+    else{chat.expanded=target;renderChatWorkspaces()}
+    await loadChatList();
+    await selectChat(id)
+  }catch(_){notice('chatError','Не удалось подтвердить создание личного чата. Проверьте список перед повтором.')}
+  finally{chatEdit.busy=false;renderChatWorkspaces()}
+}
+$('chatPersonalNew').onclick=createPersonalChat;
 $('chatRegisterWorkspace').onclick=createChatWorkspace;
 $('chatTestWorkspaceForm').onsubmit=e=>{e.preventDefault();return createTestWorkspace()};
 $('chatTestWorkspaceCancel').onclick=()=>{if(!chat.creatingWorkspace){$('chatTestWorkspaceForm').hidden=true;$('chatRegisterWorkspace').focus()}};

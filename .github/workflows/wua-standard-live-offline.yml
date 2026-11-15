@@ -1,10 +1,11 @@
 name: WUA STANDARD LIVE bounded OFFLINE Windows
 on:
   push:
-    branches: [GPT, 'review/wua-standard-live-onramp']
+    branches: [GPT]
     paths:
       - 'web_alarm/**'
       - 'test_web_alarm_standard_live.py'
+      - 'test_web_alarm_ultra_chat_ui.js'
       - '.github/workflows/wua-standard-live-offline.yml'
   workflow_dispatch:
 
@@ -22,6 +23,7 @@ jobs:
           sparse-checkout: |
             /*.py
             /rt002_multimodel_reconciliation.json
+            /test_web_alarm_ultra_chat_ui.js
             /web_alarm/
             /Start_WebAlarm_Standard.cmd
             /Start_WebAlarm_Test.cmd
@@ -54,11 +56,21 @@ jobs:
         run: |
           python -B -X utf8 -m unittest -v test_web_alarm_standard_live test_web_alarm_live_bootstrap test_web_alarm_gigachat_multimodel 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP\standard-live-offline.log"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Run deterministic browser JS regression without network
+        shell: pwsh
+        env:
+          GIGACHAT_CREDENTIALS: ''
+          GIGACHAT_SCOPE: ''
+        run: |
+          node --test test_web_alarm_ultra_chat_ui.js 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP\\personal-chat-ui.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload independent Windows log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: standard-live-offline-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/standard-live-offline.log
+          path: |
+            ${{ runner.temp }}/standard-live-offline.log
+            ${{ runner.temp }}/personal-chat-ui.log
           if-no-files-found: warn
           retention-days: 14

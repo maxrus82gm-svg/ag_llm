@@ -1,4 +1,14 @@
-## CURRENT / WEB31 15.11.2026 — FIRST REAL GIGACHAT REPLY PASS (bounded); permanent LIVE OPEN
+## CURRENT / WEB32 15.11.2026 — PERSONAL CHAT UX + BLOCKED MODEL RECOVERY: OFFLINE CI PASS, PHYSICAL GUI OPEN
+
+**USER decision and REUSE:** пользователь не должен выбирать номер Workspace ради обычного диалога; внешний Workspace — необязательная организация проектов, но Ultra identity/ledger физически сохраняются для безопасности. После одного буквального консольного согласия `LIVE 12` новый STANDARD использует персональный managed root `LOCALAPPDATA/WebAlarmWorkspace/personal_chats` (машинный переносимый путь из registry, не хардкод), с новым чатом и имеющимся Ultra Core. Existing registered Workspace/TEST/Tk/history **not migrated/reset**. На отсутствие согласия, неподготовленный/подменённый личный root, чужой Workspace или noninteractive запуск — deny без реального вызова. Только `GigaChat-2` exact observed version, прежние 12/128/8192/99840/30min bounds; пять остальных моделей не имеют REAL-контрактов. Выбор заблокированной модели в UI запрещён, опоздавший GET не может восстановить её после выбора разрешённой. Входные `Start_WebAlarm_Standard.cmd` / `Start_WebAlarm_Test.cmd` и Tk не менялись.
+
+**Independent Windows OFFLINE evidence:** review SHA `4425a86e295e24c46831958abd9f3413a1d70c20`, GitHub Actions [43750081610](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43750081610), Python **38/38 PASS**, Node browser DOM **75/75 PASS**, no credentials/OAuth/catalog/inference, isolated Windows runner. Earlier diagnostic RED [43749501341](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43749501341) fixed after preserving evidence; [43749746730](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43749746730) **38 Python + 74 JS PASS**, then extra personal-default regression added. Final `GPT` SHA/CI to verify on publication. Report `reports/CHATGPT-WUA-PERSONAL-CHAT-UX-001/report.md`.
+
+**OPEN / NEXT:** физический owner GUI STANDARD с direct personal chats, переключение моделей, сообщение/F5, ledger readback и штатное прекращение по истечении гранта — NOT RUN. Five remaining GigaChat inference, provider caps/response versions, tariff/balance, full S3b/S3c/S9/S13a, global smoke clean checkout and production release HOLD. Без отдельного пользовательского разрешения реальных/платных вызовов не делать. Codex `CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001` БЛОК 1 не изменять и не закрывать. NEXT: после merge из GPT вручную owner smoke, затем отдельный scope на пять моделей. №05 FOLLOWUP/№40.
+
+---
+
+## PREVIOUS / WEB31 15.11.2026 — FIRST REAL GIGACHAT REPLY PASS (bounded); permanent LIVE OPEN
 
 **FACT / OWNER-APPROVED REAL, TASK ACTIVE:** `CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001` остаётся в Codex БЛОКЕ 1, HISTORY ID ещё нет, `finish`/финальный closeout НЕ выполнены. Codex подготовил одноразовый `web_alarm/live_bootstrap.py`, H38 provider/transport/admission/ledger, проверил 37/37 OFFLINE, S1 69/69, S2 73/73 (авторские результаты). Stage A под отдельный USER GO: 1 OAuth + 1 каталог, 0 inference; в каталоге аккаунта все **6 текстовых GigaChat ID** (+4 embeddings). Это **не** шесть проверенных генераций.
 
