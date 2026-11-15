@@ -1,0 +1,32 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "test:failed": 1
+  },
+  "cases": [
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py::CachedUsageContract::test_documented_billable_total_can_be_preserved",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+    "--child",
+    "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_c3rgm3_v\\p"
+  ],
+  "elapsed_seconds": 1.4530000000086147,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 1,
+  "runner_exit_code": 1
+}

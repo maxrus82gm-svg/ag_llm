@@ -1,0 +1,849 @@
+{
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001",
+  "status": "AUTHOR RESULT READY / PARTIAL-BLOCKED / REAL HOLD",
+  "history_id": "H-CODEX-000037",
+  "independent": "NOT RUN / REVIEW PENDING",
+  "real": "HOLD / NOT RUN",
+  "git": "NOT RUN",
+  "sources": {
+    "gigachat_transport.py": {
+      "before": "5bdab0b0a317db911df92a39fe1ac7d8a7d189f90df27774a837e12a48ac53ed",
+      "after": "684183be92238b13148a58c772a4b42fd5d08bd9810f08d01986a814b5d2fd94"
+    },
+    "ordinary_gigachat_transport.py": {
+      "before": "02bb45df7a2ab27e2592e1ed483383939b02e74651ceb3132d80059fba024964",
+      "after": "f14f4e93515d09e45e8ab4f211e21866a5982b18d6e9c3d7827f09cd88c48a67"
+    },
+    "test_web_alarm_gigachat_ultra_preflight.py": {
+      "before": null,
+      "after": "476ed591969f71ee277980617ed71ad5185d89fae336baa1ae93c9bbd1f2a849"
+    }
+  },
+  "preservation": {
+    "checked": 299,
+    "changed": [
+      "gigachat_transport.py",
+      "ordinary_gigachat_transport.py",
+      "Документация/000_Задачи Codex.md"
+    ],
+    "unexpected_changes": [],
+    "blocks_2_to_4_unchanged": true,
+    "live_requests": 0,
+    "git_operations": 0
+  },
+  "evidence_results": {
+    "accounting_expected_red.result.json": {
+      "exit_code": 1,
+      "counts": {
+        "test:failed": 1
+      },
+      "expected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+        "--child",
+        "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/accounting_oracle.py",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_c3rgm3_v\\p"
+      ],
+      "elapsed_seconds": 1.4530000000086147,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "pytest_exit_code": 1,
+      "runner_exit_code": 1
+    },
+    "authority_mutation_red.result.json": {
+      "exit_code": 1,
+      "counts": {
+        "test:failed": 1
+      },
+      "expected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+        "--child",
+        "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/negative_oracle.py::MutatedAuthority",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_8fl1g8y2\\p"
+      ],
+      "elapsed_seconds": 2.14000000001397,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "pytest_exit_code": 1,
+      "runner_exit_code": 1
+    },
+    "authority_mutation_revised_red.result.json": {
+      "exit_code": 1,
+      "counts": {
+        "test:failed": 1
+      },
+      "expected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+        "--child",
+        "reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/negative_oracle.py::MutatedAuthority",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_v5pae6wa\\p"
+      ],
+      "elapsed_seconds": 1.735000000015134,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "pytest_exit_code": 1,
+      "runner_exit_code": 1
+    },
+    "green_contract.result.json": {
+      "exit_code": 0,
+      "counts": {
+        "test:passed": 9,
+        "subtest:passed": 5
+      },
+      "expected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+        "--child",
+        "test_web_alarm_gigachat_ultra_preflight.py",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_znzj0v5e\\p"
+      ],
+      "elapsed_seconds": 3.1089999999967404,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "pytest_exit_code": 0,
+      "runner_exit_code": 0
+    },
+    "quality.result.json": {
+      "exit_code": 0,
+      "counts": {
+        "test:passed": 47
+      },
+      "expected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+        "--child",
+        "reports/CODEX-RT002-B2-S2-ISOLATION-ORACLE-REPAIR-001/isolation_checks.py",
+        "--import-mode=importlib",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_85mhbyq6\\p"
+      ],
+      "elapsed_seconds": 6.51500000001397,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "pytest_exit_code": 0,
+      "runner_exit_code": 0
+    },
+    "red_contract.result.json": {
+      "exit_code": 1,
+      "counts": {
+        "test:failed": 5,
+        "test:passed": 2,
+        "subtest:failed": 5
+      },
+      "expected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+        "--child",
+        "test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_6pybbklp\\p"
+      ],
+      "elapsed_seconds": 2.577999999979511,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "pytest_exit_code": 1,
+      "runner_exit_code": 1
+    },
+    "regression.result.json": {
+      "exit_code": 0,
+      "counts": {
+        "test:passed": 173,
+        "subtest:passed": 255
+      },
+      "expected_guard_denials": 3,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+        "--child",
+        "test_web_alarm_gigachat_ultra_preflight.py",
+        "test_web_alarm_gigachat_transport.py",
+        "test_gigachat_admission.py",
+        "test_web_alarm_ordinary_application.py",
+        "test_web_alarm_test_model_persist.py",
+        "test_web_alarm_perchat_usage_settings.py",
+        "test_rt002_s3a_ledger.py",
+        "test_ordinary_chat_service.py",
+        "test_web_alarm_launcher.py::StableEntryTests",
+        "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_active_profile_uses_bridge_and_old_stage5_is_available",
+        "test_web_alarm_ordinary_test_activation.py::ActivationTests::test_missing_test_config_cannot_fall_back_to_standard",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_wl7hxt9d\\p"
+      ],
+      "elapsed_seconds": 182.26500000001397,
+      "guard_denials": 3,
+      "unexpected_guard_denials": 0,
+      "pytest_exit_code": 0,
+      "runner_exit_code": 0
+    },
+    "s1.result.json": {
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "test_rt002_s1_routes.py"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 81.67200000002049,
+      "counts": {
+        "run": 69,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "gate": {
+        "status": "FAIL",
+        "exit_code": 1,
+        "reasons": [
+          "FAILURES:2"
+        ]
+      },
+      "isolation_violations": []
+    },
+    "s1_final.result.json": {
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "test_rt002_s1_routes.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 74.67199999999139,
+      "counts": {
+        "run": 69,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "isolation_violations": []
+    },
+    "s2.result.json": {
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "test_rt002_s2_budget_policy.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.155999999988126,
+      "counts": {
+        "run": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "isolation_violations": []
+    },
+    "s2_final.result.json": {
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "test_rt002_s2_budget_policy.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.155999999988126,
+      "counts": {
+        "run": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "isolation_violations": []
+    },
+    "target_final.result.json": {
+      "exit_code": 0,
+      "counts": {
+        "test:passed": 10,
+        "subtest:passed": 5
+      },
+      "expected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+        "--child",
+        "test_web_alarm_gigachat_ultra_preflight.py",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_kt4nxhct\\p"
+      ],
+      "elapsed_seconds": 12.859000000025844,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "pytest_exit_code": 0,
+      "runner_exit_code": 0
+    },
+    "target_revised.result.json": {
+      "exit_code": 0,
+      "counts": {
+        "test:passed": 68,
+        "subtest:passed": 100
+      },
+      "expected_guard_denials": 0,
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\\run_checks.py",
+        "--child",
+        "test_web_alarm_gigachat_ultra_preflight.py",
+        "test_web_alarm_gigachat_transport.py",
+        "test_gigachat_admission.py",
+        "test_web_alarm_ordinary_application.py",
+        "--basetemp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_bjxptfmy\\p"
+      ],
+      "elapsed_seconds": 151.82800000000861,
+      "guard_denials": 0,
+      "unexpected_guard_denials": 0,
+      "pytest_exit_code": 0,
+      "runner_exit_code": 0
+    },
+    "ui.result.json": {
+      "command": [
+        "node",
+        "--test",
+        "test_web_alarm_ultra_chat_ui.js"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "tests": 69,
+        "pass": 69,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "baseline_negative_control": false,
+      "source_sha256": "21b80cf689f05d68bcca06da407fa4a7e54dd1c5356ac854b614b19eae54d233",
+      "test_sha256": "c67e854e366c6d461678b9cb19601fd902a3fef69792faa89a095585713b7d55"
+    }
+  },
+  "artifacts": {
+    "accounting_oracle.py": {
+      "bytes": 893,
+      "sha256": "712b3cc491487e41d6aefd60d6a3c1c4289163fe81c7da435bead02dd6a41322"
+    },
+    "before/gigachat_admission.py.txt": {
+      "bytes": 21628,
+      "sha256": "ba8dc8a824b14236806429825ada24899452ed8e8f4ac1873748945d4d55eef6"
+    },
+    "before/gigachat_transport.py.txt": {
+      "bytes": 2095,
+      "sha256": "5bdab0b0a317db911df92a39fe1ac7d8a7d189f90df27774a837e12a48ac53ed"
+    },
+    "before/model_registry.py.txt": {
+      "bytes": 2519,
+      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53"
+    },
+    "before/ordinary_chat_service.py.txt": {
+      "bytes": 15606,
+      "sha256": "da624d1f8b0b7f7afaf5075de3627dd554bd4b207c9db5e44e96f07418449d02"
+    },
+    "before/ordinary_gigachat_transport.py.txt": {
+      "bytes": 5590,
+      "sha256": "02bb45df7a2ab27e2592e1ed483383939b02e74651ceb3132d80059fba024964"
+    },
+    "before/provider_accounting.py.txt": {
+      "bytes": 4884,
+      "sha256": "dd83dbf7a22154347ac6f17ca2110e78757338248bd466f86a0d3599db510902"
+    },
+    "before/Документация__000_Задачи Codex.md.txt": {
+      "bytes": 45631,
+      "sha256": "59f073aafd4d5b2e0312b74c1ce9f0cfafde277544599ffc8821d501ac6d6e95"
+    },
+    "closeout.json": {
+      "bytes": 366,
+      "sha256": "81c87f5e80e78f5413472a26ec16a3b6bc95c1f1ad6058cd88e571ed98922c03"
+    },
+    "evidence/accounting_expected_red.cases.current.json": {
+      "bytes": 200,
+      "sha256": "e4e09fbd8d070b7b0382eb8ac73bec28810a3e71679bf9232cc34170b42b5bcf"
+    },
+    "evidence/accounting_expected_red.cases.json": {
+      "bytes": 394,
+      "sha256": "61dec60ca39762cfeb4a83b16eb7ede77d42f79e3ee0396bceefbd0e2539d362"
+    },
+    "evidence/accounting_expected_red.result.json": {
+      "bytes": 952,
+      "sha256": "3ff126a5830f646140c335a028166ea19435942f13123ade5254e1ed677c4af0"
+    },
+    "evidence/accounting_expected_red.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/accounting_expected_red.stdout.txt": {
+      "bytes": 869,
+      "sha256": "5e5b4e17096a80cddeb523ff6b8764cbc6e50f35f086e2fb7b77c4835d6a4481"
+    },
+    "evidence/authority_mutation_red.cases.current.json": {
+      "bytes": 186,
+      "sha256": "06eae1a1cc957ec216f63c3208da97f537cba6f03d3f10f750a9b926feafac02"
+    },
+    "evidence/authority_mutation_red.cases.json": {
+      "bytes": 380,
+      "sha256": "a32712174129766ff0dc462b753868ec55808c2021db0502f0c980caf2431496"
+    },
+    "evidence/authority_mutation_red.result.json": {
+      "bytes": 952,
+      "sha256": "7e299d513b8f646e655150cb286ab0d349293c51c1ef7308f1ae334f1ee0a501"
+    },
+    "evidence/authority_mutation_red.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/authority_mutation_red.stdout.txt": {
+      "bytes": 1524,
+      "sha256": "a3fdae885b531d51a15564fd36c5bfe8767e7728aafef8b549797e4bf9ddb4f8"
+    },
+    "evidence/authority_mutation_revised_red.cases.current.json": {
+      "bytes": 186,
+      "sha256": "06eae1a1cc957ec216f63c3208da97f537cba6f03d3f10f750a9b926feafac02"
+    },
+    "evidence/authority_mutation_revised_red.cases.json": {
+      "bytes": 380,
+      "sha256": "a32712174129766ff0dc462b753868ec55808c2021db0502f0c980caf2431496"
+    },
+    "evidence/authority_mutation_revised_red.result.json": {
+      "bytes": 953,
+      "sha256": "e061000b8f5bd2a5bdbd090e70146a8680b284aef75aaca3d3e9bef32eab5d63"
+    },
+    "evidence/authority_mutation_revised_red.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/authority_mutation_revised_red.stdout.txt": {
+      "bytes": 1540,
+      "sha256": "116f8baa806bc055e79847b06ab213537939ba0810170902022052d4681c01e0"
+    },
+    "evidence/base_fingerprints.json": {
+      "bytes": 4254,
+      "sha256": "3c6248c6eb348977066a3ea8fb845021d3ee7146d826f7969122c2b45cee1f42"
+    },
+    "evidence/card_after_finish.json": {
+      "bytes": 733,
+      "sha256": "cb345dae338e4a33a29fc6b621e4edbf1f11dc18ab2878632a6065d06037c175"
+    },
+    "evidence/card_before_finish.json": {
+      "bytes": 921,
+      "sha256": "a57cf0680ad896ceb6a626f1043e2a122e4e41c918b9be493803124d21c99250"
+    },
+    "evidence/card_before_finish.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/environment.json": {
+      "bytes": 275,
+      "sha256": "d82918e8fd4a6a508bfdcd86928f63bd777f8739504092d208b544a0fde26e0d"
+    },
+    "evidence/finish.json": {
+      "bytes": 5090,
+      "sha256": "fcf36a0d5a5c91ffbdaa6565a0e400cee1aaafb8c6aa4c6d77da2ade7a9e88ec"
+    },
+    "evidence/finish.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/finish_execution.json": {
+      "bytes": 394,
+      "sha256": "bca389cd039efab3b013d6dd773e7f0cf1f81d8a8e0b06d85afd4ea3c5542205"
+    },
+    "evidence/gigachat_transport.py.diff.txt": {
+      "bytes": 2141,
+      "sha256": "39295835017673952c52b8d8187956266eb676ad7198de8f8cbbc390cc2b5c46"
+    },
+    "evidence/green_contract.cases.current.json": {
+      "bytes": 214,
+      "sha256": "17ae329338e6339ac7db00f55a237d132aef1f3a0aff4ba68405d1b921de7777"
+    },
+    "evidence/green_contract.cases.json": {
+      "bytes": 3382,
+      "sha256": "dda278e6456ede9bd961f4fd48de4511022b63e9079e6ba4435bba6f35225fc1"
+    },
+    "evidence/green_contract.result.json": {
+      "bytes": 3905,
+      "sha256": "18e6e6e1e073a1b58f7d29bbdac3629062fb5fc02b860274336c822212c571c1"
+    },
+    "evidence/green_contract.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/green_contract.stdout.txt": {
+      "bytes": 114,
+      "sha256": "a43b9ffa97eb68dc4a087ada791ca027d4ab744596b1640fdbf1571d1bdcf922"
+    },
+    "evidence/history_read.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/history_read.txt": {
+      "bytes": 765,
+      "sha256": "6b60578553a9dbb8195b7192b606fc6706f099af53a3637fbf0d9216f69575fa"
+    },
+    "evidence/initial_s1_red__gigachat_transport.py.txt": {
+      "bytes": 3979,
+      "sha256": "04bb50eb26ee50e2d0d95020694e0770edfc44c0334a1bfb3990880b39f5516a"
+    },
+    "evidence/initial_s1_red__ordinary_gigachat_transport.py.txt": {
+      "bytes": 6241,
+      "sha256": "0d82f0c7edd170ed2dbdc051fcd649e70f9d685154fa94c393bd402e53fddd6a"
+    },
+    "evidence/initial_s1_red__test_web_alarm_gigachat_ultra_preflight.py.txt": {
+      "bytes": 8463,
+      "sha256": "405f6149fb11185d8b3d9aaf5c5a0d95832fc87cb489ba011f6272b27f1249a4"
+    },
+    "evidence/metadata_initial_error.txt": {
+      "bytes": 252,
+      "sha256": "163d5d88a0c178212468858a66b5182e41ff2773d8aa0a0e41ce7ca223136b59"
+    },
+    "evidence/ordinary_gigachat_transport.py.diff.txt": {
+      "bytes": 898,
+      "sha256": "35d6686d931d57b1c3688e84f5addd31ac012e63b315fd629497071d720f169d"
+    },
+    "evidence/package_check_post_finish.json": {
+      "bytes": 32,
+      "sha256": "af42f45bb8f920aa08bc631f672da861896f19059e76f65faf6ce4b6bf40e890"
+    },
+    "evidence/package_check_pre_finish.json": {
+      "bytes": 41,
+      "sha256": "38544f3af57307c5f39e748541ddc0d47420e66de5af14d2211907ea71dfe1df"
+    },
+    "evidence/pinned_class_preserved.json": {
+      "bytes": 269,
+      "sha256": "fa67f271193219128fd03d4651a213e7d986d747fa45781bca8652dbe6dc5609"
+    },
+    "evidence/preservation_final.json": {
+      "bytes": 283,
+      "sha256": "968ce6d49265cfd85fbf9304c2d1da7a7c7b42fc9993d2218f14470c68ece496"
+    },
+    "evidence/protected_before.json": {
+      "bytes": 35612,
+      "sha256": "72661314892f6c00fc4b0d60653fecdb6764d1e7ba2e6e442661a60bdc010e02"
+    },
+    "evidence/provider-public-api.yml": {
+      "bytes": 183458,
+      "sha256": "f76aa007967cea22d27edc6fab0993bcd4eb9c699445e1a4edb215018efae10b"
+    },
+    "evidence/public_schema_fetch.json": {
+      "bytes": 580,
+      "sha256": "6e959520d5e9e27ab329dd957547b9a4f03e9f4c610f206f4331b6977d088702"
+    },
+    "evidence/quality.cases.current.json": {
+      "bytes": 198,
+      "sha256": "1c6ff376e9b7eb66193f1fbd94d171be6448831926b4cc380cef5c426bfcfc8c"
+    },
+    "evidence/quality.cases.json": {
+      "bytes": 11317,
+      "sha256": "e91d6e99239484d95a874c71e19b07e2ef4093b8e30be1554cf3c4bc4a540588"
+    },
+    "evidence/quality.result.json": {
+      "bytes": 11901,
+      "sha256": "98c27d6f5df81d01a4f4aae45ededea3e463b2a3d4e785d7f4df569c2b850210"
+    },
+    "evidence/quality.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/quality.stdout.txt": {
+      "bytes": 101,
+      "sha256": "0614152c87f9aded7ecf09df657c899b1c7694b61a418ac6cd972bdfe3f73680"
+    },
+    "evidence/red_contract.cases.current.json": {
+      "bytes": 211,
+      "sha256": "cb09d6d231991d43fa5351a3644e92f0a76e6dfca78c925f8c969ba6542d1bb9"
+    },
+    "evidence/red_contract.cases.json": {
+      "bytes": 2947,
+      "sha256": "52034825120529fd4e1729cb08542ee94353c939764880b3cfcfd81671d50edf"
+    },
+    "evidence/red_contract.result.json": {
+      "bytes": 3489,
+      "sha256": "0bd022a6ea221de6a139c2d94faf89aacc43571c6b798be96bbeec0109cb44a3"
+    },
+    "evidence/red_contract.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/red_contract.stdout.txt": {
+      "bytes": 5698,
+      "sha256": "fb3947f0272eb3bcc195b8824f1302a00282aed6c6988ffb5c3a6f0895de3c7f"
+    },
+    "evidence/regression.cases.current.json": {
+      "bytes": 210,
+      "sha256": "de167560c1918390763a344b7d3acd941a0fdbc7cba8321dbd02aca986a57fc2"
+    },
+    "evidence/regression.cases.json": {
+      "bytes": 92786,
+      "sha256": "9951648ca29caff6570a15282d06a5a37a6e6df065b47235ba463b58f0a3896c"
+    },
+    "evidence/regression.guard.jsonl": {
+      "bytes": 287,
+      "sha256": "f2de21bfa7d782bc44d734661aaaec0e552619f695c61f29128aa1cac8859b8c"
+    },
+    "evidence/regression.result.json": {
+      "bytes": 93906,
+      "sha256": "1c1631995ae4292cb4b34fd5f3d8b508d717312b859a595fa6fa5a941040e63f"
+    },
+    "evidence/regression.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/regression.stdout.txt": {
+      "bytes": 258,
+      "sha256": "66f4e8e656f03c40c73055ed493bb070f1cc24d4d3ae2f157e869b5c523848eb"
+    },
+    "evidence/s1.physical_trace.json": {
+      "bytes": 14806,
+      "sha256": "85133b61160b37b2b3316edc4c5a50d6887579426dad0e6cabc607b5ff4c4508"
+    },
+    "evidence/s1.result.json": {
+      "bytes": 499,
+      "sha256": "a475104635b3225fcb237f61348f39fcbfd1bf1297bd4942a6dbe8be5cfe6b4e"
+    },
+    "evidence/s1.stderr.txt": {
+      "bytes": 88290,
+      "sha256": "897e922e2c8de1a6616c7ad38d7dc142a52cd7e6c871c6a945b4c6adf8a4abbb"
+    },
+    "evidence/s1.stdout.txt": {
+      "bytes": 2873,
+      "sha256": "2c45f7d60cee3c3c520038c63f4501f4f6e5b50a5b62ea3fd8ea9a353056775b"
+    },
+    "evidence/s1.unittest.txt": {
+      "bytes": 12176,
+      "sha256": "3122c25517dedb91d5943d70ab7cbe40dca47bf132a503da9213e524d0653230"
+    },
+    "evidence/s1_final.physical_trace.json": {
+      "bytes": 16544,
+      "sha256": "e5c8bb074734edb4d994f464b7f8e12677a8b915154817ec3430bed70e3d2eee"
+    },
+    "evidence/s1_final.result.json": {
+      "bytes": 473,
+      "sha256": "4a5332faf7d03e7e37f0e6034f3e989334e6eedee750bb71e26078686736f118"
+    },
+    "evidence/s1_final.stderr.txt": {
+      "bytes": 88290,
+      "sha256": "d601e4689e621a35897f313126513b41d64b6894b38a9f3985e561af0ddf2d8f"
+    },
+    "evidence/s1_final.stdout.txt": {
+      "bytes": 791,
+      "sha256": "0b444d879a7f83b5c196b8b4f52db54e9058329174203df61e4ae7d78bc7b323"
+    },
+    "evidence/s1_final.unittest.txt": {
+      "bytes": 10362,
+      "sha256": "67a78981dc92ccaa51e633d1343e8b0718b9518fc77d1fdb1c3e436b8b7b45a7"
+    },
+    "evidence/s2.result.json": {
+      "bytes": 481,
+      "sha256": "7c62767618cc405b67609078463b47d13eb0bd24735b188eb66ec089fa7b8bc3"
+    },
+    "evidence/s2.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/s2.stdout.txt": {
+      "bytes": 841,
+      "sha256": "19861f30d5dd1f62da207b3c60bfcdb2641b3329d34b14d9672004c229adbd42"
+    },
+    "evidence/s2.unittest.txt": {
+      "bytes": 10511,
+      "sha256": "7ab3e05a53d2fa6dcb99817a7ec250e79c1c3813c64f814e6c5ecae65ebb284b"
+    },
+    "evidence/s2_final.result.json": {
+      "bytes": 481,
+      "sha256": "7c62767618cc405b67609078463b47d13eb0bd24735b188eb66ec089fa7b8bc3"
+    },
+    "evidence/s2_final.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/s2_final.stdout.txt": {
+      "bytes": 841,
+      "sha256": "c9562abfb54cf1c46cef774d0d820efea98dd7c23fcb04902ac5a592484d5155"
+    },
+    "evidence/s2_final.unittest.txt": {
+      "bytes": 10511,
+      "sha256": "67a6664b680a03b30a023e3e592a20a4f813188e4561cf146a406769364f3e1f"
+    },
+    "evidence/syntax.json": {
+      "bytes": 204,
+      "sha256": "8adaec0d2d277cb7557efbb5f55bbd06f72cb330333e36253e01a1b7a5374fc6"
+    },
+    "evidence/syntax_final.json": {
+      "bytes": 434,
+      "sha256": "30bb58e9b7d5de35709b608478715769d9d85ac37289f711417f2f93bf498870"
+    },
+    "evidence/target_final.cases.current.json": {
+      "bytes": 214,
+      "sha256": "70848a8698755be127dd1220be8dd7c1a92251dd22f7f09b38079f623f6f655e"
+    },
+    "evidence/target_final.cases.json": {
+      "bytes": 3617,
+      "sha256": "d4135968a801651ab8783ed630afe25cfccc05d494fc4f0831b183d900004395"
+    },
+    "evidence/target_final.result.json": {
+      "bytes": 4140,
+      "sha256": "69dfb0b2866f7dc65713b2d10e9e18bf0d9d3d12ba7bb58937e587236ded1231"
+    },
+    "evidence/target_final.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/target_final.stdout.txt": {
+      "bytes": 116,
+      "sha256": "58ada419d76b007f91b13514bd935000c6d121980497ab0ec7a8dd6e1e6d2719"
+    },
+    "evidence/target_revised.cases.current.json": {
+      "bytes": 213,
+      "sha256": "c41bd40cffa298de0c2d6d51a0a3cea3fa78cd55c8af8e4a9e5d60c0eaf3f7aa"
+    },
+    "evidence/target_revised.cases.json": {
+      "bytes": 37275,
+      "sha256": "e17d63557e634c9d446fb6d3feac1ea58b4491cb3fb03e9ae1efe18af0aa4bca"
+    },
+    "evidence/target_revised.result.json": {
+      "bytes": 37925,
+      "sha256": "e909d395b3a0fe2f5f571648e42da19c31486c05b72657641b078172b60afbdf"
+    },
+    "evidence/target_revised.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/target_revised.stdout.txt": {
+      "bytes": 178,
+      "sha256": "5f1a4bcfc509408692f1bcda65e628f07f6cd43de9bd0ba6aa8605e42cba0c2f"
+    },
+    "evidence/ui.result.json": {
+      "bytes": 435,
+      "sha256": "bd3f21a43a60d8829f67e91d400c39de1afa200006dff5b765dfd1215e93427b"
+    },
+    "evidence/ui.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/ui.stdout.txt": {
+      "bytes": 16942,
+      "sha256": "51b762a8eea64333439050e1caeed9702758e62db134dbdc1538385e3888ac28"
+    },
+    "evidence/versions.json": {
+      "bytes": 125,
+      "sha256": "d378cacc8aa6c93cf485acbcf3a943b521b018951a4684868f4c1056423a3259"
+    },
+    "handoff_task.md": {
+      "bytes": 15706,
+      "sha256": "bb700c453bc105243cfc84cc1db4385196842037a832ec2b131cfef7bf32fda7"
+    },
+    "manual-review.md": {
+      "bytes": 4712,
+      "sha256": "6e5a23f6b30cc2ae75fe1746b911af7eb07ac48c55a3883d1c476aed4c0ff633"
+    },
+    "negative_oracle.py": {
+      "bytes": 610,
+      "sha256": "ba6e4b94f5e905bdf6ac91756438edd07081533d023f71bd9948f0e73d7a1a21"
+    },
+    "next-live-procedure.md": {
+      "bytes": 3714,
+      "sha256": "b4fab7f46bdd9ca16d290d09645b325cddd0c577d60ba87e513cd4a214653f25"
+    },
+    "provider-contract.md": {
+      "bytes": 8475,
+      "sha256": "1b37c3c9d4fc22e4e27aeebae44ccd134c288b7bfa82fa30a2fbf52c694b98bf"
+    },
+    "real-readiness.md": {
+      "bytes": 3461,
+      "sha256": "a7ea17ac3842eae904dc5cbc99e928f1d14ff91e17543f2671b9c12c9c0b6eca"
+    },
+    "report.md": {
+      "bytes": 14979,
+      "sha256": "0bfe576890ff9204f582c9e9b717502be064871a1c5876d9b6b19f2c111979bd"
+    },
+    "reuse-check.md": {
+      "bytes": 3427,
+      "sha256": "3f9f010fcb26752420fed132db30d69577c0be1dc0fccab6a8e9bba3d46e2083"
+    },
+    "run_checks.py": {
+      "bytes": 6515,
+      "sha256": "c9680962e2f7c9f957ba8500ce27d411e55b49227e0f4b574992df0f45c4944f"
+    },
+    "run_standalone.py": {
+      "bytes": 1909,
+      "sha256": "7fb6840be04b498b60a4ce4108fb5a3e1f50590c6c791986fc9c088d1c3c7ec7"
+    },
+    "run_ui.py": {
+      "bytes": 1481,
+      "sha256": "30502ea85568f3c233cbcbe1fe38f34e6ef2176091aa9eda7d1dde048842d27f"
+    },
+    "safety-matrix.md": {
+      "bytes": 3677,
+      "sha256": "0bd2db1f172e10c751b9b72c5d2543960e80313160b93a0b6edaaa6490fc108b"
+    },
+    "seal_package.py": {
+      "bytes": 3005,
+      "sha256": "f8334dd9ae17a1d2baa24b094d34547da45b952c43cf7f1207a1d66667a32c69"
+    },
+    "task_record.json": {
+      "bytes": 716,
+      "sha256": "7f606c748b7cfb79f572a1f31e1011f147a25f34a83058a66e8e842e1013e369"
+    }
+  }
+}

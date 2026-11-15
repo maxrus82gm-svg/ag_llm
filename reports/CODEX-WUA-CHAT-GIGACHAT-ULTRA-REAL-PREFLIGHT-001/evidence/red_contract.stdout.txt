@@ -1,0 +1,69 @@
+F.FFFF.                                                             [100%]
+================================== FAILURES ===================================
+_ RealPreflightTests.test_authority_regression_still_cannot_build_a_real_client _
+test_web_alarm_gigachat_ultra_preflight.py:66: in test_authority_regression_still_cannot_build_a_real_client
+    transport.GigaChatTransport.real('gigachat_ultra')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: type object 'GigaChatTransport' has no attribute 'real'
+_____ RealPreflightTests.test_preflight_uses_no_env_secret_token_or_http ______
+test_web_alarm_gigachat_ultra_preflight.py:47: in test_preflight_uses_no_env_secret_token_or_http
+    view = oauth.real_preflight('gigachat_ultra')
+           ^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'gigachat_transport' has no attribute 'real_preflight'
+__ RealPreflightTests.test_real_factory_denies_before_contract_token_or_http __
+test_web_alarm_gigachat_ultra_preflight.py:54: in test_real_factory_denies_before_contract_token_or_http
+    with patch.object(oauth, 'real_preflight', side_effect=AssertionError('contract before authority')) as contract, \
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1437: in get_original
+    raise AttributeError(
+E   AttributeError: <module 'gigachat_transport' from 'M:\\GitHub\\ag_llm\\gigachat_transport.py'> does not have the attribute 'real_preflight'
+____ RealPreflightTests.test_registry_remapping_is_not_a_verified_contract ____
+test_web_alarm_gigachat_ultra_preflight.py:41: in test_registry_remapping_is_not_a_verified_contract
+    oauth.real_preflight('gigachat_ultra')
+    ^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'gigachat_transport' has no attribute 'real_preflight'
+_ RealPreflightTests.test_ultra_public_contract_is_incomplete_and_not_entitlement _
+test_web_alarm_gigachat_ultra_preflight.py:20: in test_ultra_public_contract_is_incomplete_and_not_entitlement
+    view = oauth.real_preflight('gigachat_ultra')
+           ^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'gigachat_transport' has no attribute 'real_preflight'
+_ RealPreflightTests.test_unknown_model_and_foreign_contract_fail_with_safe_error (model='str') _
+test_web_alarm_gigachat_ultra_preflight.py:35: in test_unknown_model_and_foreign_contract_fail_with_safe_error
+    oauth.real_preflight(model)
+    ^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'gigachat_transport' has no attribute 'real_preflight'
+_ RealPreflightTests.test_unknown_model_and_foreign_contract_fail_with_safe_error (model='str') _
+test_web_alarm_gigachat_ultra_preflight.py:35: in test_unknown_model_and_foreign_contract_fail_with_safe_error
+    oauth.real_preflight(model)
+    ^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'gigachat_transport' has no attribute 'real_preflight'
+_ RealPreflightTests.test_unknown_model_and_foreign_contract_fail_with_safe_error (model='NoneType') _
+test_web_alarm_gigachat_ultra_preflight.py:35: in test_unknown_model_and_foreign_contract_fail_with_safe_error
+    oauth.real_preflight(model)
+    ^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'gigachat_transport' has no attribute 'real_preflight'
+_ RealPreflightTests.test_unknown_model_and_foreign_contract_fail_with_safe_error (model='dict') _
+test_web_alarm_gigachat_ultra_preflight.py:35: in test_unknown_model_and_foreign_contract_fail_with_safe_error
+    oauth.real_preflight(model)
+    ^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'gigachat_transport' has no attribute 'real_preflight'
+_ RealPreflightTests.test_unknown_model_and_foreign_contract_fail_with_safe_error (model='bool') _
+test_web_alarm_gigachat_ultra_preflight.py:35: in test_unknown_model_and_foreign_contract_fail_with_safe_error
+    oauth.real_preflight(model)
+    ^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'gigachat_transport' has no attribute 'real_preflight'
+=========================== short test summary info ===========================
+FAILED test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_authority_regression_still_cannot_build_a_real_client
+FAILED test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_preflight_uses_no_env_secret_token_or_http
+FAILED test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_real_factory_denies_before_contract_token_or_http
+FAILED test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_registry_remapping_is_not_a_verified_contract
+FAILED test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_ultra_public_contract_is_incomplete_and_not_entitlement
+SUBFAILED(model='str') test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_unknown_model_and_foreign_contract_fail_with_safe_error
+SUBFAILED(model='str') test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_unknown_model_and_foreign_contract_fail_with_safe_error
+SUBFAILED(model='NoneType') test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_unknown_model_and_foreign_contract_fail_with_safe_error
+SUBFAILED(model='dict') test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_unknown_model_and_foreign_contract_fail_with_safe_error
+SUBFAILED(model='bool') test_web_alarm_gigachat_ultra_preflight.py::RealPreflightTests::test_unknown_model_and_foreign_contract_fail_with_safe_error
+10 failed, 2 passed in 1.05s

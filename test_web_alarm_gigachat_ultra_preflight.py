@@ -1,0 +1,156 @@
+"""Ultra preparation: public contract is data, never REAL authority (OFFLINE)."""
+import asyncio
+import json
+import unittest
+from dataclasses import replace
+from unittest.mock import patch
+
+import httpx
+import gigachat_transport as oauth
+import ordinary_gigachat_transport as transport
+import ordinary_chat_service as chat
+from model_registry import get_model_spec
+import test_web_alarm_gigachat_transport as h33
+import context_storage as core
+from ultra_budget_ledger import BudgetLedger
+import ultra_budget_policy as policy
+
+
+class RealPreflightTests(unittest.TestCase):
+    def test_ultra_public_contract_is_incomplete_and_not_entitlement(self):
+        view = oauth.real_preflight('gigachat_ultra')
+        self.assertEqual(view['provider_model_id'], 'GigaChat-3-Ultra')
+        self.assertEqual(oauth.CHAT_URL, 'https://api.giga.chat/v1/chat/completions')
+        self.assertFalse(view['real_available'])
+        self.assertEqual(view['contract_status'], 'PARTIAL')
+        self.assertEqual(view['account_availability'], 'UNVERIFIED')
+        self.assertIsNone(view['output_tokens'])
+        self.assertIsNone(view['context_tokens'])
+        self.assertIn('provider_output_cap_unknown', view['holds'])
+        self.assertIn('owner_go_required', view['holds'])
+
+    def test_unknown_model_and_foreign_contract_fail_with_safe_error(self):
+        for model in ('bad-sensitive-model', 'gigachat_2_pro', None, {}, True):
+            with self.subTest(model=type(model).__name__):
+                with self.assertRaisesRegex(chat.PreSendDenied, '^real_model_contract_unavailable$'):
+                    oauth.real_preflight(model)
+
+    def test_registry_remapping_is_not_a_verified_contract(self):
+        model = replace(get_model_spec('gigachat_ultra'), provider_model_id='different')
+        with patch('model_registry.get_model_spec', return_value=model):
+            with self.assertRaisesRegex(chat.PreSendDenied, '^real_model_contract_unavailable$'):
+                oauth.real_preflight('gigachat_ultra')
+
+    def test_preflight_uses_no_env_secret_token_or_http(self):
+        with patch.object(oauth.os, 'getenv', side_effect=AssertionError('env read')), \
+             patch.object(httpx, 'AsyncClient', side_effect=AssertionError('HTTP')), \
+             patch.object(oauth, 'get_access_token', side_effect=AssertionError('token')):
+            view = oauth.real_preflight('gigachat_ultra')
+        view['holds'].clear()
+        view['output_tokens'] = 20000
+        self.assertTrue(oauth.real_preflight('gigachat_ultra')['holds'])
+        self.assertIsNone(oauth.real_preflight('gigachat_ultra')['output_tokens'])
+
+    def test_real_factory_denies_before_contract_token_or_http(self):
+        with patch.object(oauth, 'real_preflight', side_effect=AssertionError('contract before authority')) as contract, \
+             patch.object(oauth, 'get_access_token', side_effect=AssertionError('token')) as token, \
+             patch.object(httpx, 'AsyncClient', side_effect=AssertionError('HTTP')) as client:
+            for model in ('gigachat_ultra', 'bad', {'real': True}):
+                with self.assertRaisesRegex(chat.PreSendDenied, '^real_provider_authority_unavailable$'):
+                    transport.create_real_transport(model)
+            contract.assert_not_called(); token.assert_not_called(); client.assert_not_called()
+
+    def test_authority_regression_still_cannot_build_a_real_client(self):
+        with patch('gigachat_admission.require_real_authority', return_value=None), \
+             patch.object(httpx, 'AsyncClient', side_effect=AssertionError('HTTP')) as client:
+            with self.assertRaisesRegex(chat.PreSendDenied, '^real_transport_not_implemented$'):
+                transport.create_real_transport('gigachat_ultra')
+            client.assert_not_called()
+
+    def test_cached_token_cannot_bypass_existing_oauth_hold(self):
+        with patch.object(oauth, '_access_token', 'SYNTHETIC-CACHE-CANARY'), \
+             patch.object(oauth, '_access_token_valid_until', float('inf')), \
+             patch.object(oauth.os, 'getenv', side_effect=AssertionError('secret read')), \
+             patch.object(httpx, 'AsyncClient', side_effect=AssertionError('HTTP')):
+            with self.assertRaisesRegex(chat.PreSendDenied, '^real_provider_authority_unavailable$'):
+                asyncio.run(oauth.get_access_token())
+
+
+# Existing disposable fixture and provider reply; no second execution path.
+class UltraHTTPTests(h33.s5.Fixture):
+    def setUp(self):
+        super().setUp()
+        self.fixture = transport.OfflineHTTPFixture(body=json.dumps(h33.reply(h33.USAGE)).encode())
+        self.service = h33.OrdinaryCoreChatService(self.registry, self.root, http_fixture=self.fixture)
+
+    def project(self):
+        ws, cid = self.create_chat('Ultra OFFLINE')
+        root = h33.Path(self.registry.get(ws).workspace_root)
+        wid = core.read_workspace_identity_bounded(root)['workspace_id']
+        return ws, cid, root, BudgetLedger(root, wid)
+
+    def ultra_body(self, text='Ultra synthetic'):
+        body = self.body(text)
+        body['model_ref'] = 'gigachat_ultra'
+        return body
+
+
+    def test_ultra_exact_wire_reservation_usage_history_and_restart(self):
+        ws, cid, root, ledger = self.project()
+        original = httpx.MockTransport.handle_async_request
+        seen = []
+
+        async def observe(mock, request):
+            record = ledger.recover().attempts[-1]
+            _, envelope = ledger.reservation(record.attempt_id)
+            self.assertEqual(record.state, policy.SENT)
+            self.assertEqual(envelope['wire_utf8'].encode(), request.content)
+            self.assertEqual(json.loads(request.content)['model'], 'GigaChat-3-Ultra')
+            self.assertFalse(json.loads(request.content)['stream'])
+            seen.append(request.content)
+            return await original(mock, request)
+
+        body = self.ultra_body()
+        with patch.object(httpx.MockTransport, 'handle_async_request', observe):
+            result = self.service.submit_turn(ws, cid, body)
+        self.assertEqual(result['state'], 'SUCCEEDED')
+        self.assertEqual(len(seen), 1)
+        self.assertEqual(self.fixture.token_calls, 1)
+        from web_alarm.ultra_chat import OrdinaryCoreChatService
+        self.service = OrdinaryCoreChatService(self.registry, self.root, http_fixture=self.fixture)
+        self.assertEqual(self.service.submit_turn(ws, cid, body), result)
+        self.assertEqual(len(self.fixture.requests), 1)
+        page = self.service.messages(ws, cid, None, 50)
+        self.assertEqual(len(page['messages']), 2)
+        self.assertEqual(page['usage_summary']['known']['total_tokens'], 12)
+        self.assertEqual(page['usage_summary']['known']['reasoning_tokens'], 3)
+
+
+    def test_ultra_timeout_preserves_liability_and_replay_is_not_a_send(self):
+        ws, cid, root, ledger = self.project()
+        self.fixture.error = 'timeout'
+        body = self.ultra_body()
+        result = self.service.submit_turn(ws, cid, body)
+        records = ledger.recover().attempts
+        self.assertEqual(len(records), 1)
+        self.assertNotEqual(records[0].state, policy.KNOWN_TERMINAL)
+        from web_alarm.ultra_chat import OrdinaryCoreChatService
+        self.service = OrdinaryCoreChatService(self.registry, self.root, http_fixture=self.fixture)
+        self.service.submit_turn(ws, cid, body)
+        self.assertEqual(len(self.fixture.requests), 1)
+        self.assertEqual(len(ledger.recover().attempts), 1)
+        self.assertEqual(ledger.recover().attempts[0], records[0])
+
+    def test_provider_error_secret_canary_does_not_reach_history_or_result(self):
+        ws, cid, root, ledger = self.project()
+        canary = 'SYNTHETIC-ERROR-SECRET-CANARY'
+        self.fixture.status = 401
+        self.fixture.body = json.dumps({'error': {'message': canary}}).encode()
+        body = self.ultra_body()
+        result = self.service.submit_turn(ws, cid, body)
+        self.assertNotIn(canary, repr(result))
+        self.assertNotIn(canary, repr(self.service.messages(ws, cid, None, 50)))
+        self.assertEqual(len(self.fixture.requests), 1)
+        for file in root.rglob('*'):
+            if file.is_file():
+                self.assertNotIn(canary.encode(), file.read_bytes(), str(file.relative_to(root)))

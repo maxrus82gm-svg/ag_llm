@@ -40,6 +40,20 @@ class OfflineHTTPFixture:
         return 'H33-SYNTHETIC-NON-CREDENTIAL'
 
 
+def create_real_transport(model_id):
+    """Closed server entry: no token/cache/client is constructed here.
+
+    This is preparation, not a production factory. Even an accidentally
+    returning authority gate must fail closed until a reviewed constructor
+    and its provider/account/recovery contracts exist.
+    """
+    from gigachat_admission import require_real_authority
+    require_real_authority()  # First: before contract, secrets or HTTP.
+    from gigachat_transport import real_preflight
+    real_preflight(model_id)
+    raise PreSendDenied('real_transport_not_implemented')
+
+
 class GigaChatTransport:
     """One POST of admitted immutable bytes, no serialization and no retry."""
 

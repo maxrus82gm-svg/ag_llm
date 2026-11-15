@@ -1,0 +1,12 @@
+# Проект будущего ограниченного испытания — НЕ ВЫПОЛНЯТЬ СЕЙЧАС
+
+Условия входа: закрыть real-readiness gates; независимый Windows OFFLINE verdict; согласовать изменения shared scope и single server authority; отдельный USER GO с точным аккаунтом (без секретов в документе), scope/entitlement, endpoint/model, расходным потолком и числом попыток. Только запись в registry или выбранная Ultra не являются допуском.
+
+1. Задать новый disposable чат и синтетический текст «Привет», non-streaming v1, tools/compression/agent loops off. Не использовать живую историю как пробный payload. До запуска сохранить code/provider contract hashes и approved numeric attempt limits. Проверить единственный launcher/target и account-wide one-stream ownership.
+2. Отдельно ограничить и разрешить OAuth/model availability операции; запретить неявные probes/refresh. Если USER GO разрешает только chat POST, никакие вспомогательные endpoints автоматически не вызывать. Проверить TLS chain без отключения verify. Секреты читать только после server authority и нужных ворот, не сохранять в evidence.
+3. Разрешить **одну** chat attempt. Перед сетью проверить server authority, account/model/caps, exact bytes, durable reservation и SENT/readback. Сохранить только safe IDs, model, hashes/lengths, state и согласованные usage. Не выводить Authorization, token, credentials или сырые HTTP exceptions.
+4. Один non-streaming POST на согласованный `/v1/chat/completions`. No redirect/retry/OAuth fallback. При timeout/cancel/401/429/5xx/parse/storage error — STOP. Потенциальный расход остаётся UNKNOWN; ручная повторная попытка не разрешается первоначальным GO.
+5. Прочитать terminal/RAW/history и per-chat настройки, сопоставить actual model/version и usage с согласованным contract. Reasoning не прибавлять к completion второй раз. При расхождении — HOLD, сохранить безопасные факты, не исправлять ledger вручную.
+6. Закрыть authority/сессию и подтвердить HOLD; проверить restart/idempotency без новой отправки. Пользователь оценивает результат. Следующие реплики («Как дела?», «Пока») возможны только в пределах явно разрешённого числа попыток и после проверяемого terminal предыдущей, а не как автоматическая цепочка.
+
+Откат: выключить будущий server authority, остановить принадлежащую тесту сессию, оставить UNKNOWN liability и evidence; не удалять/обнулять журнал и не переписывать пользовательскую историю. В этой задаче физические CMD/browser, OAuth, модели аккаунта и реальные сообщения **NOT RUN**.

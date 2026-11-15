@@ -1,0 +1,67 @@
+{
+  "task": "CLAUDE-RT002-S1-REPAIR-001",
+  "sandbox": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-ryy7o_3u",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "FAILURES:2"
+    ]
+  },
+  "counts": {
+    "run": 69,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 69,
+  "failures": [
+    "__main__.StaticRouteInventoryTests.test_every_endpoint_constant_read_is_an_inventoried_send_url",
+    "__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity"
+  ],
+  "errors": [],
+  "skipped": [],
+  "isolation_violations": [],
+  "evidence_root": "M:\\GitHub\\ag_llm",
+  "evidence_problems": [],
+  "selected": null,
+  "elapsed_seconds": 76.766,
+  "log": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-ryy7o_3u\\unittest.log",
+  "log_sha256": "3122c25517dedb91d5943d70ab7cbe40dca47bf132a503da9213e524d0653230"
+}
+
+FAIL: test_every_endpoint_constant_read_is_an_inventoried_send_url (__main__.StaticRouteInventoryTests.test_every_endpoint_constant_read_is_an_inventoried_send_url)
+Second, receiver-independent net: an LLM/OAuth endpoint read anywhere else is unexplained.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1495, in test_every_endpoint_constant_read_is_an_inventoried_send_url
+    self.assertEqual(unexplained, [])
+AssertionError: Lists differ: [('gigachat_transport.py', 41, 25, 'endpoi[94 chars]RL')] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+('gigachat_transport.py', 41, 25, 'endpoint reference CHAT_URL')
+
++ []
+- [('gigachat_transport.py', 41, 25, 'endpoint reference CHAT_URL'),
+-  ('ordinary_gigachat_transport.py', 67, 15, 'endpoint reference CHAT_URL')]
+
+======================================================================
+FAIL: test_production_send_sites_match_inventory_with_multiplicity (__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1456, in test_production_send_sites_match_inventory_with_multiplicity
+    sites = _module_sites(production)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1448, in _module_sites
+    raise AssertionError(analysis["reconciliation_issues"])
+AssertionError: [('ordinary_gigachat_transport.py', 'changed reconciliation AST', 'GigaChatTransport')]
+
+----------------------------------------------------------------------
+Ran 69 tests in 76.766s
+
+FAILED (failures=2)
+

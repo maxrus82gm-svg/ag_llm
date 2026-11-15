@@ -1,0 +1,21 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+___________ MutatedAuthority.test_real_authority_bypass_is_detected ___________
+reports\CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001\negative_oracle.py:11: in test_real_authority_bypass_is_detected
+    RealPreflightTests('test_real_factory_denies_before_contract_token_or_http').test_real_factory_denies_before_contract_token_or_http()
+test_web_alarm_gigachat_ultra_preflight.py:60: in test_real_factory_denies_before_contract_token_or_http
+    transport.create_real_transport(model)
+ordinary_gigachat_transport.py:53: in create_real_transport
+    real_preflight(model_id)
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1139: in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1143: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1198: in _execute_mock_call
+    raise effect
+E   AssertionError: contract before authority
+=========================== short test summary info ===========================
+FAILED reports/CODEX-WUA-CHAT-GIGACHAT-ULTRA-REAL-PREFLIGHT-001/negative_oracle.py::MutatedAuthority::test_real_authority_bypass_is_detected
+1 failed in 1.03s
