@@ -11,3 +11,7 @@ These counters and successful parsed results support one physical OAuth request 
 ## Stage B USER GO — preflight stopped before network
 
 The user granted a bounded first response, conditional on confirmed model caps and exact response-version IDs. `stage-b-blocker.md` documents why the mandatory H38 `ModelContract` could not be justified. Stage B grant created: **no**. Stage B OAuth: **0**; catalog: **0**; inference: **0**. No new RAW, Turn or ledger event. The prepared Workspace remains intact and the prior Stage A grant remains CLOSED. The Stage B GO was **not exercised**; this is not LIVE PASS.
+
+## Contract amendment — OFFLINE only
+
+The user later approved a narrow first-version contract amendment with an explicit ban on new provider calls pending a fresh GO. The change and 37/37 + S1 69/69 + S2 73/73 OFFLINE results are in `contract-amendment.md`. Real OAuth/catalog/inference calls during the amendment: **0/0/0**. The prepared Workspace ledger readback remains **0 events**. No real response, RAW, Turn or usage has been created. The revised first-attempt envelope awaits a new explicit approval in `go-stage-b-updated.md`.

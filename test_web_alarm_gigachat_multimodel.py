@@ -79,6 +79,20 @@ class ProtocolTests(s5.Fixture):
     def discover(self):
         return asyncio.run(self.session.discover_models())
 
+    def first_lite_session(self):
+        self.session.close()
+        contract = ModelContract('gigachat_2', 128000, 32, (),
+            'OFFLINE official-context/operator-attempt fixture; provider output cap UNKNOWN',
+            provider_output_cap_tokens=None, version_mode='DISCOVER_GIGACHAT_2')
+        grant = replace(self.approval, grant_id=uuid4().hex, contracts=(contract,),
+            max_oauth=1, max_catalog=1, max_inference=1, max_liability_tokens=1056,
+            max_request_bytes=1024, max_answer_tokens=32)
+        self.session = ProviderSession.offline(self.workspace, self.wid, grant, self.transport)
+        self.addCleanup(self.session.close)
+        self.factory = OrdinaryProviderFactory.for_session(self.registry, self.session)
+        self.app = OrdinaryApplicationChatService(self.registry, self.factory)
+        return contract
+
     def send(self, model='gigachat_2_pro', text='Hello', cid=None, body=None):
         cid = cid or self.cid
         self.app.chat_model(self.ws, cid, {'model_ref':model})
@@ -316,6 +330,10 @@ class ProtocolTests(s5.Fixture):
         mutated=source.replace("session.check()\n                admission.check", "await client.post('https://example.invalid')\n                admission.check")
         self.assertNotEqual(mutated,source)
         self.assertTrue(census.analyze_module(path.name,mutated)['reconciliation_issues'])
+        weakened=source.replace("and _FIRST_LITE_VERSION.fullmatch(observed) is not None)",
+                                "and True)")
+        self.assertNotEqual(weakened,source)
+        self.assertTrue(census.analyze_module(path.name,weakened)['reconciliation_issues'])
 
     def test_account_owner_fences_other_grant_and_restart(self):
         with self.assertRaisesRegex(PreSendDenied,'account_owner_unresolved'):
@@ -334,6 +352,107 @@ class ProtocolTests(s5.Fixture):
         with self.assertRaisesRegex(PreSendDenied,'live_call_or_token_limit'):
             probe._consume('inference')
         self.assertEqual(self.posts(),[])
+
+    def test_first_lite_version_is_pinned_and_future_grant_requires_exact_id(self):
+        contract = self.first_lite_session()
+        self.assertIsNone(contract.provider_output_cap_tokens)
+        self.model = 'GigaChat-2:2.0.30.01'
+        self.discover()
+        body = self.body('First version', 'gigachat_2')
+        result = self.send('gigachat_2', body=body)
+        self.assertEqual(result['state'], 'SUCCEEDED', result)
+        self.assertEqual(result['response_model'], self.model)
+        self.assertEqual(json.loads(self.posts()[0][2])['max_tokens'], 32)
+        self.assertLessEqual(len(self.posts()[0][2]), 1024)
+        self.assertEqual(self.app.submit_turn(self.ws, self.cid, body), result)
+        self.assertEqual(len(self.posts()), 1)
+        self.send('gigachat_2', text='Second physical send denied')
+        self.assertEqual(len(self.posts()), 1)
+        self.session.check()
+        self.session.close()
+        with self.assertRaisesRegex(PreSendDenied, 'confirmed_version_requires_exact_pin'):
+            ProviderSession.offline(self.workspace, self.wid,
+                replace(self.session.approval, grant_id=uuid4().hex), self.transport)
+        wrong_exact = replace(self.session.approval, grant_id=uuid4().hex,
+            contracts=(replace(contract, response_models=('GigaChat-2:2.0.99.99',), version_mode='EXACT'),))
+        with self.assertRaisesRegex(PreSendDenied, 'confirmed_version_requires_exact_pin'):
+            ProviderSession.offline(self.workspace, self.wid, wrong_exact, self.transport)
+        exact = replace(self.session.approval, grant_id=uuid4().hex,
+            contracts=(replace(contract, response_models=(self.model,), version_mode='EXACT'),))
+        followup = ProviderSession.offline(self.workspace, self.wid, exact, self.transport)
+        self.addCleanup(followup.close)
+        self.assertEqual(followup._confirmed_versions['gigachat_2'], self.model)
+
+    def test_first_lite_rejects_other_family_and_bad_suffix_with_usage_no_replay(self):
+        for wrong in ('GigaChat-2-Pro:2.0.30.01', 'GigaChat-2:2.0.30.01-extra'):
+            with self.subTest(wrong=wrong):
+                self.first_lite_session()
+                self.calls.clear()  # the fixture handler compares this grant's physical count
+                self.model = wrong
+                self.discover()
+                body = self.body('Reject version', 'gigachat_2')
+                result = self.send('gigachat_2', body=body)
+                self.assertNotEqual(result['state'], 'SUCCEEDED')
+                self.assertEqual(result['usage']['total_tokens'], 12, result)
+                before = len(self.posts())
+                self.assertEqual(self.app.submit_turn(self.ws, self.cid, body), result)
+                self.assertEqual(len(self.posts()), before)
+                self.assertNotIn('gigachat_2', self.session._confirmed_versions)
+                self.assertTrue(all(m.get('role') != 'assistant'
+                    for m in self.app.messages(self.ws, self.cid, None, 50)['messages']))
+
+    def test_first_lite_bounds_stop_before_physical_post(self):
+        self.first_lite_session()
+        self.discover()
+        try:
+            self.send('gigachat_2', text='x'*2000)
+        except (PreSendDenied, UltraChatError):
+            pass
+        self.assertEqual(self.posts(), [])
+        self.session.close()
+        too_broad = replace(self.session.approval, grant_id=uuid4().hex, max_answer_tokens=33)
+        with self.assertRaisesRegex(PreSendDenied, 'first_version_discovery_envelope_invalid'):
+            ProviderSession.offline(self.workspace, self.wid, too_broad, self.transport)
+        with self.assertRaisesRegex(PreSendDenied, 'provider_contract_invalid'):
+            replace(self.session.approval.contracts[0], provider_output_cap_tokens=16).validate()
+
+    def test_first_lite_http_turn_reopen_reads_without_second_post(self):
+        from web_alarm.server import WebAlarmApi, create_server
+        import threading
+        self.first_lite_session()
+        self.model = 'GigaChat-2:2.0.30.01'
+        self.discover()
+        api = WebAlarmApi(self.root/'registry')
+        factory = OrdinaryProviderFactory.for_session(api.registry, self.session)
+        server = create_server(api, host='127.0.0.1', port=0, ordinary_factory=factory)
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        self.http = lambda *args, **kwargs: s5.HttpAndTkTests.http(self, *args, **kwargs)
+        _cap, read, write = s5.HttpAndTkTests.tokens(self, server)
+        base = f'/ultra/chat/workspaces/{self.ws}/chats/{self.cid}'
+        self.app.chat_model(self.ws, self.cid, {'model_ref':'gigachat_2'})
+        body = self.body('Ответь одним словом: готово', 'gigachat_2')
+        status, result = s5.HttpAndTkTests.http(self, server, 'POST', base+'/turns', body, write)
+        self.assertEqual((status, result['state']), (200, 'SUCCEEDED'))
+        self.assertEqual(result['response_model'], self.model)
+        self.assertEqual(s5.HttpAndTkTests.http(self, server, 'GET', '/', headers={})[0], 200)
+        self.assertEqual(s5.HttpAndTkTests.http(self, server, 'GET', base+'/messages?limit=50',
+            headers=read)[0], 200)
+        self.assertEqual(len(self.posts()), 1)
+
+    def test_first_lite_pin_failure_is_unknown_and_never_resends(self):
+        self.first_lite_session()
+        self.model = 'GigaChat-2:2.0.30.01'
+        self.discover()
+        body = self.body('Pin failure', 'gigachat_2')
+        with patch.object(self.session, 'pin_discovered_version', side_effect=OSError('synthetic pin error')):
+            result = self.send('gigachat_2', body=body)
+        self.assertEqual(result['state'], 'UNKNOWN')
+        self.assertEqual(len(self.posts()), 1)
+        self.assertEqual(self.app.submit_turn(self.ws, self.cid, body), result)
+        self.assertEqual(len(self.posts()), 1)
 
 
 if __name__ == '__main__':

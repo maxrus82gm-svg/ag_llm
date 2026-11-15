@@ -360,8 +360,11 @@ class TurnService:
                 self._check_usage(payload.get('usage'))
                 diagnostic = {'diagnostic_code': payload['diagnostic_code']} if 'diagnostic_code' in payload else {}
                 model_version = {'response_model': payload['response_model']} if 'response_model' in payload else {}
-                if model_version and model_version['response_model'] not in turn.get('ordinary_admission', {}).get('model_contract', {}).get('response_models', []):
-                    raise ValueError('Unapproved provider model version')
+                if model_version:
+                    from gigachat_runtime import response_model_allowed
+                    contract = turn.get('ordinary_admission', {}).get('model_contract', {})
+                    if not response_model_allowed(contract, model_version['response_model']):
+                        raise ValueError('Unapproved provider model version')
                 if diagnostic and diagnostic['diagnostic_code'] not in DIAGNOSTICS:
                     raise ValueError('Invalid diagnostic code')
                 if payload != {**start, 'outcome': outcome, 'execution': execution,

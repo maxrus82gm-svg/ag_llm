@@ -31,20 +31,50 @@ _SCOPES = {'GIGACHAT_API_PERS', 'GIGACHAT_API_B2B', 'GIGACHAT_API_CORP'}
 class ModelContract:
     model_id: str
     context_tokens: int
-    output_tokens: int
+    output_tokens: int  # operator limit for one attempt, not a claimed provider maximum
     response_models: tuple[str, ...]
     evidence: str
+    provider_output_cap_tokens: int | None = None  # UNKNOWN is explicit
+    version_mode: str = 'EXACT'
 
     def validate(self):
         model = get_model_spec(self.model_id)
         if (model.provider != 'gigachat' or model.is_local
                 or any(type(v) is not int or v <= 0 for v in (self.context_tokens, self.output_tokens))
                 or self.output_tokens >= self.context_tokens or not self.evidence
-                or type(self.response_models) is not tuple or not self.response_models
-                or any(type(s) is not str or not re.fullmatch(re.escape(model.provider_model_id)+r'(?:[:_][A-Za-z0-9_.-]+)?', s)
-                       for s in self.response_models)):
+                or (self.provider_output_cap_tokens is not None and
+                    (type(self.provider_output_cap_tokens) is not int or
+                     self.provider_output_cap_tokens < self.output_tokens or
+                     self.provider_output_cap_tokens >= self.context_tokens))
+                or type(self.response_models) is not tuple or self.version_mode not in ('EXACT', 'DISCOVER_GIGACHAT_2')
+                or (self.version_mode == 'EXACT' and
+                    (not self.response_models or any(type(s) is not str or not re.fullmatch(
+                        re.escape(model.provider_model_id)+r'(?:[:_][A-Za-z0-9_.-]+)?', s)
+                        for s in self.response_models)))
+                or (self.version_mode == 'DISCOVER_GIGACHAT_2' and
+                    (self.model_id != 'gigachat_2' or self.response_models != () or self.output_tokens > 32))):
             raise PreSendDenied('provider_contract_invalid')
         return model
+
+
+_FIRST_LITE_VERSION = re.compile(r'GigaChat-2:2\.0\.[0-9]{1,3}\.[0-9]{1,3}\Z', re.ASCII)
+
+
+def response_model_allowed(contract, observed):
+    """Exact historical pin, or one bounded first observation for GigaChat-2."""
+    if type(observed) is not str:
+        return False
+    if type(contract) is ModelContract:
+        model_id, mode, allowed = contract.model_id, contract.version_mode, contract.response_models
+    elif type(contract) is dict:
+        model_id, mode, allowed = (contract.get('model_id'), contract.get('version_mode', 'EXACT'),
+                                   contract.get('response_models'))
+    else:
+        return False
+    if mode == 'EXACT':
+        return type(allowed) in (list, tuple) and observed in allowed
+    return (mode == 'DISCOVER_GIGACHAT_2' and model_id == 'gigachat_2'
+            and allowed in ((), []) and _FIRST_LITE_VERSION.fullmatch(observed) is not None)
 
 
 @dataclass(frozen=True)
@@ -103,6 +133,11 @@ class ProviderSession:
             contract.validate()
         if len({c.model_id for c in approval.contracts}) != len(approval.contracts):
             raise PreSendDenied('duplicate_model_contract')
+        discovering = [c for c in approval.contracts if c.version_mode == 'DISCOVER_GIGACHAT_2']
+        if discovering and (len(approval.contracts) != 1 or approval.max_inference != 1
+                or approval.max_answer_tokens > 32 or approval.max_request_bytes > 1024
+                or approval.max_liability_tokens > 1056):
+            raise PreSendDenied('first_version_discovery_envelope_invalid')
         self.approval = approval
         self.account_id, self.scope = approval.account_id, approval.scope
         self.workspace_id = workspace_id
@@ -116,6 +151,7 @@ class ProviderSession:
         self._mutex = threading.Lock()
         self._closed = False
         self._available = frozenset()
+        self._confirmed_versions = {}
         self._counts = dict(oauth=0, catalog=0, inference=0, liability=0)
         self._parts = (core.ULTRA_DIRNAME, 'provider_sessions', approval.grant_id+'.json')
         self._account_parts = self._parts[:-1]+('account_'+hashlib.sha256(self.account_id.encode()).hexdigest()+'.json',)
@@ -130,11 +166,37 @@ class ProviderSession:
             prior = core._read_existing_raw(writer, self._account_parts)
             if prior is not None and prior.get('state') != 'CLOSED':
                 raise PreSendDenied('account_owner_unresolved')
+            pinned = prior.get('confirmed_versions', {}) if prior is not None else {}
+            if (type(pinned) is not dict or any(type(k) is not str or type(v) is not str
+                    for k, v in pinned.items())):
+                raise PreSendDenied('confirmed_versions_unreadable')
+            if pinned.get('gigachat_2'):
+                if discovering or any(c.model_id == 'gigachat_2' and
+                        (c.version_mode != 'EXACT' or c.response_models != (pinned['gigachat_2'],))
+                        for c in approval.contracts):
+                    raise PreSendDenied('confirmed_version_requires_exact_pin')
+            self._confirmed_versions = dict(pinned)
             self._save(writer)
             core._replace_verified(writer.anchor, self._account_parts, core._json_bytes(self._account_record()))
 
     def _account_record(self):
-        return dict(schema=1, grant_id=self.approval.grant_id, state='CLOSED' if self._closed else 'ACTIVE')
+        return dict(schema=1, grant_id=self.approval.grant_id, state='CLOSED' if self._closed else 'ACTIVE',
+                    confirmed_versions=self._confirmed_versions)
+
+    def pin_discovered_version(self, observed):
+        if (len(self.approval.contracts) != 1 or self.approval.contracts[0].version_mode != 'DISCOVER_GIGACHAT_2'
+                or not response_model_allowed(self.approval.contracts[0], observed)):
+            raise PreSendDenied('first_version_discovery_invalid')
+        with core._existing_workspace_writer(self.root, self.workspace_id) as writer:
+            self.check()
+            if self._confirmed_versions.get('gigachat_2'):
+                raise PreSendDenied('first_version_already_pinned')
+            candidate = {**self._account_record(), 'confirmed_versions':
+                         {**self._confirmed_versions, 'gigachat_2': observed}}
+            core._replace_verified(writer.anchor, self._account_parts, core._json_bytes(candidate))
+            if core._read_existing_raw(writer, self._account_parts) != candidate:
+                raise PreSendDenied('first_version_pin_readback_failed')
+            self._confirmed_versions = candidate['confirmed_versions']
 
     def _record(self):
         return dict(schema=1, grant_id=self.approval.grant_id, workspace_id=self.workspace_id,
@@ -316,11 +378,16 @@ class RealGigaChatTransport:
                         # Do not expose provider error text, headers or redirects.
                         safe = {'usage': decoded['usage']} if type(decoded) is dict and type(decoded.get('usage')) is dict else {}
                         return ProviderResponse(response.status_code, safe, 'provider_http_'+str(response.status_code))
-                    if type(decoded) is not dict or decoded.get('model') not in c.response_models:
+                    if type(decoded) is not dict or not response_model_allowed(c, decoded.get('model')):
                         return ProviderResponse(200, decoded, 'response_model_version_mismatch')
                     # Existing parser expects registry ID; validate the complete
                     # observed version above, then normalize only this field.
                     observed = decoded['model']
+                    if c.version_mode == 'DISCOVER_GIGACHAT_2':
+                        try:
+                            session.pin_discovered_version(observed)
+                        except Exception:
+                            raise PreSendUncertain('first_version_pin_failed') from None
                     decoded['model'] = get_model_spec(self.model_id).provider_model_id
                     return ProviderResponse(200, decoded, observed_model=observed)
                 finally:
