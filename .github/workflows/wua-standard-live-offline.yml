@@ -21,6 +21,7 @@ jobs:
           fetch-depth: 1
           sparse-checkout: |
             /*.py
+            /rt002_multimodel_reconciliation.json
             /web_alarm/
             /Start_WebAlarm_Standard.cmd
             /Start_WebAlarm_Test.cmd
@@ -39,7 +40,7 @@ jobs:
         run: |
           git rev-parse HEAD
           if (Test-Path 'reports') { throw 'Legacy report tree must not be included in Windows checkout' }
-          foreach ($name in @('web_alarm/launcher.py','web_alarm/standard_live.py','test_web_alarm_standard_live.py','gigachat_runtime.py')) {
+          foreach ($name in @('web_alarm/launcher.py','web_alarm/standard_live.py','test_web_alarm_standard_live.py','gigachat_runtime.py','rt002_multimodel_reconciliation.json')) {
             if (!(Test-Path $name)) { throw "Required file missing: $name" }
             Get-FileHash -Algorithm SHA256 $name
           }
