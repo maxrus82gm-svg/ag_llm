@@ -13,6 +13,7 @@ import hashlib
 import ordinary_chat_service as chat
 import ultra_budget_policy as policy
 from ordinary_gigachat_transport import GigaChatTransport
+from gigachat_runtime import RealGigaChatTransport
 from .ordinary_chat_test_adapter import OfflineTestAdapter, _FixtureTransport
 
 FIXTURE_ENDPOINT = "fixture://ordinary/v1"
@@ -49,6 +50,11 @@ class BridgeUsage(chat.Usage):
     reasoning_tokens: int | None = None
 
 
+@dataclass(frozen=True)
+class CachedBridgeUsage(BridgeUsage):
+    precached_prompt_tokens: int | None = None
+
+
 class OrdinaryCoreAdapter(OfflineTestAdapter):
     """Reuse the existing prepared snapshot and provider-neutral send protocol.
 
@@ -66,7 +72,31 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
         if http_fixture is not None:
             self._transport = GigaChatTransport(http_fixture)
 
+    @classmethod
+    def for_provider(cls, session, *, context_ref, model_id, context_loader=None, answer_tokens=128):
+        from ordinary_gigachat_transport import create_real_transport
+        adapter = cls(context_ref=context_ref, response=None, context_loader=context_loader)
+        contract = session.contract(model_id)
+        adapter._limits = chat.RequestLimits(32, 2048, session.approval.max_request_bytes,
+            8192, min(answer_tokens, session.approval.max_answer_tokens, contract.output_tokens), 8)
+        adapter._transport = create_real_transport(model_id, authority=session)
+        return adapter
+
     def admission_snapshot(self, prepared):
+        if type(self._transport) is RealGigaChatTransport:
+            session = self._transport.session
+            wire = policy.serialize_request_body(prepared.payload)
+            contract = next(c for c in session.approval.contracts if c.model_id == prepared.model.model_id)
+            raw = offline_policy()
+            raw['revision_label'] = 'Ordinary bounded provider '+session.approval.grant_id
+            raw['ordinary'].update(max_request_bytes=session.approval.max_request_bytes,
+                max_request_input_tokens_est=session.approval.max_request_bytes,
+                max_scope_liability_tokens=session.approval.max_request_bytes+prepared.limits.max_output_tokens)
+            return dict(endpoint=self._transport.endpoint, wire_bytes=len(wire),
+                wire_sha256=hashlib.sha256(wire).hexdigest(), policy=raw,
+                policy_sha256=policy.validate_policy(raw).revision_sha256,
+                grant_id=session.approval.grant_id, model_contract={**vars(contract), 'response_models': list(contract.response_models)},
+                provider_mode='PROTOCOL_TEST' if session.synthetic else 'REAL')
         endpoint = self._transport.endpoint if type(self._transport) is GigaChatTransport else None
         return admission_snapshot(prepared, endpoint=endpoint)
 
@@ -79,7 +109,7 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
 
     def execute(self, prepared):
         # No Boolean, config_ref or injected object can activate a real sender.
-        if type(self._transport) not in (_FixtureTransport, GigaChatTransport):
+        if type(self._transport) not in (_FixtureTransport, GigaChatTransport, RealGigaChatTransport):
             return chat.ChatResult(chat.Outcome.REJECTED, chat.Execution.NOT_STARTED,
                                    prepared.model, prepared.request_ref,
                                    error_code="provider_admission_required")
@@ -93,7 +123,9 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
         if (result.usage.status == "invalid" or result.usage.completion_tokens is None
                 or reasoning is not None and reasoning > result.usage.completion_tokens):
             reasoning = None
-        return replace(result, usage=BridgeUsage(**vars(result.usage), reasoning_tokens=reasoning))
+        normalized = BridgeUsage(**vars(result.usage), reasoning_tokens=reasoning) if capture.cached is None else CachedBridgeUsage(
+            **vars(result.usage), reasoning_tokens=reasoning, precached_prompt_tokens=capture.cached)
+        return replace(result, usage=normalized)
 
     def execute_turn(self, prepared, guard):
         # Thread/task-local binding; concurrent Turns never share mutable callbacks.
@@ -112,9 +144,10 @@ class _UsageCapture:
         self.guard = guard
         self.used = False
         self.reasoning = None
+        self.cached = None
 
     async def send(self, payload, *, timeout_seconds):
-        if self.used or type(self.transport) not in (_FixtureTransport, GigaChatTransport):
+        if self.used or type(self.transport) not in (_FixtureTransport, GigaChatTransport, RealGigaChatTransport):
             raise chat.PreSendDenied("fixture_admission_required")
         self.used = True
         wire = policy.serialize_request_body(payload)
@@ -122,13 +155,16 @@ class _UsageCapture:
             self.guard(wire)
         if self.adapter._transport is not self.transport:
             raise chat.PreSendDenied("fixture_transport_changed")
-        if type(self.transport) is GigaChatTransport:
+        if type(self.transport) in (GigaChatTransport, RealGigaChatTransport):
             response = await self.transport.send_bytes(wire, timeout_seconds=timeout_seconds,
                 max_response_bytes=self.adapter._limits.max_response_bytes, admission=self.guard)
         else:
             response = await self.transport.send_bytes(wire, timeout_seconds=timeout_seconds)
         decoded = response.data if type(response) is chat.ProviderResponse else response
         if type(decoded) is dict and type(decoded.get("usage")) is dict:
+            cached = decoded['usage'].get('precached_prompt_tokens')
+            if type(cached) is int and cached >= 0:
+                self.cached = cached
             details = decoded["usage"].get("completion_tokens_details")
             value = details.get("reasoning_tokens") if type(details) is dict else None
             if type(value) is int and value >= 0:

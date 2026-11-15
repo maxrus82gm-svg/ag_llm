@@ -88,6 +88,14 @@ RECONCILED_ADDITIONAL_SITES = {
     ("ordinary_chat_test_adapter.py", "_FixtureTransport.send_bytes", "dynamic.send", "UNKNOWN"): 1,
 }
 EXPECTED_PRODUCTION_SITES = {**EXPECTED_SEND_SITES, **RECONCILED_ADDITIONAL_SITES}
+# MVP migrates the legacy OAuth physical sink into the shared session control
+# request (OAuth OR models), and adds one guarded inference sink. S2's original
+# EXPECTED_SEND_SITES remains an unchanged historical policy contract.
+EXPECTED_PRODUCTION_SITES.pop(('gigachat_transport.py', 'get_access_token', 'client.post', 'OAUTH'))
+EXPECTED_PRODUCTION_SITES.update({
+    ('gigachat_runtime.py', 'ProviderSession.request', 'client.stream', 'OAUTH_OR_MODELS'): 1,
+    ('gigachat_runtime.py', 'RealGigaChatTransport.send_bytes', 'client.send', 'LLM'): 1,
+})
 # Modules outside the Ultra production send set; production modules must not import them.
 NON_PRODUCTION_MODULES = {
     "apply_context_step1.py", "apply_ultra_ui_visual_patch.py", "fix_chat_raw_display.py",
@@ -1076,6 +1084,13 @@ RECON_REFERENCES = {'launcher.py': '4f4f60619368656989a3c750c60da2168ec18d776d53
 RECON_SYMBOLS = frozenset({"_get", "_already_running", "_self_test", "run_web_alarm", "execute_request"})
 METADATA_FIELDS = frozenset({"api_url", "oauth_url"})
 
+# Explicit reviewed-source reconciliation, not automatic repinning at test time.
+# Changed AST/callers fail closed, including a new send inside a pinned class.
+_MVP_RECON = json.loads((ROOT / 'rt002_multimodel_reconciliation.json').read_text(encoding='utf-8'))
+for _module, _pins in _MVP_RECON['pins'].items():
+    RECON_PINS.setdefault(_module, {}).update(_pins)
+RECON_REFERENCES.update(_MVP_RECON['references'])
+
 
 def _ast_hash(node) -> str:
     return _sha256(ast.dump(node, include_attributes=False).encode("utf-8"))
@@ -1300,6 +1315,9 @@ def analyze_module(module_name: str, source: str) -> dict:
             return cls if cls in {"LLM", "OAUTH"} else "UNKNOWN"
 
         clients: set[str] = set()
+        if reconciled and module_name == 'gigachat_runtime.py' and owner in (
+                'ProviderSession.request', 'RealGigaChatTransport.send_bytes'):
+            clients.add('client')  # Exact pinned session.client construction.
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             for arg in [*node.args.posonlyargs, *node.args.args, *node.args.kwonlyargs]:
                 annotation = ast.unparse(arg.annotation) if arg.annotation is not None else ""
@@ -1369,6 +1387,11 @@ def analyze_module(module_name: str, source: str) -> dict:
                 kind = "method-ref." + sub.attr  # e.g. functools.partial(client.post, ...)
             if kind is not None:
                 traffic = classify(url)
+                if reconciled and module_name == 'gigachat_runtime.py':
+                    if owner == 'ProviderSession.request' and kind == 'client.stream':
+                        traffic = 'OAUTH_OR_MODELS'
+                    if owner == 'RealGigaChatTransport.send_bytes' and kind == 'client.send':
+                        traffic = 'LLM'
                 if reconciled and module_name == "launcher.py" and owner == "_get" and kind == "urlopen":
                     traffic = "LOCAL_HTTP_ORIGIN"
                 if reconciled and module_name == "ordinary_chat_service.py" and owner == "execute_request":
@@ -1401,6 +1424,13 @@ def analyze_module(module_name: str, source: str) -> dict:
     if reconciled and module_name == "gigachat_admission.py":
         allowed.update(id(ref) for ref, owner in references if owner in {
             "synthetic_profiles", "_ServerOwner.profile", "_GuardedClient.post"})
+    if reconciled and module_name == 'gigachat_transport.py':
+        allowed.update(id(ref) for ref, owner in references if owner == 'get_access_token')
+    if reconciled and module_name == 'gigachat_runtime.py':
+        allowed.update(id(ref) for ref, owner in references if owner in {
+            'ProviderSession.request', 'RealGigaChatTransport.send_bytes', '<module>'})
+        metadata_values.update(id(n) for n in ast.walk(tree) if isinstance(n, ast.Constant)
+            and n.value == 'https://api.giga.chat/v1/models')
     unexplained = []
     seen = set()
     for ref, owner in references:
@@ -1457,8 +1487,8 @@ class StaticRouteInventoryTests(unittest.TestCase):
         _OBSERVATIONS["static_send_sites"] = sorted(
             [s["module"], s["owner"], s["kind"], s["traffic"], s["line"]] for s in sites)
         self.assertEqual(site_multiset(sites), EXPECTED_PRODUCTION_SITES)
-        self.assertEqual(sum(1 for s in sites if s["traffic"] == "LLM"), 7)
-        self.assertEqual(sum(1 for s in sites if s["traffic"] == "OAUTH"), 1)
+        self.assertEqual(sum(1 for s in sites if s["traffic"] == "LLM"), 8)
+        self.assertEqual(sum(1 for s in sites if s["traffic"] == "OAUTH_OR_MODELS"), 1)
 
     def test_non_production_send_sites_are_known_and_isolated(self):
         non_production = [m for m in _production_modules() if m.name in NON_PRODUCTION_MODULES]
@@ -1484,7 +1514,7 @@ class StaticRouteInventoryTests(unittest.TestCase):
                     importers.add(module.name)
         self.assertEqual(importers - NON_PRODUCTION_MODULES, {
             "server.py", "planner_runtime.py", "verifier_runtime.py", "compressor_runtime.py",
-            "gigachat_transport.py", "ordinary_gigachat_transport.py", "gigachat_admission.py"})
+            "gigachat_transport.py", "ordinary_gigachat_transport.py", "gigachat_admission.py", 'gigachat_runtime.py'})
 
     def test_every_endpoint_constant_read_is_an_inventoried_send_url(self):
         """Second, receiver-independent net: an LLM/OAuth endpoint read anywhere else is unexplained."""

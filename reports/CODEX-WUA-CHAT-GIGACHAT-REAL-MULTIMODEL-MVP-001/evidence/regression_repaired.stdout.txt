@@ -1,0 +1,11 @@
+............................ [ 11%]
+.................................. [ 25%]
+.........................................................................................................................F..............................................................  [100%]
+================================== FAILURES ===================================
+_ BatTests.test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher _
+test_web_alarm_launcher.py:432: in test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher
+    self.assertIn('pushd "%~dp0"', text)
+E   AssertionError: 'pushd "%~dp0"' not found in ''
+=========================== short test summary info ===========================
+FAILED test_web_alarm_launcher.py::BatTests::test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher
+1 failed, 245 passed, 329 subtests passed in 216.26s (0:03:36)

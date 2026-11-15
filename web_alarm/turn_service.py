@@ -34,6 +34,12 @@ OFFLINE_OUTCOMES = {
 KEY = re.compile(r'^[A-Za-z0-9_-]{16,128}$')
 TURN = re.compile(r'^turn_[0-9a-f]{64}$')
 STATES = {'ACCEPTING', 'READY', 'ATTEMPTING', 'SUCCEEDED', 'FAILED', 'CANCELLED', 'UNKNOWN'}
+DIAGNOSTICS = frozenset({'response_model_version_mismatch', 'invalid_json_response',
+    'response_limit_exceeded', 'provider_http_status', 'admission_denied',
+    'admission_commit_uncertain', 'transport_failed_after_start',
+    'provider_http_301', 'provider_http_302', 'provider_http_307', 'provider_http_308',
+    'provider_http_400', 'provider_http_401', 'provider_http_402', 'provider_http_403',
+    'provider_http_404', 'provider_http_413', 'provider_http_422', 'provider_http_429', 'provider_http_500'})
 
 
 def _digest(value):
@@ -69,8 +75,9 @@ class _TurnAdmission:
     def _transport(self, transport):
         import ordinary_chat_service as chat
         from ordinary_gigachat_transport import GigaChatTransport
+        from gigachat_runtime import RealGigaChatTransport
         if (type(self.owner) is not TurnService or not self.owner._ordinary()
-                or type(transport) is not GigaChatTransport
+                or type(transport) not in (GigaChatTransport, RealGigaChatTransport)
                 or self.owner._offline_adapter._transport is not transport):
             raise chat.PreSendDenied('server_transport_required')
 
@@ -100,15 +107,25 @@ class _TurnAdmission:
 
 
 class TurnService:
-    def __init__(self, *, test_roots=(), offline_adapter=None):
+    def __init__(self, *, test_roots=(), offline_adapter=None, provider_session=None):
         self.test_roots = frozenset(Path(p).resolve() for p in test_roots)
         if offline_adapter is not None:
             from .ordinary_chat_test_adapter import OfflineTestAdapter
             from .ordinary_chat_bridge import OrdinaryCoreAdapter
+            from gigachat_runtime import ProviderSession, RealGigaChatTransport
             temp_root = Path(tempfile.gettempdir()).resolve()
-            if (type(offline_adapter) not in (OfflineTestAdapter, OrdinaryCoreAdapter) or not self.test_roots
-                    or any(temp_root not in p.parents for p in self.test_roots)):
+            if provider_session is not None:
+                if (type(provider_session) is not ProviderSession or type(offline_adapter) is not OrdinaryCoreAdapter
+                        or type(offline_adapter._transport) is not RealGigaChatTransport
+                        or offline_adapter._transport.session is not provider_session
+                        or self.test_roots != {provider_session.root}):
+                    raise ValueError('Provider session must own the exact Workspace and transport')
+                provider_session.check()
+            elif (type(offline_adapter) not in (OfflineTestAdapter, OrdinaryCoreAdapter) or not self.test_roots
+                    or any(temp_root not in p.parents for p in self.test_roots)
+                    or type(getattr(offline_adapter, '_transport', None)) is RealGigaChatTransport):
                 raise ValueError('Offline adapter requires explicit temporary Workspace roots')
+        self._provider_session = provider_session
         self._offline_adapter = offline_adapter
         self._active = set()
         self._active_lock = threading.Lock()
@@ -192,8 +209,8 @@ class TurnService:
                         if k not in {'state', 'cancel_requested', 'binding_sha256'}})
 
     def _verify_offline_binding(self, root, summary, turn):
-        if self._offline_adapter is None:
-            raise UltraChatError(403, 'test_turn_unavailable', 'Offline Turn adapter is disabled')
+        # A reader without an adapter can validate/recover old v2 evidence.
+        # _body still refuses v2 submission without an executable adapter.
         refs, snapshot = turn.get('references'), turn.get('prepared')
         if (type(refs) is not dict or set(refs) != set(REFERENCES)
                 or refs['config_ref'] != OFFLINE_REF
@@ -231,8 +248,9 @@ class TurnService:
     @staticmethod
     def _producer(turn):
         if turn['schema_version'] == 2:
-            return {'kind': 'offline_chat_fixture', 'run_id': turn['run_id'], 'turn_id': turn['turn_id'],
-                    'model_id': turn['references']['model_ref'], 'model_display_name': 'TEST · S4A offline',
+            real = turn.get('ordinary_admission', {}).get('provider_mode') == 'REAL'
+            return {'kind': 'ordinary_chat_provider' if real else 'offline_chat_fixture', 'run_id': turn['run_id'], 'turn_id': turn['turn_id'],
+                    'model_id': turn['references']['model_ref'], 'model_display_name': turn['references']['model_ref'] if real else 'TEST · S4A offline',
                     'request_ref': turn['prepared']['request_ref'], 'binding_sha256': turn['binding_sha256']}
         return {'kind': 'test_imitation', 'run_id': turn['run_id'], 'turn_id': turn['turn_id'],
                 'model_display_name': 'TEST · локальный имитатор'}
@@ -268,15 +286,19 @@ class TurnService:
     def _started(turn):
         payload = {'attempt_id': turn['attempt_id'], 'mode': 'TEST'}
         if turn['schema_version'] == 2:
-            payload.update(mode='TEST_OFFLINE', request_ref=turn['prepared']['request_ref'],
+            payload.update(mode='ORDINARY_REAL' if turn.get('ordinary_admission', {}).get('provider_mode') == 'REAL' else 'TEST_OFFLINE', request_ref=turn['prepared']['request_ref'],
                            binding_sha256=turn['binding_sha256'])
         return payload
 
     @staticmethod
     def _check_usage(usage):
         keys = ('prompt_tokens', 'completion_tokens', 'total_tokens')
-        if type(usage) is not dict or set(usage) not in ({'status', *keys}, {'status', *keys, 'reasoning_tokens'}):
+        if (type(usage) is not dict or not {'status', *keys} <= set(usage)
+                or set(usage) - {'status', *keys, 'reasoning_tokens', 'precached_prompt_tokens'}):
             raise ValueError('Invalid offline usage')
+        cached = usage.get('precached_prompt_tokens')
+        if cached is not None and (type(cached) is not int or cached < 0):
+            raise ValueError('Invalid cached usage')
         reasoning = usage.get('reasoning_tokens')
         if reasoning is not None and (type(reasoning) is not int or reasoning < 0
                 or type(usage.get('completion_tokens')) is not int or reasoning > usage['completion_tokens']):
@@ -336,8 +358,14 @@ class TurnService:
                 elif answer is not None:
                     raise ValueError('Answer on unsuccessful offline result')
                 self._check_usage(payload.get('usage'))
+                diagnostic = {'diagnostic_code': payload['diagnostic_code']} if 'diagnostic_code' in payload else {}
+                model_version = {'response_model': payload['response_model']} if 'response_model' in payload else {}
+                if model_version and model_version['response_model'] not in turn.get('ordinary_admission', {}).get('model_contract', {}).get('response_models', []):
+                    raise ValueError('Unapproved provider model version')
+                if diagnostic and diagnostic['diagnostic_code'] not in DIAGNOSTICS:
+                    raise ValueError('Invalid diagnostic code')
                 if payload != {**start, 'outcome': outcome, 'execution': execution,
-                               'usage': payload['usage'], 'answer': answer}:
+                               'usage': payload['usage'], 'answer': answer, **diagnostic, **model_version}:
                     raise ValueError('Offline result binding mismatch')
                 terminal = mapped[1], payload
             if terminal is None and (state not in ('ACCEPTING', 'READY', 'ATTEMPTING')
@@ -391,6 +419,13 @@ class TurnService:
             discarded = next((r['payload'] for r in records if r['event'] == 'turn_result_discarded'), None)
             view.update(mode='TEST_OFFLINE', request_ref=turn['prepared']['request_ref'],
                         usage=terminal[1]['usage'] if terminal else discarded['usage'] if discarded else None)
+            provider_mode = turn.get('ordinary_admission', {}).get('provider_mode')
+            if provider_mode in ('REAL', 'PROTOCOL_TEST'):
+                view['execution_mode'] = provider_mode
+            if terminal and 'diagnostic_code' in terminal[1]:
+                view['diagnostic_code'] = terminal[1]['diagnostic_code']
+            if terminal and 'response_model' in terminal[1]:
+                view['response_model'] = terminal[1]['response_model']
         return view
 
     def _settle_offline(self, root, turn):
@@ -611,6 +646,9 @@ class TurnService:
                 outcome = 'provider_error' if result.error_code == 'provider_http_status' else 'parse_error'
             if result.usage.status == 'complete':
                 usage = {k: getattr(result.usage, k) for k in ('prompt_tokens','completion_tokens','total_tokens')}
+                cached = getattr(result.usage, 'precached_prompt_tokens', None)
+                if cached is not None:
+                    usage['precached_prompt_tokens'] = cached
         expected_record = policy.apply_terminal(receipt.record, outcome, usage)
         settled = ledger.terminal(receipt.record.attempt_id, outcome, usage)
         proof, saved = ledger.reservation(receipt.record.attempt_id)
@@ -659,6 +697,11 @@ class TurnService:
                 raise ValueError('Unexpected offline adapter outcome')
             event = mapped[0]
             payload = {**start, 'outcome': outcome, 'execution': execution, 'answer': answer, 'usage': usage}
+            if result is not None and result.error_code in DIAGNOSTICS:
+                payload['diagnostic_code'] = result.error_code
+            if (result is not None and result.metadata.model
+                    and turn.get('ordinary_admission', {}).get('model_contract')):
+                payload['response_model'] = result.metadata.model
             self._offline_evidence(turn, [*records, {'event': event, 'payload': payload}])
             self._event(root, turn, event, payload)
             return self._settle_offline(root, turn)

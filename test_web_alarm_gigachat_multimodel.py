@@ -1,0 +1,340 @@
+"""Same production protocol and application core over explicit MockTransport.
+
+No credentials, OAuth/API network, user Workspace, live enrollment or paid calls.
+"""
+import asyncio
+from dataclasses import replace
+import json
+import ssl
+import time
+import unittest
+from unittest.mock import patch
+from uuid import uuid4
+
+import httpx
+import context_storage as core
+import gigachat_transport as oauth
+from gigachat_runtime import ProviderSession, LiveApproval, ModelContract, MODELS_URL
+from model_registry import list_model_specs
+from ordinary_chat_service import PreSendDenied
+from ultra_budget_ledger import BudgetLedger
+from web_alarm.ordinary_provider import OrdinaryProviderFactory, OrdinaryApplicationChatService
+from web_alarm.ultra_chat import OrdinaryCoreChatService, UltraChatError
+import test_web_alarm_ultra_chat_s5 as s5
+
+
+class ProtocolTests(s5.Fixture):
+    def setUp(self):
+        super().setUp()
+        self.service = OrdinaryCoreChatService(self.registry, self.root)
+        self.ws, self.cid = self.create_chat('Protocol fixture')
+        self.workspace = self.registry.get(self.ws).workspace_root
+        self.wid = core.read_workspace_identity_bounded(self.workspace)['workspace_id']
+        self.calls = []
+        self.status, self.error, self.model, self.usage = 200, None, None, True
+        self.oauth_status = self.catalog_status = 200
+        self.oauth_reply = None
+        self.bad_json = False
+        self.catalog = [m.provider_model_id for m in list_model_specs()]
+        self.approval = LiveApproval(uuid4().hex, 'SYNTHETIC GO', 'SYNTHETIC review', uuid4().hex,
+            'GIGACHAT_API_PERS', time.time()+3600,
+            tuple(ModelContract(m.model_id, 32768, 1024, (m.provider_model_id, m.provider_model_id+':1.0'),
+                                'SYNTHETIC bounds, not provider evidence') for m in list_model_specs()),
+            12, 2, 12, 100000)
+        self.transport = httpx.MockTransport(self.handle)
+        self.session = ProviderSession.offline(self.workspace, self.wid, self.approval, self.transport)
+        self.addCleanup(self.session.close)
+        self.factory = OrdinaryProviderFactory.for_session(self.registry, self.session)
+        self.app = OrdinaryApplicationChatService(self.registry, self.factory)
+
+    async def handle(self, request):
+        url = str(request.url)
+        self.calls.append((request.method, url, request.content))
+        if url == oauth.OAUTH_URL:
+            self.assertEqual(request.headers['Authorization'], 'Basic SYNTHETIC')
+            return httpx.Response(self.oauth_status, json=self.oauth_reply if self.oauth_reply is not None else
+                {'access_token':'SYNTHETIC-TOKEN', 'expires_at':int((time.time()+1800)*1000)})
+        if url == MODELS_URL:
+            return httpx.Response(self.catalog_status, json={'data':[{'id':s} for s in self.catalog]})
+        self.assertEqual(url, oauth.CHAT_URL)
+        attempt = BudgetLedger(self.workspace, self.wid).recover().attempts[-1]
+        self.assertEqual(attempt.state, 'SENT')
+        _, envelope = BudgetLedger(self.workspace,self.wid).reservation(attempt.attempt_id)
+        self.assertEqual(envelope['wire_utf8'].encode(), request.content)
+        self.assertEqual(self.session._counts['inference'], len(self.posts()))
+        if self.error:
+            raise self.error
+        if self.bad_json:
+            return httpx.Response(200, content=b'not JSON SECRET')
+        data = {'model': self.model or json.loads(request.content)['model']+':1.0',
+                'choices':[{'message':{'role':'assistant','content':'Protocol answer'}, 'finish_reason':'stop'}]}
+        if self.usage:
+            data['usage'] = dict(prompt_tokens=7, completion_tokens=5, total_tokens=12,
+                precached_prompt_tokens=3, completion_tokens_details={'reasoning_tokens':2})
+        return httpx.Response(self.status, json=data)
+
+    def posts(self):
+        return [c for c in self.calls if c[1] == oauth.CHAT_URL]
+
+    def discover(self):
+        return asyncio.run(self.session.discover_models())
+
+    def send(self, model='gigachat_2_pro', text='Hello', cid=None, body=None):
+        cid = cid or self.cid
+        self.app.chat_model(self.ws, cid, {'model_ref':model})
+        return self.app.submit_turn(self.ws, cid, body or self.body(text,model))
+
+    def test_real_route_six_models_history_cached_reasoning_reopen_and_no_replay(self):
+        self.discover()
+        second = 'chat_'+uuid4().hex
+        self.app.create_chat(self.ws, {'chat_id':second})
+        for m in list_model_specs():
+            result = self.send(m.model_id)
+            self.assertEqual(result['state'], 'SUCCEEDED', result)
+            self.assertEqual(result['execution_mode'],'PROTOCOL_TEST')
+            self.assertEqual(result['usage']['precached_prompt_tokens'],3)
+        self.send('gigachat_ultra', 'Separate history', second)
+        self.assertNotIn('Hello', repr(json.loads(self.posts()[-1][2])['messages']))
+        self.assertEqual(self.app.chat_model(self.ws,self.cid)['model_ref'], 'gigachat_ultra')
+        self.assertEqual(len(self.posts()),7)
+        usage=self.app.messages(self.ws,self.cid,None,50)['usage_summary']
+        self.assertEqual(usage['known']['total_tokens'],72)
+        self.assertEqual(usage['known']['reasoning_tokens'],12)
+        self.assertEqual(usage['cached_input'],dict(known=18,missing=0,full_input_known=60,full_input_missing=0))
+        self.assertTrue(result['response_model'].endswith(':1.0'))
+        # Restart with HOLD can read history, latest result and usage without
+        # requiring a fresh live authority or calling OAuth.
+        reopened = OrdinaryApplicationChatService(self.registry, OrdinaryProviderFactory())
+        self.assertEqual(len(reopened.messages(self.ws,self.cid,None,50)['messages']),12)
+        self.assertEqual(reopened.latest_turn(self.ws,self.cid)['turn']['state'], 'SUCCEEDED')
+        self.assertEqual(reopened.messages(self.ws,self.cid,None,50)['usage_summary']['known']['total_tokens'],72)
+        body=self.body('Idempotent')
+        first=self.send(body=body)
+        self.assertEqual(self.app.submit_turn(self.ws,self.cid,body),first)
+        self.assertEqual(len(self.posts()),8)
+        record=BudgetLedger(self.workspace,self.wid).recover().attempts[0]
+        self.assertEqual(record.state,'KNOWN_TERMINAL')
+
+    def test_catalog_unavailable_and_caps_are_not_preferences(self):
+        self.catalog=['GigaChat-2-Pro']
+        self.discover()
+        self.assertEqual(self.app.capability()['models'][-1]['availability'],'UNAVAILABLE')
+        result=self.send('gigachat_ultra')
+        self.assertNotEqual(result['state'],'SUCCEEDED')
+        self.assertEqual(self.posts(),[])
+
+    def test_oauth_expiry_scope_binding_and_no_duplicate_web_cache(self):
+        self.discover()
+        self.assertEqual(self.session._counts['oauth'],1)
+        self.send()
+        self.assertEqual(self.session._counts['oauth'],1)
+        with patch.object(oauth,'_access_token_valid_until',time.time()-1):
+            self.send()
+        self.assertEqual(self.session._counts['oauth'],2)
+        self.session._credentials=('SYNTHETIC','GIGACHAT_API_B2B')
+        with self.assertRaisesRegex(PreSendDenied,'credentials_or_scope_invalid'):
+            asyncio.run(oauth.get_access_token(authority=self.session))
+
+    def test_errors_one_physical_post_no_auto_refresh_retry(self):
+        self.discover()
+        for status in (301,307,401,403,404,429,500):
+            with self.subTest(status=status):
+                self.status=status
+                result=self.send()
+                self.assertEqual(result['state'],'FAILED')
+        self.assertEqual(len(self.posts()),7)
+        self.assertEqual(self.session._counts['oauth'],1)
+
+    def test_timeout_tls_transport_errors_unknown_no_replay(self):
+        self.discover()
+        for error in (httpx.ReadTimeout('SECRET'),httpx.ConnectError('SECRET TLS')):
+            self.error=error
+            body=self.body('Fault')
+            result=self.send(body=body)
+            self.assertEqual(result['state'],'UNKNOWN')
+            self.assertNotIn('SECRET',repr(result))
+            self.assertEqual(self.app.submit_turn(self.ws,self.cid,body),result)
+        self.assertEqual(len(self.posts()),2)
+
+    def test_version_mismatch_missing_usage_and_budget_limit(self):
+        self.discover()
+        self.model='GigaChat-2-Pro:UNAPPROVED'
+        self.assertEqual(self.send()['state'],'FAILED')
+        self.model=None;self.usage=False
+        result=self.send()
+        self.assertEqual(result['state'],'SUCCEEDED')
+        self.assertIsNone(result['usage']['total_tokens'])
+        self.session._counts['inference']=12
+        with core._existing_workspace_writer(self.workspace,self.wid) as writer:
+            self.session._save(writer)
+        self.assertEqual(self.send()['state'],'UNKNOWN')
+        self.assertEqual(len(self.posts()),2)
+
+    def test_approval_reuse_expiry_tls_and_default_authority_denied(self):
+        with self.assertRaisesRegex(PreSendDenied,'grant_already_used'):
+            ProviderSession.offline(self.workspace,self.wid,self.approval,self.transport)
+        insecure=ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        insecure.check_hostname=False;insecure.verify_mode=ssl.CERT_NONE
+        with self.assertRaisesRegex(PreSendDenied,'verified_tls_required'):
+            ProviderSession(self.workspace,self.wid,replace(self.approval,grant_id=uuid4().hex),tls_context=insecure)
+        with self.assertRaises(PreSendDenied):
+            asyncio.run(oauth.get_access_token())
+        self.assertEqual(self.calls,[])
+
+    def test_oauth_error_redirect_invalid_token_and_expires_at(self):
+        for status in (301,401,403,429,500):
+            with self.subTest(status=status):
+                with patch.object(oauth,'_access_token',None):
+                    self.oauth_status=status
+                    before=len(self.calls)
+                    try:
+                        asyncio.run(oauth.get_access_token(authority=self.session))
+                    except PreSendDenied:
+                        pass
+                    else:
+                        self.fail('OAuth rejection accepted')
+                    self.assertLessEqual(len(self.calls)-before,1)
+        # A separate isolated grant for malformed successful replies.
+        other=ProviderSession.offline(self.workspace,self.wid,
+            replace(self.approval,grant_id=uuid4().hex,account_id=uuid4().hex,max_oauth=10),self.transport)
+        self.addCleanup(other.close)
+        self.oauth_status=200
+        for value in ({}, {'access_token':'SECRET','expires_at':0},
+                      {'access_token':'SECRET\r\nINJECT','expires_at':int((time.time()+1800)*1000)},
+                      {'access_token':'SECRET','expires_at':True}):
+            with self.subTest(reply=list(value)):
+                self.oauth_reply=value
+                with patch.object(oauth,'_access_token',None), self.assertRaisesRegex(PreSendDenied,'oauth_response_invalid'):
+                    asyncio.run(oauth.get_access_token(authority=other))
+        self.assertEqual(self.posts(),[])
+
+    def test_malformed_response_and_usage_survives_model_rejection(self):
+        self.discover()
+        self.bad_json=True
+        self.assertEqual(self.send()['state'],'FAILED')
+        self.bad_json=False; self.model='GigaChat-2-Pro:unexpected'
+        result=self.send()
+        self.assertEqual(result['state'],'FAILED')
+        self.assertEqual(result['usage']['total_tokens'],12)
+        self.assertEqual(BudgetLedger(self.workspace,self.wid).recover().attempts[-1].state,'KNOWN_TERMINAL')
+
+    def test_close_expiry_and_foreign_workspace_do_not_hide_history(self):
+        self.discover();self.send()
+        self.session.close()
+        self.assertFalse(self.app.capability()['available'])
+        self.assertEqual(len(self.app.messages(self.ws,self.cid,None,50)['messages']),2)
+        self.assertEqual(self.app.latest_turn(self.ws,self.cid)['turn']['state'],'SUCCEEDED')
+        with self.assertRaises(UltraChatError):
+            self.send()
+        self.assertEqual(len(self.posts()),1)
+
+    def test_raw_commit_failure_recovery_does_not_resend(self):
+        self.discover()
+        commit=core.commit_raw_message
+        def fail_assistant(root,chat,message,role,*args,**kwargs):
+            if role=='assistant':
+                raise OSError('synthetic RAW write failure')
+            return commit(root,chat,message,role,*args,**kwargs)
+        body=self.body('RAW crash')
+        with patch.object(core,'commit_raw_message',fail_assistant):
+            with self.assertRaises((OSError,UltraChatError)):
+                self.send(body=body)
+        self.assertEqual(len(self.posts()),1)
+        result=self.app.submit_turn(self.ws,self.cid,body)
+        self.assertEqual(result['state'],'SUCCEEDED')
+        self.assertEqual(len(self.posts()),1)
+
+    def test_transport_options_are_verified_and_no_env_proxy(self):
+        self.discover()
+        original=httpx.AsyncClient
+        options=[]
+        def capture(*args,**kwargs):
+            options.append(kwargs)
+            return original(*args,**kwargs)
+        with patch('httpx.AsyncClient',capture):
+            self.send()
+        self.assertTrue(options)
+        self.assertTrue(all(o['trust_env'] is False and o['follow_redirects'] is False for o in options))
+        self.assertEqual(self.session._tls.verify_mode,ssl.CERT_REQUIRED)
+        self.assertTrue(self.session._tls.check_hostname)
+        # Construct (never send) the actual network branch under the early
+        # socket/DNS guard and inspect its exact httpcore TLS/retry settings.
+        self.session.synthetic=False
+        async def inspect_client():
+            async with self.session.client(8) as client:
+                self.assertIs(client._transport._pool._ssl_context,self.session._tls)
+                self.assertEqual(client._transport._pool._retries,0)
+                self.assertFalse(client.follow_redirects)
+        try:
+            asyncio.run(inspect_client())
+        finally:
+            self.session.synthetic=True
+
+    def test_cancel_at_final_boundary_no_post_and_reserved_unknown(self):
+        self.discover()
+        from web_alarm.turn_service import _TurnAdmission
+        check=_TurnAdmission.check
+        def cancel(cap,wire,transport,*,physical=False):
+            if physical:
+                root,wid,cid,tid,*_=cap.args
+                cap.owner.cancel(root,wid,cid,tid,{})
+            return check(cap,wire,transport,physical=physical)
+        with patch.object(_TurnAdmission,'check',cancel):
+            result=self.send()
+        self.assertIn(result['state'],('CANCELLED','UNKNOWN'))
+        self.assertTrue(result['cancel_requested'])
+        self.assertEqual(self.posts(),[])
+
+    def test_http_application_uses_same_protocol_and_tokens(self):
+        from web_alarm.server import WebAlarmApi,create_server
+        import threading
+        self.discover()
+        api=WebAlarmApi(self.root/'registry')
+        # Same storage, exact registry object belongs to this server.
+        factory=OrdinaryProviderFactory.for_session(api.registry,self.session)
+        server=create_server(api,host='127.0.0.1',port=0,ordinary_factory=factory)
+        worker=threading.Thread(target=server.serve_forever,daemon=True);worker.start()
+        self.addCleanup(server.server_close);self.addCleanup(server.shutdown)
+        self.http=lambda *a,**k:s5.HttpAndTkTests.http(self,*a,**k)
+        cap,read,write=s5.HttpAndTkTests.tokens(self,server)
+        base=f'/ultra/chat/workspaces/{self.ws}/chats/{self.cid}'
+        status,result=s5.HttpAndTkTests.http(self,server,'POST',base+'/turns',self.body('HTTP real protocol fixture'),write)
+        self.assertEqual((status,result['state']),(200,'SUCCEEDED'))
+        self.assertEqual(result['execution_mode'],'PROTOCOL_TEST')
+        self.assertEqual(s5.HttpAndTkTests.http(self,server,'GET',base+'/messages?limit=50',headers=read)[0],200)
+        self.assertEqual(s5.HttpAndTkTests.http(self,server,'POST',base+'/turns',self.body('denied'),{})[0],403)
+        self.assertEqual(len(self.posts()),1)
+
+    def test_exact_census_rejects_new_runtime_send_or_changed_authority(self):
+        import test_rt002_s1_routes as census
+        from pathlib import Path
+        path=Path(__file__).parent/'gigachat_runtime.py'
+        source=path.read_text(encoding='utf-8')
+        analysis=census.analyze_module(path.name,source)
+        self.assertEqual(analysis['reconciliation_issues'],[])
+        self.assertEqual(len(analysis['sites']),2)
+        mutated=source.replace("session.check()\n                admission.check", "await client.post('https://example.invalid')\n                admission.check")
+        self.assertNotEqual(mutated,source)
+        self.assertTrue(census.analyze_module(path.name,mutated)['reconciliation_issues'])
+
+    def test_account_owner_fences_other_grant_and_restart(self):
+        with self.assertRaisesRegex(PreSendDenied,'account_owner_unresolved'):
+            ProviderSession.offline(self.workspace,self.wid,replace(self.approval,grant_id=uuid4().hex),self.transport)
+        self.assertEqual(self.calls,[])
+
+    def test_probe_only_approval_has_zero_inference_without_model_caps(self):
+        grant=replace(self.approval,grant_id=uuid4().hex,account_id=uuid4().hex,
+                      contracts=(),max_inference=0,max_oauth=1,max_catalog=1)
+        probe=ProviderSession.offline(self.workspace,self.wid,grant,self.transport)
+        self.addCleanup(probe.close)
+        self.assertTrue(asyncio.run(probe.discover_models()))
+        from ordinary_gigachat_transport import create_real_transport
+        with self.assertRaisesRegex(PreSendDenied,'model_not_approved'):
+            create_real_transport('gigachat_2_pro',authority=probe)
+        with self.assertRaisesRegex(PreSendDenied,'live_call_or_token_limit'):
+            probe._consume('inference')
+        self.assertEqual(self.posts(),[])
+
+
+if __name__ == '__main__':
+    unittest.main()

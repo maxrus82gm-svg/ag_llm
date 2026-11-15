@@ -40,7 +40,7 @@ class OfflineHTTPFixture:
         return 'H33-SYNTHETIC-NON-CREDENTIAL'
 
 
-def create_real_transport(model_id):
+def create_real_transport(model_id, *, authority=None):
     """Closed server entry: no token/cache/client is constructed here.
 
     This is preparation, not a production factory. Even an accidentally
@@ -48,10 +48,12 @@ def create_real_transport(model_id):
     and its provider/account/recovery contracts exist.
     """
     from gigachat_admission import require_real_authority
-    require_real_authority()  # First: before contract, secrets or HTTP.
-    from gigachat_transport import real_preflight
-    real_preflight(model_id)
-    raise PreSendDenied('real_transport_not_implemented')
+    require_real_authority(authority)  # Before credentials or HTTP.
+    if authority is None:
+        raise PreSendDenied('real_transport_not_implemented')
+    from gigachat_runtime import RealGigaChatTransport
+    authority.contract(model_id)
+    return RealGigaChatTransport(authority, model_id)
 
 
 class GigaChatTransport:

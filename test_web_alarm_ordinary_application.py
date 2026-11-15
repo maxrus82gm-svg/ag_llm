@@ -117,8 +117,10 @@ class ApplicationTests(s5.Fixture):
         ws,cid,server,_,read,write,base,root,wid=self.application()
         ws2,cid2=self.create_chat('neighbour')
         base2=f'/ultra/chat/workspaces/{ws2}/chats/{cid2}'
-        self.assertEqual(self.http(server,'POST',base+'/model',{'model_ref':'gigachat_ultra'},write)[0],400)
-        for bad in ('gigachat_ultra','local-test:v1','GigaChat-2-Pro'):
+        # Multimodel MVP: STANDARD preferences now cover all registry entries.
+        self.assertEqual(self.http(server,'POST',base+'/model',{'model_ref':'gigachat_ultra'},write)[0],200)
+        self.assertEqual(self.http(server,'GET',base+'/model',headers=read)[1]['model_ref'],'gigachat_ultra')
+        for bad in ('unregistered','local-test:v1','GigaChat-2-Pro'):
             self.assertEqual(self.http(server,'POST',base+'/turns',self.body('no',bad),write)[0],400)
         self.assertEqual(self.fixture.token_calls,0)
         settings={'compression_threshold_tokens':3000,'answer_tokens':20000}

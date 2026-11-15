@@ -1,0 +1,36 @@
+{
+  "task": "CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001",
+  "pins": {
+    "gigachat_admission.py": {
+      "require_real_authority": "b62af626c54a95b9c9ad12dfb6355cf7a00b14e06aa3b25a460ab1b16b4fc822"
+    },
+    "gigachat_transport.py": {
+      "get_access_token": "ca63e40816fdfcefb536115be8950a2fe41655c3ca66b9f27daafda572e11c33"
+    },
+    "gigachat_runtime.py": {
+      "ProviderSession": "4403493659db70ee91d864f153de240bceb71fb1200891bacf9ecf618bb1d301",
+      "RealGigaChatTransport": "a50aab22c9f3879782f95a483a94cd66b159056bf42384de80e2ad7fe4aa1e49",
+      "ModelContract": "146dcba07a2daad7e95ae77080f3fcf3da43d8d01a04e664bc2846d5e2793738",
+      "LiveApproval": "36b20673311068c970648ac8cee933d62adc9d1354826aa8e89b5318b945f1a6",
+      "MODELS_URL": "a1312290ce191768f42b57e363c8d8126ac9526d9bb63a858857b11d41e2b4b0"
+    },
+    "ordinary_chat_bridge.py": {
+      "OrdinaryCoreAdapter": "f12cc04aed286e40ec77e5f781b695a23fe70a06002b5eb6e6f0eb4226c67a6e",
+      "_UsageCapture": "e39c1c6ed5f4c98a514c8e4ea138ec34f6f5944a7aaa449e5859511a4e8c0d55"
+    }
+  },
+  "references": {
+    "gigachat_admission.py": "b9c12295f18eb3e9ac11b80eec51b0b8f5bf63f28d6c63e5821d7d1072abdc28",
+    "gigachat_transport.py": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "gigachat_runtime.py": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "ordinary_chat_bridge.py": "3b5abf8d7e78f3311f02edb3e2fbd1180636385259cdb37fe813f30061b5c06a"
+  },
+  "policy_gates": {
+    "web_alarm.ordinary_provider": "338ef57c2d66af87b70a57b7d23d5e100ca92772449a81821e141a52e1a6d205",
+    "web_alarm.ordinary_chat_bridge": "57a9068bf038213e968dc25c4126e56e4ccd42a55472abe4021db1d56bd83560",
+    "web_alarm.turn_service": "fb4e6fd2df939ce81322a672b25a86cb225c1d2a2637c18331fe3abc625be7f3",
+    "web_alarm.ultra_chat": "8fa246f9a35febe99142134cf528e50da236a0f4f487ab801836e6d25316aecd",
+    "gigachat_admission": "c902f1faf5e810117284d92d0861fdfd44f131d19cb5fcc72599f085650428ce",
+    "gigachat_runtime": "71433c11c6483a07ac7b4d19e32f4ddaf8313dc048c97244bf6f4596f6e6186f"
+  }
+}

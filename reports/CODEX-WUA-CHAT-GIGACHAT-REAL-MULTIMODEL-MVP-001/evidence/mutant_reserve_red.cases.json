@@ -1,0 +1,16 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "test:failed": 1
+  },
+  "cases": [
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001/mutant_reserve.py::ProtocolTests::test_real_route_six_models_history_cached_reasoning_reopen_and_no_replay",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": []
+}

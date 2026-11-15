@@ -126,12 +126,15 @@ class ModelPersistenceTests(s5.Fixture):
         self.assertEqual(self.service.chat_preferences(ws,cid)['settings'],settings)
         self.assertEqual(result['references']['model_ref'],'gigachat_3_lightning')
 
-    def test_standard_still_rejects_test_model_method_and_ultra_choice(self):
+    def test_standard_accepts_registry_preference_and_still_rejects_test_method(self):
         ws,cid=self.create_chat('standard boundary')
         standard=self.serve();cap,read,write=self.tokens(standard)
         self.assertFalse(cap['real_available']);self.assertFalse(cap['available'])
         self.assertNotIn('chat_model_preferences',cap)
-        self.assertEqual(self.http(standard,'POST',self.model_path(ws,cid),{'model_ref':'gigachat_ultra'},write)[0],400)
+        self.assertEqual(self.http(standard,'POST',self.model_path(ws,cid),{'model_ref':'gigachat_ultra'},write)[0],200)
+        self.assertEqual(self.http(standard,'GET',self.model_path(ws,cid),headers=read)[1]['model_ref'],'gigachat_ultra')
+        self.assertEqual(self.http(standard,'POST',self.model_path(ws,cid).removesuffix('/model')+'/turns',
+            self.body('still HOLD','gigachat_ultra'),write)[0],403)
         self.assertEqual(self.http(standard,'POST',self.model_path(ws,cid),{'model_ref':'gigachat_2_pro'},write)[0],200)
         with self.assertRaises(UltraChatError) as caught:
             standard.web_alarm_ultra_chat.test_chat_model(ws,cid,{'model_ref':'gigachat_ultra'})

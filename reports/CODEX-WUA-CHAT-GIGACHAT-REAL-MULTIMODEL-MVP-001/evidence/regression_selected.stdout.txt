@@ -1,0 +1,47 @@
+............................ [ 17%]
+.................................. [ 38%]
+...........................................F..F...............F................................F....F            [100%]
+================================== FAILURES ===================================
+_ ApplicationTests.test_default_standard_hold_before_turn_raw_token_or_network _
+test_web_alarm_ordinary_application.py:114: in test_default_standard_hold_before_turn_raw_token_or_network
+    self.assertFalse(self.http(server,'GET',base+'/messages',headers=read)[1]['usage_summary']['available'])
+E   AssertionError: True is not false
+---------------------------- Captured stdout call -----------------------------
+uuuuu
+________ ApplicationTests.test_model_settings_and_workspace_isolation _________
+test_web_alarm_ordinary_application.py:120: in test_model_settings_and_workspace_isolation
+    self.assertEqual(self.http(server,'POST',base+'/model',{'model_ref':'gigachat_ultra'},write)[0],400)
+E   AssertionError: 200 != 400
+_ CoreBridgeTests.test_usage_reasoning_is_nested_and_survives_reopen_and_replay _
+test_web_alarm_ordinary_core_bridge.py:91: in test_usage_reasoning_is_nested_and_survives_reopen_and_replay
+    self.assertEqual(first["usage"], dict(status="complete", prompt_tokens=7,
+E   AssertionError: {'sta[74 chars]s': 12, 'reasoning_tokens': 3, 'precached_prompt_tokens': None} != {'sta[74 chars]s': 12, 'reasoning_tokens': 3}
+E     {'completion_tokens': 5,
+E   -  'precached_prompt_tokens': None,
+E      'prompt_tokens': 7,
+E      'reasoning_tokens': 3,
+E      'status': 'complete',
+E      'total_tokens': 12}
+_ ModelPersistenceTests.test_standard_still_rejects_test_model_method_and_ultra_choice _
+test_web_alarm_test_model_persist.py:134: in test_standard_still_rejects_test_model_method_and_ultra_choice
+    self.assertEqual(self.http(standard,'POST',self.model_path(ws,cid),{'model_ref':'gigachat_ultra'},write)[0],400)
+E   AssertionError: 200 != 400
+__________ ActivationTests.test_permanent_cmd_chat_flow_and_cleanup ___________
+test_web_alarm_ordinary_test_activation.py:53: in test_permanent_cmd_chat_flow_and_cleanup
+    process = subprocess.Popen(command, cwd=ROOT, env=env, stdin=subprocess.PIPE,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+reports\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\guard\sitecustomize.py:82: in _audit
+    _deny(event, "non_python_process")
+reports\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\guard\sitecustomize.py:22: in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+E   PermissionError: OFFLINE guard: non_python_process
+=========================== short test summary info ===========================
+FAILED test_web_alarm_ordinary_application.py::ApplicationTests::test_default_standard_hold_before_turn_raw_token_or_network
+FAILED test_web_alarm_ordinary_application.py::ApplicationTests::test_model_settings_and_workspace_isolation
+FAILED test_web_alarm_ordinary_core_bridge.py::CoreBridgeTests::test_usage_reasoning_is_nested_and_survives_reopen_and_replay
+FAILED test_web_alarm_test_model_persist.py::ModelPersistenceTests::test_standard_still_rejects_test_model_method_and_ultra_choice
+FAILED test_web_alarm_ordinary_test_activation.py::ActivationTests::test_permanent_cmd_chat_flow_and_cleanup
+5 failed, 158 passed, 258 subtests passed in 164.95s (0:02:44)

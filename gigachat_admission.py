@@ -53,8 +53,13 @@ def synthetic_profiles():
                  for m in MODEL_REGISTRY.values() if m.enabled and m.provider=='gigachat' and not m.is_local)
 
 
-def require_real_authority():
+def require_real_authority(authority=None):
     """No cached token, env, receipt, Boolean or verified-looking profile enables REAL."""
+    if authority is not None:
+        from gigachat_runtime import ProviderSession
+        if type(authority) is ProviderSession:
+            authority.check()
+            return
     raise PreSendDenied('real_provider_authority_unavailable')
 
 

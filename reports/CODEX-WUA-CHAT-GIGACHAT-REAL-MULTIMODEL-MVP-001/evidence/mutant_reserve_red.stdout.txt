@@ -1,0 +1,31 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_ ProtocolTests.test_real_route_six_models_history_cached_reasoning_reopen_and_no_replay _
+test_web_alarm_gigachat_multimodel.py:92: in test_real_route_six_models_history_cached_reasoning_reopen_and_no_replay
+    result = self.send(m.model_id)
+             ^^^^^^^^^^^^^^^^^^^^^
+test_web_alarm_gigachat_multimodel.py:85: in send
+    return self.app.submit_turn(self.ws, cid, body or self.body(text,model))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+web_alarm\ordinary_provider.py:211: in submit_turn
+    result = super().submit_turn(wa_workspace_id, chat_id, body)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+web_alarm\ultra_chat.py:604: in submit_turn
+    return turns.submit(root, workspace_id, chat_id,
+web_alarm\turn_service.py:507: in submit
+    return self._execute(root,workspace_id,chat_id,ids['turn_id'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+web_alarm\turn_service.py:529: in _execute
+    return self._execute_offline(root, workspace_id, chat_id, turn_id, start, prepared)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+web_alarm\turn_service.py:670: in _execute_offline
+    with self._session(root, workspace_id, chat_id):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:158: in __exit__
+    self.gen.throw(value)
+web_alarm\turn_service.py:158: in _session
+    raise UltraChatError(503, 'turn_storage_unavailable', 'Turn could not be verified or stored') from None
+E   web_alarm.ultra_chat.UltraChatError: Turn could not be verified or stored
+=========================== short test summary info ===========================
+FAILED reports/CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001/mutant_reserve.py::ProtocolTests::test_real_route_six_models_history_cached_reasoning_reopen_and_no_replay
+1 failed in 1.72s

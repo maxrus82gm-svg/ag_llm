@@ -1,0 +1,10 @@
+.....F........                                           [100%]
+================================== FAILURES ===================================
+______ ProtocolTests.test_http_application_uses_same_protocol_and_tokens ______
+test_web_alarm_gigachat_multimodel.py:280: in test_http_application_uses_same_protocol_and_tokens
+    server=create_server('127.0.0.1',0,api,ordinary_factory=factory)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   TypeError: create_server() takes 1 positional argument but 3 positional arguments (and 1 keyword-only argument) were given
+=========================== short test summary info ===========================
+FAILED test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_http_application_uses_same_protocol_and_tokens
+1 failed, 13 passed, 16 subtests passed in 38.00s

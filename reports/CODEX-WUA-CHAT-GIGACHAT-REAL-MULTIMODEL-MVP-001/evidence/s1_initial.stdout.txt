@@ -1,0 +1,84 @@
+{
+  "task": "CLAUDE-RT002-S1-REPAIR-001",
+  "sandbox": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-f7upx86k",
+  "python": "3.12.10",
+  "gate": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "reasons": [
+      "FAILURES:3"
+    ]
+  },
+  "counts": {
+    "run": 69,
+    "failures": 3,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "manifest_size": 69,
+  "failures": [
+    "__main__.StaticRouteInventoryTests.test_every_endpoint_constant_read_is_an_inventoried_send_url",
+    "__main__.StaticRouteInventoryTests.test_httpx_is_imported_only_by_known_modules",
+    "__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity"
+  ],
+  "errors": [],
+  "skipped": [],
+  "isolation_violations": [],
+  "evidence_root": "M:\\GitHub\\ag_llm",
+  "evidence_problems": [],
+  "selected": null,
+  "elapsed_seconds": 38.282,
+  "log": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-rt002-s1-f7upx86k\\unittest.log",
+  "log_sha256": "01350f5b79b3eac83893ac0c2e8f0ddc12bd23ddeccd0c57bcb1dea4b07b97e2"
+}
+
+FAIL: test_every_endpoint_constant_read_is_an_inventoried_send_url (__main__.StaticRouteInventoryTests.test_every_endpoint_constant_read_is_an_inventoried_send_url)
+Second, receiver-independent net: an LLM/OAuth endpoint read anywhere else is unexplained.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1495, in test_every_endpoint_constant_read_is_an_inventoried_send_url
+    self.assertEqual(unexplained, [])
+AssertionError: Lists differ: [('gigachat_admission.py', 51, 64, 'endpoi[542 chars]RL')] != []
+
+First list contains 9 additional elements.
+First extra element 0:
+('gigachat_admission.py', 51, 64, 'endpoint reference CHAT_URL')
+
++ []
+- [('gigachat_admission.py', 51, 64, 'endpoint reference CHAT_URL'),
+-  ('gigachat_admission.py', 143, 91, 'endpoint reference CHAT_URL'),
+-  ('gigachat_admission.py', 308, 101, 'endpoint reference CHAT_URL'),
+-  ('gigachat_admission.py', 358, 88, 'endpoint reference CHAT_URL'),
+-  ('gigachat_runtime.py', 24, 13, 'endpoint host literal'),
+-  ('gigachat_runtime.py', 210, 19, 'endpoint reference OAUTH_URL'),
+-  ('gigachat_runtime.py', 258, 15, 'endpoint reference CHAT_URL'),
+-  ('gigachat_runtime.py', 294, 66, 'endpoint reference CHAT_URL'),
+-  ('gigachat_transport.py', 87, 49, 'endpoint reference OAUTH_URL')]
+
+======================================================================
+FAIL: test_httpx_is_imported_only_by_known_modules (__main__.StaticRouteInventoryTests.test_httpx_is_imported_only_by_known_modules)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1485, in test_httpx_is_imported_only_by_known_modules
+    self.assertEqual(importers - NON_PRODUCTION_MODULES, {
+AssertionError: Items in the first set but not the second:
+'gigachat_runtime.py'
+
+======================================================================
+FAIL: test_production_send_sites_match_inventory_with_multiplicity (__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1456, in test_production_send_sites_match_inventory_with_multiplicity
+    sites = _module_sites(production)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\test_rt002_s1_routes.py", line 1448, in _module_sites
+    raise AssertionError(analysis["reconciliation_issues"])
+AssertionError: [('gigachat_admission.py', 'changed reconciliation AST', 'require_real_authority')]
+
+----------------------------------------------------------------------
+Ran 69 tests in 38.280s
+
+FAILED (failures=3)
+

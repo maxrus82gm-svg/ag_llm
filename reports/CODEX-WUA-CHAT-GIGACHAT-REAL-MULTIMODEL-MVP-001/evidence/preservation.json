@@ -1,0 +1,86 @@
+{
+  "reference": "H37 protected_before (historical reference, not current-task before snapshot)",
+  "checked": 299,
+  "differences_from_h37": [
+    "gigachat_admission.py",
+    "gigachat_transport.py",
+    "ordinary_chat_service.py",
+    "ordinary_gigachat_transport.py",
+    "test_rt002_s1_routes.py",
+    "test_rt002_s2_budget_policy.py",
+    "test_web_alarm_launcher.py",
+    "test_web_alarm_ordinary_application.py",
+    "test_web_alarm_test_model_persist.py",
+    "web_alarm/ordinary_chat_bridge.py",
+    "web_alarm/ordinary_provider.py",
+    "web_alarm/turn_service.py",
+    "web_alarm/ui.py",
+    "web_alarm/ultra_chat.py",
+    "Документация/000_Задачи Codex.md",
+    "Документация/37_Старт перехода - Web Alarm Ultra.md"
+  ],
+  "explicit_unchanged": {
+    "context_storage.py": {
+      "sha256": "8b5bed4e6832572d9af816899642bf4a3287d455ee4be4f67326c0130cce8f64",
+      "h37_equal": true
+    },
+    "run_store.py": {
+      "sha256": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e",
+      "h37_equal": true
+    },
+    "audit_storage.py": {
+      "sha256": "5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c",
+      "h37_equal": true
+    },
+    "provider_accounting.py": {
+      "sha256": "dd83dbf7a22154347ac6f17ca2110e78757338248bd466f86a0d3599db510902",
+      "h37_equal": true
+    },
+    "model_registry.py": {
+      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+      "h37_equal": true
+    },
+    "ultra_budget_ledger.py": {
+      "sha256": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592",
+      "h37_equal": true
+    },
+    "ultra_budget_policy.py": {
+      "sha256": "f6037d86fe966fdadb4d488411bc1be21d327b158546b7c01017da7f2394e14a",
+      "h37_equal": true
+    },
+    "ultra_ui.py": {
+      "sha256": "9b0b7fa52b82e9612f181ce4ec0620c1e6d37376bbe8f9e7ee92728875cb9033",
+      "h37_equal": true
+    },
+    "Start_Ultra.cmd": {
+      "sha256": "34bcd1f514b6a814f1941cc72ceacbcf264e7774c57de4dfb72cb331e061d406",
+      "h37_equal": true
+    },
+    "Start_WebAlarm_Standard.cmd": {
+      "sha256": "79468ca15e53bc595521278f67ed147304787a2789567ab33096e3075e3dc372",
+      "h37_equal": true
+    },
+    "Start_WebAlarm_Test.cmd": {
+      "sha256": "157091918484c159ecef497a60c78e95b45068fbc42c38c2682b6709a12bb6e3",
+      "h37_equal": true
+    },
+    "web_alarm/launcher.py": {
+      "sha256": "f70a511fc1db51e36a3c7869e44956ac465d7e143aec5a3b5083d2020289beaf",
+      "h37_equal": true
+    },
+    "web_alarm/launch_config.json": {
+      "sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2",
+      "h37_equal": true
+    },
+    "web_alarm/launch_test_config.json": {
+      "sha256": "c6a7d08b3488574587dbf5697923056607fa3418aa6eff7c0d9b69361b461e1a",
+      "h37_equal": true
+    },
+    "web_alarm/server.py": {
+      "sha256": "3a4cc8e5f4bbf31ce38ddcc9d8b8529df500c12ade78f4e3646f9491e29ac7e7",
+      "h37_equal": true
+    }
+  },
+  "production_data": "Not read/used by tests; no claim of full private-file census",
+  "writes": "Only explicit source/test/package + scripted own finish"
+}

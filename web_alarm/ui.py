@@ -1932,8 +1932,13 @@ function renderChatUsage(summary){
   if(!summary?.available){target.textContent=prefix+': UNKNOWN';return}
   if(!summary.attempts){target.textContent=prefix+': попыток ещё нет';return}
   const last=fields.map(([k,label])=>label+': '+count(summary.last?.usage?.[k])).join(' · ');
-  const total=fields.map(([k,label])=>label+': '+(summary.missing?.[k]===summary.attempts?'UNKNOWN':
+  let total=fields.map(([k,label])=>label+': '+(summary.missing?.[k]===summary.attempts?'UNKNOWN':
     (summary.missing?.[k]?'≥ ':'')+count(summary.known?.[k]))).join(' · ');
+  if(summary.cached_input){
+    const cache=summary.cached_input;
+    total+=' · Кэш входа: '+(cache.missing===summary.attempts?'UNKNOWN':(cache.missing?'≥ ':'')+count(cache.known));
+    total+=' · Полный вход: '+(cache.full_input_missing===summary.attempts?'UNKNOWN':(cache.full_input_missing?'≥ ':'')+count(cache.full_input_known));
+  }
   target.textContent=prefix+'. Последняя попытка — '+last+'. Чат: известный расход — '+total+
     (summary.complete?'.':'. Общий расход известен не полностью.');
 }
@@ -1992,6 +1997,14 @@ function renderTurnComposer(){
       $('chatInput').placeholder=chatTurn.available?'Сообщение TEST-имитатору':'Отправка GigaChat пока закрыта';
       text('chatComposerNote',chatTurn.available?'TEST · проверка штатного чата без обращения к GigaChat.':'Отправка GigaChat закрыта до проверки параметров модели и защит. История и настройки доступны.');
       text('chatSidebarNote','История хранится общим ядром Ultra.');
+      if(chatTurn.executionMode==='REAL'){
+        $('chatInput').placeholder='Сообщение GigaChat';
+        text('chatComposerNote','GigaChat · ограниченный серверный допуск. Enter — отправить, Shift+Enter — новая строка.');
+      }
+      if(selected?.availability==='UNAVAILABLE'){
+        $('chatSend').disabled=true;
+        text('chatComposerNote','Эта модель недоступна в подтверждённом каталоге аккаунта. Выберите другую модель.');
+      }
     }
   }
   else if(chatTurn.available){text('chatComposerNote','TEST · локальный имитатор. Выбранная модель не вызывается. Enter — отправить, Shift+Enter — новая строка.');$('chatInput').placeholder='Сообщение TEST-имитатору';text('chatModel','TEST · локальный имитатор');text('chatModelPick','TEST · без LLM');text('chatSidebarNote','TEST: ответы создаёт локальный имитатор. История хранится общим ядром Ultra.')}
@@ -2008,8 +2021,9 @@ function showTurn(result){
   chatTurn.revision++;
   chatTurn.state=result.state;
   const labels={ACCEPTING:'Приём не завершён. Для продолжения нужен исходный текст.',READY:'Принято. Ожидает явного продолжения.',ATTEMPTING:'Выполняется: TEST-имитатор обрабатывает запрос…',SUCCEEDED:'TEST: ответ сохранён.',FAILED:'TEST: выполнение завершилось ошибкой.',CANCELLED:'Отменено до выполнения.',UNKNOWN:'Исход неизвестен. Повтор ключа проверит сохранённые факты; повторного исполнения нет.'};
+  if(result.execution_mode==='REAL')Object.assign(labels,{ATTEMPTING:'GigaChat обрабатывает запрос…',SUCCEEDED:'Ответ GigaChat сохранён.',FAILED:'Запрос GigaChat завершился ошибкой.'});
   const detail=modelChat()?' · '+result.references.model_ref+(result.usage?.total_tokens==null?'':' · usage '+result.usage.total_tokens):'';
-  text('chatTurnStatus',labels[result.state]+detail);
+  text('chatTurnStatus',labels[result.state]+detail+(typeof result.diagnostic_code==='string'?' · '+result.diagnostic_code:''));
   $('chatTurnNew').hidden=result.state!=='UNKNOWN';
   $('chatTurnCancel').disabled=!['READY','ATTEMPTING'].includes(result.state);
   if(['SUCCEEDED','FAILED','CANCELLED'].includes(result.state)){
@@ -2093,6 +2107,7 @@ function chatCount(map){return Object.values(map||{}).reduce((sum,n)=>sum+(Numbe
 async function loadChatAccess(){
   const access=await api('/ui/ultra-chat/capability'),c=access?.ultra_chat;
   chatTurn.ordinary=access?.turn_test?.mode==='ORDINARY';
+  chatTurn.executionMode=access?.turn_test?.execution_mode;
   chatTurn.testModelPreferences=stage5Offline&&access?.turn_test?.mode==='TEST_OFFLINE'&&access.turn_test.chat_model_preferences===true;
   chatTurn.available=access?.turn_test?.available===true&&access.turn_test.mode===(chatTurn.ordinary?'ORDINARY':stage5Offline?'TEST_OFFLINE':'TEST');
   chatTurn.preferencesEnabled=modelChat()&&access?.turn_test?.chat_preferences===true;
@@ -2315,7 +2330,7 @@ async function openPicker(){
   $('chatModelMenu').replaceChildren(element('p','Загружаем модели…','muted'));
   if(modelChat()){
     const options=chatTurn.models.map(m=>{
-      const button=element('button',m.display_name);button.type='button';button.setAttribute('role','option');
+      const button=element('button',m.display_name+(m.availability==='UNAVAILABLE'?' · недоступна':m.availability==='UNVERIFIED'?' · доступ не проверен':''));button.type='button';button.setAttribute('role','option');
       button.setAttribute('aria-selected',String(m.model_id===chatTurn.model));
       button.onclick=async()=>{
         if(chatTurn.testModelPreferences)return chooseTestChatModel(m.model_id);

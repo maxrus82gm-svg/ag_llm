@@ -1,0 +1,16 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "test:failed": 1
+  },
+  "cases": [
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001/mutant_version.py::ProtocolTests::test_version_mismatch_missing_usage_and_budget_limit",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": []
+}

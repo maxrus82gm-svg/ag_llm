@@ -41,6 +41,7 @@ class ProviderResponse:
     status: int
     data: object = field(repr=False)
     error_code: str | None = None
+    observed_model: str | None = None
 
 
 @dataclass(frozen=True)
@@ -251,6 +252,8 @@ def parse_response(request: PreparedRequest, response: object) -> ChatResult:
                        code=code, usage=usage)
 
     if http_reply is not None and http_reply.error_code is not None:
+        if type(response) is dict:
+            usage = _usage(response)
         return invalid(http_reply.error_code)
 
     try:
@@ -292,7 +295,7 @@ def parse_response(request: PreparedRequest, response: object) -> ChatResult:
         return invalid("invalid_response_metadata")
     return _result(request, Outcome.COMPLETED, Execution.RESPONSE_RECEIVED,
                    text=content, usage=usage,
-                   metadata=ResponseMetadata(model, finish, created))
+                   metadata=ResponseMetadata(http_reply.observed_model if http_reply and http_reply.observed_model else model, finish, created))
 
 
 class ChatTransport(Protocol):

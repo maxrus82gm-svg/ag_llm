@@ -1,0 +1,111 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "test:passed": 7,
+    "subtest:passed": 7
+  },
+  "cases": [
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_approval_reuse_expiry_tls_and_default_authority_denied",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_catalog_unavailable_and_caps_are_not_preferences",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_errors_one_physical_post_no_auto_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_errors_one_physical_post_no_auto_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_errors_one_physical_post_no_auto_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_errors_one_physical_post_no_auto_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_errors_one_physical_post_no_auto_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_errors_one_physical_post_no_auto_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_errors_one_physical_post_no_auto_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "subtest"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_errors_one_physical_post_no_auto_refresh_retry",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_oauth_expiry_scope_binding_and_no_duplicate_web_cache",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_real_route_six_models_history_cached_reasoning_reopen_and_no_replay",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_timeout_tls_transport_errors_unknown_no_replay",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    },
+    {
+      "test": "test_web_alarm_gigachat_multimodel.py::ProtocolTests::test_version_mismatch_missing_usage_and_budget_limit",
+      "phase": "call",
+      "outcome": "passed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001\\run_checks.py",
+    "--child",
+    "test_web_alarm_gigachat_multimodel.py",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_gxnmq7s1\\p"
+  ],
+  "elapsed_seconds": 31.74732429999858,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 0,
+  "runner_exit_code": 0
+}

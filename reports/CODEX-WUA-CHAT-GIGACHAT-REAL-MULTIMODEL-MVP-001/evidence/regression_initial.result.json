@@ -1,0 +1,32 @@
+{
+  "exit_code": 4,
+  "counts": {},
+  "cases": [],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001\\run_checks.py",
+    "--child",
+    "test_ordinary_chat_service.py",
+    "test_web_alarm_gigachat_transport.py",
+    "test_web_alarm_gigachat_server_admission.py",
+    "test_web_alarm_gigachat_ultra_preflight.py",
+    "test_web_alarm_ordinary_application.py",
+    "test_web_alarm_ordinary_core_bridge.py",
+    "test_web_alarm_ordinary_admission.py",
+    "test_web_alarm_perchat_usage.py",
+    "test_web_alarm_test_chat_model.py",
+    "test_web_alarm_ordinary_test_activation.py",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_zu628m5r\\p"
+  ],
+  "elapsed_seconds": 0.43441190000157803,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 4,
+  "runner_exit_code": 4
+}

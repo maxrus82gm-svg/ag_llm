@@ -784,6 +784,7 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
         turns = self._turns_for(root, workspace_id, chat_id)
         keys = ("prompt_tokens", "completion_tokens", "reasoning_tokens", "total_tokens")
         known, missing = dict.fromkeys(keys, 0), dict.fromkeys(keys, 0)
+        cached_input = dict(known=0, missing=0, full_input_known=0, full_input_missing=0)
         last, seen = None, set()
         with turns._session(root, workspace_id, chat_id):
             index = run_store.load_workspace_run_index(root)
@@ -806,6 +807,15 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
                     raise ValueError("Duplicate attempt identity")
                 seen.add(attempt)
                 usage = view.get("usage") or {}
+                cached = usage.get('precached_prompt_tokens')
+                if cached is None:
+                    cached_input['missing'] += 1
+                else:
+                    cached_input['known'] += cached
+                if cached is None or usage.get('prompt_tokens') is None:
+                    cached_input['full_input_missing'] += 1
+                else:
+                    cached_input['full_input_known'] += usage['prompt_tokens']+cached
                 for key in keys:
                     value = usage.get(key)
                     if value is None:
@@ -815,7 +825,7 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
                 last = {"turn_id": run_id, "state": view["state"], "usage": usage}
         return {"available": True, "synthetic": True, "attempts": len(seen),
                 "known": known, "missing": missing, "complete": missing["total_tokens"] == 0,
-                "last": last}
+                "last": last, 'cached_input': cached_input}
 
     def _context(self, root, workspace_id, chat_id, turns):
         # Actual projection happens in adapter.freeze under Turn's shared writer
@@ -859,7 +869,7 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
             if user["role"] != "user":
                 continue
             producer = user.get("producer", {})
-            if producer.get("kind") != "offline_chat_fixture":
+            if producer.get("kind") not in ("offline_chat_fixture", "ordinary_chat_provider"):
                 # Legacy/manual history needs explicit provenance selection;
                 # never guess that an old failure or agent result is context.
                 raise UltraChatError(409, "context_source_unsupported", "Select a supported Ordinary Chat history")

@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 import time
 import uuid
+import hashlib
+import threading
 
 import httpx
 
@@ -12,6 +14,8 @@ CHAT_URL = "https://api.giga.chat/v1/chat/completions"
 
 _access_token: str | None = None
 _access_token_valid_until = 0.0
+_token_binding = None
+_token_lock = threading.Lock()
 
 
 def real_preflight(model_id: str) -> dict:
@@ -62,40 +66,33 @@ def extract_usage(data: object) -> dict:
     return result
 
 
-async def get_access_token() -> str:
+async def get_access_token(*, authority=None) -> str:
     from gigachat_admission import require_real_authority
-    require_real_authority()  # Before cache/env/HTTP. H34 grants no REAL OAuth.
-    global _access_token, _access_token_valid_until
-
-    if _access_token and time.time() < _access_token_valid_until:
-        return _access_token
-
-    credentials = os.getenv("GIGACHAT_CREDENTIALS")
-    scope = os.getenv("GIGACHAT_SCOPE", "GIGACHAT_API_PERS")
-
-    if not credentials:
-        raise RuntimeError("Не найдена переменная среды GIGACHAT_CREDENTIALS.")
-
-    headers = {
-        "Authorization": f"Basic {credentials}",
-        "RqUID": str(uuid.uuid4()),
-        "Accept": "application/json",
-    }
-
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            OAUTH_URL,
-            headers=headers,
-            data={"scope": scope},
-        )
-        response.raise_for_status()
-
-    data = response.json()
-    token = data.get("access_token")
-
-    if not token:
-        raise RuntimeError("GigaChat не вернул корректный access_token.")
-
-    _access_token = token
-    _access_token_valid_until = time.time() + 25 * 60
-    return token
+    require_real_authority(authority)  # Before cache, credentials or I/O.
+    global _access_token, _access_token_valid_until, _token_binding
+    from ordinary_chat_service import PreSendDenied
+    # Nonblocking across event loops/threads: never wait on a lock held by a
+    # suspended coroutine. One account stream is enforced by the session too.
+    if not _token_lock.acquire(blocking=False):
+        raise PreSendDenied('oauth_busy')
+    try:
+        credentials, scope = authority.credentials()
+        binding = (hashlib.sha256(credentials.encode()).digest(), scope, authority.account_id,
+                   authority.trust_identity)
+        if _access_token and binding == _token_binding and time.time() + 30 < _access_token_valid_until:
+            return _access_token
+        _access_token = None
+        _access_token_valid_until = 0
+        _token_binding = None
+        reply = await authority.request('oauth', OAUTH_URL, method='POST',
+            headers={'Authorization': 'Basic '+credentials, 'RqUID': str(uuid.uuid4()),
+                     'Accept': 'application/json'}, data={'scope': scope}, maximum=16384)
+        token, expires = reply.get('access_token'), reply.get('expires_at')
+        if (type(token) is not str or not token or len(token) > 8192
+                or any(ord(c) < 33 or ord(c) > 126 for c in token)
+                or type(expires) is not int or not time.time()+30 < expires/1000 <= time.time()+3600):
+            raise PreSendDenied('oauth_response_invalid')
+        _access_token, _access_token_valid_until, _token_binding = token, expires/1000, binding
+        return token
+    finally:
+        _token_lock.release()

@@ -1,0 +1,32 @@
+{
+  "exit_code": 1,
+  "counts": {
+    "test:failed": 1
+  },
+  "cases": [
+    {
+      "test": "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001/mutant_version.py::ProtocolTests::test_version_mismatch_missing_usage_and_budget_limit",
+      "phase": "call",
+      "outcome": "failed",
+      "kind": "test"
+    }
+  ],
+  "expected_guard_denials": 0,
+  "guard_events": [],
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001\\run_checks.py",
+    "--child",
+    "reports/CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001/mutant_version.py::ProtocolTests::test_version_mismatch_missing_usage_and_budget_limit",
+    "--basetemp",
+    "C:\\Users\\REX\\AppData\\Local\\Temp\\ultra_preflight_kpl9xsmz\\p"
+  ],
+  "elapsed_seconds": 2.456009100016672,
+  "guard_denials": 0,
+  "unexpected_guard_denials": 0,
+  "pytest_exit_code": 1,
+  "runner_exit_code": 1
+}

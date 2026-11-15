@@ -1292,6 +1292,24 @@ function ordinaryRoutes(available=true, extra={}) {
     '/ultra/chat/workspaces/ws_a/chats/chat_a/settings':()=>({settings:{compression_threshold_tokens:250000,answer_tokens:10000}}),
     [S5_TURN+'/latest']:()=>({turn:null,text:null}),...extra};
 }
+
+test('approved REAL labels and unavailable account model remain distinct from TEST',async()=>{
+  const routes=ordinaryRoutes(true);
+  const capability=routes['/ui/ultra-chat/capability'];
+  routes['/ui/ultra-chat/capability']=()=>{const c=capability();c.turn_test.execution_mode='REAL';
+    c.turn_test.models[0].availability='AVAILABLE';return c};
+  const h=harness({routes});await settle();
+  assert.equal(h.el('chatInput').placeholder,'Сообщение GigaChat');
+  assert.match(h.el('chatComposerNote').textContent,/серверный допуск/);
+  h.run('showTurn('+JSON.stringify({...offlineTurn({idempotency_key:'a'.repeat(32),model_ref:'gigachat_2_pro'},'FAILED'),
+    mode:'ORDINARY',execution_mode:'REAL',diagnostic_code:'provider_http_429'})+')');
+  assert.match(h.el('chatTurnStatus').textContent,/GigaChat/);
+  assert.match(h.el('chatTurnStatus').textContent,/provider_http_429/);
+  assert.doesNotMatch(h.el('chatTurnStatus').textContent,/TEST/);
+  h.run("chatTurn.models[0].availability='UNAVAILABLE';renderTurnComposer()");
+  assert.equal(h.el('chatSend').disabled,true);
+  assert.match(h.el('chatComposerNote').textContent,/недоступна/);
+});
 test('STANDARD Ordinary sends selected model without local-test refs through normal page',async()=>{
   const h=harness({routes:ordinaryRoutes(true,{[S5_TURN]:opts=>({...offlineTurn(JSON.parse(opts.body),'SUCCEEDED'),mode:'ORDINARY'})})});
   await settle();assert.equal(h.context.document.body.getAttribute('data-stage5-offline'),null);

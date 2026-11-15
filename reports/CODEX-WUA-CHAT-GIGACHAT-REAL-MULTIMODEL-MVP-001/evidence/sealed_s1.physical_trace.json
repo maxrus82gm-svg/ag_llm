@@ -1,0 +1,432 @@
+{
+  "real_enabled": false,
+  "admitted_requests": [
+    {
+      "route": "executor",
+      "attempt": "pa_03d6b0d9d0c848e7b1b0982d602fec3b",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_direct_7c09d9498cd240bc988fdb43fc6d4886:4fee4819aaf4cb43eac34a5aff68add7d02bec17043a00f4f63f4917f0364058",
+        "run_id": "20261115_135007_eba050",
+        "turn_id": null
+      },
+      "workspace_id": "ws_63e86c075a72478788cc5ce032858aeb",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 12068,
+      "wire_sha256": "7c48ab8ca17b3b7c899bde567617710ce3208a6f916679d6bec052412d7a8f03"
+    },
+    {
+      "route": "executor",
+      "attempt": "pa_180fb1e26d464229ba519532e4c6ffd4",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_direct_47fe0a216f4f4328ac6f8e8347efcdc1:f83f8b8a96b12a768240b429754bd434da187e1e6aebbdecc5b7d037707504bc",
+        "run_id": "20261115_135008_c66418",
+        "turn_id": null
+      },
+      "workspace_id": "ws_78561caea5164aa58317dd2f540d90b5",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 12068,
+      "wire_sha256": "c57013be60e1bc7dd96fe1188b230c096aaa1ee72db846c7ab084175d89ccd30"
+    },
+    {
+      "route": "executor",
+      "attempt": "pa_673a92afa6e347b4a5aa157cd2af59f6",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_direct_bd00b2b57fbb4350befc60b658e8169d:658902145ac34d0b412a14047749da331cb68419bd9398b8fdf52af22d0792dd",
+        "run_id": "20261115_135010_14ba38",
+        "turn_id": null
+      },
+      "workspace_id": "ws_3ecf5d12fe9f4c468e82f3b19da7552e",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 12068,
+      "wire_sha256": "342e0392f81d803c785fdbd489f8430e7e1157095d888e70a01b6918caf0bb55"
+    },
+    {
+      "route": "mcp_chat",
+      "attempt": "pa_dfbb59c85a9a0077d33d659050572ac81497feec158ddf6293f1c572634c9e9c",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "direct:150bc4e62318bb4f0cd7e132421abcda0fec2dfea5e8b586e1ef6922a471cf5f:54b42a3a0465a24e8db1bcce9a59a52c5ad3277e92d505f33f0b4053c9345db4",
+        "run_id": "h34_s1_run",
+        "turn_id": null
+      },
+      "workspace_id": "ws_238f7c560b3a4bff85078e2b432f50bd",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 135,
+      "wire_sha256": "85f5860596eacfeece1503491a8fbc096bae68df302275e8c96c1abce238222a"
+    },
+    {
+      "route": "audit_diagnostic",
+      "attempt": "pa_2156689f747e4bfca5484aaa8e2f3f90",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_audit_diagnostic_2682884b1d394a538acee910c1d1065e:809a96545013426c3a0ad17a6ac1a374df52c0151414c627bbc8ff119cd389c4",
+        "run_id": "h34_s1_run",
+        "turn_id": null
+      },
+      "workspace_id": "ws_74a2259c60ee4360a165cc6a4e7f0564",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 10314,
+      "wire_sha256": "730f83f77674c998882d8db14c2f5997043840cf542519b3b3b7bfd3b6433b27"
+    },
+    {
+      "route": "executor",
+      "attempt": "pa_10f7353461c14c549d6597a029d52374",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_direct_b18f3b4dfa904138b4088b0fa8075c8c:c8b1e392df48a2d0cb3e5602322fe845a167cf6481de20707b3221f8e3bb5985",
+        "run_id": "20261115_135014_e3deb3",
+        "turn_id": null
+      },
+      "workspace_id": "ws_d2bd5cdab69144a8b758fb0a6b988e00",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 12083,
+      "wire_sha256": "c2dd0bb92e97926e0d9def19b039395e3c809aa887f01a08c2eae759314cd395"
+    },
+    {
+      "route": "executor",
+      "attempt": "pa_a91c3a7106d24b9c840036cb992e2ef1",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_direct_f7870a6f95c2463fb7a376fe77c9bd3d:57741fae327284af97e4d7b1b9ef75d8a2198022a5e29a8009bb345dca18e9df",
+        "run_id": "20261115_135014_e3deb3",
+        "turn_id": null
+      },
+      "workspace_id": "ws_d2bd5cdab69144a8b758fb0a6b988e00",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 221048,
+      "wire_sha256": "cf75b7acffa886870fb6212de6db7620934759ddf945cdc328b5bb5e156125d6"
+    },
+    {
+      "route": "executor",
+      "attempt": "pa_665dbf563c5a40609878bd6be157de06",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_direct_b77721f80b1842628b0567218eeeffa6:3a04f7676d8381197fb6546a13b5ca325e525065ec8453910a8b6dd6a8259de9",
+        "run_id": "20261115_135014_e3deb3",
+        "turn_id": null
+      },
+      "workspace_id": "ws_d2bd5cdab69144a8b758fb0a6b988e00",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 222016,
+      "wire_sha256": "04aad970e2626ab8349e8adaf1451c51f2fda1f105ead2dabfb901aa39b2ff9d"
+    },
+    {
+      "route": "planner_session",
+      "attempt": "pa_9ee857c5534f497e8c542d5f021697ad",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_planner_initial_9be0590a278d481ab7bd055143beca58:ee559d9bb6177206e55795fa1a39e6e860ad547ab078dba71b862885f542a65c",
+        "run_id": "20261115_135020_5e4a1a",
+        "turn_id": null
+      },
+      "workspace_id": "ws_4e32e73485d54bedb96ea2b22e20dea8",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 12480,
+      "wire_sha256": "0f1334759c1ed09f2bbe69b9c62b413edf404a0a3cebae145f6971f4d6ff8489"
+    },
+    {
+      "route": "executor",
+      "attempt": "pa_361a61038c4f4b20b88752d184324511",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_stage:stage_1_d44d7b6e2471480b839878c5f3180488:9f2914b6099564f331952d5cafa7136e1244e9d5138e9e4d9b390f6dbea1657c",
+        "run_id": "20261115_135020_5e4a1a",
+        "turn_id": null
+      },
+      "workspace_id": "ws_4e32e73485d54bedb96ea2b22e20dea8",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 8965,
+      "wire_sha256": "d4cc32c03e4682f18673c0e3d445b4a9daff0750a934d0d32c2080592ad8d6b7"
+    },
+    {
+      "route": "executor",
+      "attempt": "pa_2025f062de714c6384c220aafb0ee7ca",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_stage:stage_1_09fa2e86245a473db5475a54b1198145:e52ad945a3acc884ab540258faab5da2358804ffa77a3b9aac0b40798cd9e8a2",
+        "run_id": "20261115_135020_5e4a1a",
+        "turn_id": null
+      },
+      "workspace_id": "ws_4e32e73485d54bedb96ea2b22e20dea8",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 111932,
+      "wire_sha256": "83b42c8f9feebd540cf0d30fb7dcf2b9f8d036f00fd4618871885cfbc4530599"
+    },
+    {
+      "route": "planner_session",
+      "attempt": "pa_6b47e9c7c68645fca3069755b8ae0a41",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_planner_readiness_5a8f047339824ef0b5a02f1526ef9e4e:91112fa2dcaf63cd6445888287b7b891d71fcd7cd60a8b53a5e66db0f3244e25",
+        "run_id": "20261115_135020_5e4a1a",
+        "turn_id": null
+      },
+      "workspace_id": "ws_4e32e73485d54bedb96ea2b22e20dea8",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 14007,
+      "wire_sha256": "c5e620951404c9e1e7e48337c08f3d2adeba1fedbf866c85d976764615feb1ab"
+    },
+    {
+      "route": "executor",
+      "attempt": "pa_125dea45e9ec4a709810dc5c868abcae",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_executor_stage:stage_2_a46689803fda4464988b0236a24f41eb:72fea17a32c975895f76b6c05e97bb42d468907c389d19c607d719d6d6813320",
+        "run_id": "20261115_135020_5e4a1a",
+        "turn_id": null
+      },
+      "workspace_id": "ws_4e32e73485d54bedb96ea2b22e20dea8",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 7048,
+      "wire_sha256": "74e4e6c8f784b760bbf4dc92b4cb8a1adde9ed82c450a53698ea7b6224660849"
+    },
+    {
+      "route": "planner_session",
+      "attempt": "pa_750ec20c20824a399a055b6cbe7b73fe",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_planner_readiness_eee9c75d958c4936a406b435197ebb24:7cb489bd6d95ed8687e11bd72036e285fbcdd8683449bbc120104431632648aa",
+        "run_id": "20261115_135020_5e4a1a",
+        "turn_id": null
+      },
+      "workspace_id": "ws_4e32e73485d54bedb96ea2b22e20dea8",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 14941,
+      "wire_sha256": "64b0cb0538fdfa7de01bd6afadefa28e101f069ee5d09fd6c43d818130e47487"
+    },
+    {
+      "route": "planner_direct",
+      "attempt": "pa_e1c40ff65668436b9482b698b3407a16",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_planner_initial_f0f026732f9744b896afcb062e67a4b7:bb8e5b43dbae80b569ce2ffd6147e785e59f9582ec6151c9de11f3bf9a46f953",
+        "run_id": "h34_s1_run",
+        "turn_id": null
+      },
+      "workspace_id": "ws_13d324edcbb843cf89dc1da599b65610",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 6949,
+      "wire_sha256": "f9e6963cef1d52f0c1dbc005b0781f61dd9035645bc7c0a71207c2d73bc62de7"
+    },
+    {
+      "route": "verifier_final",
+      "attempt": "pa_286858e6c5284d27884813160ea3fd05",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_dredd_final_f3680681aa5c4bacbfce43e6caf2156d:e0713f58e581cdeff2c3264914f6ad3619945da73d45170dfe501d190be984f2",
+        "run_id": "h34_s1_run",
+        "turn_id": null
+      },
+      "workspace_id": "ws_52e3becbe9974689bec3934b6332f83c",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 3206,
+      "wire_sha256": "5605cf4b6e0711f0d7a1344ad2821813da915ccedb953f315bc59a76f8e8942f"
+    },
+    {
+      "route": "verifier_permission",
+      "attempt": "pa_fa484ef1cc4e4370aa77894174a3c303",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_dredd_permission_56e61bcfaeec45f79ca9b3d22e6c6c76:ab7fd1ecba3ef80d06ac07ed52d471d39f893b1a84e344b685943b0358f6a595",
+        "run_id": "h34_s1_run",
+        "turn_id": null
+      },
+      "workspace_id": "ws_ad0070f86da14d3a8f37c301afb8d061",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 1391,
+      "wire_sha256": "3e27b3a7215e86a040d6f0b3a868f21395f8da9cb0da9bd45717e4adfb377ed4"
+    },
+    {
+      "route": "planner_review",
+      "attempt": "pa_6bf7419fb00241df8c82c0c1971e2d50",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_dredd_planner_review:initial_c125508c4e2f42eba79691bcd222c182:63d9fed1117c4267cfb5a4f0e6dadc79b3ee5d519f8919c94e6afded42774e83",
+        "run_id": "h34_s1_run",
+        "turn_id": null
+      },
+      "workspace_id": "ws_17d481bb138840a8ad203e83a2f8791d",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 852,
+      "wire_sha256": "bc8f7432860ae3938c4a437a165368d6b68991aa3e737693f989a4daaf312620"
+    },
+    {
+      "route": "verifier_final",
+      "attempt": "pa_ebba90bb85d14dc29e91a4271dc79ae4",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_dredd_final_3e1400e7ccb045dfab8579a1088a618e:90fb4e60c587136599cc975723f0df3f05f1db837aee0fa901e4e0693a8f5286",
+        "run_id": "h34_s1_run",
+        "turn_id": null
+      },
+      "workspace_id": "ws_d7bcdbdaaf2a4513a308db7936fe4fff",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 3206,
+      "wire_sha256": "5605cf4b6e0711f0d7a1344ad2821813da915ccedb953f315bc59a76f8e8942f"
+    },
+    {
+      "route": "compressor",
+      "attempt": "pa_fab4b53d3dac4c1fbb491b5089767e50",
+      "state": "SENT",
+      "binding": {
+        "chat_id": null,
+        "logical_call_id": "lc_compressor_compress_78c95aaf2a6348d988739cb2b48302a9:1ae51fcceef5670095f447e9c2a8ded39ca8c0c5a04c5f628d5eea24a75d0c55",
+        "run_id": "h34_s1_run",
+        "turn_id": null
+      },
+      "workspace_id": "ws_5b683f4ad753416a9b7930ab0171ed6d",
+      "policy_sha256": "469a3f2b5cb6d251c0995cb4f5b30c3fa33bf0d89d79f9a7b95b24223e4fe0f3",
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 142,
+      "wire_sha256": "77630e56048fb6b143d821237766acb316d80ea9fc915c2585966f8c642cd25d"
+    }
+  ],
+  "static_send_sites": [
+    [
+      "compressor_runtime.py",
+      "_request_gigachat",
+      "client.post",
+      "LLM",
+      366
+    ],
+    [
+      "gigachat_runtime.py",
+      "ProviderSession.request",
+      "client.stream",
+      "OAUTH_OR_MODELS",
+      217
+    ],
+    [
+      "gigachat_runtime.py",
+      "RealGigaChatTransport.send_bytes",
+      "client.send",
+      "LLM",
+      304
+    ],
+    [
+      "launcher.py",
+      "<import>",
+      "import:urllib.request",
+      "LOCAL_HTTP_ORIGIN",
+      29
+    ],
+    [
+      "launcher.py",
+      "_get",
+      "urlopen",
+      "LOCAL_HTTP_ORIGIN",
+      260
+    ],
+    [
+      "ordinary_chat_service.py",
+      "execute_request",
+      "dynamic.send",
+      "POTENTIAL_LLM",
+      350
+    ],
+    [
+      "ordinary_chat_service.py",
+      "execute_request",
+      "getattr.send",
+      "CAPABILITY_CHECK",
+      335
+    ],
+    [
+      "ordinary_chat_test_adapter.py",
+      "_FixtureTransport.send_bytes",
+      "dynamic.send",
+      "UNKNOWN",
+      21
+    ],
+    [
+      "ordinary_gigachat_transport.py",
+      "GigaChatTransport.send_bytes",
+      "client.stream",
+      "UNKNOWN",
+      113
+    ],
+    [
+      "planner_runtime.py",
+      "PlannerSession.call",
+      "client.post",
+      "LLM",
+      670
+    ],
+    [
+      "planner_runtime.py",
+      "run_planner",
+      "client.post",
+      "LLM",
+      807
+    ],
+    [
+      "server.py",
+      "_request_audit_diagnostic",
+      "client.post",
+      "LLM",
+      3500
+    ],
+    [
+      "server.py",
+      "_run_agent_task_impl",
+      "client.post",
+      "LLM",
+      4856
+    ],
+    [
+      "server.py",
+      "ask_gigachat",
+      "client.post",
+      "LLM",
+      576
+    ],
+    [
+      "verifier_runtime.py",
+      "_request_gigachat",
+      "client.post",
+      "LLM",
+      232
+    ]
+  ]
+}

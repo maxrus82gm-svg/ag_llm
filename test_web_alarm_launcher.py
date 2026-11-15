@@ -425,15 +425,20 @@ class StableEntryTests(Base):
 
 class BatTests(unittest.TestCase):
     def test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher(self):
-        raw = BAT.read_bytes()
-        raw.decode("ascii")
-        self.assertEqual(raw.count(b"\r\n"), raw.count(b"\n"), "batch files need CRLF line endings")
-        text = raw.decode("ascii")
-        self.assertIn('pushd "%~dp0"', text)
-        self.assertIn('"%~dp0.venv\\Scripts\\python.exe"', text)
-        self.assertIn("-m web_alarm.launcher %*", text)
-        self.assertIn("pause", text)
-        self.assertNotRegex(text, r"(?i)[a-z]:\\|\\users\\|8765|8766|8767|LOCALAPPDATA")
+        # DOC-WUA-LAUNCH-01 / USER GO 07.11: retired BAT stays empty;
+        # two fixed CMD entries delegate to the same existing launcher.
+        self.assertEqual(BAT.read_bytes(), b'')
+        for name, mode in (('Start_WebAlarm_Standard.cmd', '--standard'),
+                           ('Start_WebAlarm_Test.cmd', '--require-test')):
+            raw = (REPO / name).read_bytes()
+            text = raw.decode('ascii')
+            self.assertEqual(raw.count(b'\r\n'), raw.count(b'\n'))
+            self.assertIn('pushd "%~dp0"', text)
+            self.assertIn('"%~dp0.venv\\Scripts\\python.exe"', text)
+            self.assertIn('-m web_alarm.launcher', text)
+            self.assertIn(mode, text)
+            self.assertIn('pause', text)
+            self.assertNotRegex(text, r'(?i)[a-z]:\\|\\users\\|8765|8766|8767|LOCALAPPDATA')
         self.assertEqual(sorted(p.name for p in REPO.glob("Start_WebAlarm*.bat")), ["Start_WebAlarm.bat"])
 
 
