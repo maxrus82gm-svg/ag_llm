@@ -1,0 +1,13 @@
+# CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001
+
+**Status: PARTIAL / OFFLINE PASS / PROBE GO PENDING.** First real reply is not yet achieved. This is an interim package; the same TASK continues after separate catalog and inference GO. Do not run `task_slot_rotate.py finish` or clear БЛОК 1 before final outcome.
+
+Local Windows **user** environment provides H38-compatible credentials and `GIGACHAT_API_PERS` scope. No copy or configuration change was required. Added a small operator-only composition at `web_alarm/live_bootstrap.py`; existing H38 transport, session, Ordinary factory, server, storage and ledger remain owners of all real behavior. Fresh isolated, registered Workspace/empty Chat and initialized ledger are ready. Details: `reuse-check.md`, `bootstrap.md`, `models.md`.
+
+Addressed OFFLINE tests: initial combined run 29 PASS/1 new test-oracle ERROR; corrected oracle, then combined run **31/31 PASS**, exit 0 (5 new + 26 H38). After tightening grant bounds, new bootstrap tests **6/6 PASS**. No physical provider call. See `test-results.md`, `evidence/combined_offline.txt`, `evidence/bootstrap_final.txt` and `live-evidence.md`. The new composition was reviewed for grant separation, pre-network port binding, registry/identity/ledger verification, session closure and fail-closed behavior. It does not add a second core or permit STANDARD/TEST to become REAL.
+
+**Known limits:** scope/credential syntax and source are confirmed, account entitlement/token validity are not; TLS chain to live endpoints untested; six models registered but none account-confirmed; caps/tariff/cost UNKNOWN; single account/process/Workspace only; no automatic historical migration; no physical browser check. Probe GO cannot authorize inference. A real `ModelContract` awaits account/caps evidence.
+
+One read-only `git status --short` was accidentally executed at task entry before the personal no-Git rule was read. No further Git/GitHub operation, write, commit, push or merge was performed. Baseline `main@fb3c88d...` was therefore not verified by Git; source and report fingerprints are in `manifest.json`. The pre-existing modification to `Документация/000_Задачи Codex.md` was not touched by this work.
+
+**DOC IMPACT:** coordinator should update №05/06/34/40 and БЛОК 4 only after independent review/final result. Historical Web/Tk/STANDARD/TEST status and safety holds are unchanged. **NEXT:** approve or decline the exact bounded Stage A package in `live-evidence.md`; on approval run it once inside this TASK, evaluate account catalog/caps/tariff, then seek a distinct exact inference GO. If approval is withheld, status remains PARTIAL/NOT RUN and the active slot stays open.

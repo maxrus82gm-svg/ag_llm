@@ -1,0 +1,137 @@
+{
+  "task_id": "CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001",
+  "status": "PARTIAL_OFFLINE_PASS_PROBE_GO_PENDING",
+  "provider_calls": {
+    "oauth": 0,
+    "catalog": 0,
+    "inference": 0
+  },
+  "files": [
+    {
+      "path": "web_alarm/live_bootstrap.py",
+      "sha256": "d3546c24dad193900625ed73bdba46a5b05d34c2fa4d07e539af842997547d56",
+      "bytes": 3503,
+      "role": "new_or_report"
+    },
+    {
+      "path": "test_web_alarm_live_bootstrap.py",
+      "sha256": "02b8e78576970229cc55c914e23f75f24f62c8aba29275642a28db3aa247a7d7",
+      "bytes": 5157,
+      "role": "new_or_report"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/bootstrap.md",
+      "sha256": "93735dbe7358c1627bdb5a3976e713ca0686d7c15b7419022ad17f4cb7f7468f",
+      "bytes": 3281,
+      "role": "new_or_report"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/bootstrap_final.txt",
+      "sha256": "4eb7378ad3432de54175a5f751b875cad3cc10630df7c5653d80433417da184d",
+      "bytes": 1033,
+      "role": "new_or_report"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/combined_offline.txt",
+      "sha256": "fd34d914f83177736c7854ceb934cce80992c9100ec55f1b56606ba021bf0d85",
+      "bytes": 5434,
+      "role": "new_or_report"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/prepared_workspace.json",
+      "sha256": "9259ae5646c7c398718d45759b8fe29877cc4a82d8d8789f88d2ba9a5552aa70",
+      "bytes": 370,
+      "role": "new_or_report"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/live-evidence.md",
+      "sha256": "919523a79b3c67b3caf2384b4abab6d16b10c5ca849ad7de5124064184d1947a",
+      "bytes": 980,
+      "role": "new_or_report"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/models.md",
+      "sha256": "99f4699c2cdcb8a95ae03f5cc50d0d1c0322cd42df6ab4091cdd7d86654c3d3a",
+      "bytes": 753,
+      "role": "new_or_report"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/report.md",
+      "sha256": "9569c6cfbbb9a74a7fc232421b0fd2936f992efa929b19f6d1185b438c8d4633",
+      "bytes": 2710,
+      "role": "new_or_report"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/reuse-check.md",
+      "sha256": "280dcd8b31385e85c1c590932d0a9faf685430e41295ffd00ff2fcb65fa8f126",
+      "bytes": 1383,
+      "role": "new_or_report"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/test-results.md",
+      "sha256": "2f0807449ec4727769311d7932cf90dd70348ae9e324924c443fd7d2e0e8646a",
+      "bytes": 1852,
+      "role": "new_or_report"
+    },
+    {
+      "path": "gigachat_transport.py",
+      "sha256": "b128e4011b7724ac0eefcc52e36e088c9e8b9fd9b9d562604daef2ad2729b808",
+      "bytes": 4701,
+      "role": "reused_unchanged_reference"
+    },
+    {
+      "path": "gigachat_runtime.py",
+      "sha256": "5e17f1baf75979f7c9f417ac6df3833b69eec66603a0a1c5310c34efe82e0146",
+      "bytes": 17603,
+      "role": "reused_unchanged_reference"
+    },
+    {
+      "path": "ordinary_gigachat_transport.py",
+      "sha256": "b3f423a81d56146b52459ba7d9a6c29aa775264f8499b39ad3e201e420cb4c09",
+      "bytes": 6303,
+      "role": "reused_unchanged_reference"
+    },
+    {
+      "path": "gigachat_admission.py",
+      "sha256": "a8ae4e2f2eac9f85e8b7d3f391e38cb35b264e0a11cc63116bb1e7aa5a78e3be",
+      "bytes": 21826,
+      "role": "reused_unchanged_reference"
+    },
+    {
+      "path": "web_alarm/ordinary_provider.py",
+      "sha256": "096c574f536bf509e28d56b5da7883ad85f4d9f0bdb35e9afc9315feca03f059",
+      "bytes": 14937,
+      "role": "reused_unchanged_reference"
+    },
+    {
+      "path": "web_alarm/server.py",
+      "sha256": "3a4cc8e5f4bbf31ce38ddcc9d8b8529df500c12ade78f4e3646f9491e29ac7e7",
+      "bytes": 78024,
+      "role": "reused_unchanged_reference"
+    },
+    {
+      "path": "model_registry.py",
+      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+      "bytes": 2519,
+      "role": "reused_unchanged_reference"
+    },
+    {
+      "path": "ultra_budget_ledger.py",
+      "sha256": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592",
+      "bytes": 13219,
+      "role": "reused_unchanged_reference"
+    },
+    {
+      "path": "Start_WebAlarm_Standard.cmd",
+      "sha256": "79468ca15e53bc595521278f67ed147304787a2789567ab33096e3075e3dc372",
+      "bytes": 922,
+      "role": "reused_unchanged_reference"
+    },
+    {
+      "path": "Start_WebAlarm_Test.cmd",
+      "sha256": "157091918484c159ecef497a60c78e95b45068fbc42c38c2682b6709a12bb6e3",
+      "bytes": 1199,
+      "role": "reused_unchanged_reference"
+    }
+  ]
+}
