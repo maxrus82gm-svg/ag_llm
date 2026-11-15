@@ -1,0 +1,77 @@
+{
+  "status": "SUCCESS",
+  "error_code": null,
+  "grant_id": "First479d54451b0670dc759da42643f9d68a",
+  "committed_call_counts": {
+    "oauth": 1,
+    "catalog": 1,
+    "inference": 1,
+    "liability": 783
+  },
+  "grant_state": "CLOSED",
+  "turn_state": "SUCCEEDED",
+  "answer": "Готово",
+  "response_model": "GigaChat-2:2.0.30.01",
+  "usage": {
+    "status": "complete",
+    "prompt_tokens": 100,
+    "completion_tokens": 4,
+    "total_tokens": 104,
+    "reasoning_tokens": null,
+    "precached_prompt_tokens": 0
+  },
+  "latest_turn_matches": true,
+  "history_roles": [
+    "user",
+    "assistant"
+  ],
+  "history_text": [
+    "Ответь одним словом: готово",
+    "Готово"
+  ],
+  "raw_verified": true,
+  "usage_summary": {
+    "available": true,
+    "synthetic": false,
+    "attempts": 1,
+    "known": {
+      "prompt_tokens": 100,
+      "completion_tokens": 4,
+      "reasoning_tokens": 0,
+      "total_tokens": 104
+    },
+    "missing": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "reasoning_tokens": 1,
+      "total_tokens": 0
+    },
+    "complete": true,
+    "last": {
+      "turn_id": "turn_f46f6a5e2bebb52217e67c36f04f4d52552599a4672f48e9ad083a3e1c0fe8a0",
+      "state": "SUCCEEDED",
+      "usage": {
+        "status": "complete",
+        "prompt_tokens": 100,
+        "completion_tokens": 4,
+        "total_tokens": 104,
+        "reasoning_tokens": null,
+        "precached_prompt_tokens": 0
+      }
+    },
+    "cached_input": {
+      "known": 0,
+      "missing": 0,
+      "full_input_known": 100,
+      "full_input_missing": 0
+    }
+  },
+  "ledger": {
+    "events": 3,
+    "attempts": 1,
+    "states": [
+      "KNOWN_TERMINAL"
+    ]
+  },
+  "authorization_material_saved": false
+}
