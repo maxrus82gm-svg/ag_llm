@@ -6,4 +6,8 @@ Result: OAuth 200 and catalog 200 are inferred from H38's successful parsed retu
 
 These counters and successful parsed results support one physical OAuth request and one physical catalog request; there was no packet-level capture. TLS verification remained enabled; both HTTPS calls succeeded. This is **PROBE PASS**, not a generated reply. STANDARD and TEST were unchanged.
 
-**Stop point:** Stage A grant cannot be reused. Inference/completions remains **NOT AUTHORIZED / 0 calls**. A distinct GO is required after exact model contract, response-version and financial limits are verified; no new grant or API probe will run automatically.
+**Stage A stop point:** its grant cannot be reused and it authorized no inference. The later Stage B conditional GO is assessed below; no new grant or API probe ran automatically.
+
+## Stage B USER GO — preflight stopped before network
+
+The user granted a bounded first response, conditional on confirmed model caps and exact response-version IDs. `stage-b-blocker.md` documents why the mandatory H38 `ModelContract` could not be justified. Stage B grant created: **no**. Stage B OAuth: **0**; catalog: **0**; inference: **0**. No new RAW, Turn or ledger event. The prepared Workspace remains intact and the prior Stage A grant remains CLOSED. The Stage B GO was **not exercised**; this is not LIVE PASS.

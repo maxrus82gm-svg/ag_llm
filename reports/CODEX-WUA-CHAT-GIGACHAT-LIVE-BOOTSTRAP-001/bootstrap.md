@@ -1,4 +1,4 @@
-# Operator bootstrap — Stage A completed; inference GO pending
+# Operator bootstrap — Stage A completed; Stage B preflight blocked
 
 The normal `Start_WebAlarm_Standard.cmd` remains HOLD and `Start_WebAlarm_Test.cmd` remains OFFLINE. No permanent REAL switch exists. Stage A invoked `web_alarm.live_bootstrap.catalog_probe` through a single-use operator script and closed its grant. After a *second* GO, `serve_one_inference` takes a new `LiveApproval` constructed in trusted server-side Python; no browser request, JSON payload, command-line flag, or environment flag creates that object. Credentials are read by H38 directly from the existing Windows user environment, inside `ProviderSession`, after approval.
 
@@ -14,4 +14,4 @@ Prepared fresh Workspace (no historical data): `%LOCALAPPDATA%/WebAlarmWorkspace
 
 Construct a **new** `LiveApproval` with exactly one verified `ModelContract` for a catalog-confirmed text model and its exact accepted response versions, evidence-backed context/output caps, bounded token liability, `max_answer_tokens<=32`, one OAuth, one catalog and one inference call, and expiry no longer than 15 minutes. `serve_one_inference(WebAlarmApi(), wa_workspace_id, approval)` binds the existing Web Alarm loopback server **before** consuming control calls, performs one explicit catalog lookup and then serves. Open the single prepared chat, select the approved model and send `Ответь одним словом: готово` once. F5/reopen are reads, not resends. The approval's expiry shuts the server down; `finally` closes the session. If an attempt is uncertain or active at shutdown, the durable marker stays fail-closed for review.
 
-Before Stage B, separately establish observed model availability/version, exact model caps, tariff/financial bound, and approval of this physical POST. Do not infer caps or price from a registry record or the probe alone. The Stage A GO is consumed; this task has **no Stage B GO**.
+The user supplied a bounded Stage B GO. Preflight found no authoritative exact Lite response-version ID or separate provider output cap, so no Stage B grant was created and no Stage B network call was made. See `stage-b-blocker.md`. Do not infer caps or response versions from adjacent models.

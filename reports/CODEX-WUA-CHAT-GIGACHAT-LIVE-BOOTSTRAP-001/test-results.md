@@ -2,6 +2,8 @@
 
 Stage A LIVE control probe is recorded separately in `live-evidence.md`: 1 OAuth + 1 catalog + 0 inference, grant CLOSED. No OFFLINE suite was rerun after the successful external probe because source code was unchanged.
 
+Stage B preflight was read-only/local; `evidence/stage_b_preflight.json` records identity, ledger, process/port and TLS checks. Mandatory provider output cap and exact Lite response-version ID were unconfirmed, so no Stage B grant, OAuth, catalog or inference was executed. No new source change required a test rerun.
+
 Environment: Windows, project `.venv` Python, real credential/scope removed from each test process, `PYTHONDONTWRITEBYTECODE=1`. No account API request was made during OFFLINE tests.
 
 | Check | Result |
