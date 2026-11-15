@@ -15,3 +15,7 @@ The user granted a bounded first response, conditional on confirmed model caps a
 ## Contract amendment — OFFLINE only
 
 The user later approved a narrow first-version contract amendment with an explicit ban on new provider calls pending a fresh GO. The change and 37/37 + S1 69/69 + S2 73/73 OFFLINE results are in `contract-amendment.md`. Real OAuth/catalog/inference calls during the amendment: **0/0/0**. The prepared Workspace ledger readback remains **0 events**. No real response, RAW, Turn or usage has been created. The revised first-attempt envelope awaits a new explicit approval in `go-stage-b-updated.md`.
+
+## Revised Stage B USER GO — stopped locally after control calls
+
+The user gave a fresh GO for one inference on 15.11.2026. A new grant `Firstb8c4483a73cae4bfee1ed06bfa3593f0` was created. H38 durable counters after closure: OAuth **1**, catalog **1**, inference **0**, liability **0**. Both successful parsed control calls used verified TLS with no automatic retry. The catalog confirmed `GigaChat-2` AVAILABLE. The operator's local readiness parser looked at the wrong level of the capability response and stopped before POST `/turns`; read-only diagnosis confirmed the nested `turn_test.real_available=true`. The exclusive attempt marker remains spent. No response version, generated text, RAW, Turn or usage was produced. Workspace ledger after closure: **0 events, 0 attempts**. Port 8765 is no longer listening. See `stage-b-live-stop.md` and `evidence/stage_b_result.json`. The first inference still requires a new explicit GO.

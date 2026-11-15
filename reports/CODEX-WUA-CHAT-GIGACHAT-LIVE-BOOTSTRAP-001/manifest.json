@@ -1,16 +1,22 @@
 {
   "task_id": "CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001",
-  "status": "PARTIAL_STAGE_A_PASS_STAGE_B_AMENDMENT_OFFLINE_PASS_FRESH_GO_PENDING",
+  "status": "PARTIAL_STAGE_A_PASS_STAGE_B_LIVE_STOP_PRE_INFERENCE",
   "provider_calls": {
     "stage_a": {
       "oauth": 1,
       "catalog": 1,
       "inference": 0
     },
-    "stage_b_preflight_and_amendment": {
+    "stage_b_old_preflight_and_amendment": {
       "oauth": 0,
       "catalog": 0,
       "inference": 0
+    },
+    "stage_b_live": {
+      "oauth": 1,
+      "catalog": 1,
+      "inference": 0,
+      "liability": 0
     }
   },
   "files": [
@@ -40,14 +46,14 @@
     },
     {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/bootstrap.md",
-      "sha256": "716caff1ae80b81d97922ded52d464a90541aa0c59ed282c87d483a812414962",
-      "bytes": 3549,
+      "sha256": "7f8240a20711de5eeb50462353d4d8753215a44a13e4311dfd56d1a3a19bf8e5",
+      "bytes": 3633,
       "role": "report_or_evidence"
     },
     {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/contract-amendment.md",
-      "sha256": "81e6e4dccfaba7960217c645397d0b48e4c4041d8863fd35924c94abc0f1fcdd",
-      "bytes": 3198,
+      "sha256": "23d426eeed9ca58a4c837b39a4178c91eb5903211e487acc44f33303f47de169",
+      "bytes": 3311,
       "role": "report_or_evidence"
     },
     {
@@ -117,33 +123,45 @@
       "role": "report_or_evidence"
     },
     {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_b_attempt.json",
+      "sha256": "6fc591ca96a821a0ae5eddd246772c74b4ef7aec1a595fa357e9ec92e5ec8693",
+      "bytes": 134,
+      "role": "report_or_evidence"
+    },
+    {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_b_preflight.json",
       "sha256": "d0f72b0f16126b48cf185f1032361dfb8d1f2e37ca147e69a9739d1415cd142b",
       "bytes": 953,
       "role": "report_or_evidence"
     },
     {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/evidence/stage_b_result.json",
+      "sha256": "23732d109685e50f7f83806e43570c8c704a3686b7465cf12ead5a8a32a735f6",
+      "bytes": 616,
+      "role": "report_or_evidence"
+    },
+    {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/go-stage-b-updated.md",
-      "sha256": "e007e19ebf33e2cfbf225ae0177c48342c0e85ea2db8706c55975ec5aff0d9a3",
-      "bytes": 2016,
+      "sha256": "ad287a648299d816dff1bcaeb25c5cc9d0e5ef0a46703408a366cd62f82cd85f",
+      "bytes": 2102,
       "role": "report_or_evidence"
     },
     {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/live-evidence.md",
-      "sha256": "4b043e34d69cea9ad45bdbda2ac3f7db5c9ed3ec56535cc36c53d3002a281311",
-      "bytes": 2463,
+      "sha256": "24c766068023c1832b8cb79ba79e8203762e1d3116e33c2ed0cc8217792ed5e0",
+      "bytes": 3401,
       "role": "report_or_evidence"
     },
     {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/models.md",
-      "sha256": "26b208130bac3c301928459426a4028a2897943eb181e3e0dd0d1715f4ae45b6",
-      "bytes": 1685,
+      "sha256": "eb0d9450d35fc1d11153b8635c886c8c53205f2b4d46e0f5d7f3a13326f8dc91",
+      "bytes": 1802,
       "role": "report_or_evidence"
     },
     {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/report.md",
-      "sha256": "f034f05cb324f946517f7e17cb3d4e82c96ed49c5c27fbec605be0171bf4b3a9",
-      "bytes": 4446,
+      "sha256": "2ed0529ab91f84b0a5aae03abe3808a395f6cb03a57f00989f27bbb6f1d0051e",
+      "bytes": 5149,
       "role": "report_or_evidence"
     },
     {
@@ -159,15 +177,27 @@
       "role": "report_or_evidence"
     },
     {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/run_stage_b_once.py",
+      "sha256": "ad50addbc5daf71887b24ead4cee6fcb088471f5bb99b04941198a1043579976",
+      "bytes": 10639,
+      "role": "report_or_evidence"
+    },
+    {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/stage-b-blocker.md",
       "sha256": "de746e118b3e1aaa4166af484f85d9ab8cf989da51f5aebb4f4d32d2def93e1e",
       "bytes": 3086,
       "role": "report_or_evidence"
     },
     {
+      "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/stage-b-live-stop.md",
+      "sha256": "ede339a00b02568e10d97ee9b36c4b46a1ddbc46d076f309ab52b49b366db375",
+      "bytes": 1621,
+      "role": "report_or_evidence"
+    },
+    {
       "path": "reports/CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001/test-results.md",
-      "sha256": "c1107f4537f5e655a75fa9a24701ec6ae91ce8fcadfba0d046f523a8e672f07b",
-      "bytes": 3156,
+      "sha256": "60f755c838b9de182316b12d9bb2e70fa8a058824b7e6238b7e9ec07f61b1644",
+      "bytes": 3603,
       "role": "report_or_evidence"
     },
     {

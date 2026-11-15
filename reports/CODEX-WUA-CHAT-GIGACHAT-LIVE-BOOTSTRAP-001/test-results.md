@@ -6,6 +6,8 @@ Stage B preflight was read-only/local; `evidence/stage_b_preflight.json` records
 
 The later user amendment authorized a narrow H38 contract change and OFFLINE checks only. After that change, `evidence/amendment_offline_sealed.txt` records **37/37 PASS** (MockTransport and loopback HTTP), no failure/error/skip. `evidence/amendment_s1.txt` records guarded S1 **69/69 PASS** with no isolation violation. `evidence/amendment_s2_final.txt` records guarded S2 **73/73 PASS** with no isolation violation. The early amendment runs exposed test fixture accounting and AST reconciliation mismatches; those were corrected before the final passing runs. No account API call was made during the amendment. Prepared Workspace ledger readback after testing remained **0 events**.
 
+The later LIVE operator attempt reached one real OAuth and one real catalog call but stopped before inference due to an operator script capability-wrapper parsing error. The read-only local capability response showed `turn_test.real_available=true`; the parser was corrected, and the spent marker was retained. No revised OFFLINE regression was needed for this report-only script correction; H38 source was unchanged. See `stage-b-live-stop.md`.
+
 Environment: Windows, project `.venv` Python, real credential/scope removed from each test process, `PYTHONDONTWRITEBYTECODE=1`. No account API request was made during OFFLINE tests.
 
 | Check | Result |

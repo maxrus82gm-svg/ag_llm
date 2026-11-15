@@ -16,4 +16,4 @@ The source change is limited to `gigachat_runtime.py`, the durable Turn replay v
 
 MockTransport and loopback HTTP: 37/37 addressed tests PASS, including acceptance/pin, exact future grant, foreign family, malformed suffix, usage on rejection, request/provider-cap limits, pin failure UNKNOWN and F5-style GET/reopen without a second POST. Guarded S1: 69/69 PASS; guarded S2: 73/73 PASS; zero isolation violations. Logs: `evidence/amendment_offline_sealed.txt`, `evidence/amendment_s1.txt`, `evidence/amendment_s2_final.txt`. The prepared real Workspace ledger was read again after the OFFLINE run: 0 events.
 
-Stage B physical calls under the old conditional GO and this amendment: OAuth **0**, catalog **0**, inference **0**. A new explicit user GO is required before any provider call under this revised contract.
+At amendment completion, Stage B physical calls under the old conditional GO and this amendment were OAuth **0**, catalog **0**, inference **0**. The user subsequently gave a fresh Stage B GO; that attempt spent one OAuth and catalog call but stopped before inference. See `stage-b-live-stop.md` for the later outcome.
