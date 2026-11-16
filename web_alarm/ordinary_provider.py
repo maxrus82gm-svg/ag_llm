@@ -350,10 +350,9 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 self._factory.require_real()
             except PreSendDenied:
                 raise UltraChatError(403, "ordinary_real_hold", "GigaChat sending awaits provider and safety acceptance") from None
-        if self._factory._session is not None:
-            selected = get_model_spec(body['model_ref'])
-            if selected.provider_model_id not in self._factory._session._available:
-                raise UltraChatError(409, 'ordinary_model_unavailable', 'Model not confirmed by account catalog')
+        # Preserve the existing Turn/error contract: the immutable admitted wire
+        # is refused by session.validate_wire before physical POST for an absent
+        # catalog model; UI availability alone must not change stored outcomes.
         root, _ = self._writable_workspace(_core(), wa_workspace_id)
         self._factory.fixture_for(self.registry, root)
         result = super().submit_turn(wa_workspace_id, chat_id, body)

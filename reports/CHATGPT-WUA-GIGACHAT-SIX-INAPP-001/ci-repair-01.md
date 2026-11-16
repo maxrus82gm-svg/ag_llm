@@ -1,0 +1,3 @@
+# CI correction 01 — 2026-11-16
+
+GitHub Windows 43921610007: 57 tests, 1 ERROR and 1 FAIL. Real calls 0. ERROR: early catalog preflight changed existing Turn outcome for absent model; restore the prior durable Turn/error contract (physical POST remains denied). FAIL: four expected AST fingerprints in `rt002_multimodel_reconciliation.json` are intentionally stale because new six-model version validation changes four reconciled functions/classes. Do not blindly replace pins. Print new AST fingerprints in Windows CI, inspect sink inventory and the exact source diff, then re-pin as a separate bounded source-reconciliation correction. Do not merge until subsequent independent offline green. Baseline general smoke long-path checkout failure remains separate.

@@ -50,6 +50,11 @@ jobs:
             if (!(Test-Path $name)) { throw "Required file missing: $name" }
             Get-FileHash -Algorithm SHA256 $name
           }
+      - name: Print changed AST fingerprints for independent reconciliation (diagnostic)
+        shell: pwsh
+        run: |
+          python -c "import ast,hashlib; t=ast.parse(open('gigachat_runtime.py',encoding='utf-8').read()); d={n.name:n for n in t.body if isinstance(n,(ast.ClassDef,ast.FunctionDef))}; names=('ProviderSession','RealGigaChatTransport','ModelContract','response_model_allowed'); print('AST_PINS_BEGIN'); [print(n,hashlib.sha256(ast.dump(d[n],include_attributes=False).encode('utf-8')).hexdigest()) for n in names]; print('AST_PINS_END')"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: New guarded launch and existing provider regressions (NO REAL)
         shell: pwsh
         env:
