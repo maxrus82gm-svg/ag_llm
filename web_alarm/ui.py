@@ -2018,7 +2018,7 @@ function renderTurnComposer(){
         if(effective?.availability!=='AVAILABLE'){
           $('chatSend').disabled=true;
           text('chatComposerNote',effective?.availability==='NOT_APPROVED'?
-            'Эта модель есть в каталоге, но не разрешена для текущего сеанса.':
+            'Эта модель есть в каталоге, но пока не разрешена для текущего сеанса.':
             effective?.availability==='UNAVAILABLE'?
             'Эта модель недоступна в подтверждённом каталоге аккаунта. Выберите другую модель.':
             'Выбранная модель не подтверждена для этого LIVE-сеанса.');
