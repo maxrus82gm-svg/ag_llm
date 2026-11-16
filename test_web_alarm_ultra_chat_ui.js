@@ -1522,6 +1522,38 @@ test('REAL live scope cannot send from a different Workspace and can return to p
   assert.equal(h.el('chatSend').disabled,false);
 });
 
+test('STANDARD HOLD creates first personal chat without LIVE or Workspace picker',async()=>{
+  let registered=false;
+  const routes=ordinaryRoutes(false);
+  routes['/ui/ultra-chat/capability']=()=>({...cap(),turn_test:{
+    available:false,mode:'ORDINARY',execution_mode:'HOLD',chat_preferences:true,
+    personal_workspace_id:registered?'ws_personal':null,
+    models:[{model_id:'gigachat_2_pro',display_name:'GigaChat Pro'}]}});
+  routes['/ultra/chat/workspaces']=()=>({state:'ok',workspaces:[
+    ws('ws_a','Проект А'),ws('ws_b','Проект Б'),...(registered?[ws('ws_personal','Личные чаты')]:[])]});
+  routes['/ultra/chat/personal']=opts=>{
+    assert.equal(opts.method,'POST');assert.deepEqual(JSON.parse(opts.body),{});
+    registered=true;return {wa_workspace_id:'ws_personal',created:true};
+  };
+  routes['/ultra/chat/workspaces/ws_personal/chats']=()=>({state:'ok',
+    chats:[chatItem('chat_first','Первый диалог')],excluded:{}});
+  routes['/ultra/chat/workspaces/ws_personal/chats/chat_first/messages?limit=50']=()=>page([],{
+    wa_workspace_id:'ws_personal',chat_id:'chat_first',chat:{chat_id:'chat_first',title:'Первый диалог'}});
+  routes['/ultra/chat/workspaces/ws_personal/chats/chat_first/turns/latest']=()=>({turn:null,text:null});
+  routes['/ultra/chat/workspaces/ws_personal/chats/chat_first/model']=()=>({model_ref:'gigachat_2_pro',persisted:false});
+  routes['/ultra/chat/workspaces/ws_personal/chats/chat_first/settings']=()=>({settings:{compression_threshold_tokens:250000,answer_tokens:10000}});
+  const h=harness({routes});await settle();
+  assert.equal(h.el('chatPersonalNew').hidden,false);
+  assert.equal(h.el('chatPersonalList').children.length,0);
+  assert.equal(h.el('chatWorkspaceList').children.length,2);
+  await h.el('chatPersonalNew').onclick();await settle();
+  assert.equal(h.run('chat.workspace'),'ws_personal');
+  assert.equal(h.el('chatPersonalList').children.length,1);
+  assert.equal(h.el('chatWorkspaceList').children.length,2);
+  assert.equal(h.el('chatSend').disabled,true);
+  assert.deepEqual(h.chatCalls().filter(c=>c.method==='POST').map(c=>c.url),['/ultra/chat/personal']);
+});
+
 test('Personal chat button creates direct chat without a Workspace picker or provider send',async()=>{
   const f=approvedPersonalRoutes('gigachat_2');
   const h=harness({routes:f.routes});

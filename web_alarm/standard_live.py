@@ -61,8 +61,10 @@ def personal_chat_registration(registry):
 
 
 def prepare_personal_chat(api):
-    """Only call after a fresh explicit owner consent, never on GET or launch.
+    """Create the private local chat store only after an explicit owner action.
 
+    A browser personal-create POST or optional operator LIVE consent can create
+    local storage, but neither grants real provider authority by itself.
     Refuse to adopt an unregistered or unverified preexisting directory,
     including incomplete enrollment. Leave any incomplete data for review.
     """

@@ -96,6 +96,36 @@ class ApplicationTests(s5.Fixture):
                 normal_dom=True,mode=cap['mode'],physical_synthetic_posts=len(seen),wire_sha256=seen,
                 terminal='KNOWN_TERMINAL',history_messages=2,usage_total=12,reopen_no_resend=True)),encoding='utf-8')
 
+    def test_standard_personal_chat_without_live_is_local_and_durable(self):
+        server = self.serve()
+        cap, read, write = self.tokens(server)
+        root = self.api.registry.storage_root / 'personal_chats'
+        self.assertFalse(root.exists())
+        self.assertFalse(cap['available'])
+        self.assertIsNone(cap['personal_workspace_id'])
+        self.assertEqual(self.http(server, 'POST', '/ultra/chat/personal', {})[0], 403)
+        self.assertFalse(root.exists())
+        self.assertEqual(self.http(server, 'POST', '/ultra/chat/personal', {'real': True}, write)[0], 400)
+        self.assertFalse(root.exists())
+        status, created = self.http(server, 'POST', '/ultra/chat/personal', {}, write)
+        self.assertEqual(status, 201)
+        self.assertTrue(created['created'])
+        ws = created['wa_workspace_id']
+        self.assertEqual(self.http(server, 'GET', '/ui/ultra-chat/capability')[1]['turn_test']['personal_workspace_id'], ws)
+        self.assertEqual(self.http(server, 'POST', '/ultra/chat/personal', {}, write),
+                         (200, {'wa_workspace_id': ws, 'created': False}))
+        chats = self.http(server, 'GET', '/ultra/chat/workspaces/' + ws + '/chats', headers=read)[1]
+        self.assertEqual(len(chats['chats']), 1)
+        cid = chats['chats'][0]['chat_id']
+        self.assertEqual(self.http(server, 'POST', f'/ultra/chat/workspaces/{ws}/chats/{cid}/turns',
+                         self.body('never send'), write)[0], 403)
+        self.oauth.assert_not_called()
+        reopened = self.serve()
+        _, second_read, _ = self.tokens(reopened)
+        other = self.http(reopened, 'GET', '/ultra/chat/workspaces/' + ws + '/chats', headers=second_read)[1]
+        self.assertEqual(other['chats'], chats['chats'])
+        self.assertEqual(len(core.list_chats_bounded(root)['chats']), 1)
+
     def test_default_standard_hold_before_turn_raw_token_or_network(self):
         ws,cid = self.create_chat('HOLD')
         server=self.serve();cap,read,write=self.tokens(server)

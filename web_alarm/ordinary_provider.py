@@ -100,11 +100,15 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
     The factory supplies execution only in isolated tests. Normal installation
     reads history and preferences, but accepts no provider Turn while HOLD is open.
     """
-    def __init__(self, registry, factory):
+    def __init__(self, registry, factory, *, api=None):
         if type(factory) is not OrdinaryProviderFactory:
             raise ValueError("Expected the exact server factory")
         factory.validate_server(registry)
         UltraChatService.__init__(self, registry)
+        if api is not None and api.registry is not registry:
+            raise ValueError('Personal chat API must use the same registry')
+        self._api = api
+        self._personal_lock = threading.Lock()
         self._factory = factory
         self._http_fixture = factory._fixture
         self._owners = {}
@@ -167,8 +171,24 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
 
     @staticmethod
     def is_write_path(path):
-        return (OrdinaryApplicationChatService._model_path(path)
+        return (path == '/ultra/chat/personal' or OrdinaryApplicationChatService._model_path(path)
                 or OrdinaryCoreChatService._settings_path(path) or UltraChatService.is_write_path(path))
+
+    def create_personal_chat(self, body):
+        """Browser-only local registration; never creates OAuth or model grants."""
+        if type(body) is not dict or body:
+            raise UltraChatError(400, 'invalid_ultra_chat_request', 'Expected empty personal chat request')
+        if self._api is None:
+            raise UltraChatError(403, 'personal_creation_unavailable', 'Personal creation is unavailable here')
+        from .standard_live import prepare_personal_chat, personal_chat_registration
+        with self._personal_lock:
+            existed = personal_chat_registration(self.registry) is not None
+            try:
+                record, _, _ = prepare_personal_chat(self._api)
+            except Exception:
+                raise UltraChatError(409, 'personal_storage_unavailable',
+                                     'Personal history needs storage review; no existing data changed') from None
+        return (200 if existed else 201), {'wa_workspace_id': record.workspace_id, 'created': not existed}
 
     def create_workspace(self, body):
         raise UltraChatError(405, "method_not_allowed", "Use normal Workspace registration")
@@ -180,6 +200,10 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         return super().route(path, raw_query)
 
     def write_route(self, path, raw_query):
+        if path == '/ultra/chat/personal':
+            if raw_query:
+                raise UltraChatError(400, 'invalid_ultra_chat_request', 'Query parameters are not supported')
+            return self.create_personal_chat
         if path == "/ultra/chat/workspaces":
             raise UltraChatError(405, "method_not_allowed", "Use normal Workspace registration")
         if self._model_path(path):

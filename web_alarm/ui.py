@@ -304,6 +304,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <p id="chatAccess" class="live" role="status">Проверяем доступ к истории…</p>
 <div id="chatError" class="notice error" role="alert" hidden></div>
 <div class="chat-personal-heading"><span class="side-title">ЛИЧНЫЕ ЧАТЫ</span><button type="button" id="chatPersonalNew" hidden>+ Новый чат</button></div>
+<div id="chatPersonalList" class="chat-picks" aria-label="Личные диалоги"></div>
 <div class="chat-workspace-heading"><span class="side-title">WORKSPACE</span><button type="button" id="chatRegisterWorkspace" title="Выбрать существующую папку или создать новую в окне Windows">+ Создать Workspace</button></div>
 <div id="chatWorkspaceResult" class="notice info" role="status" hidden></div>
 <p id="chatWorkspaceState" class="muted" role="status"></p>
@@ -2177,13 +2178,13 @@ function chatIcon(label,title,onClick,enabled=true){
 function renderChatWorkspaces(){
   const selected=chat.workspace;
   const personal=chat.workspaces.find(w=>w.wa_workspace_id===chatTurn.personalWorkspaceId&&w.history==='ok');
-  $('chatPersonalNew').hidden=!personal;
-  $('chatPersonalNew').disabled=!personal||chatEdit.busy;
+  $('chatPersonalNew').hidden=!chatTurn.ordinary;
+  $('chatPersonalNew').disabled=chatEdit.busy;
   // Park the shared controls in the connected, hidden dock BEFORE replacing the tree. Collapsing the
   // selected group otherwise detaches them: getElementById returns null and append prints "null".
   const nested=['chatWorkspaceNameForm','chatListState','chatList','chatNameForm'].map($);
   $('chatListDock').append(...nested);
-  $('chatWorkspaceList').replaceChildren(...chat.workspaces.map(w=>{
+  const groups=chat.workspaces.map(w=>{
     const active=w.wa_workspace_id===selected,open=active&&chat.expanded===selected;
     const group=element('div',null,'chat-workspace-group');group.dataset.active=String(active);
     const row=element('div',null,'chat-workspace-row');
@@ -2198,8 +2199,10 @@ function renderChatWorkspaces(){
       panel.append(...nested);
       group.append(panel)
     }
-    return group
-  }));
+    return {group,personal:w.wa_workspace_id===chatTurn.personalWorkspaceId}
+  });
+  $('chatPersonalList').replaceChildren(...groups.filter(g=>g.personal).map(g=>g.group));
+  $('chatWorkspaceList').replaceChildren(...groups.filter(g=>!g.personal).map(g=>g.group));
   syncChatActions()
 }
 function openWorkspaceName(id){
@@ -2424,7 +2427,8 @@ async function loadChatWorkspaces(){
     const data=await chatGet('/ultra/chat/workspaces');
     if(epoch!==chat.epoch)return;
     if(!validChatWorkspaces(data))throw Error('Некорректный ответ сервера о Workspace');
-    text('chatAccess',chatTurn.available?'TEST · локальный имитатор · без LLM':'Данные проверяет сервер · сообщения не отправляются');chat.workspaces=data.workspaces;
+    text('chatAccess',chatTurn.ordinary?(chatTurn.available?'GigaChat · провайдер подключён':'Личные чаты доступны · отправка GigaChat пока закрыта'):
+      chatTurn.available?'TEST · локальный имитатор · без LLM':'Данные проверяет сервер · сообщения не отправляются');chat.workspaces=data.workspaces;
     text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.length?'':'Нет зарегистрированных Workspace. Нажмите «+ Создать Workspace».');
     if(chat.workspace&&!chat.workspaces.some(w=>w.wa_workspace_id===chat.workspace)){chat.workspace=null;chat.expanded=null;chat.chat=null;chat.chats=[];renderChatList();clearChatHistory('Выберите диалог')}
     const selected=chat.workspaces.find(w=>w.wa_workspace_id===chat.workspace);
@@ -2625,10 +2629,18 @@ async function createChatWorkspace(){
 async function createPersonalChat(){
   const target=chatTurn.personalWorkspaceId;
   const personal=chat.workspaces.find(w=>w.wa_workspace_id===target&&w.history==='ok');
-  if(!personal||chatEdit.busy)return;
+  if(!chatTurn.ordinary||chatEdit.busy)return;
   chatEdit.busy=true;$('chatPersonalNew').disabled=true;
   const id=newChatId();
   try{
+    if(!personal){
+      const enrolled=await chatPost('/ultra/chat/personal',{});
+      if(typeof enrolled?.wa_workspace_id!=='string')throw Error('Личное хранилище не подтверждено');
+      await loadChatAccess();
+      if(!await loadChatWorkspaces())throw Error('Личные чаты не загружены');
+      if(chat.workspace!==enrolled.wa_workspace_id)await selectChatWorkspace(enrolled.wa_workspace_id);
+      return;
+    }
     const created=await chatPost('/ultra/chat/workspaces/'+encodeURIComponent(target)+'/chats',{chat_id:id});
     if(created?.chat?.chat_id!==id)throw Error('Личный чат не подтверждён');
     if(chat.workspace!==target){await selectChatWorkspace(target)}

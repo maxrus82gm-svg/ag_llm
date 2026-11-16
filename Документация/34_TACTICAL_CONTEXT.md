@@ -1,4 +1,14 @@
-## CURRENT / WEB32 15.11.2026 — PERSONAL CHAT UX + BLOCKED MODEL RECOVERY: OFFLINE CI PASS, PHYSICAL GUI OPEN
+## CURRENT / WEB31 16.11.2026 — STANDARD PERSONAL WITHOUT LIVE: AUTHOR TESTED, INDEPENDENT OPEN
+
+**OWNER GUI defect:** в обычном STANDARD на подтверждённом №627 личные чаты не создавались, кнопка скрывалась до отдельного LIVE-включения, REAL Turn был закрыт. Проблема не в ярлыках и не в локальном обновлении. Пользователь потребовал убрать LIVE из обычного сценария. CODE scope ограничен **локальным созданием/историей личных чатов**, а не открытием платных вызовов.
+
+**AUTHOR fix №628 candidate / `CHATGPT-WUA-PERSONAL-NOLIVE-001`:** POST `/ultra/chat/personal` по локальному write-token + same-origin только по нажатию пользователя создаёт личные Ultra identity/ledger/первый диалог, без консольного LIVE/выбора Workspace; повтор использует исходную регистрацию, небезопасные существующие папки не усыновляются. UI показывает отдельный раздел личных чатов и самостоятельную кнопку. TEST, Tk, `Start_WebAlarm_Standard.cmd` и `Start_WebAlarm_Test.cmd` не изменяются. Настоящий GigaChat API, OAuth, MODEL grant и REAL HOLD **не изменены**; работающая отправка настоящей модели требует отдельного безопасного пользовательского подключения, не включать автоматически. SOURCE/report: `reports/CHATGPT-WUA-PERSONAL-NOLIVE-001/report.md`.
+
+**AUTHOR TESTS (temporary isolated copy, no normal storage or provider I/O):** narrow Python 9/9 OK; Node DOM 76/76 PASS; broader Python 77 tests OK (1 SKIP). First incomplete scratch checkout had 6 environment errors only; missing support files supplied and all rerun clean. **GitHub Windows CI:** pending at authoring. **Independent code-review:** pending; **physical user GUI:** pending. Do not claim RELEASE PASS; the owner decides GPT→main merge. NEXT: independent Windows CI / source review, then owner STANDARD GUI personal-create/F5; separately in-app GigaChat connect/START/STOP with safety guard and explicit paid/API consent, existing permanent LIVE FOLLOWUP stays OPEN.
+
+---
+
+## PREVIOUS / WEB32 15.11.2026 — PERSONAL CHAT UX + BLOCKED MODEL RECOVERY: OFFLINE CI PASS, PHYSICAL GUI OPEN
 
 **USER decision and REUSE:** пользователь не должен выбирать номер Workspace ради обычного диалога; внешний Workspace — необязательная организация проектов, но Ultra identity/ledger физически сохраняются для безопасности. После одного буквального консольного согласия `LIVE 12` новый STANDARD использует персональный managed root `LOCALAPPDATA/WebAlarmWorkspace/personal_chats` (машинный переносимый путь из registry, не хардкод), с новым чатом и имеющимся Ultra Core. Existing registered Workspace/TEST/Tk/history **not migrated/reset**. На отсутствие согласия, неподготовленный/подменённый личный root, чужой Workspace или noninteractive запуск — deny без реального вызова. Только `GigaChat-2` exact observed version, прежние 12/128/8192/99840/30min bounds; пять остальных моделей не имеют REAL-контрактов. Выбор заблокированной модели в UI запрещён, опоздавший GET не может восстановить её после выбора разрешённой. Входные `Start_WebAlarm_Standard.cmd` / `Start_WebAlarm_Test.cmd` и Tk не менялись.
 

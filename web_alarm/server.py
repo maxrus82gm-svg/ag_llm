@@ -1489,7 +1489,7 @@ def create_server(
         UltraChatService(api.registry, test_turn_roots=
             test_turn_roots if enable_ultra_chat and enable_ultra_chat_write and host in LOOPBACK_HOSTS else ())
         if test_turn_roots else OrdinaryApplicationChatService(
-            api.registry, ordinary_factory if ordinary_factory is not None else OrdinaryProviderFactory()))  # type: ignore[attr-defined]
+            api.registry, ordinary_factory if ordinary_factory is not None else OrdinaryProviderFactory(), api=api))  # type: ignore[attr-defined]
     return server
 
 

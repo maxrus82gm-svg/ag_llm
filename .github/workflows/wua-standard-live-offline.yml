@@ -54,7 +54,7 @@ jobs:
           TEMP: ${{ runner.temp }}
           TMP: ${{ runner.temp }}
         run: |
-          python -B -X utf8 -m unittest -v test_web_alarm_standard_live test_web_alarm_live_bootstrap test_web_alarm_gigachat_multimodel 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP\standard-live-offline.log"
+          python -B -X utf8 -m unittest -v test_web_alarm_standard_live test_web_alarm_live_bootstrap test_web_alarm_gigachat_multimodel test_web_alarm_ordinary_application 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP\standard-live-offline.log"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Run deterministic browser JS regression without network
         shell: pwsh
