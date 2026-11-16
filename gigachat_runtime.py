@@ -46,13 +46,15 @@ class ModelContract:
                     (type(self.provider_output_cap_tokens) is not int or
                      self.provider_output_cap_tokens < self.output_tokens or
                      self.provider_output_cap_tokens >= self.context_tokens))
-                or type(self.response_models) is not tuple or self.version_mode not in ('EXACT', 'DISCOVER_GIGACHAT_2')
+                or type(self.response_models) is not tuple or self.version_mode not in ('EXACT', 'DISCOVER_GIGACHAT_2', 'DISCOVER_FAMILY')
                 or (self.version_mode == 'EXACT' and
                     (not self.response_models or any(type(s) is not str or not re.fullmatch(
                         re.escape(model.provider_model_id)+r'(?:[:_][A-Za-z0-9_.-]+)?', s)
                         for s in self.response_models)))
                 or (self.version_mode == 'DISCOVER_GIGACHAT_2' and
-                    (self.model_id != 'gigachat_2' or self.response_models != () or self.output_tokens > 32))):
+                    (self.model_id != 'gigachat_2' or self.response_models != () or self.output_tokens > 32))
+                or (self.version_mode == 'DISCOVER_FAMILY' and
+                    (self.model_id == 'gigachat_2' or self.response_models != () or self.output_tokens > 128))):
             raise PreSendDenied('provider_contract_invalid')
         return model
 
@@ -73,6 +75,14 @@ def response_model_allowed(contract, observed):
         return False
     if mode == 'EXACT':
         return type(allowed) in (list, tuple) and observed in allowed
+    if mode == 'DISCOVER_FAMILY' and allowed in ((), []):
+        try:
+            base = get_model_spec(model_id).provider_model_id
+        except (ValueError, KeyError, RuntimeError):
+            return False
+        # Bounded first observation: same exact family, numeric release suffix only.
+        # Persist the observed version; another family or arbitrary suffix is refused.
+        return re.fullmatch(re.escape(base)+r'(?::[0-9]+(?:\.[0-9]+){0,5})?', observed, re.ASCII) is not None
     return (mode == 'DISCOVER_GIGACHAT_2' and model_id == 'gigachat_2'
             and allowed in ((), []) and _FIRST_LITE_VERSION.fullmatch(observed) is not None)
 
@@ -138,6 +148,10 @@ class ProviderSession:
                 or approval.max_answer_tokens > 32 or approval.max_request_bytes > 1024
                 or approval.max_liability_tokens > 1056):
             raise PreSendDenied('first_version_discovery_envelope_invalid')
+        family = [c for c in approval.contracts if c.version_mode == 'DISCOVER_FAMILY']
+        if family and (approval.max_inference > 12 or approval.max_answer_tokens > 128
+                or approval.max_request_bytes > 4096 or approval.max_liability_tokens > 50688):
+            raise PreSendDenied('family_discovery_envelope_invalid')
         self.approval = approval
         self.account_id, self.scope = approval.account_id, approval.scope
         self.workspace_id = workspace_id
@@ -183,16 +197,20 @@ class ProviderSession:
         return dict(schema=1, grant_id=self.approval.grant_id, state='CLOSED' if self._closed else 'ACTIVE',
                     confirmed_versions=self._confirmed_versions)
 
-    def pin_discovered_version(self, observed):
-        if (len(self.approval.contracts) != 1 or self.approval.contracts[0].version_mode != 'DISCOVER_GIGACHAT_2'
-                or not response_model_allowed(self.approval.contracts[0], observed)):
+    def pin_discovered_version(self, observed, model_id='gigachat_2'):
+        c = self.contract(model_id)
+        if (c.version_mode not in ('DISCOVER_GIGACHAT_2', 'DISCOVER_FAMILY')
+                or not response_model_allowed(c, observed)):
             raise PreSendDenied('first_version_discovery_invalid')
         with core._existing_workspace_writer(self.root, self.workspace_id) as writer:
             self.check()
-            if self._confirmed_versions.get('gigachat_2'):
-                raise PreSendDenied('first_version_already_pinned')
+            prior = self._confirmed_versions.get(model_id)
+            if prior is not None:
+                if prior != observed:
+                    raise PreSendDenied('confirmed_version_changed')
+                return
             candidate = {**self._account_record(), 'confirmed_versions':
-                         {**self._confirmed_versions, 'gigachat_2': observed}}
+                         {**self._confirmed_versions, model_id: observed}}
             core._replace_verified(writer.anchor, self._account_parts, core._json_bytes(candidate))
             if core._read_existing_raw(writer, self._account_parts) != candidate:
                 raise PreSendDenied('first_version_pin_readback_failed')
@@ -383,9 +401,9 @@ class RealGigaChatTransport:
                     # Existing parser expects registry ID; validate the complete
                     # observed version above, then normalize only this field.
                     observed = decoded['model']
-                    if c.version_mode == 'DISCOVER_GIGACHAT_2':
+                    if c.version_mode in ('DISCOVER_GIGACHAT_2', 'DISCOVER_FAMILY'):
                         try:
-                            session.pin_discovered_version(observed)
+                            session.pin_discovered_version(observed, self.model_id)
                         except Exception:
                             raise PreSendUncertain('first_version_pin_failed') from None
                     decoded['model'] = get_model_spec(self.model_id).provider_model_id

@@ -5,6 +5,9 @@ on:
     paths:
       - 'web_alarm/**'
       - 'test_web_alarm_standard_live.py'
+      - 'test_web_alarm_gigachat_live_control.py'
+      - 'gigachat_runtime.py'
+      - 'test_web_alarm_gigachat_multimodel.py'
       - 'test_web_alarm_ordinary_application.py'
       - 'test_web_alarm_ultra_chat_ui.js'
       - '.github/workflows/wua-standard-live-offline.yml'
@@ -55,7 +58,7 @@ jobs:
           TEMP: ${{ runner.temp }}
           TMP: ${{ runner.temp }}
         run: |
-          python -B -X utf8 -m unittest -v test_web_alarm_standard_live test_web_alarm_live_bootstrap test_web_alarm_gigachat_multimodel test_web_alarm_ordinary_application 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP\standard-live-offline.log"
+          python -B -X utf8 -m unittest -v test_web_alarm_standard_live test_web_alarm_live_bootstrap test_web_alarm_gigachat_multimodel test_web_alarm_gigachat_live_control test_web_alarm_ordinary_application 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP\standard-live-offline.log"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Run deterministic browser JS regression without network
         shell: pwsh

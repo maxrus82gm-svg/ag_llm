@@ -171,7 +171,8 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
 
     @staticmethod
     def is_write_path(path):
-        return (path == '/ultra/chat/personal' or OrdinaryApplicationChatService._model_path(path)
+        return (path in ('/ultra/chat/personal', '/ultra/chat/live/start', '/ultra/chat/live/stop')
+                or OrdinaryApplicationChatService._model_path(path)
                 or OrdinaryCoreChatService._settings_path(path) or UltraChatService.is_write_path(path))
 
     def create_personal_chat(self, body):
@@ -190,6 +191,107 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                                      'Personal history needs storage review; no existing data changed') from None
         return (200 if existed else 201), {'wa_workspace_id': record.workspace_id, 'created': not existed}
 
+
+    def start_live(self, body):
+        """Explicit local-user action only; bounded 12-send six-model session.
+
+        The existing profile/environment owns credentials and OAuth. Never accept
+        a grant, model cap, endpoint, root or credentials from browser JSON.
+        """
+        if type(body) is not dict or body != {'confirmation': 'GIGACHAT 6'}:
+            raise UltraChatError(400, 'live_confirmation_required', 'Confirm the six-model bounded session')
+        if self._api is None or self._factory._fixture is not None:
+            raise UltraChatError(403, 'live_unavailable', 'Only normal local STANDARD can start GigaChat')
+        import os
+        import secrets
+        import time
+        import asyncio
+        from .live_bootstrap import _verified_workspace
+        from .standard_live import personal_chat_registration, OBSERVED_MODEL
+        from gigachat_runtime import LiveApproval, ModelContract, ProviderSession
+        if (not os.environ.get('GIGACHAT_CREDENTIALS')
+                or os.environ.get('GIGACHAT_SCOPE', 'GIGACHAT_API_PERS') != 'GIGACHAT_API_PERS'):
+            raise UltraChatError(409, 'live_credentials_missing',
+                                 'Configure the existing GIGACHAT_CREDENTIALS and PERS profile, then restart STANDARD')
+        with self._personal_lock:
+            current = self._factory._session
+            if current is not None:
+                try:
+                    current.check()
+                except PreSendDenied:
+                    try:
+                        current.close()
+                    except PreSendDenied:
+                        raise UltraChatError(409, 'live_session_unresolved', 'Previous provider session requires review') from None
+                    self._factory._session = None
+                else:
+                    raise UltraChatError(409, 'live_already_active', 'Stop the active GigaChat session first')
+            record = personal_chat_registration(self.registry)
+            if record is None:
+                raise UltraChatError(409, 'personal_chat_required', 'Create Личные чаты first')
+            try:
+                root, wid = _verified_workspace(self._api, record.workspace_id)
+            except Exception:
+                raise UltraChatError(409, 'personal_storage_unavailable', 'Personal storage needs review') from None
+            contracts = tuple(
+                ModelContract(m.model_id, 8192, 128,
+                    (OBSERVED_MODEL,) if m.model_id == 'gigachat_2' else (),
+                    'Conservative operator attempt limit; provider maximum UNKNOWN; '
+                    'exact GigaChat-2 previously observed; other versions pinned on first bounded response',
+                    version_mode='EXACT' if m.model_id == 'gigachat_2' else 'DISCOVER_FAMILY')
+                for m in list_model_specs()
+                if m.enabled and m.provider == 'gigachat' and not m.is_local
+            )
+            if len(contracts) != 6:
+                raise UltraChatError(409, 'live_registry_changed', 'Six-model registry requires review')
+            approval = LiveApproval(
+                grant_id='InAppGigaChat' + secrets.token_hex(16),
+                user_go='in-app authenticated same-origin GIGACHAT 6 consent; 2026-11-16',
+                independent_review='Bounded offline verification required before owner merge; general release HOLD',
+                account_id='existing-windows-gigachat-pers-account', scope='GIGACHAT_API_PERS',
+                expires_at=time.time() + 1800, contracts=contracts,
+                max_oauth=1, max_catalog=1, max_inference=12,
+                max_liability_tokens=50688, max_request_bytes=4096, max_answer_tokens=128)
+            try:
+                session = ProviderSession(root, wid, approval)
+            except PreSendDenied as exc:
+                raise UltraChatError(409, 'live_session_denied',
+                                     'Provider session requires review: ' + str(exc)) from None
+            try:
+                available = asyncio.run(session.discover_models())
+                if not any(m.provider_model_id in available for m in list_model_specs()):
+                    raise PreSendDenied('no_gigachat_models_in_catalog')
+            except Exception:
+                try:
+                    session.close()
+                except Exception:
+                    raise UltraChatError(503, 'live_session_unresolved',
+                                         'Provider control call uncertain; review before retry') from None
+                raise UltraChatError(503, 'live_catalog_unavailable',
+                                     'Provider catalog could not be verified; no chat Turn was sent') from None
+            self._factory._registry = self.registry
+            self._factory._session = session
+            return 200, {'state': 'ACTIVE', 'limits': {'sends': 12, 'output_tokens': 128,
+                                                       'request_bytes': 4096, 'minutes': 30},
+                         'models': self.capability()['models']}
+
+    def stop_live(self, body):
+        """An explicit stop closes the durable grant without clearing any history."""
+        if type(body) is not dict or body:
+            raise UltraChatError(400, 'invalid_ultra_chat_request', 'Expected empty stop request')
+        if self._api is None or self._factory._fixture is not None:
+            raise UltraChatError(403, 'live_unavailable', 'Only normal local STANDARD can stop GigaChat')
+        with self._personal_lock:
+            session = self._factory._session
+            if session is None:
+                return 200, {'state': 'INACTIVE'}
+            try:
+                session.close()
+            except PreSendDenied:
+                raise UltraChatError(409, 'live_session_busy', 'A provider request is still active') from None
+            self._factory._session = None
+            return 200, {'state': 'INACTIVE'}
+
     def create_workspace(self, body):
         raise UltraChatError(405, "method_not_allowed", "Use normal Workspace registration")
 
@@ -200,6 +302,10 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         return super().route(path, raw_query)
 
     def write_route(self, path, raw_query):
+        if path in ('/ultra/chat/live/start', '/ultra/chat/live/stop'):
+            if raw_query:
+                raise UltraChatError(400, 'invalid_ultra_chat_request', 'Query parameters are not supported')
+            return self.start_live if path.endswith('/start') else self.stop_live
         if path == '/ultra/chat/personal':
             if raw_query:
                 raise UltraChatError(400, 'invalid_ultra_chat_request', 'Query parameters are not supported')
@@ -244,6 +350,10 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 self._factory.require_real()
             except PreSendDenied:
                 raise UltraChatError(403, "ordinary_real_hold", "GigaChat sending awaits provider and safety acceptance") from None
+        if self._factory._session is not None:
+            selected = get_model_spec(body['model_ref'])
+            if selected.provider_model_id not in self._factory._session._available:
+                raise UltraChatError(409, 'ordinary_model_unavailable', 'Model not confirmed by account catalog')
         root, _ = self._writable_workspace(_core(), wa_workspace_id)
         self._factory.fixture_for(self.registry, root)
         result = super().submit_turn(wa_workspace_id, chat_id, body)

@@ -350,7 +350,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
 <label for="chatInput">Сообщение</label>
 <textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea>
-<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
+<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p><span class="composer-actions"><button type="button" id="chatLiveStart" hidden title="Подключить GigaChat в личном чате">Подключить GigaChat</button><button type="button" id="chatLiveStop" hidden title="Отключить реальные запросы GigaChat">Отключить GigaChat</button><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
 </form>
 </div>
 </div>
@@ -1976,6 +1976,11 @@ async function saveChatPreferences(){
   finally{if(epoch===chat.epoch&&revision===chatPreferencesRevision)preferencesBusy(false)}
 }
 function renderTurnComposer(){
+  const liveVisible=chatTurn.ordinary&&!stage5Offline;
+  $('chatLiveStart').hidden=!liveVisible||chatTurn.executionMode==='REAL';
+  $('chatLiveStop').hidden=!liveVisible||chatTurn.executionMode!=='REAL';
+  $('chatLiveStart').disabled=!chat.workspace||chat.workspace!==chatTurn.personalWorkspaceId||chatTurn.liveBusy;
+  $('chatLiveStop').disabled=!!chatTurn.liveBusy;
   const enabled=chatTurn.available&&!!chat.workspace&&!!chat.chat;
   const pending=turnPending();
   $('chatInput').disabled=!enabled||chatTurn.busy;$('chatSend').disabled=!enabled||chatTurn.busy;
@@ -2013,7 +2018,7 @@ function renderTurnComposer(){
         if(effective?.availability!=='AVAILABLE'){
           $('chatSend').disabled=true;
           text('chatComposerNote',effective?.availability==='NOT_APPROVED'?
-            'Эта модель есть в каталоге, но пока не разрешена. Выберите GigaChat-2.':
+            'Эта модель есть в каталоге, но не разрешена для текущего сеанса.':
             effective?.availability==='UNAVAILABLE'?
             'Эта модель недоступна в подтверждённом каталоге аккаунта. Выберите другую модель.':
             'Выбранная модель не подтверждена для этого LIVE-сеанса.');
@@ -2084,6 +2089,27 @@ async function checkTurn(manual=false){
     text('chatTurnCheckResult',e.httpStatus===404?'Запрос ещё не найден. Исходный ключ сохранён; проверьте состояние перед повтором.':'Не удалось проверить состояние запроса. Автоматического повтора отправки нет.')
   }}
   finally{if(current()){chatTurn.checking=0;renderTurnComposer()}}
+}
+async function startGigaChat(){
+  if(!chatTurn.ordinary||chatTurn.liveBusy||chat.workspace!==chatTurn.personalWorkspaceId)return;
+  if(!window.confirm('Включить все 6 моделей GigaChat на 30 минут? До 12 реальных отправок, максимум 128 токенов ответа и 4096 байт запроса. API может быть платным. Без автоматических повторов.'))return;
+  chatTurn.liveBusy=true;renderTurnComposer();
+  try{
+    await chatPost('/ultra/chat/live/start',{confirmation:'GIGACHAT 6'});
+    await loadChatAccess();await loadChatModel();
+    notice('chatNotice','GigaChat подключён. Выбери модель и отправь короткое сообщение.');
+  }catch(e){notice('chatNotice','Подключение не выполнено: '+(e.code||'проверь существующие настройки доступа'));}
+  finally{chatTurn.liveBusy=false;renderTurnComposer()}
+}
+async function stopGigaChat(){
+  if(!chatTurn.ordinary||chatTurn.liveBusy)return;
+  chatTurn.liveBusy=true;renderTurnComposer();
+  try{
+    await chatPost('/ultra/chat/live/stop',{});
+    await loadChatAccess();
+    notice('chatNotice','GigaChat отключён. История сохранена.');
+  }catch(e){notice('chatNotice','Отключение не подтверждено: '+(e.code||'проверь состояние запроса'));}
+  finally{chatTurn.liveBusy=false;renderTurnComposer()}
 }
 async function sendTurn(){
   if(chatTurn.testModelPreferences&&(chatTurn.testModelBusy||(!chatTurn.testModelLoaded&&!turnPending()?.model)))return;
@@ -2667,6 +2693,8 @@ $('chatNameCancel').onclick=()=>closeChatName();
 $('chatNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeChatName()}};
 $('chatComposer').onsubmit=e=>{e.preventDefault();return sendTurn()};
 $('chatSend').onclick=sendTurn;
+$('chatLiveStart').onclick=startGigaChat;
+$('chatLiveStop').onclick=stopGigaChat;
 $('chatInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();return sendTurn()}};
 $('chatTurnCheck').onclick=()=>checkTurn(true);
 $('chatTurnCancel').onclick=cancelTurn;

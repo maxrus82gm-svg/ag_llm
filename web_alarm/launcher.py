@@ -406,6 +406,13 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
         pass
     finally:
         server.server_close()
+        in_app = getattr(getattr(server.web_alarm_ultra_chat, '_factory', None), '_session', None)
+        if in_app is not None and in_app is not live_session:
+            try:
+                in_app.close()
+                out.write('[LIVE] Встроенный допуск закрыт.\n')
+            except Exception:
+                out.write('[LIVE] Встроенный grant требует проверки журнала.\n')
         if live_session is not None:
             try:
                 live_session.close()
