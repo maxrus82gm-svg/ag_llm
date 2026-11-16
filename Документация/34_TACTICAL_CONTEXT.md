@@ -1,4 +1,14 @@
-## CURRENT / WEB31 16.11.2026 — STANDARD PERSONAL WITHOUT LIVE: AUTHOR TESTED, INDEPENDENT OPEN
+## CURRENT / WEB31 16.11.2026 — STANDARD LEGACY CHAT READ / 503 FIX (AUTHOR PATCH, CI PENDING)
+
+**OWNER GUI FAIL:** после №628 личные чаты создаются без Workspace/LIVE и переживают F5, однако старые Workspace отображают «Загружаем историю…» и универсальную ошибку. Read-only HTTP диагностика STANDARD показала `offline_history_invalid` HTTP 503 для 11/11 диалогов `ag_llm` и 1/3 `1234`; другие проверенные истории доступны. Это НЕ доказательство удаления RAW или утраты истории.
+
+**SOURCE CAUSE / REUSE:** `OrdinaryApplicationChatService.messages` вызывает inherited `OfflineUltraChatService.messages` через `super()`, тем самым применяя TEST_OFFLINE Turn/RAW provenance к старым Tk/Ultra сообщениям STANDARD. Исправление `CHATGPT-WUA-STANDARD-HISTORY-READ-001`: STANDARD без synthetic fixture читает через `UltraChatService.messages` (existing bounded identity/ownership/limits/partial checks), а usage остаётся опциональной проекцией через existing `chat_usage`; synthetic fixture продолжает строгую TEST-проверку. REAL HOLD, OAuth, реальные вызовы, Workspace и TEST маршруты не изменены.
+
+**VERIFICATION AT AUTHORING:** targeted Python HTTP regression добавлена: legacy user/assistant/failed no TEST Turn -> 200, restart same bytes, strict TEST -> 503, damaged record -> partial 200; existing STANDARD/JS suites через `wua-standard-live-offline.yml` на GitHub-hosted Windows запустятся по push. `CI=PENDING`, `USER STANDARD GUI=NOT RUN`, `REAL=HOLD`, independent human review not claimed. NEXT: inspect CI source SHA and logs, owner merge, затем owner GUI reopen старого Workspace/F5. Отчёт: `reports/CHATGPT-WUA-STANDARD-HISTORY-READ-001/report.md`. Отдельный FOLLOWUP в №05. Два постоянных CMD без изменений.
+
+---
+
+## PREVIOUS / WEB31 16.11.2026 — STANDARD PERSONAL WITHOUT LIVE: AUTHOR TESTED, INDEPENDENT OPEN
 
 **OWNER GUI defect:** в обычном STANDARD на подтверждённом №627 личные чаты не создавались, кнопка скрывалась до отдельного LIVE-включения, REAL Turn был закрыт. Проблема не в ярлыках и не в локальном обновлении. Пользователь потребовал убрать LIVE из обычного сценария. CODE scope ограничен **локальным созданием/историей личных чатов**, а не открытием платных вызовов.
 

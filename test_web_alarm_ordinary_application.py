@@ -126,6 +126,62 @@ class ApplicationTests(s5.Fixture):
         self.assertEqual(other['chats'], chats['chats'])
         self.assertEqual(len(core.list_chats_bounded(root)['chats']), 1)
 
+    def test_standard_legacy_history_without_test_turn_is_readable_and_unchanged(self):
+        # Reproduce old Tk/Ultra RAW with no TEST_OFFLINE Turn, producer or
+        # optional audit enrollment. Before the fix STANDARD returned HTTP 503.
+        ws, cid = self.create_chat('legacy read only')
+        root = Path(self.api.registry.get(ws).workspace_root)
+        core.append_raw_message(root, cid, 'user', 'Старый вопрос')
+        core.append_raw_message(root, cid, 'assistant', 'Старый ответ')
+        core.append_raw_message(root, cid, 'assistant', 'RUN STATUS: FAILED\\nLegacy failure')
+        files = list((root / '.ultra' / 'chats' / cid / 'messages').glob('*.json'))
+        raw_before = {p.name: p.read_bytes() for p in files}
+        server = self.serve()
+        cap, read, write = self.tokens(server)
+        self.assertFalse(cap['real_available'])
+        base = f'/ultra/chat/workspaces/{ws}/chats/{cid}'
+        status, page = self.http(server, 'GET', base + '/messages?limit=50', headers=read)
+        self.assertEqual(status, 200)
+        self.assertEqual(page['history_state'], 'complete')
+        self.assertEqual([m['text'] for m in page['messages']],
+                         ['Старый вопрос', 'Старый ответ', 'RUN STATUS: FAILED\\nLegacy failure'])
+        self.assertEqual([m['outcome'] for m in page['messages']], ['request', 'legacy', 'failed'])
+        self.assertFalse(page['usage_summary']['available'])
+        self.assertFalse(page['usage_summary']['synthetic'])
+        self.assertEqual({p.name: p.read_bytes() for p in files}, raw_before)
+        # A second process reads the same RAW without a migration or provider call.
+        second = self.serve()
+        _, read2, _ = self.tokens(second)
+        self.assertEqual(self.http(second, 'GET', base + '/messages?limit=50', headers=read2),
+                         (200, page))
+        self.assertEqual(self.http(second, 'POST', base + '/turns',
+                                  self.body('no REAL'), write)[0], 403)
+        # Stage 5 itself must still reject unverified old RAW as TEST evidence.
+        strict = self.serve(offline_chat=s5.OfflineUltraChatService(self.api.registry, self.root))
+        _, test_read, _ = self.tokens(strict)
+        rejected, detail = self.http(strict, 'GET', base + '/messages?limit=50', headers=test_read)
+        self.assertEqual(rejected, 503)
+        self.assertEqual(detail['error']['code'], 'offline_history_invalid')
+        self.oauth.assert_not_called()
+
+    def test_standard_partial_legacy_history_keeps_good_raw_visible(self):
+        ws, cid = self.create_chat('legacy partial')
+        root = Path(self.api.registry.get(ws).workspace_root)
+        core.append_raw_message(root, cid, 'user', 'Сохранившееся сообщение')
+        broken = root / '.ultra' / 'chats' / cid / 'messages' / ('msg_' + 'f' * 32 + '.json')
+        broken.write_text('{corrupted', encoding='utf-8')
+        server = self.serve()
+        _, read, _ = self.tokens(server)
+        status, page = self.http(server, 'GET',
+                                 f'/ultra/chat/workspaces/{ws}/chats/{cid}/messages?limit=50',
+                                 headers=read)
+        self.assertEqual(status, 200)
+        self.assertEqual(page['history_state'], 'partial')
+        self.assertEqual([m['text'] for m in page['messages']], ['Сохранившееся сообщение'])
+        self.assertTrue(page['excluded'])
+        self.assertEqual(broken.read_text(encoding='utf-8'), '{corrupted')
+        self.oauth.assert_not_called()
+
     def test_default_standard_hold_before_turn_raw_token_or_network(self):
         ws,cid = self.create_chat('HOLD')
         server=self.serve();cap,read,write=self.tokens(server)

@@ -265,7 +265,20 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         return {**result, "turn": self._application_view(result["turn"]) if result["turn"] else None}
 
     def messages(self, wa_workspace_id, chat_id, before, limit):
-        page = super().messages(wa_workspace_id, chat_id, before, limit)
+        if self._factory._fixture is not None:
+            # Synthetic application tests retain Stage 5's strict TEST Turn/RAW checks.
+            page = super().messages(wa_workspace_id, chat_id, before, limit)
+        else:
+            # STANDARD must read historical Tk/Ultra RAW without requiring a
+            # TEST_OFFLINE Turn. The shared bounded reader still verifies the
+            # workspace identity, message ownership, limits and damaged records.
+            page = UltraChatService.messages(self, wa_workspace_id, chat_id, before, limit)
+            try:
+                # Usage is optional display data; missing historical Turn/ledger
+                # enrollment cannot make otherwise readable RAW disappear.
+                page['usage_summary'] = self.chat_usage(wa_workspace_id, chat_id)
+            except (UltraChatError, OSError, ValueError, KeyError, TypeError):
+                page['usage_summary'] = {'available': False, 'synthetic': False}
         page['usage_summary']['synthetic'] = bool(self._factory._fixture is not None
             or self._factory._session and self._factory._session.synthetic)
         if not self._factory._fixture and not self._factory._session and not page['usage_summary'].get('attempts'):
