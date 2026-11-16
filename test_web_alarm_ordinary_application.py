@@ -133,7 +133,7 @@ class ApplicationTests(s5.Fixture):
         root = Path(self.api.registry.get(ws).workspace_root)
         core.append_raw_message(root, cid, 'user', 'Старый вопрос')
         core.append_raw_message(root, cid, 'assistant', 'Старый ответ')
-        core.append_raw_message(root, cid, 'assistant', 'RUN STATUS: FAILED\\nLegacy failure')
+        core.append_raw_message(root, cid, 'assistant', 'RUN STATUS: FAILED\nLegacy failure')
         files = list((root / '.ultra' / 'chats' / cid / 'messages').glob('*.json'))
         raw_before = {p.name: p.read_bytes() for p in files}
         server = self.serve()
@@ -144,7 +144,7 @@ class ApplicationTests(s5.Fixture):
         self.assertEqual(status, 200)
         self.assertEqual(page['history_state'], 'complete')
         self.assertEqual([m['text'] for m in page['messages']],
-                         ['Старый вопрос', 'Старый ответ', 'RUN STATUS: FAILED\\nLegacy failure'])
+                         ['Старый вопрос', 'Старый ответ', 'RUN STATUS: FAILED\nLegacy failure'])
         self.assertEqual([m['outcome'] for m in page['messages']], ['request', 'legacy', 'failed'])
         self.assertFalse(page['usage_summary']['available'])
         self.assertFalse(page['usage_summary']['synthetic'])

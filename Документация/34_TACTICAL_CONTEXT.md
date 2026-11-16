@@ -1,4 +1,12 @@
-## CURRENT / WEB31 16.11.2026 — STANDARD LEGACY CHAT READ / 503 FIX (AUTHOR PATCH, CI PENDING)
+## CURRENT / WEB31 16.11.2026 — CI LEGACY ORACLE REPAIR #630 / WINDOWS PENDING
+
+**Independent GitHub-run #629** [43910083916](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43910083916) ran 53 Python tests: 52 OK, 1 FAIL in the newly added regression fixture, NOT source runtime. The test fixture wrote literal backslash-n in a legacy failure marker, so `LEGACY_FAILURE_PREFIX` appropriately classified it as `legacy`, while test expected `failed`. Existing test also verified STANDARD 200 legacy RAW, immutable stored messages, original strict TEST 503, partial/damaged history 200, REAL HOLD; other application regressions passed. General Web Alarm smoke [43910084039](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/43910084039) FAILED checkout long-path before any test (separate baseline issue).
+
+**Correction task `CHATGPT-WUA-STANDARD-HISTORY-CI-ORACLE-001`:** replace doubled escape with real Python `\\n` string escape in only two test occurrences; add the application-test filename to Windows workflow push-paths so a tests-only repair automatically reruns CI. No runtime code, history, creds, workspace or shortcuts changed. **CI rerun pending at authoring**, not independent PASS; owner physical F5 still NOT RUN. Original fix `CHATGPT-WUA-STANDARD-HISTORY-READ-001` #629 remains in place. Report: `reports/CHATGPT-WUA-STANDARD-HISTORY-CI-ORACLE-001/report.md`. Do not merge before green Windows profile.
+
+---
+
+## PREVIOUS / WEB31 16.11.2026 — STANDARD LEGACY CHAT READ / 503 FIX (AUTHOR PATCH, CI PENDING)
 
 **OWNER GUI FAIL:** после №628 личные чаты создаются без Workspace/LIVE и переживают F5, однако старые Workspace отображают «Загружаем историю…» и универсальную ошибку. Read-only HTTP диагностика STANDARD показала `offline_history_invalid` HTTP 503 для 11/11 диалогов `ag_llm` и 1/3 `1234`; другие проверенные истории доступны. Это НЕ доказательство удаления RAW или утраты истории.
 
