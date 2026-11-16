@@ -154,7 +154,7 @@ class LauncherIsolationTests(unittest.TestCase):
         consent.assert_not_called()
         fake_server.server_close.assert_called_once()
 
-    def test_missing_catalog_closes_live_before_browser(self):
+    def test_explicit_operator_live_missing_catalog_closes_before_browser(self):
         from unittest import mock
         from web_alarm import launcher
         fake_server = mock.Mock()
@@ -169,12 +169,54 @@ class LauncherIsolationTests(unittest.TestCase):
                    return_value=object()):
             result = launcher.run_web_alarm(launcher.standard_launch(),
                                             out=io.StringIO(), colors=False,
-                                            open_browser=False, port=0)
+                                            open_browser=False, port=0, request_live=True)
         self.assertEqual(result, 5)
         session.discover_models.assert_awaited_once()
         session.close.assert_called_once()
         fake_server.serve_forever.assert_not_called()
         fake_server.server_close.assert_called_once()
+
+
+    def test_interactive_standard_with_credentials_starts_without_live_question(self):
+        from unittest import mock
+        from web_alarm import launcher
+        fake_server = mock.Mock()
+        fake_server.server_port = 8765
+        with patch.object(launcher.sys.stdin, "isatty", return_value=True), \
+             patch.object(launcher, "WebAlarmApi"), \
+             patch.object(launcher, "create_server", return_value=fake_server), \
+             patch("web_alarm.standard_live.offer_standard_live") as consent, \
+             patch.dict(os.environ, {"GIGACHAT_CREDENTIALS": "synthetic-only",
+                                    "GIGACHAT_SCOPE": "GIGACHAT_API_PERS"}):
+            result = launcher.run_web_alarm(launcher.standard_launch(),
+                                            out=io.StringIO(), colors=False,
+                                            open_browser=False, port=0)
+        self.assertEqual(result, 0)
+        consent.assert_not_called()
+        fake_server.serve_forever.assert_called_once()
+        fake_server.server_close.assert_called_once()
+
+    def test_explicit_live_command_requires_standard_and_never_runs_test(self):
+        from unittest import mock
+        from web_alarm import launcher
+        output = io.StringIO()
+        with patch.object(launcher, "run_web_alarm") as server, \
+             patch.object(launcher, "run_script") as test_script:
+            result = launcher.main(["--config", "web_alarm/launch_test_config.json",
+                                    "--require-test", "--live"], out=output)
+        self.assertEqual(result, 2)
+        self.assertIn("TEST", output.getvalue())
+        server.assert_not_called()
+        test_script.assert_not_called()
+
+    def test_explicit_live_command_is_not_enabled_by_standard_shortcut(self):
+        from web_alarm import launcher
+        with patch.object(launcher, "run_web_alarm", return_value=0) as server:
+            self.assertEqual(launcher.main(["--standard"], out=io.StringIO()), 0)
+            self.assertEqual(launcher.main(["--standard", "--live"], out=io.StringIO()), 0)
+        self.assertEqual(server.call_count, 2)
+        self.assertFalse(server.call_args_list[0].kwargs["request_live"])
+        self.assertTrue(server.call_args_list[1].kwargs["request_live"])
 
 
 if __name__ == "__main__":

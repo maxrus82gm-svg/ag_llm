@@ -315,7 +315,8 @@ def _stop_on_break() -> None:
 
 def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bool = True,
                   self_test: Path | None = None, port: int | None = None,
-                  sleep: Callable[[float], None] = time.sleep, opener: Callable[[str], Any] = webbrowser.open) -> int:
+                  sleep: Callable[[float], None] = time.sleep, opener: Callable[[str], Any] = webbrowser.open,
+                  request_live: bool = False) -> int:
     storage_root = None if launch.standard else Path(tempfile.mkdtemp(prefix=f"wa-test-launch-{launch.name}-"))
     storage_text = str(default_storage_root() if launch.standard else storage_root)
     bind_port = launch.port if port is None else port
@@ -327,7 +328,7 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
         if bind_port and (claim is None or _port_in_use(bind_port)):
             raise OSError("port busy")
         api = WebAlarmApi(storage_root)
-        if launch.standard and self_test is None and sys.stdin.isatty():
+        if launch.standard and request_live and self_test is None and sys.stdin.isatty():
             from .standard_live import offer_standard_live
             live_session = offer_standard_live(api, input, out)
         factory = None
@@ -476,9 +477,14 @@ def main(argv: list[str] | None = None, out: TextIO | None = None) -> int:
     parser.add_argument("--require-test", action="store_true", help="refuse any fallback to the standard launch")
     parser.add_argument("--self-test", type=Path, help="start, check over HTTP, stop and write a JSON result")
     parser.add_argument("--no-browser", action="store_true")
+    parser.add_argument("--live", action="store_true",
+                        help="explicit operator-only LIVE consent; never used by permanent CMD shortcuts")
     args = parser.parse_args(argv)
     out = out or sys.stdout
     colors = enable_colors(out)
+    if args.live and (not args.standard or args.require_test or args.self_test is not None):
+        out.write("LIVE допускается только при отдельном интерактивном --standard --live; TEST и self-test запрещены.\n")
+        return 2
     try:
         launch = standard_launch() if args.standard else load_launch(args.config)
         if args.require_test:
@@ -491,7 +497,8 @@ def main(argv: list[str] | None = None, out: TextIO | None = None) -> int:
             out.write("Самопроверка для тестового скрипта не поддерживается.\n")
             return 2
         return run_script(launch, out=out, colors=colors)
-    return run_web_alarm(launch, out=out, colors=colors, open_browser=not args.no_browser, self_test=args.self_test)
+    return run_web_alarm(launch, out=out, colors=colors, open_browser=not args.no_browser,
+                         self_test=args.self_test, request_live=args.live)
 
 
 if __name__ == "__main__":
