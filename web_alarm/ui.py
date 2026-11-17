@@ -2097,7 +2097,7 @@ async function checkTurn(manual=false){
 }
 async function startGigaChat(){
   if(!chatTurn.ordinary||chatTurn.liveBusy||chat.workspace!==chatTurn.personalWorkspaceId)return;
-  if(!window.confirm('Включить все 6 моделей GigaChat на 30 минут? До 12 реальных отправок, максимум 128 токенов ответа и 4096 байт запроса. API может быть платным. Без автоматических повторов.'))return;
+  if(!window.confirm('Включить 6 моделей GigaChat на 24 часа? Каждая отправка требует вашего действия. Предпочтительный максимум ответа задаётся в настройках чата (до 20 000 токенов); технический предел запроса 4096 байт. API может быть платным. Автоматических повторов нет.'))return;
   chatTurn.liveBusy=true;renderTurnComposer();
   try{
     await chatPost('/ultra/chat/live/start',{confirmation:'GIGACHAT 6'});

@@ -35,6 +35,7 @@ class ProtocolTests(s5.Fixture):
         self.oauth_status = self.catalog_status = 200
         self.oauth_reply = None
         self.bad_json = False
+        self.answer_text = 'Protocol answer'
         self.catalog = [m.provider_model_id for m in list_model_specs()]
         self.approval = LiveApproval(uuid4().hex, 'SYNTHETIC GO', 'SYNTHETIC review', uuid4().hex,
             'GIGACHAT_API_PERS', time.time()+3600,
@@ -67,7 +68,7 @@ class ProtocolTests(s5.Fixture):
         if self.bad_json:
             return httpx.Response(200, content=b'not JSON SECRET')
         data = {'model': self.model or json.loads(request.content)['model']+':1.0',
-                'choices':[{'message':{'role':'assistant','content':'Protocol answer'}, 'finish_reason':'stop'}]}
+                'choices':[{'message':{'role':'assistant','content':self.answer_text}, 'finish_reason':'stop'}]}
         if self.usage:
             data['usage'] = dict(prompt_tokens=7, completion_tokens=5, total_tokens=12,
                 precached_prompt_tokens=3, completion_tokens_details={'reasoning_tokens':2})
@@ -110,6 +111,100 @@ class ProtocolTests(s5.Fixture):
         with self.assertRaisesRegex(PreSendDenied, 'evm_profile_invalid'):
             OrdinaryCoreAdapter.for_provider(self.session, context_ref='stage5:'+self.cid,
                 model_id='gigachat_2_pro', evm_profile={**profile, 'timeout_seconds': 121})
+
+    def test_user_turn_mode_uses_preference_and_keeps_full_large_reply(self):
+        self.session.close()
+        contract = ModelContract('gigachat_2', 128000, 20000, ('GigaChat-2:1.0',),
+            'OFFLINE operator output ceiling; provider maximum unknown')
+        grant = replace(self.approval, grant_id=uuid4().hex, contracts=(contract,),
+            max_oauth=None, max_catalog=1, max_inference=None, max_liability_tokens=None,
+            max_request_bytes=4096, max_answer_tokens=20000, user_turn_mode=True)
+        self.session = ProviderSession.offline(self.workspace, self.wid, grant, self.transport)
+        self.addCleanup(self.session.close)
+        self.app = OrdinaryApplicationChatService(self.registry,
+            OrdinaryProviderFactory.for_session(self.registry, self.session))
+        self.discover()
+        self.app.chat_preferences(self.ws, self.cid,
+            {'compression_threshold_tokens':250000, 'answer_tokens':20000})
+        self.answer_text = 'Длинный ответ. ' * 1000
+        body = self.body('Full reply', 'gigachat_2')
+        result = self.send('gigachat_2', body=body)
+        self.assertEqual(result['state'], 'SUCCEEDED')
+        self.assertEqual(self.app.messages(self.ws, self.cid, None, 50)['messages'][-1]['text'], self.answer_text)
+        self.assertEqual(json.loads(self.posts()[0][2])['max_tokens'], 20000)
+        self.assertEqual(self.app.submit_turn(self.ws, self.cid, body), result)
+        self.assertEqual(len(self.posts()), 1)
+        self.assertEqual(self.session._counts['inference'], 1)
+        self.assertLess(self.session._counts['liability'], 24097)
+
+    def test_user_turn_mode_rejects_oversized_attempt_before_io(self):
+        self.session.close()
+        contract = ModelContract('gigachat_2', 128000, 20000, ('GigaChat-2:1.0',), 'OFFLINE')
+        grant = replace(self.approval, grant_id=uuid4().hex, contracts=(contract,),
+            max_oauth=None, max_catalog=1, max_inference=None, max_liability_tokens=None,
+            max_request_bytes=4096, max_answer_tokens=20000, user_turn_mode=True)
+        self.session = ProviderSession.offline(self.workspace, self.wid, grant, self.transport)
+        self.addCleanup(self.session.close)
+        with self.assertRaisesRegex(PreSendDenied, 'live_call_or_token_limit'):
+            self.session._consume('inference', 24097)
+        self.assertEqual(self.posts(), [])
+
+    def test_user_turn_mode_has_no_twelve_send_cutoff_and_no_replay(self):
+        self.session.close()
+        contract = ModelContract('gigachat_2', 128000, 20000, ('GigaChat-2:1.0',), 'OFFLINE')
+        grant = replace(self.approval, grant_id=uuid4().hex, contracts=(contract,),
+            max_oauth=None, max_catalog=1, max_inference=None, max_liability_tokens=None,
+            max_request_bytes=4096, max_answer_tokens=20000, user_turn_mode=True)
+        self.session = ProviderSession.offline(self.workspace, self.wid, grant, self.transport)
+        self.addCleanup(self.session.close)
+        self.app = OrdinaryApplicationChatService(self.registry,
+            OrdinaryProviderFactory.for_session(self.registry, self.session))
+        self.discover()
+        for number in range(13):
+            cid = 'chat_'+uuid4().hex
+            self.app.create_chat(self.ws, {'chat_id':cid})
+            body = self.body('Question '+str(number), 'gigachat_2')
+            self.assertEqual(self.send('gigachat_2', cid=cid, body=body)['state'], 'SUCCEEDED')
+            if number == 12:
+                self.assertEqual(self.app.submit_turn(self.ws, cid, body)['state'], 'SUCCEEDED')
+        self.assertEqual(len(self.posts()), 13)
+        self.assertEqual(self.session._counts['inference'], 13)
+
+    def test_large_provider_reply_hits_memory_guard_once(self):
+        self.discover()
+        self.answer_text = 'x' * 524288
+        result = self.send()
+        self.assertNotEqual(result['state'], 'SUCCEEDED')
+        self.assertEqual(result.get('diagnostic_code'), 'response_limit_exceeded')
+        self.assertEqual(len(self.posts()), 1)
+
+    def test_user_turn_mode_requires_the_exact_operational_envelope(self):
+        self.session.close()
+        invalid = replace(self.approval, grant_id=uuid4().hex, user_turn_mode=True,
+            max_oauth=None, max_inference=12, max_liability_tokens=None, max_catalog=1)
+        with self.assertRaisesRegex(PreSendDenied, 'reviewed_live_approval_required'):
+            ProviderSession.offline(self.workspace, self.wid, invalid, self.transport)
+        self.assertEqual(self.posts(), [])
+
+    def test_discovered_family_version_is_exact_after_first_response(self):
+        self.session.close()
+        contract = ModelContract('gigachat_2_pro', 32768, 20000, (),
+            'OFFLINE first-family pin', version_mode='DISCOVER_FAMILY')
+        grant = replace(self.approval, grant_id=uuid4().hex, contracts=(contract,),
+            max_oauth=None, max_catalog=1, max_inference=None, max_liability_tokens=None,
+            max_request_bytes=4096, max_answer_tokens=20000, user_turn_mode=True)
+        self.session = ProviderSession.offline(self.workspace, self.wid, grant, self.transport)
+        self.addCleanup(self.session.close)
+        self.app = OrdinaryApplicationChatService(self.registry,
+            OrdinaryProviderFactory.for_session(self.registry, self.session))
+        self.discover()
+        self.assertEqual(self.send('gigachat_2_pro')['state'], 'SUCCEEDED')
+        self.assertEqual(self.session._confirmed_versions['gigachat_2_pro'], 'GigaChat-2-Pro:1.0')
+        self.model = 'GigaChat-2-Pro:1.1'
+        second = self.send('gigachat_2_pro', 'second question')
+        self.assertNotEqual(second['state'], 'SUCCEEDED')
+        self.assertEqual(second.get('diagnostic_code'), 'response_model_version_mismatch')
+        self.assertEqual(len(self.posts()), 2)
 
     def test_real_route_six_models_history_cached_reasoning_reopen_and_no_replay(self):
         self.discover()

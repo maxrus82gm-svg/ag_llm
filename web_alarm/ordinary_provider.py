@@ -197,7 +197,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
 
 
     def start_live(self, body):
-        """Explicit local-user action only; bounded 12-send six-model session.
+        """Explicit local-user action opens a finite six-model session.
 
         The existing profile/environment owns credentials and OAuth. Never accept
         a grant, model cap, endpoint, root or credentials from browser JSON.
@@ -238,9 +238,10 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
             except Exception:
                 raise UltraChatError(409, 'personal_storage_unavailable', 'Personal storage needs review') from None
             contracts = tuple(
-                ModelContract(m.model_id, 8192, 128,
+                    ModelContract(m.model_id, 128000 if m.model_id.startswith('gigachat_2') or m.model_id == 'gigachat_ultra' else 32768, 20000,
                     (OBSERVED_MODEL,) if m.model_id == 'gigachat_2' else (),
-                    'Conservative operator attempt limit; provider maximum UNKNOWN; '
+                    'Operator output preference ceiling 20000; 2-series and 3-Ultra context 128000 from official docs, '
+                    'other 3-series context admission ceiling 32768, provider context/output maximum UNKNOWN; '
                     'exact GigaChat-2 previously observed; other versions pinned on first bounded response',
                     version_mode='EXACT' if m.model_id == 'gigachat_2' else 'DISCOVER_FAMILY')
                 for m in list_model_specs()
@@ -253,9 +254,10 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 user_go='in-app authenticated same-origin GIGACHAT 6 consent; 2026-11-16',
                 independent_review='Bounded offline verification required before owner merge; general release HOLD',
                 account_id='existing-windows-gigachat-pers-account', scope='GIGACHAT_API_PERS',
-                expires_at=time.time() + 1800, contracts=contracts,
-                max_oauth=1, max_catalog=1, max_inference=12,
-                max_liability_tokens=50688, max_request_bytes=4096, max_answer_tokens=128)
+                expires_at=time.time() + 86400, contracts=contracts,
+                max_oauth=None, max_catalog=1, max_inference=None,
+                max_liability_tokens=None, max_request_bytes=4096, max_answer_tokens=20000,
+                user_turn_mode=True)
             try:
                 session = ProviderSession(root, wid, approval)
             except PreSendDenied as exc:
@@ -275,8 +277,8 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                                      'Provider catalog could not be verified; no chat Turn was sent') from None
             self._factory._registry = self.registry
             self._factory._session = session
-            return 200, {'state': 'ACTIVE', 'limits': {'sends': 12, 'output_tokens': 128,
-                                                       'request_bytes': 4096, 'minutes': 30},
+            return 200, {'state': 'ACTIVE', 'limits': {'sends': 'PER_USER_TURN', 'output_tokens': 20000,
+                                                       'request_bytes': 4096, 'hours': 24},
                          'models': self.capability()['models']}
 
     def stop_live(self, body):

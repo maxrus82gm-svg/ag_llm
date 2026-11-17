@@ -87,7 +87,7 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
                 raise chat.PreSendDenied('evm_profile_invalid')
             adapter._evm_profile = dict(evm_profile)
         adapter._limits = chat.RequestLimits(32, 2048, session.approval.max_request_bytes,
-            8192, min(answer_tokens, session.approval.max_answer_tokens, contract.output_tokens),
+            524288, min(answer_tokens, session.approval.max_answer_tokens, contract.output_tokens),
             evm_profile['timeout_seconds'] if evm_profile is not None else 8)
         adapter._transport = create_real_transport(model_id, authority=session)
         return adapter

@@ -1,0 +1,7 @@
+2026-11-17 OFFLINE. Interpreter: .venv\Scripts\python.exe. No live provider calls.
+Command: -B -m unittest -q test_web_alarm_gigachat_live_control test_web_alarm_standard_live test_web_alarm_gigachat_multimodel test_web_alarm_evm_unified test_web_alarm_model_cards test_web_alarm_ordinary_application
+Observed exit code: 0
+Observed output: Ran 85 tests in 85.642s; OK.
+Additional new cases after that run: test_user_turn_mode_requires_the_exact_operational_envelope and test_discovered_family_version_is_exact_after_first_response.
+Observed exit code: 0; Ran 2 tests in 2.538s; OK.
+Earlier negative check: system Python lacked httpx. Correct project .venv used thereafter.

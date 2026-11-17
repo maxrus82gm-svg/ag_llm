@@ -258,7 +258,7 @@ class TurnService:
     @staticmethod
     def _raw(root, turn, role):
         message_id = turn[role+'_message_id']
-        value = core.read_ultra_json_bounded(root, ('chats', turn['chat_id'], 'messages', message_id+'.json'), max_bytes=32768)
+        value = core.read_ultra_json_bounded(root, ('chats', turn['chat_id'], 'messages', message_id+'.json'), max_bytes=1048576)
         if (not isinstance(value, dict) or value.get('workspace_id') != turn['workspace_id'] or value.get('chat_id') != turn['chat_id']
                 or value.get('message_id') != message_id or value.get('role') != ('user' if role == 'user' else 'assistant')
                 or value.get('producer') != TurnService._producer(turn) or value.get('task_block_id') != turn['task_block_id']
@@ -353,7 +353,7 @@ class TurnService:
                     raise ValueError('Offline terminal projection mismatch')
                 answer = payload.get('answer')
                 if event == 'turn_result':
-                    if type(answer) is not str or not answer.strip() or len(answer.encode('utf-8')) > 8192:
+                    if type(answer) is not str or not answer.strip() or len(answer.encode('utf-8')) > 524288:
                         raise ValueError('Invalid offline answer')
                 elif answer is not None:
                     raise ValueError('Answer on unsuccessful offline result')

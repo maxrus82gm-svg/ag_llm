@@ -21,11 +21,9 @@ from .workspace_registry import WorkspaceRegistryError
 
 MODEL_ID = "gigachat_2"
 OBSERVED_MODEL = "GigaChat-2:2.0.30.01"
-MAX_SENDS = 12
 MAX_WIRE_BYTES = 8192
-MAX_ANSWER_TOKENS = 128
-MAX_LIABILITY = MAX_SENDS * (MAX_WIRE_BYTES + MAX_ANSWER_TOKENS)
-LIFETIME_SECONDS = 1800
+MAX_ANSWER_TOKENS = 20000  # user preference ceiling, not a provider output claim
+LIFETIME_SECONDS = 86400  # finite local authority; reconnect requires an owner action
 PERSONAL_DIRNAME = "personal_chats"
 PERSONAL_LABEL = "Личные чаты"
 
@@ -117,23 +115,23 @@ def offer_standard_live(api, ask, out):
     out.write(
         "[LIVE] Личные чаты: отдельный внутренний каталог, без выбора Workspace.\n"
         "[LIVE] Старые проекты, Workspace и история не меняются и не переносятся.\n"
-        f"[LIVE] Только GigaChat-2 ({OBSERVED_MODEL}); максимум {MAX_SENDS} отправок, "
-        f"{MAX_ANSWER_TOKENS} токенов ответа и {MAX_WIRE_BYTES} байт wire на отправку.\n"
-        f"[LIVE] Консервативная liability до {MAX_LIABILITY} токенов, срок "
-        f"{LIFETIME_SECONDS // 60} минут; тариф/остаток UNKNOWN.\n"
+        f"[LIVE] Только GigaChat-2 ({OBSERVED_MODEL}); каждая отправка требует действия в чате.\n"
+        f"[LIVE] Предпочтительный максимум ответа до {MAX_ANSWER_TOKENS} токенов; "
+        f"технический предел запроса {MAX_WIRE_BYTES} байт.\n"
+        f"[LIVE] Срок подключения {LIFETIME_SECONDS // 3600} часа; тариф/остаток UNKNOWN.\n"
         "[LIVE] Внимание: настоящие вызовы API могут быть платными.\n"
     )
     try:
-        consent = ask(f"Включить LIVE для личного чата? Введите LIVE {MAX_SENDS} (Enter = без LIVE): ").strip()
+        consent = ask("Включить LIVE для личного чата? Введите LIVE CHAT (Enter = без LIVE): ").strip()
     except (EOFError, KeyboardInterrupt):
         return None
-    if consent != f"LIVE {MAX_SENDS}":
+    if consent != "LIVE CHAT":
         out.write("[LIVE] Отказ: STANDARD откроется без REAL.\n")
         return None
     record, root, wid = prepare_personal_chat(api)
     approval = LiveApproval(
         grant_id="StandardLive" + secrets.token_hex(16),
-        user_go=f"interactive owner console confirmation: LIVE {MAX_SENDS}, personal {record.workspace_id}",
+        user_go=f"interactive owner console confirmation: LIVE CHAT, personal {record.workspace_id}",
         independent_review="H38 bounded offline Windows review; first GigaChat-2 REAL proof 2026-11-15; "
                            "personal-onramp requires independent Windows CI and physical GUI acceptance",
         account_id="existing-windows-gigachat-pers-account",
@@ -144,10 +142,10 @@ def offer_standard_live(api, ask, out):
             response_models=(OBSERVED_MODEL,), provider_output_cap_tokens=None,
             version_mode="EXACT",
             evidence="GigaChat 2 Lite 128k official docs; observed real "
-                     "GigaChat-2:2.0.30.01 on 2026-11-15; operator bound 128"),),
-        max_oauth=1, max_catalog=1, max_inference=MAX_SENDS,
-        max_liability_tokens=MAX_LIABILITY, max_request_bytes=MAX_WIRE_BYTES,
-        max_answer_tokens=MAX_ANSWER_TOKENS,
+                     "GigaChat-2:2.0.30.01 on 2026-11-15; operator output preference ceiling 20000"),),
+        max_oauth=None, max_catalog=1, max_inference=None,
+        max_liability_tokens=None, max_request_bytes=MAX_WIRE_BYTES,
+        max_answer_tokens=MAX_ANSWER_TOKENS, user_turn_mode=True,
     )
     session = ProviderSession(root, wid, approval)
     out.write("[LIVE] Разрешение для «Личные чаты» создано. Историю других Workspace не затрагиваем.\n")

@@ -8,6 +8,36 @@
   },
   "files": [
     {
+      "path": "Start_WebAlarm_Standard.cmd",
+      "sha256": "79468ca15e53bc595521278f67ed147304787a2789567ab33096e3075e3dc372",
+      "bytes": 922,
+      "role": "reused_reference"
+    },
+    {
+      "path": "Start_WebAlarm_Test.cmd",
+      "sha256": "157091918484c159ecef497a60c78e95b45068fbc42c38c2682b6709a12bb6e3",
+      "bytes": 1199,
+      "role": "reused_reference"
+    },
+    {
+      "path": "gigachat_admission.py",
+      "sha256": "a8ae4e2f2eac9f85e8b7d3f391e38cb35b264e0a11cc63116bb1e7aa5a78e3be",
+      "bytes": 21826,
+      "role": "reused_reference"
+    },
+    {
+      "path": "gigachat_runtime.py",
+      "sha256": "706a7f900657a069d21de631da616eedb8dce2b5e5711291ada297f8bcaff27d",
+      "bytes": 24570,
+      "role": "changed"
+    },
+    {
+      "path": "model_registry.py",
+      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+      "bytes": 2519,
+      "role": "reused_reference"
+    },
+    {
       "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/evidence/python_final.txt",
       "sha256": "8dc4968411d1d37eaa802d994ec5effc1428a55932fc767682941bfeace31a1b",
       "bytes": 103,
@@ -18,6 +48,12 @@
       "sha256": "853f2158f550d1164c53d451821975808064390df2fd5ea7c21af224bb4c07b6",
       "bytes": 103,
       "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/evidence/python_operational.txt",
+      "role": "report_or_evidence",
+      "sha256": "278adc82a9603b567a216a40bfbfb4b27411e548a7052a9e1b2cbd2c7fc1f257",
+      "bytes": 673
     },
     {
       "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/evidence/python_targeted.txt",
@@ -38,6 +74,12 @@
       "role": "report_or_evidence"
     },
     {
+      "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/evidence/s1_operational.txt",
+      "role": "report_or_evidence",
+      "sha256": "d571c1baf805da4d00c34b95046400c670c121ef2ca670c7a01b0033c93d7421",
+      "bytes": 88028
+    },
+    {
       "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/evidence/s2.txt",
       "sha256": "35945e484a5d31f61bfccc1b2ff8dcbec16f8d811dcb75daae97a006c9469d6f",
       "bytes": 1880,
@@ -48,6 +90,12 @@
       "sha256": "12f079e449cd2de6b814f27801acc024216a24a687fe47a1fc11da92ed88b3ce",
       "bytes": 840,
       "role": "report_or_evidence"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/evidence/s2_operational.txt",
+      "role": "report_or_evidence",
+      "sha256": "a938639c594cdc311b51ef962f74cfee4c9065ff7ebd1d2d44197fa10ac60d50",
+      "bytes": 840
     },
     {
       "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/evidence/standard_live.txt",
@@ -68,75 +116,39 @@
       "role": "report_or_evidence"
     },
     {
+      "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/evidence/ui_operational.tap",
+      "role": "report_or_evidence",
+      "sha256": "41c39841adf0ec1847d8d0eedc7022d57bf8882d1b220c8d4bfa0b86f25c5c63",
+      "bytes": 31107
+    },
+    {
       "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/integration-map.md",
-      "sha256": "87e210413a074ef27cadce836e55669789ec43ba6e1eae24ab474fb4d2cb3a9c",
-      "bytes": 3060,
+      "sha256": "6e0d8ebf71598ae60e375a8564aa7b6b45aa0ab0fa47ab8f9f98d1c7f5fd912d",
+      "bytes": 3925,
       "role": "report_or_evidence"
     },
     {
       "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/manual-review.md",
-      "sha256": "ea5d7d120ad73143094c96325aad05545b85e18dcf9c78179c35bbf401ae3606",
-      "bytes": 2620,
+      "sha256": "755b1a72bbb58d4371ae7ab2bc2bf186e1cc80a00906395e2e18e41860ebc05b",
+      "bytes": 4129,
       "role": "report_or_evidence"
     },
     {
       "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/report.md",
-      "sha256": "07dc13172344db2b90dba6caf1808504d81d4d81f7ed1393cffc90266031fcc2",
-      "bytes": 1734,
+      "sha256": "a668f4d7fef0f01009651c1f0c1f1d33287ac003331f06bfa1a6eaabded1b2be",
+      "bytes": 2950,
       "role": "report_or_evidence"
     },
     {
       "path": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/tests.md",
-      "sha256": "8d8ee161ae749e4cdc0780a3a463e9cfedb71ba294b7f81a1d0154e381dfbeca",
-      "bytes": 1851,
+      "sha256": "60b89d5aef9ce4417613a9d983f77036412ea22c2f48322e042c046f69c58fd5",
+      "bytes": 3301,
       "role": "report_or_evidence"
     },
     {
-      "path": "web_alarm/model_cards.py",
-      "sha256": "7c29311d41c422f268ba6ca42497365223c8b6e5f30ffb23c5b2691a0899504d",
-      "bytes": 57921,
-      "role": "changed"
-    },
-    {
-      "path": "web_alarm/ordinary_provider.py",
-      "sha256": "0fc0032f248ef87979dec6f0003b062c73334423f69e0f8118ca121b92f1b114",
-      "bytes": 29617,
-      "role": "changed"
-    },
-    {
-      "path": "web_alarm/ordinary_chat_bridge.py",
-      "sha256": "62ad2de544005c170301767d42904c8ff205d0784d4868d319359384a3d1b230",
-      "bytes": 9841,
-      "role": "changed"
-    },
-    {
-      "path": "web_alarm/turn_service.py",
-      "sha256": "ac2bbee03c8cafd0605bc4a333c1dc44657faba0980428c61d314301d973ba1c",
-      "bytes": 43933,
-      "role": "changed"
-    },
-    {
-      "path": "web_alarm/server.py",
-      "sha256": "f1a6abcb961f80e3930e8fe806f9bacd988bf8984279a3d3eb3da42c2078cf66",
-      "bytes": 78360,
-      "role": "changed"
-    },
-    {
-      "path": "web_alarm/ui.py",
-      "sha256": "e525f3a8e5f83fbceda0d6838220908ce75ce0eb80593a6b635d3e5b4c6b3b19",
-      "bytes": 224489,
-      "role": "changed"
-    },
-    {
-      "path": "test_web_alarm_model_cards.py",
-      "sha256": "60e54ceaefc3a51cd7b55677d6b1b4c92206d179ab202f9353964d726d19376e",
-      "bytes": 57179,
-      "role": "changed"
-    },
-    {
-      "path": "test_web_alarm_gigachat_multimodel.py",
-      "sha256": "2605da73d5521cdc0a3a925f9c3b89ea269a93da1847ebab86596513cac86610",
-      "bytes": 26007,
+      "path": "rt002_multimodel_reconciliation.json",
+      "sha256": "76e4e06646b14f1d2c22f2baf57aeb205292528b1a2959c05608b814b5eac135",
+      "bytes": 3052,
       "role": "changed"
     },
     {
@@ -152,27 +164,33 @@
       "role": "changed"
     },
     {
-      "path": "rt002_multimodel_reconciliation.json",
-      "sha256": "3c65c9a1bff80e243694d850e63886036ca28d2d6c1fa3d4aa98a40be267a8e1",
-      "bytes": 3052,
+      "path": "test_web_alarm_gigachat_live_control.py",
+      "role": "changed",
+      "sha256": "4b58a3790ad98a6d4b307a10bb52cd8cc5fb7b04a1dd19f5e7a776a57b08b2f2",
+      "bytes": 5251
+    },
+    {
+      "path": "test_web_alarm_gigachat_multimodel.py",
+      "sha256": "9b7a3aa9c9206031b6051957418b89de5db48dcdfe8017f6d8b3dec8c184cb28",
+      "bytes": 31869,
       "role": "changed"
     },
     {
-      "path": "model_registry.py",
-      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
-      "bytes": 2519,
-      "role": "reused_reference"
+      "path": "test_web_alarm_model_cards.py",
+      "sha256": "60e54ceaefc3a51cd7b55677d6b1b4c92206d179ab202f9353964d726d19376e",
+      "bytes": 57179,
+      "role": "changed"
     },
     {
-      "path": "web_alarm/ultra_connections.py",
-      "sha256": "d57a37774e9b1fa7ea5d3e954a0c7058aea2f3ca82446ecd9bd59c8b171b266b",
-      "bytes": 11898,
-      "role": "reused_reference"
+      "path": "test_web_alarm_standard_live.py",
+      "role": "changed",
+      "sha256": "88ac6a331359f1b6794348e101304dc4b9659ca916763bd21ece98565cb300dc",
+      "bytes": 12011
     },
     {
-      "path": "web_alarm/standard_live.py",
-      "sha256": "4cba7dd0ae192d28a0f4100177a5738242ce8f9f71c9a71ded8b95bbce60db1a",
-      "bytes": 7406,
+      "path": "ultra_budget_ledger.py",
+      "sha256": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592",
+      "bytes": 13219,
       "role": "reused_reference"
     },
     {
@@ -182,33 +200,57 @@
       "role": "reused_reference"
     },
     {
-      "path": "gigachat_runtime.py",
-      "sha256": "b29ffa2c94070bacaceec05f9065a753d9641949a6dcdee3f9c1bb93f8b97b97",
-      "bytes": 23404,
-      "role": "reused_reference"
+      "path": "web_alarm/model_cards.py",
+      "sha256": "7c29311d41c422f268ba6ca42497365223c8b6e5f30ffb23c5b2691a0899504d",
+      "bytes": 57921,
+      "role": "changed"
     },
     {
-      "path": "gigachat_admission.py",
-      "sha256": "a8ae4e2f2eac9f85e8b7d3f391e38cb35b264e0a11cc63116bb1e7aa5a78e3be",
-      "bytes": 21826,
-      "role": "reused_reference"
+      "path": "web_alarm/ordinary_chat_bridge.py",
+      "sha256": "66e4084dc0b6e8d78c3b1a367b898a0f596225c67eaa006eff222698b3a2de79",
+      "bytes": 9843,
+      "role": "changed"
     },
     {
-      "path": "ultra_budget_ledger.py",
-      "sha256": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592",
-      "bytes": 13219,
-      "role": "reused_reference"
+      "path": "web_alarm/ordinary_provider.py",
+      "sha256": "e0d900fc7f8e98de533efc0993480b5acc44dfa8563b5d350cb4dc4a3502fa9b",
+      "bytes": 29908,
+      "role": "changed"
     },
     {
-      "path": "Start_WebAlarm_Standard.cmd",
-      "sha256": "79468ca15e53bc595521278f67ed147304787a2789567ab33096e3075e3dc372",
-      "bytes": 922,
-      "role": "reused_reference"
+      "path": "web_alarm/server.py",
+      "sha256": "f1a6abcb961f80e3930e8fe806f9bacd988bf8984279a3d3eb3da42c2078cf66",
+      "bytes": 78360,
+      "role": "changed"
     },
     {
-      "path": "Start_WebAlarm_Test.cmd",
-      "sha256": "157091918484c159ecef497a60c78e95b45068fbc42c38c2682b6709a12bb6e3",
-      "bytes": 1199,
+      "path": "web_alarm/standard_live.py",
+      "sha256": "72230705ad53c2a928090bcba2e33954c3db614545f6e2751108abfa5cb2158b",
+      "bytes": 7514,
+      "role": "changed"
+    },
+    {
+      "path": "web_alarm/turn_service.py",
+      "sha256": "5adf26a7fb027f5194eda200a423b5b803aecbd5d1034982ca6b0bc17e949cee",
+      "bytes": 43937,
+      "role": "changed"
+    },
+    {
+      "path": "web_alarm/ui.py",
+      "sha256": "95c6b8b356ad1d5a186319099a9500fd519e5f7a52cc7cdffd0d7eb01fc157b4",
+      "bytes": 224640,
+      "role": "changed"
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "role": "changed",
+      "sha256": "566f3369ca069c3a52badd5dc50fa913565b6dde3c71d234995f4ea4267f4080",
+      "bytes": 60088
+    },
+    {
+      "path": "web_alarm/ultra_connections.py",
+      "sha256": "d57a37774e9b1fa7ea5d3e954a0c7058aea2f3ca82446ecd9bd59c8b171b266b",
+      "bytes": 11898,
       "role": "reused_reference"
     }
   ]

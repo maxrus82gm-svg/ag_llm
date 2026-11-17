@@ -54,7 +54,7 @@ class ModelContract:
                 or (self.version_mode == 'DISCOVER_GIGACHAT_2' and
                     (self.model_id != 'gigachat_2' or self.response_models != () or self.output_tokens > 32))
                 or (self.version_mode == 'DISCOVER_FAMILY' and
-                    (self.model_id == 'gigachat_2' or self.response_models != () or self.output_tokens > 128))):
+                    (self.model_id == 'gigachat_2' or self.response_models != () or self.output_tokens > 20000))):
             raise PreSendDenied('provider_contract_invalid')
         return model
 
@@ -102,12 +102,13 @@ class LiveApproval:
     scope: str
     expires_at: float
     contracts: tuple[ModelContract, ...]
-    max_oauth: int
+    max_oauth: int | None
     max_catalog: int
-    max_inference: int
-    max_liability_tokens: int
+    max_inference: int | None
+    max_liability_tokens: int | None
     max_request_bytes: int = 8192
     max_answer_tokens: int = 128
+    user_turn_mode: bool = False  # each physical inference still needs a fresh Turn admission
 
 
 class ProviderSession:
@@ -134,9 +135,16 @@ class ProviderSession:
                 or not time.time() < approval.expires_at <= time.time()+86400
                 or type(approval.contracts) is not tuple or (approval.max_inference != 0 and not approval.contracts)
                 or any(type(c) is not ModelContract for c in approval.contracts)
-                or any(type(n) is not int or n < 0 for n in (approval.max_oauth, approval.max_catalog, approval.max_inference))
-                or approval.max_oauth+approval.max_catalog+approval.max_inference == 0
-                or any(type(n) is not int or n <= 0 for n in (approval.max_liability_tokens, approval.max_request_bytes, approval.max_answer_tokens))
+                or type(approval.user_turn_mode) is not bool
+                or type(approval.max_catalog) is not int or approval.max_catalog < 0
+                or (approval.user_turn_mode and (approval.max_oauth is not None
+                    or approval.max_inference is not None or approval.max_liability_tokens is not None
+                    or approval.max_catalog != 1))
+                or (not approval.user_turn_mode and (
+                    any(type(n) is not int or n < 0 for n in (approval.max_oauth, approval.max_inference))
+                    or type(approval.max_liability_tokens) is not int or approval.max_liability_tokens <= 0
+                    or approval.max_oauth+approval.max_catalog+approval.max_inference == 0))
+                or any(type(n) is not int or n <= 0 for n in (approval.max_request_bytes, approval.max_answer_tokens))
                 or approval.max_request_bytes > 8192 or approval.max_answer_tokens > 20000):
             raise PreSendDenied('reviewed_live_approval_required')
         for contract in approval.contracts:
@@ -144,12 +152,12 @@ class ProviderSession:
         if len({c.model_id for c in approval.contracts}) != len(approval.contracts):
             raise PreSendDenied('duplicate_model_contract')
         discovering = [c for c in approval.contracts if c.version_mode == 'DISCOVER_GIGACHAT_2']
-        if discovering and (len(approval.contracts) != 1 or approval.max_inference != 1
+        if discovering and (approval.user_turn_mode or len(approval.contracts) != 1 or approval.max_inference != 1
                 or approval.max_answer_tokens > 32 or approval.max_request_bytes > 1024
                 or approval.max_liability_tokens > 1056):
             raise PreSendDenied('first_version_discovery_envelope_invalid')
         family = [c for c in approval.contracts if c.version_mode == 'DISCOVER_FAMILY']
-        if family and (approval.max_inference > 12 or approval.max_answer_tokens > 128
+        if family and not approval.user_turn_mode and (approval.max_inference > 12 or approval.max_answer_tokens > 128
                 or approval.max_request_bytes > 4096 or approval.max_liability_tokens > 50688):
             raise PreSendDenied('family_discovery_envelope_invalid')
         self.approval = approval
@@ -249,9 +257,13 @@ class ProviderSession:
 
     def _consume(self, kind, liability=0):
         self.check()
+        ceiling = getattr(self.approval, 'max_'+kind, None)
         if (kind not in ('oauth', 'catalog', 'inference')
-                or self._counts[kind] >= getattr(self.approval, 'max_'+kind)
-                or self._counts['liability']+liability > self.approval.max_liability_tokens):
+                or (ceiling is not None and self._counts[kind] >= ceiling)
+                or (self.approval.max_liability_tokens is not None and
+                    self._counts['liability']+liability > self.approval.max_liability_tokens)
+                or (self.approval.user_turn_mode and kind == 'inference' and
+                    not 0 < liability <= self.approval.max_request_bytes+self.approval.max_answer_tokens)):
             raise PreSendDenied('live_call_or_token_limit')
         with core._existing_workspace_writer(self.root, self.workspace_id) as writer:
             self.check()
@@ -396,7 +408,9 @@ class RealGigaChatTransport:
                         # Do not expose provider error text, headers or redirects.
                         safe = {'usage': decoded['usage']} if type(decoded) is dict and type(decoded.get('usage')) is dict else {}
                         return ProviderResponse(response.status_code, safe, 'provider_http_'+str(response.status_code))
-                    if type(decoded) is not dict or not response_model_allowed(c, decoded.get('model')):
+                    pinned = session._confirmed_versions.get(self.model_id)
+                    if (type(decoded) is not dict or not response_model_allowed(c, decoded.get('model'))
+                            or (pinned is not None and decoded.get('model') != pinned)):
                         return ProviderResponse(200, decoded, 'response_model_version_mismatch')
                     # Existing parser expects registry ID; validate the complete
                     # observed version above, then normalize only this field.

@@ -857,7 +857,8 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
                 raise
             system = ""
         history = core.read_chat_history_bounded(root, chat_id,
-            limits=core.ReadLimits(max_message_files=256, max_history_bytes=512 * 1024, max_message_bytes=32768))
+            limits=core.ReadLimits(max_message_files=256, max_history_bytes=8 * 1024 * 1024,
+                                   max_message_bytes=1024 * 1024))
         if history["excluded"]:
             raise UltraChatError(503, "offline_history_invalid", "Chat context contains unreadable records")
         context = [{"role": "system", "content": system}] if system.strip() else []

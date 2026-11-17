@@ -12,7 +12,7 @@ from ultra_budget_ledger import BudgetLedger
 from web_alarm.server import WebAlarmApi
 from web_alarm.standard_live import (
     eligible_workspaces, personal_chat_registration, prepare_personal_chat,
-    offer_standard_live, MAX_SENDS, MAX_LIABILITY, OBSERVED_MODEL, MODEL_ID,
+    offer_standard_live, MAX_ANSWER_TOKENS, OBSERVED_MODEL, MODEL_ID,
     PERSONAL_DIRNAME, PERSONAL_LABEL,
 )
 from web_alarm.ordinary_provider import OrdinaryProviderFactory, OrdinaryApplicationChatService
@@ -56,20 +56,22 @@ class PersonalChatTests(unittest.TestCase):
 
     def test_missing_credentials_does_not_create_personal_root(self):
         with patch.dict(os.environ, {"GIGACHAT_CREDENTIALS": ""}):
-            self.assertIsNone(self.attempt("LIVE 12"))
+            self.assertIsNone(self.attempt("LIVE CHAT"))
         self.assertFalse(self.personal_path.exists())
 
     def test_new_personal_chat_durable_single_chat_and_zero_provider_calls(self):
         before = self.api.registry.list()
         with patch("gigachat_runtime.ProviderSession.discover_models",
                    side_effect=AssertionError("unexpected provider request")):
-            session = self.attempt("LIVE 12")
+            session = self.attempt("LIVE CHAT")
         self.assertIsNotNone(session)
         self.assertEqual(session.root, self.personal_path)
-        self.assertEqual(session.approval.max_inference, MAX_SENDS)
-        self.assertEqual(session.approval.max_oauth, 1)
+        self.assertIsNone(session.approval.max_inference)
+        self.assertIsNone(session.approval.max_oauth)
         self.assertEqual(session.approval.max_catalog, 1)
-        self.assertEqual(session.approval.max_liability_tokens, MAX_LIABILITY)
+        self.assertIsNone(session.approval.max_liability_tokens)
+        self.assertTrue(session.approval.user_turn_mode)
+        self.assertEqual(session.approval.max_answer_tokens, MAX_ANSWER_TOKENS)
         self.assertEqual(session.approval.contracts[0].response_models, (OBSERVED_MODEL,))
         self.assertEqual(tuple(c.model_id for c in session.approval.contracts), (MODEL_ID,))
         self.assertEqual(session._counts["oauth"], 0)
@@ -90,11 +92,11 @@ class PersonalChatTests(unittest.TestCase):
         session.close()
 
     def test_reopen_preserves_personal_identity_and_chat(self):
-        first = self.attempt("LIVE 12")
+        first = self.attempt("LIVE CHAT")
         first_reg = self.api.registry.get(personal_chat_registration(self.api.registry).workspace_id)
         first_chats = core.list_chats_bounded(self.personal_path)["chats"]
         first.close()
-        second = self.attempt("LIVE 12")
+        second = self.attempt("LIVE CHAT")
         self.assertEqual(second.workspace_id, first.workspace_id)
         self.assertNotEqual(second.approval.grant_id, first.approval.grant_id)
         self.assertEqual(self.api.registry.get(first_reg.workspace_id), first_reg)
@@ -106,14 +108,14 @@ class PersonalChatTests(unittest.TestCase):
         self.personal_path.mkdir()
         self.assertIsNone(personal_chat_registration(self.api.registry))
         with self.assertRaisesRegex(PreSendDenied, "personal_storage_existing_unregistered"):
-            self.attempt("LIVE 12")
+            self.attempt("LIVE CHAT")
         self.assertEqual(list(self.personal_path.iterdir()), [])
         self.assertEqual(len(self.api.registry.list()), 1)
 
     def test_preexisting_file_refuses_adoption_and_is_not_deleted(self):
         self.personal_path.write_text("UNTOUCHED", encoding="utf-8")
         with self.assertRaisesRegex(PreSendDenied, "personal_storage_existing_unregistered"):
-            self.attempt("LIVE 12")
+            self.attempt("LIVE CHAT")
         self.assertEqual(self.personal_path.read_text(encoding="utf-8"), "UNTOUCHED")
 
     def test_registered_personal_root_with_missing_audit_refuses_reset(self):
@@ -121,11 +123,11 @@ class PersonalChatTests(unittest.TestCase):
         core.ensure_workspace_storage(self.personal_path)
         self.api.registry.register(PERSONAL_LABEL, self.personal_path)
         with self.assertRaises(Exception):
-            self.attempt("LIVE 12")
+            self.attempt("LIVE CHAT")
         self.assertIsNone((self.personal_path / ".ultra" / "audit" / "ledger_marker.json").is_file() or None)
 
     def test_unapproved_model_is_visible_but_cannot_be_sent(self):
-        session = self.attempt("LIVE 12")
+        session = self.attempt("LIVE CHAT")
         self.addCleanup(session.close)
         session._available = frozenset(("GigaChat-2", "GigaChat-3-Ultra"))
         app = OrdinaryApplicationChatService(self.api.registry,
