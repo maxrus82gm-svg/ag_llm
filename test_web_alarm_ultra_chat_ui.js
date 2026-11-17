@@ -1524,19 +1524,36 @@ test('REAL old late model GET cannot re-block a newer approved choice',async()=>
   assert.equal(h.el('chatSend').disabled,false);
 });
 
-test('REAL live scope cannot send from a different Workspace and can return to personal',async()=>{
+test('REAL shared provider permits registered Workspace with own confirmed model and Turn',async()=>{
   const f=approvedPersonalRoutes('gigachat_2'),h=harness({routes:f.routes});
+  const b='/ultra/chat/workspaces/ws_b/chats/chat_b';
+  let stored='gigachat_2',enrolled=false;
+  h.routes.set(b+'/model',opts=>{
+    if(opts.method==='POST'){stored=JSON.parse(opts.body).model_ref;enrolled=true;}
+    return {model_ref:stored,persisted:enrolled,enrolled};
+  });
+  h.routes.set(b+'/turns',opts=>({...offlineTurn(JSON.parse(opts.body),'SUCCEEDED'),
+    mode:'ORDINARY',execution_mode:'REAL'}));
+  h.routes.set(b+'/turns/latest',()=>({turn:null,text:null}));
   await settle();
   assert.equal(h.el('chatSend').disabled,false);
-  h.run("chat.workspace='ws_b';chat.chat='chat_b';renderTurnComposer()");
-  assert.equal(h.el('chatSend').disabled,true);
-  assert.equal(h.el('chatInput').disabled,true);
-  assert.match(h.el('chatComposerNote').textContent,/Личные чаты/);
-  h.el('chatInput').value='Should not send';
-  await h.el('chatSend').onclick();
-  assert.equal(h.chatCalls().some(c=>c.url.endsWith('/turns')&&c.method==='POST'),false);
-  h.run("chat.workspace='ws_a';chat.chat='chat_a';renderTurnComposer()");
+  h.run("chat.epoch++;chat.workspace='ws_b';chat.chat='chat_b';chatTurn.model=null;renderTurnComposer()");
+  assert.equal(h.el('chatSend').disabled,true,'model must reload for new Workspace');
+  await h.run('loadChatModel()');
+  assert.equal(h.el('chatSend').disabled,true,'unenrolled Workspace must select a model first');
+  assert.match(h.el('chatModelError').textContent,/журнал новых GigaChat/);
+  await h.el('chatModelPick').onclick();
+  await h.el('chatModelMenu').children[0].onclick();
+  assert.equal(enrolled,true);
   assert.equal(h.el('chatInput').disabled,false);
+  assert.equal(h.el('chatSend').disabled,false);
+  h.el('chatInput').value='Send from registered Workspace';
+  await h.el('chatSend').onclick();
+  assert.equal(h.chatCalls().filter(c=>c.url===b+'/turns'&&c.method==='POST').length,1);
+  assert.equal(h.run('turnScope()'),'webAlarm.ordinaryTurn.ws_b.chat_b');
+  h.run("chat.epoch++;chat.workspace='ws_a';chat.chat='chat_a';chatTurn.model=null;renderTurnComposer()");
+  await h.run('loadChatModel()');
+  assert.equal(h.run('chatTurn.model'),'gigachat_2');
   assert.equal(h.el('chatSend').disabled,false);
 });
 

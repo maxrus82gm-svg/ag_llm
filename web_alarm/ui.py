@@ -2160,11 +2160,9 @@ function renderTurnComposer(){
           $('chatSend').disabled=true;
           text('chatComposerNote','Сохранённый незавершённый запрос привязан к другой модели. Проверьте его состояние.');
         }
-        if(chatTurn.liveWorkspaceId&&chat.workspace!==chatTurn.liveWorkspaceId){
-          $('chatInput').disabled=true;
-          $('chatSend').disabled=true;
-          text('chatComposerNote','LIVE разрешён только для «Личные чаты». Другие Workspace остаются доступными для просмотра.');
-        }
+        // The same connected provider may serve any registered and audited
+        // Workspace. Server-side scope and per-Workspace Turn/ledger checks
+        // remain authoritative; never treat the personal root as a UI allowlist.
       }
     }
   }
@@ -2249,8 +2247,7 @@ async function sendTurn(){
   if(chatTurn.testModelPreferences&&(chatTurn.testModelBusy||(!chatTurn.testModelLoaded&&!turnPending()?.model)))return;
   if(!chatTurn.available||chatTurn.busy||!chat.workspace||!chat.chat||!$('chatInput').value.trim()||(modelChat()&&!chatTurn.model&&!(chatTurn.testModelPreferences&&turnPending()?.model)))return;
   if(chatTurn.ordinary&&chatTurn.executionMode==='REAL'&&
-      ((chatTurn.liveWorkspaceId&&chat.workspace!==chatTurn.liveWorkspaceId)||
-       chatTurn.models.find(m=>m.model_id===chatTurn.model)?.availability!=='AVAILABLE'||
+      (chatTurn.models.find(m=>m.model_id===chatTurn.model)?.availability!=='AVAILABLE'||
        (turnPending()?.model&&turnPending().model!==chatTurn.model)))return;
   const epoch=chat.epoch,scope=turnScope(),base=turnBase(),value=$('chatInput').value;
   chatTurn.busy=true;renderTurnComposer();text('chatTurnStatus','Принимаем TEST-запрос…');
@@ -2496,8 +2493,12 @@ async function loadChatModel(){
     if(chatTurn.ordinary&&chat.workspace&&chat.chat){
       const epoch=chat.epoch,revision=++ordinaryModelRevision;chatTurn.model=null;renderTurnComposer();
       try{const selected=await chatGet(turnBase().replace(/\/turns$/,'/model'));
-        if(epoch===chat.epoch&&revision===ordinaryModelRevision)
-          chatTurn.model=typeof selected.model_ref==='string'?selected.model_ref:null;
+        if(epoch===chat.epoch&&revision===ordinaryModelRevision){
+          chatTurn.model=selected.enrolled===false?null:
+            typeof selected.model_ref==='string'?selected.model_ref:null;
+          if(selected.enrolled===false)notice('chatModelError',
+            'Для этого Workspace выберите модель: журнал новых GigaChat-запросов подготовится при выборе.');
+        }
       }catch(_){if(epoch===chat.epoch&&revision===ordinaryModelRevision)text('chatModelError','Выбор модели не подтверждён.');}
       if(epoch!==chat.epoch||revision!==ordinaryModelRevision)return;
     }
@@ -2542,13 +2543,18 @@ async function openPicker(){
         try{
           if(chatTurn.ordinary){
             const saved=await chatPost(turnBase().replace(/\/turns$/,'/model'),{model_ref:m.model_id});
-            if(saved?.model_ref!==m.model_id||saved?.persisted!==true)throw Error('model_not_confirmed');
+            if(saved?.model_ref!==m.model_id||saved?.persisted!==true||saved?.enrolled===false)
+              throw Error('model_not_confirmed');
           }
           if(epoch===chat.epoch&&scope===turnScope()&&(!chatTurn.ordinary||revision===ordinaryModelRevision)){
             chatTurn.model=m.model_id;notice('chatModelError','');closePicker(true);renderTurnComposer();
           }
-        }catch(_){if(epoch===chat.epoch&&revision===ordinaryModelRevision)
-          notice('chatModelError','Выбор модели не сохранён. Повторите выбор.');}
+        }catch(e){if(epoch===chat.epoch&&revision===ordinaryModelRevision)
+          notice('chatModelError',e?.code==='ordinary_workspace_not_enrolled'?
+            'Журнал учёта Workspace недоступен или требует восстановления. Выбор модели не сохранён.':
+            e?.code==='provider_workspace_scope'?
+            'Workspace не зарегистрирован для этого подключения GigaChat. Выбор модели не сохранён.':
+            'Выбор модели не сохранён. Повторите выбор.');}
         finally{picker.busy=false;renderTurnComposer()}
       };return button
     });

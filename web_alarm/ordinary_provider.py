@@ -14,6 +14,37 @@ from ordinary_chat_service import PreSendDenied
 from .ultra_chat import OrdinaryCoreChatService, UltraChatError, UltraChatService, _core
 
 
+class RegisteredProviderWorkspace:
+    """One registered, audited Workspace bound to a shared live provider session.
+
+    The provider grant, account OS lock and TLS authority remain in the original
+    personal session. This object only scopes an individual Turn/RAW/ledger.
+    """
+    def __init__(self, registry, session, root, workspace_id):
+        from gigachat_runtime import ProviderSession
+        if type(session) is not ProviderSession:
+            raise ValueError("A real provider-session object is required")
+        self.registry, self.session = registry, session
+        self.root = Path(root).absolute()
+        self.workspace_id = workspace_id
+        self.check()
+
+    def check(self):
+        from ultra_budget_ledger import BudgetLedger, LedgerDenied
+        from .workspace_registry import WorkspaceRegistryError
+        self.session.check()
+        try:
+            record = self.registry.find_by_root(self.root)
+            if (record is None or Path(record.workspace_root) != self.root
+                    or self.root.resolve(strict=True) != self.root
+                    or _core().read_workspace_identity_bounded(self.root).get('workspace_id') != self.workspace_id):
+                raise ValueError("Registered Workspace identity changed")
+            BudgetLedger(self.root, self.workspace_id).recover()
+        except (OSError, ValueError, LedgerDenied, WorkspaceRegistryError):
+            raise UltraChatError(409, 'ordinary_workspace_not_enrolled',
+                                 'Workspace identity or audit requires review') from None
+
+
 MODEL_ID = "gigachat_2_pro"  # Reference to the existing registry, not a second catalog.
 RELEASE_HOLDS = ("provider_caps_unverified", "account_scope_availability_unverified",
                  "usage_cost_tls_contract_unverified", "S3b_open", "S3c_open",
@@ -79,8 +110,18 @@ class OrdinaryProviderFactory:
     def fixture_for(self, registry, root):
         self.validate_server(registry)
         if self._session is not None:
-            if Path(root).absolute() != self._session.root:
-                raise UltraChatError(403, 'provider_workspace_scope', 'Workspace is outside the provider approval')
+            # One GigaChat authority, many independent registered chat stores.
+            # Never authorize arbitrary filesystem paths or a browser-provided root.
+            from .workspace_registry import WorkspaceRegistryError
+            scope = Path(root).absolute()
+            try:
+                record = registry.find_by_root(scope)
+                if (record is None or Path(record.workspace_root) != scope
+                        or scope.resolve(strict=True) != scope):
+                    raise ValueError('Workspace registration changed')
+            except (ValueError, OSError, WorkspaceRegistryError):
+                raise UltraChatError(403, 'provider_workspace_scope',
+                                     'Only registered Workspace roots may use GigaChat') from None
             return None
         if self._fixture is None:
             return None
@@ -339,6 +380,23 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         try:
             with core._existing_workspace_writer(root, wid) as writer:
                 parts, metadata = core._require_chat_for_write(writer, chat_id)
+                enrolled = True
+                if self._factory._fixture is None:
+                    # Reads never enroll. Explicit model selection is the local
+                    # consent point to initialize an empty audit, preserving all
+                    # old Run/RAW/UNKNOWN and rejecting a damaged audit.
+                    from ultra_budget_ledger import BudgetLedger, LedgerDenied
+                    try:
+                        ledger = BudgetLedger(root, wid)
+                        if update is ...:
+                            ledger.recover()
+                        else:
+                            ledger.initialize()
+                    except LedgerDenied:
+                        if update is not ...:
+                            raise UltraChatError(409, 'ordinary_workspace_not_enrolled',
+                                'Workspace audit needs review before enabling GigaChat') from None
+                        enrolled = False
                 fallback = (self._factory._session.approval.contracts[0].model_id
                             if self._factory._session is not None and not self._factory._session.synthetic else MODEL_ID)
                 selected = metadata.get("ordinary_chat_model", fallback) if update is ... else update['model_ref']
@@ -348,7 +406,8 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                     core._replace_verified(writer.anchor, parts + ("metadata.json",),
                         core._json_bytes({**metadata, "ordinary_chat_model": selected}))
                 return {"model_ref": selected, "persisted": "ordinary_chat_model" in metadata or update is not ...,
-                        "enabled": self._api is None or self._api.model_cards.is_enabled(selected)}
+                        "enabled": self._api is None or self._api.model_cards.is_enabled(selected),
+                        "enrolled": enrolled}
         except (core.StorageWriteError, core.ChatNotFoundError, OSError, ValueError):
             raise UltraChatError(503, "ordinary_model_unavailable", "Chat model could not be verified") from None
 
@@ -466,7 +525,11 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         model_id = session.approval.contracts[0].model_id if not session.synthetic else MODEL_ID
         answer = session.approval.max_answer_tokens
         if chat_id:
-            with _core()._existing_workspace_writer(root, session.workspace_id) as writer:
+            identity = _core().read_workspace_identity_bounded(root)
+            workspace_id = identity.get('workspace_id') if identity.get('status') == 'ok' else None
+            if not workspace_id:
+                raise UltraChatError(409, 'workspace_unavailable', 'Workspace identity needs review')
+            with _core()._existing_workspace_writer(root, workspace_id) as writer:
                 _, metadata = _core()._require_chat_for_write(writer, chat_id)
                 model_id = metadata.get('ordinary_chat_model', session.approval.contracts[0].model_id if not session.synthetic else MODEL_ID)
                 answer = metadata.get('ordinary_chat_settings', {}).get('answer_tokens', answer)
@@ -482,7 +545,10 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         adapter = OrdinaryCoreAdapter.for_provider(session, context_ref=context_ref, model_id=model_id,
             context_loader=lambda: self._chat_context(root, chat_id), answer_tokens=answer,
             evm_profile=evm_profile)
-        return TurnService(test_roots=[root], offline_adapter=adapter, provider_session=session)
+        scope = (None if Path(root).absolute() == session.root and workspace_id == session.workspace_id
+                 else RegisteredProviderWorkspace(self.registry, session, root, workspace_id))
+        return TurnService(test_roots=[root], offline_adapter=adapter, provider_session=session,
+                           provider_workspace=scope)
 
 
 class _OrdinaryTurnChecker:

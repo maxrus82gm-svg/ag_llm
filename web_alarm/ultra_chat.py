@@ -871,9 +871,10 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
                 continue
             producer = user.get("producer", {})
             if producer.get("kind") not in ("offline_chat_fixture", "ordinary_chat_provider"):
-                # Legacy/manual history needs explicit provenance selection;
-                # never guess that an old failure or agent result is context.
-                raise UltraChatError(409, "context_source_unsupported", "Select a supported Ordinary Chat history")
+                # Keep historical/manual records visible, but exclude them from
+                # the LLM context. Only verified Ordinary Turns are admissible.
+                # Never infer that a legacy assistant/user pair succeeded.
+                continue
             turn = turns.get(root, identity["workspace_id"], chat_id, producer.get("run_id"))
             stored = turns._load(root, identity["workspace_id"], chat_id, turn["turn_id"])
             if turn["user_message_id"] != user["message_id"]:

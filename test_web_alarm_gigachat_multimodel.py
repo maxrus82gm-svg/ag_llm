@@ -99,6 +99,116 @@ class ProtocolTests(s5.Fixture):
         self.app.chat_model(self.ws, cid, {'model_ref':model})
         return self.app.submit_turn(self.ws, cid, body or self.body(text,model))
 
+    def _older_registered_workspace(self):
+        from ultra_budget_ledger import LedgerDenied
+        other_root = self.root / ('old_workspace_' + uuid4().hex)
+        other_root.mkdir()
+        identity = core.ensure_workspace_storage(other_root)
+        other_id = identity['workspace_id']
+        record = self.registry.register('Existing Workspace', other_root)
+        chat_record = core.create_chat_record(other_root, title='Исторический чат',
+                                               expected_workspace_id=other_id)
+        self.assertRaises(LedgerDenied, BudgetLedger(other_root, other_id).recover)
+        return record.workspace_id, chat_record['chat']['chat_id'], other_root, other_id
+
+    def test_one_provider_session_serves_personal_and_existing_registered_workspace(self):
+        self.discover()
+        ws, chat_id, root, wid = self._older_registered_workspace()
+        legacy = core.append_raw_message(root, chat_id, 'user', 'LEGACY_HISTORY_NOT_CONTEXT')
+        personal_root, personal_wid = self.workspace, self.wid
+        original_count = len(self.posts())
+        self.assertEqual(self.app.chat_model(ws, chat_id)['model_ref'], 'gigachat_2_pro')
+        self.assertFalse(self.app.chat_model(ws, chat_id)['enrolled'])
+        self.assertEqual(len(self.posts()), original_count)  # GET must not enroll or send
+        from ultra_budget_ledger import LedgerDenied
+        self.assertRaises(LedgerDenied, BudgetLedger(root, wid).recover)
+        selected = self.app.chat_model(ws, chat_id, {'model_ref':'gigachat_ultra'})
+        self.assertEqual(selected['model_ref'], 'gigachat_ultra')
+        self.assertTrue(selected['persisted'])
+        self.assertTrue(selected['enrolled'])
+        self.assertEqual(BudgetLedger(root, wid).recover().attempts, ())
+        self.assertEqual(len(self.posts()), original_count)
+        # The simulated HTTP provider handler verifies the target Workspace ledger.
+        self.workspace, self.wid = root, wid
+        try:
+            body = self.body('From existing Workspace', 'gigachat_ultra')
+            result = self.app.submit_turn(ws, chat_id, body)
+            self.assertEqual(result['state'], 'SUCCEEDED')
+            self.assertEqual(result['execution_mode'], 'PROTOCOL_TEST')
+            self.assertEqual(len(self.posts()), original_count + 1)
+            self.assertNotIn(b'LEGACY_HISTORY_NOT_CONTEXT', self.posts()[-1][2])
+            self.assertIn(legacy['message_id'],
+                          {m['message_id'] for m in core.read_chat_history_bounded(root, chat_id)['messages']})
+            self.assertEqual(BudgetLedger(root, wid).recover().attempts[-1].state, 'KNOWN_TERMINAL')
+            self.assertEqual(self.app.chat_model(ws, chat_id)['model_ref'], 'gigachat_ultra')
+            self.assertEqual(self.app.submit_turn(ws, chat_id, body)['turn_id'], result['turn_id'])
+            self.assertEqual(len(self.posts()), original_count + 1)  # replay did not resend
+        finally:
+            self.workspace, self.wid = personal_root, personal_wid
+        self.assertEqual(BudgetLedger(personal_root, personal_wid).recover().attempts, ())
+        self.assertEqual(self.app.chat_model(self.ws, self.cid)['model_ref'], 'gigachat_2_pro')
+        personal = self.send(text='Personal after Workspace')
+        self.assertEqual(personal['state'], 'SUCCEEDED')
+        self.assertEqual(len(self.posts()), original_count + 2)
+        self.assertEqual(len(BudgetLedger(root, wid).recover().attempts), 1)
+        self.assertEqual(len(BudgetLedger(personal_root, personal_wid).recover().attempts), 1)
+
+    def test_http_model_and_turn_routing_to_registered_old_workspace(self):
+        from web_alarm.server import WebAlarmApi, create_server
+        import threading
+        self.discover()
+        ws, chat_id, root, wid = self._older_registered_workspace()
+        api = WebAlarmApi(self.root / 'registry')
+        factory = OrdinaryProviderFactory.for_session(api.registry, self.session)
+        server = create_server(api, host='127.0.0.1', port=0, ordinary_factory=factory)
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        self.http = lambda *a, **k: s5.HttpAndTkTests.http(self, *a, **k)
+        http = lambda method, uri, body=None, headers=None: s5.HttpAndTkTests.http(
+            self, server, method, uri, body, headers)
+        _, read, write = s5.HttpAndTkTests.tokens(self, server)
+        base = f'/ultra/chat/workspaces/{ws}/chats/{chat_id}'
+        self.assertEqual(http('GET', base+'/model', headers=read)[0], 200)
+        from ultra_budget_ledger import LedgerDenied
+        self.assertRaises(LedgerDenied, BudgetLedger(root, wid).recover)
+        code, selected = http('POST',base+'/model',{'model_ref':'gigachat_ultra'},write)
+        self.assertEqual((code, selected['model_ref'], selected['persisted']),
+                         (200, 'gigachat_ultra', True))
+        original_root, original_wid = self.workspace, self.wid
+        self.workspace, self.wid = root, wid
+        try:
+            body = self.body('HTTP from old Workspace', 'gigachat_ultra')
+            code, reply = http('POST',base+'/turns',body,write)
+            self.assertEqual((code, reply['state']), (200,'SUCCEEDED'))
+            self.assertEqual(http('POST',base+'/turns',body,write)[1]['turn_id'], reply['turn_id'])
+            self.assertEqual(http('GET',base+'/model',headers=read)[1]['model_ref'],'gigachat_ultra')
+            self.assertEqual(http('GET',base+'/messages?limit=50',headers=read)[0],200)
+        finally:
+            self.workspace, self.wid = original_root, original_wid
+        self.assertEqual(len(self.posts()),1)
+        self.assertEqual(len(BudgetLedger(root, wid).recover().attempts),1)
+
+    def test_unregistered_and_damaged_workspaces_never_gain_provider_send(self):
+        self.discover()
+        ws, chat_id, root, wid = self._older_registered_workspace()
+        outside = self.root / ('unregistered_' + uuid4().hex)
+        outside.mkdir()
+        core.ensure_workspace_storage(outside)
+        before = len(self.posts())
+        with self.assertRaisesRegex(UltraChatError, 'Only registered Workspace roots'):
+            self.factory.fixture_for(self.registry, outside)
+        self.assertEqual(len(self.posts()), before)
+        # A corrupted/incomplete existing audit cannot be replaced by a fresh zero.
+        marker = BudgetLedger(root, wid)._marker()
+        marker.parent.mkdir(exist_ok=True)
+        marker.write_text('not-json', encoding='utf-8')
+        with self.assertRaisesRegex(UltraChatError, 'Workspace audit needs review'):
+            self.app.chat_model(ws, chat_id, {'model_ref':'gigachat_2_pro'})
+        self.assertEqual(len(self.posts()), before)
+        self.assertFalse(self.app.chat_model(ws, chat_id)['persisted'])
+
     def test_evm_profile_timeout_is_bound_to_existing_provider_adapter(self):
         from web_alarm.ordinary_chat_bridge import OrdinaryCoreAdapter
         profile = {'profile_id': 'gigachat-default', 'settings_version': 'a'*16,

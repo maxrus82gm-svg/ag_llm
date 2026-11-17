@@ -107,25 +107,36 @@ class _TurnAdmission:
 
 
 class TurnService:
-    def __init__(self, *, test_roots=(), offline_adapter=None, provider_session=None):
+    def __init__(self, *, test_roots=(), offline_adapter=None, provider_session=None,
+                 provider_workspace=None):
         self.test_roots = frozenset(Path(p).resolve() for p in test_roots)
         if offline_adapter is not None:
             from .ordinary_chat_test_adapter import OfflineTestAdapter
             from .ordinary_chat_bridge import OrdinaryCoreAdapter
             from gigachat_runtime import ProviderSession, RealGigaChatTransport
+            from .ordinary_provider import RegisteredProviderWorkspace
             temp_root = Path(tempfile.gettempdir()).resolve()
             if provider_session is not None:
                 if (type(provider_session) is not ProviderSession or type(offline_adapter) is not OrdinaryCoreAdapter
                         or type(offline_adapter._transport) is not RealGigaChatTransport
                         or offline_adapter._transport.session is not provider_session
-                        or self.test_roots != {provider_session.root}):
-                    raise ValueError('Provider session must own the exact Workspace and transport')
+                        or (provider_workspace is None and self.test_roots != {provider_session.root})
+                        or (provider_workspace is not None and (
+                            type(provider_workspace) is not RegisteredProviderWorkspace
+                            or provider_workspace.session is not provider_session
+                            or self.test_roots != {provider_workspace.root}))):
+                    raise ValueError('Provider session must own an exact registered Workspace and transport')
                 provider_session.check()
+                if provider_workspace is not None:
+                    provider_workspace.check()
             elif (type(offline_adapter) not in (OfflineTestAdapter, OrdinaryCoreAdapter) or not self.test_roots
                     or any(temp_root not in p.parents for p in self.test_roots)
                     or type(getattr(offline_adapter, '_transport', None)) is RealGigaChatTransport):
                 raise ValueError('Offline adapter requires explicit temporary Workspace roots')
+        if provider_workspace is not None and provider_session is None:
+            raise ValueError('Provider Workspace cannot exist without provider session')
         self._provider_session = provider_session
+        self._provider_workspace = provider_workspace
         self._offline_adapter = offline_adapter
         self._active = set()
         self._active_lock = threading.Lock()
@@ -136,6 +147,8 @@ class TurnService:
 
     def _require_test(self, root):
         # Explicit synthetic root allowlist; registration by itself grants no TEST execution permission.
+        if self._provider_workspace is not None:
+            self._provider_workspace.check()  # registry + identity + audit + live authority on every operation
         if Path(root).resolve() not in self.test_roots:
             raise UltraChatError(403, 'test_turn_unavailable', 'TEST sending is disabled for this Workspace')
 
