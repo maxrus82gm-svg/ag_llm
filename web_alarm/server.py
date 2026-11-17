@@ -60,7 +60,7 @@ from .state_machine import (
 )
 from .task_store import TaskStore, TaskStoreError
 from .transport_event_store import TransportEventStore, TransportEventStoreError
-from .ui import INDEX_HTML
+from .ui import INDEX_HTML, UI_VERSION
 from .blueprints import (
     BlueprintError, BlueprintService, CAPABILITY_PATH as BLUEPRINT_CAPABILITY_PATH,
     MAX_BYTES as BLUEPRINT_MAX_BYTES,
@@ -1386,6 +1386,38 @@ class _JsonHandler(BaseHTTPRequestHandler):
         threading.Thread(target=self.server.shutdown, name='web-alarm-shutdown', daemon=True).start()
         self._send_json(202, {'state': 'STOPPING', 'scope': 'THIS_INSTANCE'})
 
+    def _instances_request(self, path: str) -> None:
+        self._require_local_ui_origin('instances_forbidden', 'Instance diagnostics')
+        if urlsplit(self.path).query:
+            raise ApiError(400, 'invalid_instances_request', 'Query parameters are not supported')
+        from .instance_control import inventory, cleanup
+        own = getattr(self.server, 'web_alarm_instance', None)
+        if own is None:
+            raise ApiError(404, 'instance_unavailable', 'This server has no launcher instance identity')
+        if path == '/ui/instance' and self.command == 'GET':
+            self._send_json(200, own)
+            return
+        if path == '/ui/instances' and self.command == 'GET':
+            self._send_json(200, {'current': own['instance_id'], 'instances': inventory(self.server)})
+            return
+        if path != '/ui/instances/cleanup' or self.command != 'POST':
+            raise ApiError(405, 'method_not_allowed', 'Use the explicit cleanup POST')
+        if len(self.headers.get_all('Origin', [])) != 1:
+            raise ApiError(403, 'instances_forbidden', 'An exact browser origin is required')
+        try:
+            self.server.web_alarm_ultra_chat_write_access.require(self.headers)
+        except UltraChatError as exc:
+            raise ApiError(exc.status, exc.code, exc.message) from None
+        body = self._read_body()
+        if (type(body) is not dict or set(body) != {'confirmation', 'instance_ids'}
+                or body['confirmation'] != 'CLEAN EXTRA WEB ALARM'):
+            raise ApiError(400, 'cleanup_confirmation_required', 'Confirm the selected extra instances')
+        try:
+            results = cleanup(self.server, body['instance_ids'])
+        except ValueError:
+            raise ApiError(400, 'invalid_cleanup_selection', 'Expected distinct instance IDs') from None
+        self._send_json(200, {'current': own['instance_id'], 'results': results})
+
     def _run(self) -> None:
         tracker = self.server.web_alarm_shutdown_tracker
         with tracker['condition']:
@@ -1406,6 +1438,9 @@ class _JsonHandler(BaseHTTPRequestHandler):
     def _run_inner(self) -> None:
         try:
             path = urlsplit(self.path).path
+            if path in {'/ui/instance', '/ui/instances', '/ui/instances/cleanup'}:
+                self._instances_request(path)
+                return
             if path == '/ui/shutdown':
                 self._shutdown_request()
                 return

@@ -7,6 +7,7 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 <!-- TASK-HISTORY-INDEX:BEGIN -->
 | Дата | ID | Задача | Статус / проверка | Адрес подробностей |
 | --- | --- | --- | --- | --- |
+| 2026-11-17 | `H-CODEX-000043` / `CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001` | STANDARD — завершение, legacy GigaChat session и экземпляры | AUTHOR PARTIAL; successor personal account RECOVERED (owner-authorised, local readback PASS); INDEPENDENT CI, OWNER GUI, REAL PROVIDER NOT RUN | `reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/task_record.json` |
 | 2026-11-17 | `H-CODEX-000042` / `CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001` | EVM — восстановление проверки и инженерные исправления | AUTHOR PARTIAL / SOURCE REVIEW; OFFLINE F02–F05; F01, CI, REAL, UX OPEN | `reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/task_record.json` |
 | 2026-11-17 | `H-CODEX-000041` / `CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001` | EVM — управление моделями, чат и многооконный режим | SUBMITTED / REVIEW PENDING; AUTHOR PARTIAL; S2 72/73 FAIL; GUI/REAL NOT VERIFIED | `reports/CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001/task_record.json` |
 | 2026-11-17 | `H-CODEX-000040` / `CODEX-WUA-EVM-UNIFIED-CONNECTION-001` | EVM ↔ GigaChat — единая сессия, Turn, статусы | SUBMITTED / REVIEW PENDING; AUTHOR OFFLINE PASS; GUI/REAL NOT VERIFIED | `reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/task_record.json` |
@@ -16,7 +17,6 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 | 2026-11-15 | `H-CODEX-000036` / `CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001` | Сохранение TEST-модели отдельно по чату | DOC CLOSED / bounded independent OFFLINE PASS + owner TEST GUI accepted; REAL HOLD | `reports/CODEX-WUA-CHAT-TEST-PER-CHAT-MODEL-PERSIST-001/task_record.json` |
 | 2026-11-14 | `H-CODEX-000035` / `CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001` | Одна модель GigaChat — preflight и настройки STANDARD | DOC RECORDED / bounded independent OFFLINE PASS + owner GUI accepted; REAL NOT READY | `reports/CODEX-WUA-CHAT-GIGACHAT-ONE-MODEL-REAL-PREFLIGHT-001/task_record.json` |
 | 2026-11-14 | `H-CODEX-000034` / `CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001` | GigaChat — S3b REAL-readiness | DOC CLOSED / bounded independent OFFLINE PASS; full REAL HOLD | `reports/CODEX-WUA-CHAT-GIGACHAT-REAL-READINESS-S3B-001/task_record.json` |
-| 2026-11-13 | `H-CODEX-000033` / `CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001` | GigaChat — транспортный OFFLINE gate | DOC CLOSED / bounded independent OFFLINE PASS | `reports/CODEX-WUA-CHAT-GIGACHAT-TRANSPORT-OFFLINE-GATE-001/task_record.json` |
 <!-- TASK-HISTORY-INDEX:END -->
 
 Старый полный текст сохранён побайтово: `reports/CODEX-TASK-HISTORY-ID-001/preservation/001_История выполненных задач Codex.md`. Снимок не читать целиком на старте. Старые статусы относятся к своим датам; перенос не является новым PASS. Старше десяти — вне рабочего окна, но не удалено из архива.

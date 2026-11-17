@@ -4,6 +4,7 @@ INDEX_HTML = r'''<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
+<meta id="waUiVersion" name="web-alarm-ui-version" content="__WA_UI_VERSION__">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Web Alarm Workspace</title>
 <style>
@@ -304,9 +305,11 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <input type="checkbox" id="autoRefresh"> Наблюдать · 15 с</label>
 <button id="refresh">↻ Обновить</button>
 <button type="button" id="shutdownWebAlarm">Завершить Web Alarm</button>
+<button type="button" id="cleanupInstances">Очистить лишние экземпляры</button>
 </div>
 </header>
 <div id="shutdownResult" class="notice info" role="status" hidden></div>
+<div id="instanceResult" class="notice info" role="status" hidden></div>
 <section id="chatView" class="chat-view" aria-labelledby="chatHeading">
 <div class="chat-layout">
 <nav class="chat-side" aria-label="Workspace и диалоги Ultra">
@@ -2845,6 +2848,33 @@ $('shutdownWebAlarm').onclick=async()=>{
     $('shutdownWebAlarm').disabled=false;
   }
 };
+$('cleanupInstances').onclick=async()=>{
+  $('cleanupInstances').disabled=true;
+  try{
+    const list=await api('/ui/instances');
+    const extra=(list.instances||[]).filter(x=>x.state==='EXTRA_CONFIRMED');
+    const unverified=(list.instances||[]).filter(x=>x.state==='UNVERIFIED'||x.state==='LEGACY_UNVERIFIED').length;
+    if(!extra.length){text('instanceResult','Доказанных лишних экземпляров нет. Неподтверждённых записей: '+unverified+'. Текущий сервер не затронут.');return}
+    const description=extra.map(x=>x.profile+' · порт '+x.port+' · PID '+x.pid+' · '+(x.stale_ui?'старая версия':'та же версия')).join('\n');
+    if(!window.confirm('Завершить только подтверждённые лишние экземпляры? Текущий чат останется открытым.\n'+description))return;
+    if(!chatEdit.token)await loadChatWriteAccess();
+    const result=await api('/ui/instances/cleanup',{method:'POST',headers:{[CHAT_WRITE_HEADER]:chatEdit.token},
+      body:{confirmation:'CLEAN EXTRA WEB ALARM',instance_ids:extra.map(x=>x.instance_id)}});
+    const states=(result.results||[]).map(x=>x.instance_id.slice(0,8)+': '+x.state).join('; ');
+    text('instanceResult','Запрошена остановка лишних экземпляров: '+states+'. Текущий сервер и чат продолжают работу. Обновите диагностику после завершения.');
+  }catch(error){text('instanceResult','Очистка не подтверждена: '+(error.message||'ошибка диагностики'))}
+  finally{$('instanceResult').hidden=false;$('cleanupInstances').disabled=false}
+};
+async function checkPageInstance(){
+  try{
+    const current=await api('/ui/instance');
+    const loaded=$('waUiVersion').getAttribute('content');
+    if(loaded!==current.ui_version){
+      text('instanceResult','Версия HTML/JS этой страницы отличается от сервера. Обновите страницу без кеша.');
+      $('instanceResult').hidden=false;
+    }
+  }catch(_){/* Older server: diagnostics unavailable, no automatic action. */}
+}
 $('chatInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();return sendTurn()}};
 $('chatTurnCheck').onclick=()=>checkTurn(true);
 $('chatTurnCancel').onclick=cancelTurn;
@@ -2882,6 +2912,7 @@ if(stage5Offline){
   $('chatModelPick').setAttribute('title','Выбрать модель следующего TEST-запроса');
   text('serverStatus','TEST · OFFLINE');$('serverStatus').setAttribute('data-state','checking');
 }else refresh();
+if(!stage5Offline)checkPageInstance();
 </script>
 </body></html>
 '''
@@ -2889,3 +2920,6 @@ if(stage5Offline){
 # Keep the existing client and its DOM contract intact; the editor is an isolated module.
 from .blueprint_ui import install_blueprint_ui
 INDEX_HTML = install_blueprint_ui(INDEX_HTML)
+import hashlib
+UI_VERSION = hashlib.sha256(INDEX_HTML.encode('utf-8')).hexdigest()[:12]
+INDEX_HTML = INDEX_HTML.replace('__WA_UI_VERSION__', UI_VERSION)

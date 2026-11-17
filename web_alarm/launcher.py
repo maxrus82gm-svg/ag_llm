@@ -378,6 +378,9 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
         return 5
     server.RequestHandlerClass = _MarkedHandler
     server.web_alarm_launch = launch
+    if self_test is None:
+        from .instance_control import register
+        register(server, profile=launch.name, storage=storage_text, ui_version=wa_server.UI_VERSION)
     url = f"http://{HOST}:{server.server_port}/"
     set_console_title(("Web Alarm Ultra — " + STANDARD_TEXT) if launch.standard else (f"[ТЕСТ] {launch.name} — " + TEST_TEXT))
     out.write(banner(launch, url, storage_text, colors))
@@ -405,6 +408,8 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
     except KeyboardInterrupt:
         pass
     finally:
+        from .instance_control import unregister
+        unregister(server)
         tracker = server.web_alarm_shutdown_tracker
         if type(tracker) is dict:
             with tracker['condition']:
