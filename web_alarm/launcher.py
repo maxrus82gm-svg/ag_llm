@@ -487,6 +487,31 @@ def run_script(launch: Launch, *, out: TextIO, colors: bool, sleep: Callable[[fl
         return 0
 
 
+def _refresh_standard_gigachat_environment() -> None:
+    """Use current-user Windows settings when an older parent shell has stale variables.
+
+    Never replace an explicit process variable, log credential values, touch disk
+    storage or obtain OAuth. This is only a launch-time environment refresh.
+    """
+    if os.name != "nt":
+        return
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
+            for name in ("GIGACHAT_CREDENTIALS", "GIGACHAT_SCOPE"):
+                if name in os.environ:
+                    continue
+                try:
+                    value, kind = winreg.QueryValueEx(key, name)
+                except OSError:
+                    continue
+                if kind in (winreg.REG_SZ, winreg.REG_EXPAND_SZ) and type(value) is str and value:
+                    os.environ[name] = value
+    except OSError:
+        # Missing registry settings continue through the existing fail-closed gate.
+        return
+
+
 def main(argv: list[str] | None = None, out: TextIO | None = None) -> int:
     parser = argparse.ArgumentParser(prog="Start_WebAlarm.bat", description="Web Alarm Ultra launcher")
     selection = parser.add_mutually_exclusive_group()
@@ -515,6 +540,8 @@ def main(argv: list[str] | None = None, out: TextIO | None = None) -> int:
             out.write("Самопроверка для тестового скрипта не поддерживается.\n")
             return 2
         return run_script(launch, out=out, colors=colors)
+    if launch.standard and args.self_test is None:
+        _refresh_standard_gigachat_environment()
     return run_web_alarm(launch, out=out, colors=colors, open_browser=not args.no_browser,
                          self_test=args.self_test, request_live=args.live)
 

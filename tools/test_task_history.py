@@ -36,6 +36,37 @@ class History(unittest.TestCase):
         self.assertEqual(c['history_id'],'H-CODEX-000002')
         self.assertEqual(h.load_record(self.root,a['history_id'])['id'],a['id'])
 
+    def test_chatgpt_direct_registration_has_own_history_id_without_codex_slot(self):
+        (self.root/'report.md').write_text('Direct owner GUI smoke', encoding='utf-8')
+        task = 'CHATGPT-WUA-OWNER-SMOKE-001'
+        args = ('register','--id',task,'--agent','chatgpt','--title',
+                'Owner GUI smoke without Block 1','--date','2026-11-17',
+                '--assignment','input.md','--report','report.md','--apply')
+        self.assertEqual(self.cli(*args)[0], 0)
+        direct = h.load_record(self.root, task)
+        self.assertEqual(direct['history_id'], 'H-CHATGPT-000001')
+        self.assertEqual(direct['agent'], 'chatgpt')
+        self.assertEqual(h.load_record(self.root, direct['history_id'])['id'], task)
+        self.assertEqual(self.cli(*args)[0], 0)
+        self.assertEqual(h.load_record(self.root, task), direct)
+        codex = self.add('CODEX-TEST-003')
+        self.assertEqual(codex['history_id'], 'H-CODEX-000001')
+        code, out, _ = self.cli('validate')
+        self.assertEqual(code, 0, out)
+        self.assertIn('"sources": "HASH VERIFIED"', out)
+
+    def test_chatgpt_direct_is_in_general_index_not_codex_card(self):
+        docs = self.root/'Документация'
+        docs.mkdir()
+        for name in [*h.CARDS.values(), '05_Реестр задач.md']:
+            (docs/name).write_text(h.BEGIN+'\n'+h.END+'\n', encoding='utf-8')
+        self.assertEqual(h.register(self.root,'CHATGPT-WUA-OWNER-001','chatgpt',
+            'Direct task','2026-11-17',
+            {'assignment':h.source_ref(self.root,'input.md')})['history_id'], 'H-CHATGPT-000001')
+        self.assertEqual(self.cli('render','--apply')[0], 0)
+        self.assertIn('H-CHATGPT-000001', (docs/'05_Реестр задач.md').read_text(encoding='utf-8'))
+        self.assertNotIn('H-CHATGPT', (docs/h.CARDS['codex']).read_text(encoding='utf-8'))
+
     def test_revision_keeps_identity_previous_and_does_not_forge_review(self):
         old=self.add()
         (self.root/'new.md').write_text('Новая сдача',encoding='utf-8')

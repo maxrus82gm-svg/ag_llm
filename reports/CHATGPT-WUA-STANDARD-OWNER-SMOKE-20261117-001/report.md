@@ -1,0 +1,33 @@
+# Owner-smoke STANDARD, GigaChat credential environment и обнаруженный Workspace scope
+
+**TASK ID:** `CHATGPT-WUA-STANDARD-OWNER-SMOKE-20261117-001`
+**Дата:** 2026-11-17 (локальное окно пользовательского GUI)
+**Источник:** HOME `DESKTOP-SC96D3U`, `M:\GitHub\ag_llm`, исходный пользовательский `main@7e122c21`; код этой итерации перед публикацией находится в локальной `GPT`.
+**Связь:** `CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001` / `H-CODEX-000043` (авторский PARTIAL), ранее задокументированные owner-approved legacy apply `CHATGPT-WUA-H43-LEGACY-RECOVERY-APPLY-20261117-001` (#646) и engineering repair (#645). Ничего не переобъявляем как независимый H43 PASS.
+
+## Доказанные и наблюдённые факты
+
+1. После пользовательского merge H43 и штатного старта STANDARD на 127.0.0.1:8765 HTTP ответ был 200. Пользователь подтвердил доступность старой истории и личных чатов. Первые попытки `EVM → Подключить GigaChat` (в том числе случайный повтор) закончились `Состояние не изменено` / `live_credentials_missing`, провайдер оставался отключённым.
+2. На HOME диагностическая PowerShell и созданный Python-процесс не наследовали `GIGACHAT_CREDENTIALS`; соответствующее значение существовало в Windows HKCU Environment, `GIGACHAT_SCOPE=GIGACHAT_API_PERS` также присутствовал в пользовательских настройках. **Никакие секретные значения не выводились, в Git или отчёт не попадали**.
+3. Адресная правка `web_alarm/launcher.py`: `_refresh_standard_gigachat_environment()` при обычном запуске STANDARD без self-test читает только отсутствующие process переменные `GIGACHAT_CREDENTIALS` и `GIGACHAT_SCOPE` из Windows HKCU Environment, не заменяет явно переданные значения, не выводит секретов; TEST не использует этот путь. При отсутствии данных прежний fail-closed admission остаётся. Появление переменных **не равно** автоматическому OAuth/отправке или праву на LIVE.
+4. LOCAL Windows developer OFFLINE: `test_web_alarm_standard_credential_env.py` **4/4 PASS** (включая registry absent, explicit process vars, STANDARD/self-test gating); связанный `test_web_alarm_launcher.py` **24/24 PASS**. Реальный диагностический процесс дал `CREDENTIAL_PRESENT_BEFORE=False`, `CREDENTIAL_PRESENT_AFTER=True`, `SCOPE_VALID_AFTER=True` без чтения самого секрета в stdout. **GitHub-hosted CI для этого изменения НЕ ЗАПУСКАЛСЯ, independent verifier НЕ ВЫПОЛНЕН**.
+5. После штатного закрытия, нового запуска STANDARD и одного явного EVM Connect пользователь сообщил `Подключение выполняется → Всё подключено`, затем увидел успешную отправку, ответ от GigaChat Ultra на личный `Привет`, зелёную индикацию проверки; сообщил, что GigaChat и проверка работают. Это **USER GUI / REAL bounded observation**, не независимая приёмка всех моделей и не доказательство повторного запуска/устойчивости в других условиях. Число реальных OAuth/inference, тариф и provider usage по логам нами не подсчитывались; агент сам REAL Turn не запускал. Пользовательские реальныe отправки могли тарифицироваться.
+6. Пользователь подтвердил, что личные чаты работают, но в обычных зарегистрированных Workspace старых диалогах выбор модели выдаёт `Выбор модели не сохранён. Повторите выбор`, отправка не работает. **Исход пользователя FACT / SOURCE-сопряжение:** UI `web_alarm/ui.py` обобщает исключение POST `/ultra/chat/workspaces/<ws>/chats/<chat>/model`; `web_alarm/ordinary_provider.py` вызов `_writable_workspace` проходит `factory.fixture_for` и в REAL отклоняет root вне личного provider session `session.root` кодом `provider_workspace_scope`. HTTP-код конкретной попытки пользователя не перехватывался, поэтому нет утверждения, что это единственная возможная причина или что real Workspace был успешно проверен. Защиту нельзя просто отключить: root имеет собственный Turn/ledger, account/grant и authority. Отдельный FOLLOWUP с проектированием и offline negative verification, без LIVE/paid auto-send.
+7. GUI карточки EVM: обычная закреплённая в странице карточка не выходит на второй монитор; отдельное внешнее browser-окно переносится. Владелец обсуждает возможность оставить внешний режим; **ни удаление, ни новая UX-архитектура не утверждены**. Пользовательское предложение: в будущем корректное завершение всей программы при закрытии окна крестиком, не сейчас; браузерное закрытие вкладки само по себе ненадёжно для завершения сервера. Пока работает штатная кнопка shutdown, пользователь её применял; HTTP полноценного multi-instance CI нет.
+
+## Разделение статусов и границ
+
+- **EXECUTION:** LOCAL FIX IMPLEMENTED; 4/4 + 24/24 developer tests; подтверждён локальный launcher readback; USER GUI EVM connect + ответ в личном чате PASS в наблюдаемом ограниченном scope.
+- **DOCUMENTED / HISTORY RECORDED:** адресный отчёт + TASK ID в №05; `task_record.json` с HISTORY ID, штатно присвоенным `task_history.py register --agent chatgpt`; исходный Codex слот не использовался; событие №06 и CURRENT №34/40. Никакой синтетической карточки Codex, никакого вращения БЛОКА 1/1.1.
+- **INDEPENDENT VERDICT:** NOT VERIFIED; GitHub Actions Windows NOT RUN; S1/S2 для этой правки отдельно NOT RUN; воспроизводимость после clean Windows старта/Windows service неизвестна.
+- **REAL PROVIDER:** пользовательский ограниченный smoke подтверждён; полное шесть моделей/все Workspace и тариф/лимиты провайдера NOT VERIFIED.
+- **RELEASE:** HOLD для полного продукта/Workspace, не заявлять полный PASS H43.
+- **REMAINING:** Workspace model/send defect; второй старый ACTIVE account в другом Workspace; независимый CI, последующий F5/shutdown/regression; окна и закрытие по крестику отдельно. `successor_task_id=UNASSIGNED` для нового Workspace-контракта.
+
+## Почему проблема не была найдена сразу
+
+Предыдущая диагностика H43 корректно выявила *отдельный существовавший* legacy ACTIVE без owner_lock и выполнила разрешённое безопасное восстановление, но первое сообщение `live_credentials_missing` относилось уже к процессному окружению, а не к legacy recovery. Быстрее было сначала сопоставить error code, HKCU Windows User Environment и actual launcher process environment. Именно недостаточная ранняя проверка environment привела к лишней диагностической работе. Не утверждать, что legacy восстановление было заведомо ненужным или что виноват один исполнитель без анализа истории.
+
+## Коммит и последующее использование
+
+Один атомарный пакет этой прямой итерации: `web_alarm/launcher.py`, `test_web_alarm_standard_credential_env.py`, поддержка прямых ChatGPT регистраций в `tools/task_history.py` и тесты `tools/test_task_history.py`, отчёт/assignment, task_record и записи №05/06/34/40, без изменения пользовательского storage. Пользователь принимает публикацию GPT→main самостоятельно. Работающий STANDARD при подготовке не останавливался. Публикационный SHA сверить отдельно после git commit/push.

@@ -18,7 +18,7 @@ import tempfile
 
 ID_RE = re.compile(r"[A-Z0-9]+(?:-[A-Z0-9]+)+\Z")
 MAX_BYTES = 8 * 1024 * 1024
-AGENTS = {"codex": "Codex", "claude": "Claude", "ultra": "Ultra Desktop"}
+AGENTS = {"codex": "Codex", "claude": "Claude", "ultra": "Ultra Desktop", "chatgpt": "ChatGPT"}
 CARDS = {"codex": "001_История выполненных задач Codex.md",
          "claude": "001_История выполненных задач Claude.md",
          "ultra": "001_История выполнения задач Ultra Desktop.md"}
