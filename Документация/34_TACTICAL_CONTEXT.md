@@ -2,6 +2,16 @@
 
 **CURRENT / 17.11.2026 / WEB33–34 / FACTUAL DOCUMENTATION UPDATE.** Источник: `main@70870380fc2828087f785357eeb70c0ac343da9f` (№641). Полные исходные 74 051 символ прежней редакции сохранены без сокращения в `reports/CHATGPT-WUA-DOC-CONTINUITY-20261117-001/preservation/34_TACTICAL_CONTEXT_before.md`; также доступны в неизменяемой истории commit №641. Исторические заметки не пересматриваются задним числом. Этот краткий документ не является новым техническим PASS.
 
+## CURRENT / 17.11.2026 — H43 LEGACY RECOVERY: LOCAL REPAIR PARTIAL / REAL HOLD
+
+**Source:** HOME `DESKTOP-SC96D3U`, `main@7504b761` (#644), GPT #643 before publication. Codex `H-CODEX-000043` / `CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001` submitted **PARTIAL**, with uncommitted H43 instance-control amendment; original author verdict not changed. OWNER directly authorised ChatGPT to continue local engineering and OFFLINE checks, but **not** real account/grant mutation or paid inference. Backup personal provider_sessions `%LOCALAPPDATA%/WebAlarmRecovery/H43_20261117_222742`: 4/4 SHA256 verified.
+
+**P0 finding:** STANDARD saved personal account `ACTIVE` lacks `owner_lock`; present `ProviderSession._setup()` rejects legacy state `account_owner_unresolved_legacy_active`. Read-only inspection: 30 budget events, 10 attempts (one `UNKNOWN_TERMINAL`), three pinned model versions. Registry workspace ID differs from embedded storage workspace identity by architecture; `_verified_workspace` uses embedded ID. No real account/grant/ledger changes, no OAuth/catalog/inference.
+
+**Prepared:** independent operator-only `tools/legacy_session_recovery.py` (NOT invoked by launcher/UI): account OS lock, exact grant and embedded identity, budget recover, evidence-first atomic account close, no grant/ledger reset, fail-closed repeated/ambiguous attempts. TEMP OFFLINE 7/7, related Python 23/23, amended S1 local UNKNOWN peer sites 69/69, S2 73/73; initial local S1 and S2 failures retained in report. H43 instance-control local 3/3. **All are local developer checks, NOT independent GitHub-hosted CI.** Report `reports/CHATGPT-WUA-H43-LEGACY-RECOVERY-REPAIR-20261117-001/report.md`.
+
+**OPEN/NEXT:** do not apply to real records until separate owner GO and verified quiescence of all old session owners, then readback; independent Windows CI at source SHA, actual STANDARD GUI/instance cleanup/shutdown/F5 and explicit REAL GigaChat approval remain NOT RUN. H43 `PARTIAL / INDEPENDENT NOT VERIFIED / RELEASE HOLD`. Do not manually change B1/B1.1. Do not publish a claim of recovery or paid Turn.
+
 ## CURRENT / 17.11.2026 — H42 SOURCE REVIEW / БЛОК 1 WAITING
 
 **Source:** `main@a216c45f19d855f7049c30aee5df93b045e0a0ac` (рабочий коммит №642), затем `main@238f69ab5456259e4b802fa9f82909327cc4da15` (пользовательский технический merge предыдущей GPT-документации и H42). Исторические два №642 не переименовывать. **TASK** `CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001`, **HISTORY** `H-CODEX-000042`: автор `PARTIAL / SUBMITTED / REVIEW PENDING`; техническая независимая проверка ограничена чтением опубликованного source/diff и evidence. GitHub-hosted Windows test, physical GUI и REAL provider **NOT RUN**. БЛОК 1 WAITING, БЛОК 1.1 содержит H42. Новой TASK нет.

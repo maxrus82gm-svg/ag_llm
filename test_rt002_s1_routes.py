@@ -81,6 +81,12 @@ RECONCILED_ADDITIONAL_SITES = {
     # Exact reconciled constructions; LOCAL describes the initial URL, not redirect/proxy enforcement.
     ("launcher.py", "<import>", "import:urllib.request", "LOCAL_HTTP_ORIGIN"): 1,
     ("launcher.py", "_get", "urlopen", "LOCAL_HTTP_ORIGIN"): 1,
+    # H43 local instance diagnostics/cleanup: exact new loopback sites are
+    # conservatively UNKNOWN to S1 (peer route is not provider traffic).
+    # Never wildcard their owners or count them as approved LLM routes.
+    ("instance_control.py", "<import>", "import:urllib.request", "UNKNOWN"): 1,
+    ("instance_control.py", "_read_peer", "urlopen", "UNKNOWN"): 1,
+    ("instance_control.py", "cleanup", "urlopen", "UNKNOWN"): 1,
     ("ordinary_chat_service.py", "execute_request", "getattr.send", "CAPABILITY_CHECK"): 1,
     ("ordinary_chat_service.py", "execute_request", "dynamic.send", "POTENTIAL_LLM"): 1,
     # H32 sealed in-memory fixture byte entry delegates to the existing fake send.
