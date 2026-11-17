@@ -1,5 +1,6 @@
 """Stage 5 integration on disposable Windows Workspaces."""
 from concurrent.futures import ThreadPoolExecutor
+import gc
 import http.client
 import json
 import os
@@ -316,6 +317,7 @@ class HttpAndTkTests(Fixture):
         _, read, write = self.tokens(server)
         with patch.object(ultra_ui, "load_ui_state", side_effect=AssertionError("live UI state")):
             app = ultra_ui.UltraApp(offline_chat=self.service)
+        self.addCleanup(gc.collect)  # release Tk Variables on the owning thread before later HTTP worker tests
         self.addCleanup(app.destroy)
         app.withdraw()
         panel = app.offline_chat_panel
@@ -349,6 +351,7 @@ class HttpAndTkTests(Fixture):
         ws, chat = self.create_chat("Tk cancel")
         app = ultra_ui.UltraApp(offline_chat=self.service)
         app.withdraw()
+        self.addCleanup(gc.collect)
         self.addCleanup(app.destroy)
         panel = app.offline_chat_panel
         self.assertEqual((panel.workspace, panel.chat), (ws, chat))

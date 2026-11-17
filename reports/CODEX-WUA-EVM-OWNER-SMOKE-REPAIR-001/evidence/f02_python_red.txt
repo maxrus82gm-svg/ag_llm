@@ -1,0 +1,49 @@
+EFF
+======================================================================
+ERROR: test_expired_authority_refuses_before_creating_a_check_chat (test_web_alarm_evm_unified.EvmTurnHandoff.test_expired_authority_refuses_before_creating_a_check_chat)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_evm_unified.py", line 68, in test_expired_authority_refuses_before_creating_a_check_chat
+    self.checker.check(self.request)
+  File "M:\GitHub\ag_llm\web_alarm\ordinary_provider.py", line 517, in check
+    self.service._factory.require_real()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+ordinary_chat_service.PreSendDenied: expired
+
+======================================================================
+FAIL: test_m09_failures_simulations_and_checker_errors (test_web_alarm_model_cards.ApiStatus.test_m09_failures_simulations_and_checker_errors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_model_cards.py", line 310, in test_m09_failures_simulations_and_checker_errors
+    self.assertEqual((crashed["outcome"], crashed["card"]["api"]["last_failure"]["code"]), ("UNKNOWN", "http_401"))
+AssertionError: Tuples differ: ('FAILED', 'checker_error') != ('UNKNOWN', 'http_401')
+
+First differing element 0:
+'FAILED'
+'UNKNOWN'
+
+- ('FAILED', 'checker_error')
++ ('UNKNOWN', 'http_401')
+
+======================================================================
+FAIL: test_m10_unauthorised_default_sends_nothing_and_refusals (test_web_alarm_model_cards.ApiStatus.test_m10_unauthorised_default_sends_nothing_and_refusals)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_model_cards.py", line 325, in test_m10_unauthorised_default_sends_nothing_and_refusals
+    self.assertEqual(answer["message"], "��������� �� ���������. ���������� GigaChat � EVM.")
+AssertionError: '��������� ������ � API � ���� ������ �� �[61 chars]��).' != '��������� �� ���������. ���������� GigaChat � EVM.'
+- ��������� ������ � API � ���� ������ �� ��������: ����� ��������� USER GO (�����, �������������� �������).
++ ��������� �� ���������. ���������� GigaChat � EVM.
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.405s
+
+FAILED (failures=2, errors=1)

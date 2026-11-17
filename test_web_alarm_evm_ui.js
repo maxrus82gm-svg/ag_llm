@@ -73,7 +73,7 @@ const rect = (left, top, width, height) => ({left, top, width, height, right: le
 const COLUMN_LEFT = {Fav: 20, Api: 320, Mcp: 620, Local: 920};
 
 function harness(options = {}) {
-  const h = {calls: [], routes: new Map(), popups: [], bodyClasses: []};
+  const h = {calls: [], routes: new Map(), popups: [], bodyClasses: [], confirms: []};
   h.routes.set('/ui/ultra-chat/write-capability', () => ({ultra_chat_write: {available: true,
     header: 'X-WebAlarm-Ultra-Chat-Write-Token', token: 'synthetic-local-write-token-00000000000000000000'}}));
   const elements = {};
@@ -102,7 +102,7 @@ function harness(options = {}) {
     ...(options.topmost ? {documentPictureInPicture: {requestWindow: async () => pip}} : {}),
     setTimeout: (fn, ms) => {const t = setTimeout(fn, ms); t.unref(); return t;}, clearTimeout,
     setInterval: () => 0, Date, localStorage: {getItem: () => null, setItem: () => {}, removeItem: () => {}},
-    window: {confirm: () => true, matchMedia: () => ({matches: false}), scrollTo: () => {}, addEventListener: () => {},
+    window: {confirm: message => {h.confirms.push(message); return options.confirm !== false;}, matchMedia: () => ({matches: false}), scrollTo: () => {}, addEventListener: () => {},
       open: (url, name, features) => {h.popups.push({url, name, features}); return options.popupBlocked ? null : {focus() {this.focused = true;}};},
       close: () => {h.windowClosed = true;}},
     navigator: {locks: {request: async (k, o, fn) => fn({name: k})}, clipboard: {writeText: async () => {}}},
@@ -273,14 +273,14 @@ test('EVM controls reuse personal creation and Ultra Chat LIVE routes, then reta
   assert.deepEqual(h.posts('/ultra/chat/live/start'), [{confirmation: 'GIGACHAT 6'}]);
   assert.equal(h.el('evmLiveStart').disabled, true);
   assert.equal(h.el('evmLiveStop').disabled, false);
-  assert.match(h.el('evmLiveState').textContent, /Подключён/);
+  assert.match(h.el('evmLiveState').textContent, /подключён/i);
   assert.equal(h.calls.filter(c => c.url.includes('/turns') || c.url.includes('/chat/completions')).length, 0);
   await h.run('loadEvm()'); await settle(); // F5-style server readback; no write or provider call.
-  assert.match(h.el('evmLiveState').textContent, /Подключён/);
+  assert.match(h.el('evmLiveState').textContent, /подключён/i);
   assert.equal(h.posts('/ultra/chat/live/start').length, 1);
   await h.el('evmLiveStop').onclick(); await settle();
   assert.deepEqual(h.posts('/ultra/chat/live/stop'), [{}]);
-  assert.match(h.el('evmLiveState').textContent, /Отключён/);
+  assert.match(h.el('evmLiveState').textContent, /отключён/i);
   assert.equal(h.posts('/ultra/chat/personal').length, 1);
 });
 
@@ -514,6 +514,7 @@ test('E14 settings from a pinned window: a bad count is refused locally, a revis
 
 test('E15 one dialog keeps the state of the other; closing gives the keyboard back to the command that opened it (in place and in a pinned window)', async () => {
   const h = harness(); await settle();
+  h.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: 'HOLD', real_available: false}}));
   await h.openEvm([conn('alpha', 'Alpha'), conn('beta', 'Beta')]);
   h.routes.set('/ultra/model-cards/alpha/check', () => ({outcome: 'LIVE_CHECK_NOT_AUTHORIZED', message: 'Нужен USER GO.', network_calls: 0, test_message: 'Тест.', card: mcard('alpha', 'Alpha')}));
   await h.click(h.cards()[0]);
@@ -525,9 +526,9 @@ test('E15 one dialog keeps the state of the other; closing gives the keyboard ba
   assert.equal(h.document.activeElement, h.button(h.inline(h.cards()[0]), 'Настройки'), 'the keyboard is back on «Настройки» of the same card');
   assert.match(h.inline(h.cards()[0]).textContent, /несохранённые изменения/);
   h.button(h.inline(h.cards()[0]), 'Проверить чат').onclick(); await settle();
-  h.el('evmCheckSend').onclick(); await settle();
   const answer = h.el('evmCheckOutput').textContent;
-  assert.match(answer, /Сообщение не отправлялось.*Статус API не изменён/s);
+  assert.match(answer, /Провайдер не подключён/);
+  assert.equal(h.posts('/ultra/model-cards/alpha/check').length, 0);
   h.el('evmCheckWindow').onclick({target: h.el('evmCheckWindow')}); await settle();
   assert.equal(h.el('evmCheckWindow').hidden, true, 'a click on the backdrop closes it');
   assert.equal(h.document.activeElement, h.button(h.inline(h.cards()[0]), 'Проверить чат'));
@@ -548,27 +549,48 @@ test('E15 one dialog keeps the state of the other; closing gives the keyboard ba
   assert.equal(h.document.activeElement, h.opener(h.cards()[1]), 'then the keyboard lands on the compact card of that model');
 });
 
-test('E16 the check: one empty POST, no input field, the indicator comes only from the server', async () => {
+test('E16 the check: disconnected state is read-only; connected check needs consent and one POST', async () => {
+  const disconnected = harness(); await settle();
+  disconnected.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: 'HOLD', real_available: false}}));
+  await disconnected.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha', {provider_id: 'gigachat'})]));
+  await disconnected.click(disconnected.cards()[0]);
+  disconnected.button(disconnected.inline(disconnected.cards()[0]), 'Проверить чат').onclick(); await settle();
+  assert.match(disconnected.el('evmCheckOutput').textContent, /Провайдер не подключён/);
+  assert.equal(disconnected.el('evmCheckSend').disabled, true);
+  assert.equal(disconnected.el('evmCheckConnect').hidden, false);
+  await disconnected.run('sendCheck()'); await settle();
+  assert.equal(disconnected.posts('/ultra/model-cards/alpha/check').length, 0);
   const outcomes = [
-    [{outcome: 'LIVE_CHECK_NOT_AUTHORIZED', message: 'Нужен USER GO.', network_calls: 0}, /Сообщение не отправлялось\. Нужен USER GO\./, 'output info'],
+    [{outcome: 'LIVE_CHECK_NOT_AUTHORIZED', message: 'Провайдер не подключён.', network_calls: 0}, /Сообщение не отправлялось\. Провайдер не подключён\./, 'output info'],
     [{outcome: 'SIMULATED', text: 'Привет!'}, /ИМИТАЦИЯ.*статус API не изменён.*Привет!/s, 'output info'],
     [{outcome: 'CONFIRMED', text: 'Получено.'}, /^Получено\.$/, 'output reply'],
-    [{httpError: true, status: 409, data: {error: {code: 'check_refused', message: 'no adapter'}}}, /Проверка не выполнена: check_refused/, 'output error'],
+    [{outcome: 'UNKNOWN', text: 'transport_unknown'}, /Исход проверки неизвестен/, 'output info'],
+    [{httpError: true, status: 409, data: {error: {code: 'check_refused', message: 'no adapter'}}}, /Проверка не выполнена: check_refused/, 'output info'],
   ];
   for (const [answer, expected, cls] of outcomes) {
     const h = harness(); await settle();
+    h.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: 'REAL', real_available: true},
+      ultra_chat: {available: true, header: 'X-WebAlarm-Ultra-Chat-Token', token: 'synthetic-read-token-00000000000000000000'}}));
     h.routes.set('/ultra/model-cards/alpha/check', () => answer.httpError ? answer : {test_message: 'Тест.', card: mcard('alpha', 'Alpha'), ...answer});
-    await h.openEvm([conn('alpha', 'Alpha')]);
+    await h.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha')], {live_check: {authorized: true, reason: null}}));
     await h.click(h.cards()[0]);
     h.button(h.inline(h.cards()[0]), 'Проверить чат').onclick(); await settle();
-    assert.equal(h.el('evmCheckNote').textContent, 'Тестовое сообщение: «Тест.» — в этой версии оно не отправляется.');
+    assert.match(h.el('evmCheckNote').textContent, /может тарифицироваться/);
     h.el('evmCheckSend').onclick(); await settle();
     assert.deepEqual(h.calls.filter(c => c.method === 'POST').map(c => [c.url, c.body]), [['/ultra/model-cards/alpha/check', '{}']]);
+    assert.equal(h.confirms.length, 1);
     assert.match(h.el('evmCheckOutput').textContent, expected);
     assert.equal(h.el('evmCheckOutput').className, cls);
     assert.equal(h.el('evmCheckDot').children[0].textContent, '×', 'a check answer never paints the indicator by itself');
     assert.equal(h.dot(h.cards()[0]).textContent, '×');
   }
+  const cancelled = harness({confirm: false}); await settle();
+  cancelled.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: 'REAL', real_available: true}}));
+  await cancelled.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha')], {live_check: {authorized: true}}));
+  await cancelled.click(cancelled.cards()[0]);
+  cancelled.button(cancelled.inline(cancelled.cards()[0]), 'Проверить чат').onclick(); await settle();
+  cancelled.el('evmCheckSend').onclick(); await settle();
+  assert.equal(cancelled.posts('/ultra/model-cards/alpha/check').length, 0);
   assert.doesNotMatch(source.match(/<div id="evmCheckWindow"[\s\S]*?<\/div><\/div>/)[0], /<input|<textarea/);
   assert.ok(source.match(/id="evmCheckClose"[\s\S]*?id="evmCheckSend"/), 'buttons are [Закрыть] [Отправить тестовое сообщение]');
 });
@@ -1438,10 +1460,56 @@ test('E46 three named external popups, blocked popup and one topmost PiP are han
   assert.ok(external.bodyClasses.includes('evm-external'));
   assert.equal(external.el('evmExternal').hidden, false);
   assert.match(external.el('evmExternalCard').textContent, /A/);
+  assert.match(external.el('evmExternalMove').textContent, /системный заголовок браузера/);
   external.el('evmTopmost').onclick(); await settle();
   assert.match(external.pip.document.body.child.src, /evm_window=api%3Aprov%3Aa&evm_top=1/);
   assert.equal(external.el('evmExternalCard').hidden, true);
   external.el('evmTopmost').onclick(); await settle();
   assert.equal(external.pip.closed, true);
   assert.equal(external.el('evmExternalCard').hidden, false);
+});
+
+test('E47 model permission, provider session and API proof stay separate after server reload', async () => {
+  let active = false;
+  const state = cards([mcard('alpha', 'Alpha', {provider_id: 'gigachat', api: api('gray', 'NEVER_CONFIRMED')})]);
+  const h = harness(); await settle();
+  h.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: active ? 'REAL' : 'HOLD', real_available: active}}));
+  await h.openEvm([conn('alpha', 'Alpha')], state); await h.click(h.cards()[0]);
+  assert.match(h.inline(h.cards()[0]).textContent, /Модель: включена · Провайдер: GigaChat отключён · Работоспособность: Успешной проверки ещё не было/);
+  active = true; await h.run('loadEvm()'); await settle();
+  assert.match(h.inline(h.cards()[0]).textContent, /Модель: включена · Провайдер: GigaChat подключён · Работоспособность: Успешной проверки ещё не было/);
+  h.run("evm.liveBusy=true;evm.liveAction='start';renderEvm()");
+  assert.match(h.inline(h.cards()[0]).textContent, /Подключение выполняется/);
+  h.run("evm.liveBusy=false;evm.liveAction=null;evm.liveFailure='connect';renderEvm()");
+  assert.match(h.inline(h.cards()[0]).textContent, /Ошибка подключения/);
+  h.run("evm.liveFailure=null;renderEvm()");
+  state.cards[0].api = api('green', 'CONFIRMED'); state.cards[0].enabled = false;
+  await h.run('loadEvm()'); await settle();
+  assert.match(h.inline(h.cards()[0]).textContent, /Модель: отключена · Провайдер: GigaChat подключён · Работоспособность: Ответ модели подтверждён/);
+  const fresh = harness(); await settle();
+  fresh.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: 'REAL', real_available: true}}));
+  await fresh.openEvm([conn('alpha', 'Alpha')], state); await fresh.click(fresh.cards()[0]);
+  assert.match(fresh.inline(fresh.cards()[0]).textContent, /Модель: отключена · Провайдер: GigaChat подключён/);
+});
+
+test('E48 check dialog connects through existing EVM route and duplicate click sends one Turn', async () => {
+  let active = false, release;
+  const state = cards([mcard('alpha', 'Alpha', {provider_id: 'gigachat'})]);
+  const h = harness(); await settle();
+  h.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: active ? 'REAL' : 'HOLD', real_available: active, personal_workspace_id: 'wa_personal'}}));
+  h.routes.set('/ultra/chat/live/start', () => {active = true; state.live_check = {authorized: true}; return {state: 'ACTIVE'};});
+  h.routes.set('/ultra/model-cards/alpha/check', () => new Promise(resolve => {release = resolve;}));
+  await h.openEvm([conn('alpha', 'Alpha')], state); await h.click(h.cards()[0]);
+  h.button(h.inline(h.cards()[0]), 'Проверить чат').onclick(); await settle();
+  assert.equal(h.el('evmCheckSend').disabled, true);
+  await h.el('evmCheckConnect').onclick(); await settle();
+  assert.equal(h.posts('/ultra/chat/live/start').length, 1);
+  assert.equal(h.posts('/ultra/model-cards/alpha/check').length, 0);
+  assert.equal(h.el('evmCheckSend').disabled, false);
+  const pending = h.el('evmCheckSend').onclick(); await settle();
+  h.el('evmCheckSend').onclick(); await settle();
+  assert.equal(h.posts('/ultra/model-cards/alpha/check').length, 1);
+  assert.equal(h.confirms.length, 2, 'connect and paid check each require their own confirmation');
+  release({outcome: 'CONFIRMED', text: 'Готово'}); await pending; await settle();
+  assert.equal(h.el('evmCheckOutput').textContent, 'Готово');
 });

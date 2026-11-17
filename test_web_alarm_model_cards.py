@@ -307,7 +307,11 @@ class ApiStatus(Fixture):
         self.assertEqual((simulated["outcome"], simulated["card"]["api"]["color"]), ("SIMULATED", "red"))
         self.assertEqual((self.storage / "ultra" / "api_checks.json").read_bytes(), stored, "a simulation was recorded")
         crashed = self.check(api=api)
-        self.assertEqual((crashed["outcome"], crashed["card"]["api"]["last_failure"]["code"]), ("FAILED", "checker_error"))
+        self.assertEqual((crashed["outcome"], crashed["card"]["api"]["reason"]), ("UNKNOWN", "LAST_OUTCOME_UNKNOWN"))
+        self.assertEqual(crashed["card"]["api"]["last_failure"]["code"], "http_401")
+        evidence = json.loads((self.storage / "ultra" / "api_checks.json").read_text(encoding="utf-8"))
+        self.assertEqual(evidence["checks"]["api:gigachat:gigachat_2"]["history"][-1]["outcome"], "UNKNOWN")
+        self.assertNotEqual((self.storage / "ultra" / "api_checks.json").read_bytes(), stored)
         self.assertNotIn(SECRET, json.dumps(crashed, ensure_ascii=False))
         self.clock.value = T0 + timedelta(minutes=3)
         self.assertEqual(self.check(api=api)["card"]["api"]["color"], "green", "a newer confirmation wins")
@@ -333,6 +337,25 @@ class ApiStatus(Fixture):
         self.assertEqual(self.refused("POST", "/ultra/model-cards/nope/check", {}).code, "unknown_model")
         self.assertEqual(self.refused("POST", "/ultra/model-cards/gigachat_2/check", {"message": "hi"}).code, "invalid_model_card_request")
         self.assertEqual(self.refused("GET", "/ultra/model-cards/gigachat_2/check").status, 405)
+
+    def test_check_turn_status_fallback_is_deduplicated_after_reload(self):
+        checker = FakeChecker(
+            mc.CheckResult(ok=True, live=True, reply="Готово", turn_id="turn-check-A"),
+            mc.CheckResult(ok=False, live=True, uncertain=True, error_code="transport_unknown", turn_id="turn-check-B"),
+            mc.CheckResult(ok=True, live=True, reply="Старый ответ", turn_id="turn-check-A"))
+        api = self.make(checker)
+        first = self.check(api=api)
+        self.assertEqual((first["outcome"], first["card"]["api"]["color"]), ("CONFIRMED", "green"))
+        self.clock.value = T0 + timedelta(minutes=1)
+        second = self.check(api=api)
+        self.assertEqual((second["outcome"], second["card"]["api"]["reason"]), ("UNKNOWN", "LAST_OUTCOME_UNKNOWN"))
+        path = self.storage / "ultra" / "api_checks.json"
+        before = path.read_bytes()
+        self.clock.value = T0 + timedelta(minutes=2)
+        replay = self.check(api=api)
+        self.assertEqual(replay["card"]["api"]["reason"], "LAST_OUTCOME_UNKNOWN")
+        self.assertEqual(path.read_bytes(), before)
+        self.assertEqual(self.card(api=self.make())["api"]["reason"], "LAST_OUTCOME_UNKNOWN")
 
     def test_m11_damaged_checks_are_red_kept_for_diagnosis_and_replaced_by_the_next_answer(self):
         path = self.storage / "ultra" / "api_checks.json"

@@ -1011,6 +1011,21 @@ class ModelCards:
 
         self._record(connection_id, update)
 
+    def record_unknown(self, connection_id: str, settings_version: str, *, code: str, limit: int) -> None:
+        """An interrupted diagnostic with no confirmed Turn invalidates older green evidence."""
+        at = self.now().isoformat()
+        safe_code = safe_text(code, 60)
+
+        def update(record: dict[str, Any]) -> None:
+            record.update(last_unknown_at=at, last_event="unknown")
+            record["last_output"] = {"kind": "unknown", "at": at,
+                                     "text": safe_text("Исход проверки неизвестен: " + safe_code, limit)}
+            record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
+                                 {"at": at, "outcome": "UNKNOWN", "source": "diagnostic",
+                                  "code": safe_code, "settings_version": settings_version}]
+
+        self._record(connection_id, update)
+
     def record_chat_success(self, model_id: str, settings_version: str, *, turn_id: str | None = None) -> bool:
         """Extension point for an ordinary Ultra Chat answer: it refreshes the confirmation only when the
         server knows the exact model and the settings version the answer was produced with."""
@@ -1084,24 +1099,33 @@ class ModelCards:
             result = self.checker.check(request)
         except CheckRefusedError:
             raise
-        except Exception as exc:  # a checker failure is a failed check, never a crash of the server
-            result = CheckResult(ok=False, live=True, error_code="checker_error", error_message=type(exc).__name__)
+        except Exception as exc:  # without a completed Turn, the physical send state may be unknown
+            result = CheckResult(ok=False, live=True, uncertain=True, error_code="checker_unknown",
+                                 error_message=type(exc).__name__)
         limit = profile["diagnostic_limit_chars"]
         if not result.live:
             outcome = "SIMULATED"
             text = safe_text(result.reply or result.error_message or "", limit)
         elif result.uncertain:
             outcome = "UNKNOWN"
+            if result.turn_id is None:
+                self.record_unknown(card["connection_id"], version, code=result.error_code or "unknown", limit=limit)
+            else:
+                self.record_chat_unknown(spec.model_id, version, turn_id=result.turn_id)
             text = safe_text(result.error_code or "unknown", limit)
         elif result.ok:
             outcome = "CONFIRMED"
             if result.turn_id is None:
                 self.record_success(card["connection_id"], version, source="diagnostic", reply=result.reply or "", limit=limit)
+            else:
+                self.record_chat_success(spec.model_id, version, turn_id=result.turn_id)
             text = safe_text(result.reply or "", limit)
         else:
             outcome = "FAILED"
             if result.turn_id is None:
                 self.record_failure(card["connection_id"], version, code=result.error_code or "check_failed",
                                     message=result.error_message or "", limit=limit)
+            else:
+                self.record_chat_failure(spec.model_id, version, code=result.error_code or "check_failed", turn_id=result.turn_id)
             text = safe_text(f"{result.error_code or 'check_failed'}: {result.error_message or ''}", limit)
         return {"outcome": outcome, "text": text, "test_message": TEST_MESSAGE, "card": self.card(spec.model_id)}

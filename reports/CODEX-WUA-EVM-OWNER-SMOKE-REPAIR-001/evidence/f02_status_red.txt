@@ -1,0 +1,24 @@
+F
+======================================================================
+FAIL: test_check_turn_status_fallback_is_deduplicated_after_reload (test_web_alarm_model_cards.ApiStatus.test_check_turn_status_fallback_is_deduplicated_after_reload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_model_cards.py", line 348, in test_check_turn_status_fallback_is_deduplicated_after_reload
+    self.assertEqual((first["outcome"], first["card"]["api"]["color"]), ("CONFIRMED", "green"))
+AssertionError: Tuples differ: ('CONFIRMED', 'gray') != ('CONFIRMED', 'green')
+
+First differing element 1:
+'gray'
+'green'
+
+- ('CONFIRMED', 'gray')
+?                  ^^
+
++ ('CONFIRMED', 'green')
+?                  ^^^
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.215s
+
+FAILED (failures=1)

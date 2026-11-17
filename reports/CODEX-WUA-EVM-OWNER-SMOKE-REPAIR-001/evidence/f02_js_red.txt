@@ -1,0 +1,32 @@
+TAP version 13
+# Subtest: E16 the check: disconnected state is read-only; connected check needs consent and one POST
+not ok 1 - E16 the check: disconnected state is read-only; connected check needs consent and one POST
+  ---
+  duration_ms: 17.8247
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_evm_ui.js:551:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /Провайдер не подключён/. Input:
+    
+    'Нажмите «Отправить тестовое сообщение», чтобы проверить подключение и увидеть ответ модели.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Нажмите «Отправить тестовое сообщение», чтобы проверить подключение и увидеть ответ модели.'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_evm_ui.js:556:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 93.696

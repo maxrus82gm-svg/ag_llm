@@ -1,0 +1,348 @@
+{
+  "status": "PARTIAL_SUBMITTED_REVIEW_PENDING",
+  "provider_calls": {
+    "oauth_post": 0,
+    "models_get": 0,
+    "inference_post": 0
+  },
+  "date": "2026-11-17",
+  "files": [
+    {
+      "role": "changed",
+      "sha256": "af2dcb77a50a44998849d7637482777846d46d366e2e30986d15e9334ab780b1",
+      "bytes": 238154,
+      "path": "web_alarm/ui.py"
+    },
+    {
+      "role": "changed",
+      "sha256": "e456fa8102984ab3a340ef4f3b9986e5f2c900d92537774959f24a35fbd31c26",
+      "bytes": 65354,
+      "path": "web_alarm/model_cards.py"
+    },
+    {
+      "role": "changed",
+      "sha256": "2eaad9e5a91b689270507bec12d07ce8c54fdb36878dd5d2638954c77fee025b",
+      "bytes": 32130,
+      "path": "web_alarm/ordinary_provider.py"
+    },
+    {
+      "role": "changed",
+      "sha256": "a1576d1bb8a06030cf7b1684d667dd2645ffc3041e3359d6845145f9ab796708",
+      "bytes": 115937,
+      "path": "test_web_alarm_evm_ui.js"
+    },
+    {
+      "role": "changed",
+      "sha256": "c527f8a303ea36fb86af98c4a26ce0bcc34dec6d7e5c012b1f6b24d0363bfb84",
+      "bytes": 67757,
+      "path": "test_web_alarm_model_cards.py"
+    },
+    {
+      "role": "changed",
+      "sha256": "a62ec246c5a20c1f3e329ea583d723848256cb36bc127e94f14b1b902f824f25",
+      "bytes": 4007,
+      "path": "test_web_alarm_evm_unified.py"
+    },
+    {
+      "role": "changed",
+      "sha256": "99ab2698d3c78ef0bad7ef24666a499c00df95a4624bfe926da59fc51f8f35c2",
+      "bytes": 21837,
+      "path": "test_web_alarm_ultra_chat_s5.py"
+    },
+    {
+      "role": "changed",
+      "sha256": "1cb5c857c3e1d7962b731179d92ab3a21dd77e0197f4d6f33f7e5cc55fb236e5",
+      "bytes": 133437,
+      "path": "test_rt002_s1_routes.py"
+    },
+    {
+      "role": "changed",
+      "sha256": "ce3b75c319ffb4fcbc8d2873c60fd66e0e2c764e2ecb72ac1d9607a85d572a5b",
+      "bytes": 3052,
+      "path": "rt002_multimodel_reconciliation.json"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "515760add75864bd9e1e7fdf7fdcf8d7cc293a3d1a32da22a7446ccc0609cd73",
+      "bytes": 78782,
+      "path": "web_alarm/server.py"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "e4d8e8d382b6e33dfa05863b27393bb35f884afa4e23ef3b8ffd0cf5272f8ab0",
+      "bytes": 12263,
+      "path": "web_alarm/ultra_connections.py"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "566f3369ca069c3a52badd5dc50fa913565b6dde3c71d234995f4ea4267f4080",
+      "bytes": 60088,
+      "path": "web_alarm/ultra_chat.py"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "66e4084dc0b6e8d78c3b1a367b898a0f596225c67eaa006eff222698b3a2de79",
+      "bytes": 9843,
+      "path": "web_alarm/ordinary_chat_bridge.py"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "72230705ad53c2a928090bcba2e33954c3db614545f6e2751108abfa5cb2158b",
+      "bytes": 7514,
+      "path": "web_alarm/standard_live.py"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+      "bytes": 2519,
+      "path": "model_registry.py"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592",
+      "bytes": 13219,
+      "path": "ultra_budget_ledger.py"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "f6037d86fe966fdadb4d488411bc1be21d327b158546b7c01017da7f2394e14a",
+      "bytes": 56051,
+      "path": "ultra_budget_policy.py"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "79468ca15e53bc595521278f67ed147304787a2789567ab33096e3075e3dc372",
+      "bytes": 922,
+      "path": "Start_WebAlarm_Standard.cmd"
+    },
+    {
+      "role": "reused_reference",
+      "sha256": "157091918484c159ecef497a60c78e95b45068fbc42c38c2682b6709a12bb6e3",
+      "bytes": 1199,
+      "path": "Start_WebAlarm_Test.cmd"
+    },
+    {
+      "role": "report",
+      "sha256": "d2505579177c2d7c03c82dfe9f73085b7ec9ff2b3a66009cf114a24698434f24",
+      "bytes": 8288,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/report.md"
+    },
+    {
+      "role": "report",
+      "sha256": "d192bfd2bdb6cbd3deb7cbb8ebe720aa15ec145f7634ced5f3b7b31c3f1c958c",
+      "bytes": 6200,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/root-cause.md"
+    },
+    {
+      "role": "report",
+      "sha256": "c56510440c8baa31a7b2ce81ee6c7e49481415186cd0ac60dbd8d3e77a736142",
+      "bytes": 3979,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/tests.md"
+    },
+    {
+      "role": "report",
+      "sha256": "8c5fc4300469043364578d4bb6460e9e491354e79b6af4720099ef98b5daa8a0",
+      "bytes": 2473,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/windows-review.md"
+    },
+    {
+      "role": "report",
+      "sha256": "86e6e4a5556df771d4d15c6409bc9f71df835b9dae0e27f95bfb8e3756291a75",
+      "bytes": 2218,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/user-smoke.md"
+    },
+    {
+      "role": "report",
+      "sha256": "c96ebf550f6cf1ced2bcfb751ab1837dd9a6d73fe8d2f6d3903905574058e0d8",
+      "bytes": 2838,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/manual-review.md"
+    },
+    {
+      "role": "evidence",
+      "sha256": "453a3698fb6f5ff56d1fdd2faba49d35ae7eb5732b9c93c19f887c63b05b8508",
+      "bytes": 12,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/ast_final.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "c4e798d772e7c6a84f672af6f72ba38df5da773f967fd10e232d52b451845f0a",
+      "bytes": 18924,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/chat_js_final.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "f5429875270560ba8c36c040fda0a7a622ab34b062de80eac937c3e144ed2777",
+      "bytes": 14361,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/evm_js_after.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "3757761e54f302d66e53c032ee3142fd8da3597269479f81fc125d293cdc90f7",
+      "bytes": 14346,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/evm_js_final.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "9e6c4f91f93eb2833fab4656d569faea7d8b9fb53c8b12133381a47265a12f0d",
+      "bytes": 1295,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/f02_js_red.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "a2b1a519532dcd147d2b9e1c5f2cbff64b26f5d2574d562cd41a1b24d36501ee",
+      "bytes": 1234,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/f02_js_target.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "6e6d799b61da2bf2e353cc8ad423eaab3b71e111f07ac8a84ec7a099876d649d",
+      "bytes": 3398,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/f02_python_red.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "62250be475bce08edf96ca435f5faf5c0424a747bcca7bb39e5072bc023d113b",
+      "bytes": 1389,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/f02_python_target.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "33e757e4ce4efef9b713daf0156e666ec1d21890a9e040659c4da0cf07074308",
+      "bytes": 930,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/f02_status_red.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "aa69bb6a5792f8a9e945e65d62a00342e2e369075f3420f127a4d72f612fe30a",
+      "bytes": 109,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/f02_status_target.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "74d7a3619685b8c2a741d9e60b9d1ef7cc1c66d9d1da576095d522dfb9d0bdea",
+      "bytes": 107,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/live_control_offline.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "60d17a0a4d1b7179eb379d4fc0bbe9a0efdc393fbb37f232ca6a1d0a58f28b01",
+      "bytes": 16976,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/python_combined_after.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "be5a3d3648b59000d5730ce1cec3f0f2618b7daa8c6717c01a9c36d46694f7fe",
+      "bytes": 21274,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/python_combined_faulthandler.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "3649e801fe7913261d5cf09df80dce31e19ad3661125eb7283a1c5f731857f51",
+      "bytes": 17145,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/python_combined_final.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "a7c76731a02bbeb929d4463ba49ef39576d14f86b14a9f94d8b97bab7d84e864",
+      "bytes": 23,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/python_compile.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "2da782cf298d425ef437e75258bf0ed2a1f3cca8768283f5ff0b21ad33e9d75e",
+      "bytes": 159,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/python_target_after.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "2ee86c3d9be25fba421fb5027ec9403bee02a22ef835ec1b8b00c99986ea0743",
+      "bytes": 89081,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/s1_after.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "dcfe343835fe7255ef79464ebe0e8c38a1d75a1e761e57bc23f09fea48a86556",
+      "bytes": 89081,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/s1_final.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "98e7086b19729272429ad09f889a6e762300ebb5f30b18c5280a153c5ff38092",
+      "bytes": 841,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/s2_after.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "91e9e41dc8eacc985d3b751bda4879d3bcdba3d5c7bd764377a168d4400980da",
+      "bytes": 1871,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/s2_before.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "08db49ee9bc61c73c75ed19987841300302ebafafe85a30c7347289640beddf0",
+      "bytes": 841,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/s2_final.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "f37d2128f921399e7ceaa6b3ecd057f2347de2c36356ef1ee9adefb8d7a1f800",
+      "bytes": 75,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/s2_negative_audit.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "db55b8c6b53673d04c9656aaab53f6cafb6e5c2473822b3229e770f7424a6364",
+      "bytes": 1808,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/source_compare_h41.txt"
+    },
+    {
+      "role": "evidence",
+      "sha256": "9230cc10dad15cf6d0f026b5c4b926cfb0e6b321aedc962de5f0536b6c363d41",
+      "bytes": 117,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/evidence/standard_offline.txt"
+    },
+    {
+      "role": "report",
+      "sha256": "d2e18fe711df9996731cd3c09c287bd93f54b4a109462ef65644c5f4083b0b5b",
+      "bytes": 2557,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/finish-result.md"
+    },
+    {
+      "role": "evidence",
+      "sha256": "5a6186b6756ca2a94a2dc8f578a342931f0865b49782710aa9c0f2cc828cd9fb",
+      "bytes": 2340,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/finish_dry_run.json"
+    },
+    {
+      "role": "evidence",
+      "sha256": "8a8b7c8084eb56a8c35b0b303292dd646212b13c0729bc0db6670500efa21350",
+      "bytes": 4897,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/finish_protocol.json"
+    },
+    {
+      "role": "evidence",
+      "sha256": "a2a1ffbd5e44f2fbbda9a735a3133f20af9a38718ff9f9e293674a7fff2d7697",
+      "bytes": 707,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/finish_check.json"
+    },
+    {
+      "role": "evidence",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/history_validate.txt"
+    },
+    {
+      "role": "archive",
+      "sha256": "049580a5990425e7474aed9d6ef8dcad9deb2cf0adbd24e9198477186b12e48c",
+      "bytes": 21180,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/handoff_task.md"
+    },
+    {
+      "role": "archive",
+      "sha256": "96d56070309242c9dedf3e6dba86853cde08ecac22c47e895a06be7bf0ab4fbd",
+      "bytes": 748,
+      "path": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/task_record.json"
+    }
+  ],
+  "task_id": "CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001"
+}

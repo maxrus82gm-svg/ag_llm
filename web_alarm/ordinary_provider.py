@@ -503,7 +503,7 @@ class _OrdinaryTurnChecker:
 
     @property
     def reason(self):
-        return "Сначала явно подключите GigaChat в Ultra Chat" if not self.authorized else ""
+        return "Провайдер не подключён. Подключите GigaChat в EVM." if not self.authorized else ""
 
     def check(self, request):
         from uuid import uuid4
@@ -514,7 +514,10 @@ class _OrdinaryTurnChecker:
                 or request.model_id not in {c.model_id for c in session.approval.contracts}
                 or request.provider_model_id not in session._available):
             raise CheckRefusedError('A verified active provider session is required')
-        self.service._factory.require_real()
+        try:
+            self.service._factory.require_real()
+        except PreSendDenied:
+            raise CheckRefusedError('Provider session is not active; no check Turn was submitted') from None
         record = personal_chat_registration(self.service.registry)
         if record is None or Path(record.workspace_root).resolve() != session.root:
             raise CheckRefusedError('Personal chat Workspace is not the approved provider Workspace')

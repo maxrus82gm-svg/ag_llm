@@ -1,0 +1,66 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "6e6704b98f951fe0fb7a950a22bf0194b555df162d1d9790b5c22c61c72bc733",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 356,
+    "b11b": 362,
+    "b11e": 710
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001",
+    "problems": [],
+    "title": "Web Alarm Ultra — исправление EVM после пользовательской проверки STANDARD",
+    "lines": 307
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001",
+    "copy_sha256": "95e3572aea6fda7bc302e0f764a3ebfee6c3ab3879727e83332ee20879f4b727",
+    "history_id": "H-CODEX-000041",
+    "history_record": "reports/CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "6e6704b98f951fe0fb7a950a22bf0194b555df162d1d9790b5c22c61c72bc733",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001",
+    "copy_sha256": "95e3572aea6fda7bc302e0f764a3ebfee6c3ab3879727e83332ee20879f4b727",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001/handoff_task.md",
+    "archive_sha256": "6d4e20f0d2e729ec35f45acaa4cdf042e08fe2d86084b72ca71ebb5fd34d0ecf"
+   },
+   "history_id": "H-CODEX-000042",
+   "new_card_sha256": "f728fef88c9ae24f75e3b8384cf8a1404b355e34dd5e0e27c93166454219daa4",
+   "copy_sha256_lf": "2211fe7c081f5f1bead7550cc7edd7e9bbd17a368c190b1ae198e16eb5f333c4",
+   "copy_lines": 307,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  }
+ ],
+ "result": "DRY RUN OK",
+ "task_id": "CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001"
+}

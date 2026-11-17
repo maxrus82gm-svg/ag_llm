@@ -1,0 +1,16 @@
+..F
+======================================================================
+FAIL: test_m10_unauthorised_default_sends_nothing_and_refusals (test_web_alarm_model_cards.ApiStatus.test_m10_unauthorised_default_sends_nothing_and_refusals)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_model_cards.py", line 325, in test_m10_unauthorised_default_sends_nothing_and_refusals
+    self.assertEqual(answer["message"], "��������� �� ���������. ���������� GigaChat � EVM.")
+AssertionError: '��������� ������ � API � ���� ������ �� �[61 chars]��).' != '��������� �� ���������. ���������� GigaChat � EVM.'
+- ��������� ������ � API � ���� ������ �� ��������: ����� ��������� USER GO (�����, �������������� �������).
++ ��������� �� ���������. ���������� GigaChat � EVM.
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.429s
+
+FAILED (failures=1)

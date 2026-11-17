@@ -50,6 +50,7 @@ class EvmTurnHandoff(TestCase):
         self.service.submit_turn.assert_not_called()
         self.session.check = Mock(side_effect=PreSendDenied('closed'))
         self.assertFalse(self.checker.authorized)
+        self.assertEqual(self.checker.reason, 'Провайдер не подключён. Подключите GigaChat в EVM.')
 
     def test_unknown_turn_is_reported_uncertain_without_retry(self):
         self.service.submit_turn.return_value = {'execution_mode': 'REAL', 'state': 'UNKNOWN',
@@ -61,3 +62,10 @@ class EvmTurnHandoff(TestCase):
         self.assertTrue(result.uncertain)
         self.assertEqual(result.turn_id, 'turn_1')
         self.service.submit_turn.assert_called_once()
+
+    def test_expired_authority_refuses_before_creating_a_check_chat(self):
+        self.factory.require_real.side_effect = PreSendDenied('expired')
+        with self.assertRaises(CheckRefusedError):
+            self.checker.check(self.request)
+        self.service.create_chat.assert_not_called()
+        self.service.submit_turn.assert_not_called()

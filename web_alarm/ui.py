@@ -189,6 +189,7 @@ body.evm-external{height:auto;min-height:100dvh;overflow:auto}
 body.evm-external .top,body.evm-external .evm-head,body.evm-external .evm-info,body.evm-external .evm-board,body.evm-external .evm-pins,body.evm-external .evm-peek{display:none!important}
 body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 .evm-external-head{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.evm-external-move{width:100%;font-size:12px;color:var(--muted);margin:0 0 8px}
 .evm-external-card .mcard{max-width:none}
 .evm-top-frame{width:100%;height:100%;border:0}
 .evm-pin{position:absolute;pointer-events:auto;display:flex;flex-direction:column;width:min(460px,calc(100vw - 24px));border:1px solid #4d7fa8;border-radius:12px;background:#16212d;box-shadow:0 14px 40px rgba(0,0,0,.5);overflow:hidden}
@@ -569,7 +570,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <section class="evm-col" aria-labelledby="evmLocalTitle" id="evmLocalCol"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
 </div>
 <div id="evmPins" class="evm-pins" role="group" aria-label="Закреплённые окна моделей"></div>
-<div id="evmExternal" hidden><div class="evm-external-head"><strong id="evmExternalTitle">Карточка модели</strong><div class="row"><button type="button" id="evmTopmost">Поверх всех окон: ВЫКЛ</button><button type="button" id="evmExternalRefresh">↻ Обновить</button><button type="button" id="evmExternalClose">Закрыть окно ×</button></div></div><div id="evmExternalCard" class="evm-external-card"></div></div>
+<div id="evmExternal" hidden><div class="evm-external-head"><strong id="evmExternalTitle">Карточка модели</strong><div class="row"><button type="button" id="evmTopmost">Поверх всех окон: ВЫКЛ</button><button type="button" id="evmExternalRefresh">↻ Обновить</button><button type="button" id="evmExternalClose">Закрыть окно ×</button></div></div><p id="evmExternalMove" class="evm-external-move">Перенос на другой монитор: перетаскивайте окно за системный заголовок браузера, а не за карточку. В Windows также работает Win + Shift + ←/→.</p><div id="evmExternalCard" class="evm-external-card"></div></div>
 <div id="evmPeek" class="evm-peek" role="dialog" aria-modal="false" aria-label="Быстрый просмотр" tabindex="-1" hidden></div>
 <div id="evmGhost" class="evm-ghost" aria-hidden="true" hidden></div><div id="evmDropLine" class="evm-drop-line" aria-hidden="true" hidden></div>
 <div id="evmSettingsWindow" class="evm-backdrop" hidden><div class="evm-window" role="dialog" aria-modal="true" aria-labelledby="evmSetTitle">
@@ -601,7 +602,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <h3 id="evmCheckTitle" tabindex="-1"><span id="evmCheckName">Проверка API</span><span id="evmCheckDot"></span></h3>
 <p id="evmCheckLast" class="muted">—</p>
 <div><p class="output-label">ОТВЕТ МОДЕЛИ</p><div id="evmCheckOutput" class="output info" role="status" aria-live="polite">—</div></div>
-<div class="window-actions"><button type="button" id="evmCheckClose">Закрыть</button><button type="button" id="evmCheckSend" class="primary">Отправить тестовое сообщение</button></div>
+<div class="window-actions"><button type="button" id="evmCheckClose">Закрыть</button><button type="button" id="evmCheckConnect">Подключить GigaChat в EVM</button><button type="button" id="evmCheckSend" class="primary">Отправить тестовое сообщение</button></div>
 <p id="evmCheckNote" class="muted">—</p>
 </div></div>
 </section>
@@ -1089,7 +1090,7 @@ $('copyContext').onclick=()=>{
 // a click opens a card in place inside its column; Ctrl + hover (or «⧉») shows the same full card in a side panel;
 // a press that moves more than a few pixels drags the card (Pointer Events only, no native drag-and-drop).
 // The manual order and favourites are saved on the server (/ultra/model-cards/view).
-const evm={epoch:0,data:null,cards:null,cardsError:null,live:null,liveBusy:false,view:'chat',drafts:{},outputs:{},window:null,tab:'conn',saving:false,checking:false,setError:'',
+const evm={epoch:0,data:null,cards:null,cardsError:null,live:null,liveBusy:false,liveAction:null,liveFailure:null,view:'chat',drafts:{},outputs:{},window:null,tab:'conn',saving:false,checking:false,setError:'',
   ccards:{},cheads:{},copen:{},cquick:{},cexp:{},fk:{},expanded:new Set(),uid:0,peek:{id:null,section:null},peekTimer:0,
   pins:{},pinOrder:[],hinted:null,promote:null,winDrag:null,layoutQueue:Promise.resolve(),layoutLoaded:false,
   hover:null,ctrl:false,press:null,drag:null,scrollFrame:0,suppressUntil:0,returnTo:null,viewSaving:false,noticeTimer:0};
@@ -1184,6 +1185,11 @@ function modelCard(c,data,section,inst){
   const params=element('span',paramsText(c.params_billion),'params');params.setAttribute('title',c.params_billion==null?'Количество параметров не указано':'Количество параметров, указано пользователем');
   const provider=data.providers.find(p=>p.provider_id===c.provider_id);
   head.append(element('h4',c.display_name,'mcard-name'),apiDot(c.api),params,element('span',provider?provider.display_name:c.provider_id,'mcard-side'));
+  const permitted=c.enabled!==false;
+  const providerState=c.provider_id==='gigachat'?(evm.liveBusy?(evm.liveAction==='start'?'Подключение выполняется':'Отключение выполняется'):
+    evm.liveFailure?(evm.liveFailure==='disconnect'?'Ошибка отключения':'Ошибка подключения'):evm.live?.real_available?'GigaChat подключён':evm.live?.mode==='ORDINARY'?'GigaChat отключён':'Состояние неизвестно'):
+    'Подключение этого провайдера не подтверждено';
+  const stateLine=element('p','Модель: '+(permitted?'включена':'отключена')+' · Провайдер: '+providerState+' · Работоспособность: '+apiText(c.api),'mcard-note');
   const sub=element('div',null,'mcard-sub');sub.append(element('strong','Назначенные роли'),element('span','Наведите на название для описания','mcard-note'));
   const states=new Map(c.roles.map(r=>[r.role,r.state]));
   const roles=element('div',null,'roles');roles.append(...data.role_definitions.map(def=>roleItem(def,states.get(def.role))));
@@ -1195,12 +1201,12 @@ function modelCard(c,data,section,inst){
   strengths.onclick=()=>openWindow('settings',c.model_id,'model',inst+':desc');
   const settings=fk(editButton('⚙ Настройки',c),inst,'settings');settings.onclick=()=>openWindow('settings',c.model_id,null,inst+':settings');
   const check=fk(editButton('▤ Проверить чат',c,'primary'),inst,'check');check.setAttribute('aria-label','Проверка API модели '+c.display_name);check.onclick=()=>openWindow('check',c.model_id,null,inst+':check');
-  const enabled=c.enabled!==false;
+  const enabled=permitted;
   const toggle=fk(editButton(enabled?'Отключить':'Включить',c),inst,'toggle');
   toggle.setAttribute('aria-pressed',String(enabled));toggle.onclick=()=>toggleModel(c.model_id,!enabled);
   const external=fk(editButton('↗ Внешнее окно',c),inst,'external');external.onclick=()=>openExternal(c.connection_id);
   const actions=element('div',null,'mcard-actions');actions.append(settings,check,toggle,external);
-  card.append(head,sub,roles,label,strengths,actions);
+  card.append(head,stateLine,sub,roles,label,strengths,actions);
   if(evm.drafts[c.model_id])card.append(element('p','Есть несохранённые изменения настроек.','mcard-note'));
   return card
 }
@@ -1302,7 +1308,10 @@ function renderEvm(){
   const data=evm.data;if(!data)return;
   const cols=data.columns,s=data.selection.chat,cards=evm.cards;
   const live=evm.live,ready=live?.mode==='ORDINARY'&&live.execution_mode!=='PROTOCOL_TEST'&&!stage5Offline;
-  text('evmLiveState',!ready?'Управление доступно только в локальном STANDARD':live.real_available?'Подключён · реальные отправки разрешены':'Отключён · история доступна');
+  text('evmLiveState',!ready?'Управление доступно только в локальном STANDARD':evm.liveBusy?
+    (evm.liveAction==='start'?'Подключение выполняется':'Отключение выполняется'):evm.liveFailure?
+    (evm.liveFailure==='disconnect'?'Ошибка отключения':'Ошибка подключения')+' · проверьте состояние перед повтором':live.real_available?
+    'GigaChat подключён · реальные отправки разрешены':'GigaChat отключён · история доступна');
   $('evmLiveStart').disabled=!ready||live.real_available||evm.liveBusy;
   $('evmLiveStop').disabled=!ready||!live.real_available||evm.liveBusy;
   $('evmApiState').replaceChildren(evmTag(cols.api.state));
@@ -1331,6 +1340,8 @@ function renderExternalCard(){
   const e=entryOf(EXTERNAL_MODEL),box=$('evmExternalCard');
   $('evmExternal').hidden=false;
   text('evmExternalTitle',e?nameOf(EXTERNAL_MODEL):'Карточка недоступна');
+  text('evmExternalMove',EXTERNAL_TOP?'PiP-окно переносится за системный заголовок, если это разрешает браузер и Windows.':
+    'Перенос на другой монитор: перетаскивайте окно за системный заголовок браузера, а не за карточку. В Windows также работает Win + Shift + ←/→.');
   box.replaceChildren(...(e?[fullCard(e,homeSection(EXTERNAL_MODEL),'external:'+EXTERNAL_MODEL)]:[element('p','Подключение отсутствует в реестре.','muted')]));
   box.hidden=!!externalPip;
   text('evmTopmost',EXTERNAL_TOP||externalPip?'Поверх всех окон: ВКЛ — выключить':'Поверх всех окон: ВЫКЛ — включить');
@@ -1812,13 +1823,13 @@ async function loadEvm(){
     notice('evmError','Не удалось получить подключения: '+e.message);text('evmState','Список не обновлён')
   }finally{$('evmRefresh').disabled=false}
 }
-const GIGACHAT_CONNECT_PROMPT='Включить 6 моделей GigaChat на 24 часа? Каждая отправка требует вашего действия. Предпочтительный максимум ответа задаётся в настройках чата (до 20 000 токенов); технический предел запроса 4096 байт. API может быть платным. Автоматических повторов нет.';
+const GIGACHAT_CONNECT_PROMPT='Подключить провайдера GigaChat на срок действующей сессии (до 24 часов)? Это не включает и не проверяет отдельные модели. Каждая отправка требует вашего действия. Предпочтительный максимум ответа задаётся в настройках чата (до 20 000 токенов); технический предел запроса 4096 байт. API может быть платным. Автоматических повторов нет.';
 async function evmLiveControl(start){
   const live=evm.live;
   if(stage5Offline||evm.liveBusy||chatTurn.liveBusy||live?.mode!=='ORDINARY'||live.execution_mode==='PROTOCOL_TEST'||
       (start?live.real_available:!live.real_available))return;
   if(start&&!window.confirm(GIGACHAT_CONNECT_PROMPT))return;
-  evm.liveBusy=true;chatTurn.liveBusy=true;renderEvm();renderTurnComposer();
+  evm.liveBusy=true;evm.liveAction=start?'start':'stop';evm.liveFailure=null;chatTurn.liveBusy=true;renderEvm();renderTurnComposer();
   let committed=false,error='';
   try{
     if(start&&!live.personal_workspace_id){
@@ -1831,12 +1842,12 @@ async function evmLiveControl(start){
     committed=true;
   }catch(e){error=e.code||e.message||'проверьте состояние подключения'}
   finally{
-    evm.liveBusy=false;chatTurn.liveBusy=false;
+    evm.liveBusy=false;evm.liveAction=null;evm.liveFailure=committed?null:(start?'connect':'disconnect');chatTurn.liveBusy=false;
     await loadEvm();
     if(chat.started){try{await loadChatAccess();await loadChatWorkspaces()}catch(_){/* EVM readback stays authoritative */}}
     renderEvm();renderTurnComposer();
   }
-  if(committed)evmSay(start?'GigaChat подключён. Модели доступны в Ultra Chat.':'GigaChat отключён. История сохранена.');
+  if(committed)evmSay(start?'GigaChat подключён. В Ultra Chat доступны включённые модели.':'GigaChat отключён. История сохранена.');
   else notice('evmError','Состояние не изменено или не подтверждено: '+error+'. Проверьте его перед повтором.');
 }
 // Settings and diagnostics windows. Only one is shown at a time; closing or switching keeps the draft of every
@@ -1939,30 +1950,47 @@ async function saveSettings(){
 }
 function fillCheck(){
   const c=cardData(evm.window.id),live=evm.cards.live_check;
+  const disconnected=evm.live?.mode==='ORDINARY'&&!evm.live.real_available;
+  const canCheck=c.enabled!==false&&evm.live?.real_available===true&&live.authorized===true&&!evm.liveBusy;
   text('evmCheckName','Проверка API — '+c.display_name);$('evmCheckDot').replaceChildren(apiDot(c.api));
   text('evmCheckLast','Последний успешный ответ: '+(c.api.last_success_at?fmtTime(c.api.last_success_at)+(c.api.last_success_source==='chat'?' (обычный запрос)':''):'отсутствует')+' · '+apiText(c.api));
-  const out=evm.outputs[c.model_id]||(c.last_output?{kind:c.last_output.kind==='reply'?'reply':'error',text:c.last_output.text+'\n('+fmtTime(c.last_output.at)+')'}:
-    {kind:'info',text:'Нажмите «Отправить тестовое сообщение», чтобы проверить подключение и увидеть ответ модели.'});
+  const out=evm.outputs[c.model_id]||(c.last_output?{kind:c.last_output.kind==='reply'?'reply':c.last_output.kind==='unknown'?'info':'error',text:c.last_output.text+'\n('+fmtTime(c.last_output.at)+')'}:
+    {kind:'info',text:c.enabled===false?'Модель отключена в EVM. Включите её перед проверкой.':disconnected?
+      'Провайдер не подключён. Подключите GigaChat в EVM, затем отдельно подтвердите тестовый запрос.':
+      !canCheck?'Проверка сейчас недоступна: '+(live.reason||'нет подтверждённого допуска к модели.'):
+      'Нажмите «Отправить тестовое сообщение», чтобы проверить подключение и увидеть ответ модели.'});
   text('evmCheckOutput',out.text);$('evmCheckOutput').className='output '+out.kind;
-  text('evmCheckNote','Тестовое сообщение: «'+evm.cards.test_message+'»'+(live.authorized?'':' — в этой версии оно не отправляется.'));
-  $('evmCheckSend').disabled=evm.checking
+  text('evmCheckNote','Тестовое сообщение: «'+evm.cards.test_message+'». '+(canCheck?
+    'Настоящий запрос может тарифицироваться; перед отправкой потребуется отдельное подтверждение.':
+    c.enabled===false?'Модель отключена; запрос не отправляется.':disconnected?
+    'Провайдер не подключён; запрос не отправляется.':'Отправка сейчас недоступна; запрос не отправляется.'));
+  $('evmCheckConnect').hidden=!disconnected||c.provider_id!=='gigachat';
+  $('evmCheckConnect').disabled=evm.liveBusy||evm.checking;
+  $('evmCheckSend').disabled=evm.checking||!canCheck
 }
 function checkOutput(r){
   if(r?.outcome==='LIVE_CHECK_NOT_AUTHORIZED')return {kind:'info',text:'Сообщение не отправлялось. '+r.message+' Статус API не изменён.'};
   if(r?.outcome==='SIMULATED')return {kind:'info',text:'ИМИТАЦИЯ — настоящий запрос не отправлялся, статус API не изменён.\n'+(r.text||'')};
   if(r?.outcome==='CONFIRMED')return {kind:'reply',text:String(r.text||'')};
   if(r?.outcome==='FAILED')return {kind:'error',text:String(r.text||'Проверка завершилась отказом')};
-  return {kind:'error',text:'Некорректный ответ сервера о проверке.'}
+  if(r?.outcome==='UNKNOWN')return {kind:'info',text:'Исход проверки неизвестен. Автоматической повторной отправки нет. '+String(r.text||'')};
+  return {kind:'info',text:'Результат проверки не подтверждён; обновите состояние перед новой попыткой.'}
 }
 async function sendCheck(){
   const c=evm.window?.kind==='check'?cardData(evm.window.id):null;if(!c||evm.checking)return;
+  if(c.enabled===false||evm.live?.real_available!==true||evm.cards.live_check?.authorized!==true){
+    evm.outputs[c.model_id]={kind:'info',text:c.enabled===false?'Модель отключена в EVM. Запрос не отправлялся.':
+      'Провайдер не подключён или допуск к проверке отсутствует. Запрос не отправлялся.'};fillCheck();return
+  }
+  if(!window.confirm('Отправить одно тестовое сообщение модели '+c.display_name+' через GigaChat? Запрос может тарифицироваться. Автоматического повтора нет.'))return;
   const id=c.model_id;evm.checking=true;evm.outputs[id]={kind:'info',text:'Проверяем…'};fillCheck();
   try{
     if(!chatEdit.token)await loadChatWriteAccess();
     evm.outputs[id]=checkOutput(await api('/ultra/model-cards/'+encodeURIComponent(id)+'/check',
       {method:'POST',headers:{[CHAT_WRITE_HEADER]:chatEdit.token},body:{},timeoutMs:130000}))
   }
-  catch(e){evm.outputs[id]={kind:'error',text:'Проверка не выполнена: '+e.message}}
+  catch(e){evm.outputs[id]={kind:'info',text:e.httpStatus&&e.httpStatus<500?
+    'Проверка не выполнена: '+(e.code||e.message):'Исход проверки неизвестен. Автоматического повтора нет. '+(e.code||e.message)}}
   evm.checking=false;
   await loadEvm()  // the indicator always comes from the server, never from this answer
 }
@@ -1980,6 +2008,7 @@ $('evmSetReset').onclick=()=>{const w=evm.window;if(w?.kind!=='settings')return;
 $('evmSetSave').onclick=()=>saveSettings();
 $('evmSetClose').onclick=()=>closeWindow();
 $('evmCheckClose').onclick=()=>closeWindow();
+$('evmCheckConnect').onclick=()=>evmLiveControl(true);
 $('evmCheckSend').onclick=()=>sendCheck();
 $('evmLiveStart').onclick=()=>evmLiveControl(true);
 $('evmLiveStop').onclick=()=>evmLiveControl(false);

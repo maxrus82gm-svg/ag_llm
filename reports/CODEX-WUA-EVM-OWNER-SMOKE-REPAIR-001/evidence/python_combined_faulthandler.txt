@@ -1,0 +1,153 @@
+test_diagnostic_limit_clips_display_but_preserves_saved_reply (test_web_alarm_model_cards.ApiStatus.test_diagnostic_limit_clips_display_but_preserves_saved_reply) ... ok
+test_evm_execution_snapshot_timeout_and_turn_replay_dedup (test_web_alarm_model_cards.ApiStatus.test_evm_execution_snapshot_timeout_and_turn_replay_dedup) ... ok
+test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere (test_web_alarm_model_cards.ApiStatus.test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere) ... ok
+test_m08_timeout_changes_execution_version_but_display_limits_do_not (test_web_alarm_model_cards.ApiStatus.test_m08_timeout_changes_execution_version_but_display_limits_do_not) ... ok
+test_m09_failures_simulations_and_checker_errors (test_web_alarm_model_cards.ApiStatus.test_m09_failures_simulations_and_checker_errors) ... ok
+test_m10_unauthorised_default_sends_nothing_and_refusals (test_web_alarm_model_cards.ApiStatus.test_m10_unauthorised_default_sends_nothing_and_refusals) ... ok
+test_m11_damaged_checks_are_red_kept_for_diagnosis_and_replaced_by_the_next_answer (test_web_alarm_model_cards.ApiStatus.test_m11_damaged_checks_are_red_kept_for_diagnosis_and_replaced_by_the_next_answer) ... ok
+test_m12_an_ordinary_answer_refreshes_only_with_the_exact_settings (test_web_alarm_model_cards.ApiStatus.test_m12_an_ordinary_answer_refreshes_only_with_the_exact_settings) ... ok
+test_replayed_old_failure_after_later_success_keeps_green_after_reload (test_web_alarm_model_cards.ApiStatus.test_replayed_old_failure_after_later_success_keeps_green_after_reload) ... ok
+test_replayed_old_success_after_later_failure_keeps_red_after_reload (test_web_alarm_model_cards.ApiStatus.test_replayed_old_success_after_later_failure_keeps_red_after_reload) ... ok
+test_replayed_turn_stays_blocked_after_visible_history_rolls_over (test_web_alarm_model_cards.ApiStatus.test_replayed_turn_stays_blocked_after_visible_history_rolls_over) ... ok
+test_m22_windows_persist_restart_and_touch_nothing_else (test_web_alarm_model_cards.BoardLayout.test_m22_windows_persist_restart_and_touch_nothing_else) ... ok
+test_m23_layout_requests_are_checked_before_anything_is_written (test_web_alarm_model_cards.BoardLayout.test_m23_layout_requests_are_checked_before_anything_is_written) ... ok
+test_m24_two_pages_and_concurrent_writes_lose_no_window (test_web_alarm_model_cards.BoardLayout.test_m24_two_pages_and_concurrent_writes_lose_no_window) ... ok
+test_m25_damaged_or_absent_windows_never_break_the_board (test_web_alarm_model_cards.BoardLayout.test_m25_damaged_or_absent_windows_never_break_the_board) ... ok
+test_m18_order_and_favourites_persist_and_touch_nothing_else (test_web_alarm_model_cards.BoardView.test_m18_order_and_favourites_persist_and_touch_nothing_else) ... ok
+test_m19_requests_are_checked_before_anything_is_written (test_web_alarm_model_cards.BoardView.test_m19_requests_are_checked_before_anything_is_written) ... ok
+test_m20_new_and_removed_entries_keep_preferences_and_never_duplicate (test_web_alarm_model_cards.BoardView.test_m20_new_and_removed_entries_keep_preferences_and_never_duplicate) ... ok
+test_m21_concurrent_saves_and_a_damaged_file (test_web_alarm_model_cards.BoardView.test_m21_concurrent_saves_and_a_damaged_file) ... ok
+test_m01_cards_follow_the_shared_registry_and_reading_writes_nothing (test_web_alarm_model_cards.CatalogAndRoles.test_m01_cards_follow_the_shared_registry_and_reading_writes_nothing) ... ok
+test_m02_role_marks_are_the_real_assignments_and_nothing_else (test_web_alarm_model_cards.CatalogAndRoles.test_m02_role_marks_are_the_real_assignments_and_nothing_else) ... ok
+test_m03_tk_reading_mirrors_ui_state_and_the_tk_fallback (test_web_alarm_model_cards.CatalogAndRoles.test_m03_tk_reading_mirrors_ui_state_and_the_tk_fallback) ... ok
+test_m04_tk_defaults_and_provider_facts_match_their_owners (test_web_alarm_model_cards.CatalogAndRoles.test_m04_tk_defaults_and_provider_facts_match_their_owners) ... ok
+test_m05_unreadable_missing_or_unconnected_tk_settings_never_give_a_check_mark (test_web_alarm_model_cards.CatalogAndRoles.test_m05_unreadable_missing_or_unconnected_tk_settings_never_give_a_check_mark) ... ok
+test_m06_an_instance_on_its_own_storage_reads_tk_settings_only_from_a_given_file (test_web_alarm_model_cards.CatalogAndRoles.test_m06_an_instance_on_its_own_storage_reads_tk_settings_only_from_a_given_file) ... ok
+test_m16_http_only_for_the_local_page_and_no_secret_anywhere (test_web_alarm_model_cards.Http.test_m16_http_only_for_the_local_page_and_no_secret_anywhere) ... ok
+test_m17_the_module_cannot_send_or_read_a_key (test_web_alarm_model_cards.Http.test_m17_the_module_cannot_send_or_read_a_key) ... ok
+test_independent_switch_catalog_selection_settings_and_restart (test_web_alarm_model_cards.PerModelControls.test_independent_switch_catalog_selection_settings_and_restart) ... ok
+test_invalid_model_entry_or_container_cannot_enable_a_disabled_model (test_web_alarm_model_cards.PerModelControls.test_invalid_model_entry_or_container_cannot_enable_a_disabled_model) ... ok
+test_invalid_saved_enabled_value_fails_closed (test_web_alarm_model_cards.PerModelControls.test_invalid_saved_enabled_value_fails_closed) ... ok
+test_rejects_malformed_toggle_and_stale_revision (test_web_alarm_model_cards.PerModelControls.test_rejects_malformed_toggle_and_stale_revision) ... ok
+test_unknown_is_gray_and_deduplicated_after_restart (test_web_alarm_model_cards.PerModelControls.test_unknown_is_gray_and_deduplicated_after_restart) ... ok
+test_zero_models_and_corrupt_store_fail_closed_without_erasing_card_data (test_web_alarm_model_cards.PerModelControls.test_zero_models_and_corrupt_store_fail_closed_without_erasing_card_data) ... ok
+test_m13_card_data_is_validated_persisted_and_kept_apart_from_status_and_secrets (test_web_alarm_model_cards.Settings.test_m13_card_data_is_validated_persisted_and_kept_apart_from_status_and_secrets) ... ok
+test_m14_concurrent_saves_lose_nothing_silently (test_web_alarm_model_cards.Settings.test_m14_concurrent_saves_lose_nothing_silently) ... ok
+test_m15_damaged_settings_are_reported_kept_and_replaced_only_on_purpose (test_web_alarm_model_cards.Settings.test_m15_damaged_settings_are_reported_kept_and_replaced_only_on_purpose) ... ok
+test_an_unavailable_shared_registry_is_reported_and_invents_nothing (test_web_alarm_ultra_connections.CatalogTests.test_an_unavailable_shared_registry_is_reported_and_invents_nothing) ... ok
+test_catalog_is_exactly_the_shared_registry_and_the_page_copies_no_model (test_web_alarm_ultra_connections.CatalogTests.test_catalog_is_exactly_the_shared_registry_and_the_page_copies_no_model) ... ok
+test_registry_changes_are_seen_without_any_copy_in_web_alarm (test_web_alarm_ultra_connections.CatalogTests.test_registry_changes_are_seen_without_any_copy_in_web_alarm) ... ok
+test_status_lists_the_capability_and_wrong_methods_are_refused (test_web_alarm_ultra_connections.CatalogTests.test_status_lists_the_capability_and_wrong_methods_are_refused) ... ok
+test_viewing_writes_nothing_and_opens_no_network_or_transport (test_web_alarm_ultra_connections.CatalogTests.test_viewing_writes_nothing_and_opens_no_network_or_transport) ... ok
+test_real_http_round_trip_never_carries_a_secret_or_a_log_line (test_web_alarm_ultra_connections.HttpTests.test_real_http_round_trip_never_carries_a_secret_or_a_log_line) ... ok
+test_selection_requires_json_and_the_page_offers_the_evm_entry_and_a_way_back (test_web_alarm_ultra_connections.HttpTests.test_selection_requires_json_and_the_page_offers_the_evm_entry_and_a_way_back) ... ok
+test_a_saved_model_that_later_disappears_or_is_disabled_is_reported_not_used (test_web_alarm_ultra_connections.SelectionTests.test_a_saved_model_that_later_disappears_or_is_disabled_is_reported_not_used) ... ok
+test_concurrent_choices_leave_one_valid_file (test_web_alarm_ultra_connections.SelectionTests.test_concurrent_choices_leave_one_valid_file) ... ok
+test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice (test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice) ... ok
+test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id (test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id) ... ok
+test_pro_and_ultra_choice_survives_a_restart_and_is_stored_only_as_a_reference (test_web_alarm_ultra_connections.SelectionTests.test_pro_and_ultra_choice_survives_a_restart_and_is_stored_only_as_a_reference) ... ok
+test_roles_of_a_newer_version_are_kept_when_chat_is_saved (test_web_alarm_ultra_connections.SelectionTests.test_roles_of_a_newer_version_are_kept_when_chat_is_saved) ... ok
+test_the_tkinter_ultra_state_and_the_transport_are_never_touched (test_web_alarm_ultra_connections.SelectionTests.test_the_tkinter_ultra_state_and_the_transport_are_never_touched) ... ok
+test_unknown_malformed_and_disabled_connections_are_refused_without_writing (test_web_alarm_ultra_connections.SelectionTests.test_unknown_malformed_and_disabled_connections_are_refused_without_writing) ... ok
+test_all_models_off_refuses_provider_start_before_oauth (test_web_alarm_ordinary_application.ApplicationTests.test_all_models_off_refuses_provider_start_before_oauth) ... ok
+test_application_cancel_during_http_keeps_unknown_and_no_retry (test_web_alarm_ordinary_application.ApplicationTests.test_application_cancel_during_http_keeps_unknown_and_no_retry) ... ok
+test_application_terminal_failure_does_not_publish_or_resend (test_web_alarm_ordinary_application.ApplicationTests.test_application_terminal_failure_does_not_publish_or_resend) ... ok
+test_default_standard_hold_before_turn_raw_token_or_network (test_web_alarm_ordinary_application.ApplicationTests.test_default_standard_hold_before_turn_raw_token_or_network) ... ok
+test_evm_disable_blocks_new_send_but_keeps_chat_history_and_accepted_replay (test_web_alarm_ordinary_application.ApplicationTests.test_evm_disable_blocks_new_send_but_keeps_chat_history_and_accepted_replay) ... ok
+test_factory_scope_and_forged_real_authority_denied (test_web_alarm_ordinary_application.ApplicationTests.test_factory_scope_and_forged_real_authority_denied) ... ok
+test_http_auth_rate_server_and_bad_json_are_not_retried (test_web_alarm_ordinary_application.ApplicationTests.test_http_auth_rate_server_and_bad_json_are_not_retried) ... ok
+test_model_settings_and_workspace_isolation (test_web_alarm_ordinary_application.ApplicationTests.test_model_settings_and_workspace_isolation) ... ok
+test_standard_exact_wire_terminal_history_usage_model_and_reopen (test_web_alarm_ordinary_application.ApplicationTests.test_standard_exact_wire_terminal_history_usage_model_and_reopen) ... ok
+test_standard_legacy_history_without_test_turn_is_readable_and_unchanged (test_web_alarm_ordinary_application.ApplicationTests.test_standard_legacy_history_without_test_turn_is_readable_and_unchanged) ... ok
+test_standard_partial_legacy_history_keeps_good_raw_visible (test_web_alarm_ordinary_application.ApplicationTests.test_standard_partial_legacy_history_keeps_good_raw_visible) ... ok
+test_standard_personal_chat_without_live_is_local_and_durable (test_web_alarm_ordinary_application.ApplicationTests.test_standard_personal_chat_without_live_is_local_and_durable) ... ok
+test_synthetic_oauth_boundary_failure_is_not_real_and_not_retried (test_web_alarm_ordinary_application.ApplicationTests.test_synthetic_oauth_boundary_failure_is_not_real_and_not_retried) ... ok
+test_timeout_unknown_reopen_retains_liability_without_resend (test_web_alarm_ordinary_application.ApplicationTests.test_timeout_unknown_reopen_retains_liability_without_resend) ... ok
+test_expired_authority_refuses_before_creating_a_check_chat (test_web_alarm_evm_unified.EvmTurnHandoff.test_expired_authority_refuses_before_creating_a_check_chat) ... ok
+test_no_live_authority_or_foreign_workspace_denies_before_turn (test_web_alarm_evm_unified.EvmTurnHandoff.test_no_live_authority_or_foreign_workspace_denies_before_turn) ... ok
+test_one_explicit_check_uses_one_visible_ordinary_turn (test_web_alarm_evm_unified.EvmTurnHandoff.test_one_explicit_check_uses_one_visible_ordinary_turn) ... ok
+test_unknown_turn_is_reported_uncertain_without_retry (test_web_alarm_evm_unified.EvmTurnHandoff.test_unknown_turn_is_reported_uncertain_without_retry) ... ok
+test_active_profile_uses_bridge_and_old_stage5_is_available (test_web_alarm_ordinary_test_activation.ActivationTests.test_active_profile_uses_bridge_and_old_stage5_is_available) ... ok
+test_missing_test_config_cannot_fall_back_to_standard (test_web_alarm_ordinary_test_activation.ActivationTests.test_missing_test_config_cannot_fall_back_to_standard) ... ok
+test_permanent_cmd_chat_flow_and_cleanup (test_web_alarm_ordinary_test_activation.ActivationTests.test_permanent_cmd_chat_flow_and_cleanup) ... ok
+test_guard_and_provider_controls (test_web_alarm_ultra_chat_s5.HttpAndTkTests.test_guard_and_provider_controls) ... skipped 'Requires the task guard for physical negative probes'
+test_http_cancel_reopen_usage_and_standard_gate (test_web_alarm_ultra_chat_s5.HttpAndTkTests.test_http_cancel_reopen_usage_and_standard_gate) ... ok
+test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat (test_web_alarm_ultra_chat_s5.HttpAndTkTests.test_http_reply_disconnect_does_not_replace_success_with_500_or_repeat) ... ok
+test_tk_cancel_control_and_reopen_unknown (test_web_alarm_ultra_chat_s5.HttpAndTkTests.test_tk_cancel_control_and_reopen_unknown) ... ok
+test_tk_controls_and_history_shared_with_web (test_web_alarm_ultra_chat_s5.HttpAndTkTests.test_tk_controls_and_history_shared_with_web) ... invalid command name "1875431428416_drain"
+    while executing
+"1875431428416_drain"
+    ("after" script)
+ok
+test_context_isolation_model_binding_restart_and_conflict (test_web_alarm_ultra_chat_s5.OfflineChatTests.test_context_isolation_model_binding_restart_and_conflict) ... ok
+test_error_and_unavailable_storage (test_web_alarm_ultra_chat_s5.OfflineChatTests.test_error_and_unavailable_storage) ... ok
+test_explicit_repeat_recovers_pending_result (test_web_alarm_ultra_chat_s5.OfflineChatTests.test_explicit_repeat_recovers_pending_result) ... ok
+test_model_refusal_leaves_no_turn_or_raw (test_web_alarm_ultra_chat_s5.OfflineChatTests.test_model_refusal_leaves_no_turn_or_raw) ... ok
+test_new_process_reuses_original_key_without_transport (test_web_alarm_ultra_chat_s5.OfflineChatTests.test_new_process_reuses_original_key_without_transport) ... ok
+test_refuses_foreign_registered_path_before_reading_history (test_web_alarm_ultra_chat_s5.OfflineChatTests.test_refuses_foreign_registered_path_before_reading_history) ... ok
+test_tampered_assistant_is_not_projected_as_success (test_web_alarm_ultra_chat_s5.OfflineChatTests.test_tampered_assistant_is_not_projected_as_success) ... ok
+test_two_messages_save_fake_answers (test_web_alarm_ultra_chat_s5.OfflineChatTests.test_two_messages_save_fake_answers) ... ok
+test_active_user_uses_authoritative_turn_state (test_web_alarm_ultra_chat_s5_recovery.RecoveryTests.test_active_user_uses_authoritative_turn_state) ... ok
+test_cancel_after_start_preserves_unknown_raw_http_history_and_context_policy (test_web_alarm_ultra_chat_s5_recovery.RecoveryTests.test_cancel_after_start_preserves_unknown_raw_http_history_and_context_policy) ... ok
+test_cancel_before_execution_preserves_raw_http_history_and_context_policy (test_web_alarm_ultra_chat_s5_recovery.RecoveryTests.test_cancel_before_execution_preserves_raw_http_history_and_context_policy) ... ok
+test_auth_origin_size_schema_and_unknown_references_do_not_write (test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_auth_origin_size_schema_and_unknown_references_do_not_write) ... ok
+test_foreign_chat_registered_root_not_allowlisted_and_methods (test_web_alarm_ultra_chat_turn_http.TurnHttpTests.test_foreign_chat_registered_root_not_allowlisted_and_methods) ... Exception ignored in: <function Variable.__del__ at 0x000001B4A6838AE0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 414, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Tcl_AsyncDelete: async handler deleted by the wrong thread
+Windows fatal exception: code 0x80000003
+
+Current thread 0x000002d0 (most recent call first):
+  Garbage-collecting
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\json\encoder.py", line 334 in _iterencode_dict
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\json\encoder.py", line 406 in _iterencode_dict
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\json\encoder.py", line 406 in _iterencode_dict
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\json\encoder.py", line 432 in _iterencode
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\json\encoder.py", line 202 in encode
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 238 in dumps
+  File "M:\GitHub\ag_llm\web_alarm\server.py", line 1188 in _send_json
+  File "M:\GitHub\ag_llm\web_alarm\server.py", line 1403 in _run
+  File "M:\GitHub\ag_llm\web_alarm\server.py", line 1429 in do_POST
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 424 in handle_one_request
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 436 in handle
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 766 in __init__
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 362 in finish_request
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 697 in process_request_thread
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1012 in run
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1075 in _bootstrap_inner
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1032 in _bootstrap
+
+Thread 0x00006520 (most recent call first):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\selectors.py", line 314 in _select
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\selectors.py", line 323 in select
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 235 in serve_forever
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1012 in run
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1075 in _bootstrap_inner
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1032 in _bootstrap
+
+Thread 0x000081b4 (most recent call first):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 720 in readinto
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\http\client.py", line 292 in _read_status
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\http\client.py", line 331 in begin
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\http\client.py", line 1430 in getresponse
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_storage.py", line 90 in request
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_storage.py", line 108 in post
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn_http.py", line 78 in test_foreign_chat_registered_root_not_allowlisted_and_methods
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 589 in _callTestMethod
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 634 in run
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 690 in __call__
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\suite.py", line 122 in run
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\suite.py", line 84 in __call__
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\suite.py", line 122 in run
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\suite.py", line 84 in __call__
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\suite.py", line 122 in run
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\suite.py", line 84 in __call__
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\runner.py", line 240 in run
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\main.py", line 281 in runTests
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\main.py", line 105 in __init__
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\unittest\__main__.py", line 18 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 198 in _run_module_as_main
