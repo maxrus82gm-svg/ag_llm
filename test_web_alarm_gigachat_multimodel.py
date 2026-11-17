@@ -98,6 +98,19 @@ class ProtocolTests(s5.Fixture):
         self.app.chat_model(self.ws, cid, {'model_ref':model})
         return self.app.submit_turn(self.ws, cid, body or self.body(text,model))
 
+    def test_evm_profile_timeout_is_bound_to_existing_provider_adapter(self):
+        from web_alarm.ordinary_chat_bridge import OrdinaryCoreAdapter
+        profile = {'profile_id': 'gigachat-default', 'settings_version': 'a'*16,
+                   'timeout_seconds': 67}
+        adapter = OrdinaryCoreAdapter.for_provider(self.session, context_ref='stage5:'+self.cid,
+            model_id='gigachat_2_pro', evm_profile=profile)
+        self.assertEqual(adapter._limits.timeout_seconds, 67.0)
+        self.assertEqual(adapter._evm_profile, profile)
+        self.assertEqual(self.posts(), [])
+        with self.assertRaisesRegex(PreSendDenied, 'evm_profile_invalid'):
+            OrdinaryCoreAdapter.for_provider(self.session, context_ref='stage5:'+self.cid,
+                model_id='gigachat_2_pro', evm_profile={**profile, 'timeout_seconds': 121})
+
     def test_real_route_six_models_history_cached_reasoning_reopen_and_no_replay(self):
         self.discover()
         second = 'chat_'+uuid4().hex

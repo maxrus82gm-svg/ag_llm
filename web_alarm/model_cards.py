@@ -565,13 +565,14 @@ class ModelCards:
     def _settings_version(self, spec: Any, provider: Provider | None, profile: dict[str, Any],
                           facts: dict[str, Any]) -> str:
         """Changes when the key, the API profile, an endpoint or the called model changes; card text,
-        parameter count, timeouts and the freshness period are deliberately outside."""
+        parameter count and the freshness period are deliberately outside."""
         material = {
             "provider": spec.provider, "adapter": provider.adapter if provider else None,
             "profile_id": profile["profile_id"], "credential_env": provider.credential_env if provider else None,
             "credential_present": facts["credential"]["present"], "credential_revision": profile["credential_revision"],
             "scope": facts["scope"]["value"], "oauth_url": provider.oauth_url if provider else None,
             "api_url": provider.api_url if provider else None, "provider_model_id": spec.provider_model_id,
+            "timeout_seconds": profile["timeout_seconds"],
         }
         canonical = json.dumps(material, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical.encode("ascii")).hexdigest()[:16]
@@ -610,7 +611,8 @@ class ModelCards:
             return verdict(RED, "LAST_CHECK_FAILED" if failure_at else "NEVER_CONFIRMED")
         if record.get("settings_version") != settings_version:
             return verdict(RED, "SETTINGS_CHANGED")
-        if failure_at is not None and failure_at > success_at:
+        if failure_at is not None and (failure_at > success_at or
+                (failure_at == success_at and record.get("last_event") == "failure")):
             return verdict(RED, "LAST_CHECK_FAILED")
         if success_at > now + FUTURE_TOLERANCE:
             return verdict(RED, "TIMESTAMP_INVALID")
@@ -829,6 +831,17 @@ class ModelCards:
         ctx = self._context()
         return self._card(ctx, self._spec(ctx["registry"], model_id))
 
+    def execution_snapshot(self, model_id: str) -> dict[str, Any]:
+        """Non-secret EVM profile captured for a newly accepted Ordinary Turn."""
+        ctx = self._context()
+        spec = self._spec(ctx["registry"], model_id)
+        if ctx["settings"]["state"] == "CORRUPT":
+            raise ModelCardsStoreError("EVM settings require review")
+        card = self._card(ctx, spec)
+        profile = self._profile_for(ctx["settings"], spec)
+        return {"profile_id": profile["profile_id"], "settings_version": card["settings_version"],
+                "timeout_seconds": profile["timeout_seconds"]}
+
     # --- writes -------------------------------------------------------------------------------------------
 
     def save_settings(self, model_id: Any, body: Mapping[str, Any]) -> dict[str, Any]:
@@ -876,7 +889,7 @@ class ModelCards:
             lock.release()
         return self.card(spec.model_id)
 
-    def _record(self, connection_id: str, update: Callable[[dict[str, Any]], None]) -> None:
+    def _record(self, connection_id: str, update: Callable[[dict[str, Any]], bool | None]) -> bool:
         lock = self._locked()
         try:
             loaded = self._checks()
@@ -886,9 +899,11 @@ class ModelCards:
             else:
                 checks = loaded["checks"]
             record = dict(checks.get(connection_id) or {})
-            update(record)
+            if update(record) is False:
+                return False
             checks[connection_id] = record
             self._write(self.checks_path, {"schema": CHECKS_SCHEMA, "version": SCHEMA_VERSION, "checks": checks})
+            return True
         finally:
             lock.release()
 
@@ -897,9 +912,13 @@ class ModelCards:
         at = self.now().isoformat()
 
         def update(record: dict[str, Any]) -> None:
-            record.update(settings_version=settings_version, last_success_at=at, last_success_source=source)
+            record.update(settings_version=settings_version, last_success_at=at,
+                          last_success_source=source, last_event="success")
             if reply is not None:
-                record["last_output"] = {"kind": "reply", "at": at, "text": safe_text(reply, limit)}
+                record["last_output"] = {"kind": "reply", "at": at, "text": safe_text(reply, 8192)}
+            record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
+                                 {"at": at, "outcome": "CONFIRMED", "source": source,
+                                  "settings_version": settings_version}]
 
         self._record(connection_id, update)
 
@@ -909,20 +928,51 @@ class ModelCards:
         failure = {"code": safe_text(code, 60), "message": safe_text(message, MAX_ERROR_TEXT)}
 
         def update(record: dict[str, Any]) -> None:
-            record.update(last_failure_at=at, last_failure=failure, failure_settings_version=settings_version)
+            record.update(last_failure_at=at, last_failure=failure,
+                          failure_settings_version=settings_version, last_event="failure")
             record["last_output"] = {"kind": "error", "at": at,
                                      "text": safe_text(f"{failure['code']}: {failure['message']}", limit)}
+            record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
+                                 {"at": at, "outcome": "FAILED", "code": failure["code"],
+                                  "settings_version": settings_version}]
 
         self._record(connection_id, update)
 
-    def record_chat_success(self, model_id: str, settings_version: str) -> bool:
+    def record_chat_success(self, model_id: str, settings_version: str, *, turn_id: str | None = None) -> bool:
         """Extension point for an ordinary Ultra Chat answer: it refreshes the confirmation only when the
         server knows the exact model and the settings version the answer was produced with."""
         card = self.card(model_id)
         if settings_version != card["settings_version"] or not card["registry_enabled"]:
             return False
-        self.record_success(card["connection_id"], settings_version, source="chat", reply=None, limit=0)
-        return True
+        at = self.now().isoformat()
+        def update(record: dict[str, Any]) -> bool:
+            if turn_id is not None and record.get("last_success_turn_id") == turn_id:
+                return False
+            record.update(settings_version=settings_version, last_success_at=at,
+                          last_success_source="chat", last_success_turn_id=turn_id, last_event="success")
+            record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
+                                 {"at": at, "outcome": "CONFIRMED", "source": "chat",
+                                  "settings_version": settings_version, "turn_id": turn_id}]
+            return True
+        return self._record(card["connection_id"], update)
+
+    def record_chat_failure(self, model_id: str, settings_version: str, *, code: str, turn_id: str) -> bool:
+        """A failed or uncertain REAL Turn invalidates a prior confirmation once."""
+        card = self.card(model_id)
+        if settings_version != card["settings_version"] or not card["registry_enabled"]:
+            return False
+        at = self.now().isoformat()
+        safe_code = safe_text(code, 60)
+        def update(record: dict[str, Any]) -> bool:
+            if record.get("last_failure_turn_id") == turn_id:
+                return False
+            record.update(last_failure_at=at, last_failure={"code": safe_code, "message": "Turn did not succeed"},
+                          failure_settings_version=settings_version, last_failure_turn_id=turn_id, last_event="failure")
+            record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
+                                 {"at": at, "outcome": "FAILED", "source": "chat", "code": safe_code,
+                                  "settings_version": settings_version, "turn_id": turn_id}]
+            return True
+        return self._record(card["connection_id"], update)
 
     def run_check(self, model_id: Any) -> dict[str, Any]:
         """One fixed short test message through the configured checker; nothing is sent while the live

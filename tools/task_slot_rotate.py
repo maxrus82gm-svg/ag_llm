@@ -455,6 +455,37 @@ def snapshot_bytes(task, card_rel, date, copy_lf, amendments, report_rel):
     return out
 
 
+def _windows_replace_existing(path: Path, tmp: Path, data: bytes):
+    """Atomic replacement for Windows targets that reject os.replace with WinError 5.
+
+    ReplaceFileW preserves the original in a same-directory backup until readback.
+    Never overwrite an older backup or fall back to an unguarded in-place write.
+    """
+    import ctypes
+    from ctypes import wintypes
+
+    backup = path.with_name("." + path.name + ".rotate-backup")
+    if backup.exists():
+        raise FileExistsError(f"Unresolved rotation backup: {backup}")
+
+    replace_file = ctypes.WinDLL("kernel32", use_last_error=True).ReplaceFileW
+    replace_file.argtypes = [
+        wintypes.LPCWSTR, wintypes.LPCWSTR, wintypes.LPCWSTR,
+        wintypes.DWORD, wintypes.LPVOID, wintypes.LPVOID,
+    ]
+    replace_file.restype = wintypes.BOOL
+    if not replace_file(str(path), str(tmp), str(backup), 0, None, None):
+        raise ctypes.WinError(ctypes.get_last_error())
+
+    if path.read_bytes() != data:
+        # Windows replacement succeeded but readback did not: restore the old file.
+        if not replace_file(str(path), str(backup), None, 0, None, None):
+            raise OSError("Windows replacement readback mismatch; backup kept for recovery")
+        raise OSError("Windows replacement readback mismatch; original restored")
+    with contextlib.suppress(OSError):
+        backup.unlink()
+
+
 def atomic_write(path: Path, data: bytes):
     tmp = path.with_name("." + path.name + ".rotate-tmp")
     try:
@@ -462,11 +493,18 @@ def atomic_write(path: Path, data: bytes):
             handle.write(data)
             handle.flush()
             os.fsync(handle.fileno())
-        os.replace(tmp, path)
+        try:
+            os.replace(tmp, path)
+        except PermissionError as error:
+            if os.name != "nt" or getattr(error, "winerror", None) != 5 or not path.is_file():
+                raise
+            _windows_replace_existing(path, tmp, data)
     except OSError as error:
         with contextlib.suppress(OSError):
             tmp.unlink()
-        raise Refused([problem("WRITE_FAILED", f"{path.name}: {type(error).__name__}")])
+        winerror = getattr(error, "winerror", None)
+        suffix = f" WinError {winerror}" if winerror is not None else ""
+        raise Refused([problem("WRITE_FAILED", f"{path.name}: {type(error).__name__}{suffix}")])
 
 
 @contextlib.contextmanager

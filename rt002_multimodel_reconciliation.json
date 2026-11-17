@@ -17,23 +17,33 @@
       "_FIRST_LITE_VERSION": "6a59c391a30164a21a3095c7b43d4022e44c80d5c8e4fd624c9e4b1df26288ca"
     },
     "ordinary_chat_bridge.py": {
-      "OrdinaryCoreAdapter": "f12cc04aed286e40ec77e5f781b695a23fe70a06002b5eb6e6f0eb4226c67a6e",
+      "OrdinaryCoreAdapter": "25f427af374af2670bf4f71e557f6fc7699e03d7be01419f9aafbd34b5d377f4",
       "_UsageCapture": "e39c1c6ed5f4c98a514c8e4ea138ec34f6f5944a7aaa449e5859511a4e8c0d55"
+    },
+    "launcher.py": {
+      "run_web_alarm": "798c31888ff3c64566d8d26a119dd844283713af6174c1371936051076aa8b1b",
+      "main": "9b2e4837670bbc1bfd10f886d60e5938110fac4880a350045b17fd6294418f27"
+    },
+    "model_cards.py": {
+      "ModelCards._settings_version": "a6d7b8beedabf6c6fcc9c104f781cde470f0edbda7ac2fda39c22bcd5cf814e1"
     }
   },
   "references": {
     "gigachat_admission.py": "b9c12295f18eb3e9ac11b80eec51b0b8f5bf63f28d6c63e5821d7d1072abdc28",
     "gigachat_transport.py": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
     "gigachat_runtime.py": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-    "ordinary_chat_bridge.py": "3b5abf8d7e78f3311f02edb3e2fbd1180636385259cdb37fe813f30061b5c06a"
+    "ordinary_chat_bridge.py": "3b5abf8d7e78f3311f02edb3e2fbd1180636385259cdb37fe813f30061b5c06a",
+    "launcher.py": "2ca3f78cbdbd75914a41332ff84fece7880a9ff03b08ed21583536aa38870bc9",
+    "model_cards.py": "cb81abb0acb5bf3fb51807ea434ae06ba41ece8825a2836b495bb0ece6de8cf3"
   },
   "policy_gates": {
-    "web_alarm.ordinary_provider": "338ef57c2d66af87b70a57b7d23d5e100ca92772449a81821e141a52e1a6d205",
-    "web_alarm.ordinary_chat_bridge": "57a9068bf038213e968dc25c4126e56e4ccd42a55472abe4021db1d56bd83560",
-    "web_alarm.turn_service": "93dd932bd17d7577defd831ea755af427733179502ed5b0ea32613f5e41baf4f",
+    "web_alarm.ordinary_provider": "a9ec5eab3fdeb97b085ae8e4023b2c61eed1d4ceab782cc2ebb293f586fddf31",
+    "web_alarm.ordinary_chat_bridge": "9dcbad4734a40ceff7e8eff87df857882208e3b842fbc443a52b998193bee363",
+    "web_alarm.turn_service": "30dad28558b51c031d4fc33d5f81357f239ee108485ccd63a8da5fee4f790f8e",
     "web_alarm.ultra_chat": "8fa246f9a35febe99142134cf528e50da236a0f4f487ab801836e6d25316aecd",
     "gigachat_admission": "c902f1faf5e810117284d92d0861fdfd44f131d19cb5fcc72599f085650428ce",
-    "gigachat_runtime": "40789ee835bb9a4c51dd0d316e5e905c78bd958247a01783a8f721ea1fda865a",
-    "web_alarm.live_bootstrap": "2afc0692a542b4d5f6619120009b93d7cfc92395bcbf5f7dcb866d6784155fbd"
+    "gigachat_runtime": "0b574faae24d2b178d54cc936f8e4b85ee4632086c7e23db5e5125a54a37daea",
+    "web_alarm.live_bootstrap": "2afc0692a542b4d5f6619120009b93d7cfc92395bcbf5f7dcb866d6784155fbd",
+    "web_alarm.standard_live": "a1dc33db769463b76f0f24d5685d86e9cf4fb672d1692a0e29c8618be34ec637"
   }
 }

@@ -425,6 +425,41 @@ class Refusals(Base):
         self.assertEqual(path.read_bytes(), before)
         self.assertEqual(sorted(p.name for p in path.parent.iterdir()), [path.name])
 
+    @unittest.skipUnless(sys.platform == "win32", "Windows ReplaceFileW fallback")
+    def test_n25b_winerror5_uses_atomic_replacefile_fallback(self):
+        import ctypes
+
+        path = self.ws.card(make_card())
+        after = make_card(b1=task_text(title="Windows replacement test"))
+        real_replace = os.replace
+
+        def replace(src, dst):
+            if Path(dst) == path:
+                raise ctypes.WinError(5)
+            return real_replace(src, dst)
+
+        with unittest.mock.patch.object(tsr.os, "replace", side_effect=replace):
+            tsr.atomic_write(path, after)
+        self.assertEqual(path.read_bytes(), after)
+        self.assertFalse(path.with_name("." + path.name + ".rotate-tmp").exists())
+        self.assertFalse(path.with_name("." + path.name + ".rotate-backup").exists())
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows ReplaceFileW fallback")
+    def test_n25c_windows_backup_collision_refuses_without_modification(self):
+        import ctypes
+
+        path = self.ws.card(make_card())
+        old = path.read_bytes()
+        backup = path.with_name("." + path.name + ".rotate-backup")
+        backup.write_bytes(b"preexisting backup")
+        with unittest.mock.patch.object(tsr.os, "replace", side_effect=ctypes.WinError(5)):
+            with self.assertRaises(tsr.Refused) as error:
+                tsr.atomic_write(path, make_card(b1=task_text(title="new")))
+        self.assertEqual([p["code"] for p in error.exception.problems], ["WRITE_FAILED"])
+        self.assertEqual(path.read_bytes(), old)
+        self.assertEqual(backup.read_bytes(), b"preexisting backup")
+        self.assertFalse(path.with_name("." + path.name + ".rotate-tmp").exists())
+
     def test_n27_wrong_text_inside_task(self):
         cases = {
             "SLOT_COPY_IN_TASK": tsr.META.format(task=TASK, date=DATE, sha="0" * 64, amend="нет", snap="s", report="r"),

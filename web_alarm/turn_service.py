@@ -425,6 +425,9 @@ class TurnService:
             provider_mode = turn.get('ordinary_admission', {}).get('provider_mode')
             if provider_mode in ('REAL', 'PROTOCOL_TEST'):
                 view['execution_mode'] = provider_mode
+            evm_profile = turn.get('ordinary_admission', {}).get('evm_profile')
+            if provider_mode == 'REAL' and type(evm_profile) is dict:
+                view['evm_profile'] = evm_profile
             if terminal and 'diagnostic_code' in terminal[1]:
                 view['diagnostic_code'] = terminal[1]['diagnostic_code']
             if terminal and 'response_model' in terminal[1]:

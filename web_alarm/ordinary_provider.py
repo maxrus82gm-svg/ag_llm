@@ -108,6 +108,10 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         if api is not None and api.registry is not registry:
             raise ValueError('Personal chat API must use the same registry')
         self._api = api
+        if api is not None:
+            from .model_cards import LiveCheckNotAuthorized
+            if type(api.model_cards.checker) is LiveCheckNotAuthorized:
+                api.model_cards.checker = _OrdinaryTurnChecker(self)
         self._personal_lock = threading.Lock()
         self._factory = factory
         self._http_fixture = factory._fixture
@@ -356,6 +360,23 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         root, _ = self._writable_workspace(_core(), wa_workspace_id)
         self._factory.fixture_for(self.registry, root)
         result = super().submit_turn(wa_workspace_id, chat_id, body)
+        if (self._api is not None and result.get('execution_mode') == 'REAL'
+                and type(result.get('evm_profile')) is dict):
+            try:
+                if result.get('state') == 'SUCCEEDED':
+                    synced = self._api.model_cards.record_chat_success(body['model_ref'],
+                        result['evm_profile']['settings_version'], turn_id=result['turn_id'])
+                elif result.get('state') in ('FAILED', 'UNKNOWN'):
+                    synced = self._api.model_cards.record_chat_failure(body['model_ref'],
+                        result['evm_profile']['settings_version'],
+                        code=result.get('diagnostic_code') or result['state'].lower(), turn_id=result['turn_id'])
+                else:
+                    synced = False
+                result = {**result, 'evm_status_sync': 'UPDATED' if synced else 'NO_CHANGE'}
+            except Exception:
+                # The committed Turn/RAW/ledger must remain readable even if
+                # the secondary EVM indicator store needs repair.
+                result = {**result, 'evm_status_sync': 'UNAVAILABLE'}
         return self._application_view(result)
 
     def _application_view(self, result):
@@ -423,6 +444,61 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 answer = metadata.get('ordinary_chat_settings', {}).get('answer_tokens', answer)
         if not chat_id:
             return TurnService(test_roots=[root])
+        evm_profile = None
+        if self._api is not None and not session.synthetic:
+            from .model_cards import ModelCardsError
+            try:
+                evm_profile = self._api.model_cards.execution_snapshot(model_id)
+            except ModelCardsError:
+                raise PreSendDenied('evm_profile_unavailable') from None
         adapter = OrdinaryCoreAdapter.for_provider(session, context_ref=context_ref, model_id=model_id,
-            context_loader=lambda: self._chat_context(root, chat_id), answer_tokens=answer)
+            context_loader=lambda: self._chat_context(root, chat_id), answer_tokens=answer,
+            evm_profile=evm_profile)
         return TurnService(test_roots=[root], offline_adapter=adapter, provider_session=session)
+
+
+class _OrdinaryTurnChecker:
+    """EVM check uses the visible Ordinary Chat Turn, never a second sender."""
+    def __init__(self, service):
+        self.service = service
+
+    @property
+    def authorized(self):
+        session = self.service._factory._session
+        if session is None or session.synthetic:
+            return False
+        try:
+            session.check()
+            return bool(session._available)
+        except PreSendDenied:
+            return False
+
+    @property
+    def reason(self):
+        return "Сначала явно подключите GigaChat в Ultra Chat" if not self.authorized else ""
+
+    def check(self, request):
+        from uuid import uuid4
+        from .model_cards import CheckRefusedError, CheckResult
+        from .standard_live import personal_chat_registration
+        session = self.service._factory._session
+        if (not self.authorized or session is None or request.provider_id != 'gigachat'
+                or request.model_id not in {c.model_id for c in session.approval.contracts}
+                or request.provider_model_id not in session._available):
+            raise CheckRefusedError('A verified active provider session is required')
+        self.service._factory.require_real()
+        record = personal_chat_registration(self.service.registry)
+        if record is None or Path(record.workspace_root).resolve() != session.root:
+            raise CheckRefusedError('Personal chat Workspace is not the approved provider Workspace')
+        chat_id = 'chat_' + uuid4().hex
+        self.service.create_chat(record.workspace_id,
+            {'chat_id': chat_id, 'title': 'Проверка EVM — ' + request.model_id})
+        self.service.chat_model(record.workspace_id, chat_id, {'model_ref': request.model_id})
+        result = self.service.submit_turn(record.workspace_id, chat_id,
+            {'idempotency_key': uuid4().hex, 'model_ref': request.model_id, 'text': request.message})
+        if result.get('execution_mode') != 'REAL':
+            raise CheckRefusedError('The provider did not execute a real Turn')
+        if result.get('state') == 'SUCCEEDED' and result.get('answer'):
+            return CheckResult(ok=True, live=True, reply=result['answer'])
+        return CheckResult(ok=False, live=True, error_code=result.get('diagnostic_code') or 'turn_not_succeeded',
+                           error_message=result.get('state') or 'unknown')

@@ -201,11 +201,12 @@ class CatalogAndRoles(Fixture):
                                       ("verifier_runtime", "DEFAULT_VERIFIER_MODEL_ID", "verifier_model_id")):
             self.assertIn(f'{constant} = "{defaults[key]}"', (repo / f"{module}.py").read_text(encoding="utf-8"))
         transport = (repo / "gigachat_transport.py").read_text(encoding="utf-8")
+        runtime = (repo / "gigachat_runtime.py").read_text(encoding="utf-8")
         provider = mc.BUILTIN_PROVIDERS["gigachat"]
         self.assertIn(f'OAUTH_URL = "{provider.oauth_url}"', transport)
         self.assertIn(f'CHAT_URL = "{provider.api_url}"', transport)
-        self.assertIn(f'os.getenv("{provider.credential_env}")', transport)
-        self.assertIn(f'os.getenv("{provider.scope_env}", "{provider.default_scope}")', transport)
+        self.assertIn(f"os.getenv('{provider.credential_env}')", runtime)
+        self.assertIn(f"os.getenv('{provider.scope_env}', '{provider.default_scope}')", runtime)
 
     def test_m05_unreadable_missing_or_unconnected_tk_settings_never_give_a_check_mark(self):
         for name, prepare in (("not_json", lambda: self.tk.write_bytes(b"{nope")),
@@ -255,11 +256,12 @@ class ApiStatus(Fixture):
                 self.assertEqual(self.check(api=restarted)["card"]["api"], card["api"], "check answer and card disagree")
         self.assertEqual(self.card()["api"]["reason"], "TIMESTAMP_INVALID")
 
-    def test_m08_card_text_and_profile_limits_never_reset_the_status_but_settings_do(self):
-        api = self.make(FakeChecker(OK))
+    def test_m08_timeout_changes_execution_version_but_display_limits_do_not(self):
+        api = self.make(FakeChecker(OK, OK))
         self.check(api=api)
         self.save(description="Сильная", params_billion=390, profile={"timeout_seconds": 90, "diagnostic_limit_chars": 300})
-        self.assertEqual(self.card()["api"]["color"], "green")
+        self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("red", "SETTINGS_CHANGED"))
+        self.check(api=api)
         self.clock.value = T0 + timedelta(days=11)
         self.assertEqual(self.card()["api"]["color"], "green")
         self.save(profile={"freshness_days": 10})
@@ -359,6 +361,40 @@ class ApiStatus(Fixture):
         self.assertTrue(cards.record_chat_success("gigachat_2", version))
         api = self.card()["api"]
         self.assertEqual((api["color"], api["last_success_source"]), ("green", "chat"))
+
+    def test_evm_execution_snapshot_timeout_and_turn_replay_dedup(self):
+        cards = self.api.model_cards
+        initial = cards.execution_snapshot('gigachat_2')
+        self.assertEqual(initial['timeout_seconds'], 30)
+        self.save(profile={'timeout_seconds': 67, 'diagnostic_limit_chars': 200})
+        changed = cards.execution_snapshot('gigachat_2')
+        self.assertEqual(changed['timeout_seconds'], 67)
+        self.assertNotEqual(initial['settings_version'], changed['settings_version'])
+        self.assertTrue(cards.record_chat_success('gigachat_2', changed['settings_version'], turn_id='turn-one'))
+        self.assertFalse(cards.record_chat_success('gigachat_2', changed['settings_version'], turn_id='turn-one'))
+        self.assertEqual(self.card()['api']['color'], 'green')
+        self.assertTrue(cards.record_chat_failure('gigachat_2', changed['settings_version'],
+            code='incomplete_or_unsupported_response', turn_id='turn-two'))
+        self.assertFalse(cards.record_chat_failure('gigachat_2', changed['settings_version'],
+            code='incomplete_or_unsupported_response', turn_id='turn-two'))
+        self.assertEqual(self.card()['api']['reason'], 'LAST_CHECK_FAILED')
+        self.assertTrue(cards.record_chat_success('gigachat_2', changed['settings_version'], turn_id='turn-three'))
+        self.assertEqual(self.card()['api']['color'], 'green')
+        self.save(profile={'freshness_days': 1, 'diagnostic_limit_chars': 400})
+        self.assertEqual(cards.execution_snapshot('gigachat_2')['settings_version'], changed['settings_version'])
+        self.save(profile={'timeout_seconds': 68})
+        self.assertEqual(self.card()['api']['reason'], 'SETTINGS_CHANGED')
+
+    def test_diagnostic_limit_clips_display_but_preserves_saved_reply(self):
+        cards = self.api.model_cards
+        self.save(profile={'diagnostic_limit_chars': 200})
+        card = self.card()
+        reply = 'Ответ ' * 100
+        cards.record_success(card['connection_id'], card['settings_version'],
+                             source='diagnostic', reply=reply, limit=200)
+        stored = json.loads(cards.checks_path.read_text(encoding='utf-8'))
+        self.assertEqual(stored['checks'][card['connection_id']]['last_output']['text'], reply)
+        self.assertLessEqual(len(self.card()['last_output']['text']), 200)
 
 
 class Settings(Fixture):
@@ -747,13 +783,17 @@ class Http(Fixture):
     def test_m16_http_only_for_the_local_page_and_no_secret_anywhere(self):
         self.serve()
         origin = {"Origin": "http://" + self.host}
+        denied, _ = self.request("POST", "/ultra/model-cards/gigachat_2/check", origin, b"{}")
+        self.assertEqual(denied, 403)
+        access = json.loads(self.request("GET", "/ui/ultra-chat/write-capability")[1])["ultra_chat_write"]
+        authorized = {**origin, access["header"]: access["token"]}
         cases = [
             ("GET", "/ultra/model-cards", {}, b"", 200, None),
             ("GET", "/ultra/model-cards", {"Origin": "http://evil.example"}, b"", 403, "model_cards_forbidden"),
             ("GET", "/ultra/model-cards", {"Host": "evil.example"}, b"", 403, "model_cards_forbidden"),
             ("GET", "/ultra/model-cards", {"Sec-Fetch-Site": "cross-site"}, b"", 403, "model_cards_forbidden"),
             ("POST", "/ultra/model-cards/gigachat_2/check", {}, b"{}", 403, "model_cards_forbidden"),
-            ("POST", "/ultra/model-cards/gigachat_2/check", origin, b"{}", 200, None),
+            ("POST", "/ultra/model-cards/gigachat_2/check", authorized, b"{}", 200, None),
             ("POST", "/ultra/model-cards/gigachat_2/settings", origin, json.dumps({"base_revision": 0, "description": "Быстрая"}).encode(), 200, None),
             ("GET", "/ultra/model-cards?x=1", {}, b"", 400, "invalid_model_card_request"),
             ("POST", "/ultra/model-cards", origin, b"{}", 405, "method_not_allowed"),

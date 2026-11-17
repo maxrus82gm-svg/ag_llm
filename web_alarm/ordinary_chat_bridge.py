@@ -69,16 +69,26 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
                          limits=chat.RequestLimits(32, 2048, 8192, 8192, 128, 8),
                          response=response)
         self._context_loader = context_loader
+        self._evm_profile = None
         if http_fixture is not None:
             self._transport = GigaChatTransport(http_fixture)
 
     @classmethod
-    def for_provider(cls, session, *, context_ref, model_id, context_loader=None, answer_tokens=128):
+    def for_provider(cls, session, *, context_ref, model_id, context_loader=None, answer_tokens=128,
+                     evm_profile=None):
         from ordinary_gigachat_transport import create_real_transport
         adapter = cls(context_ref=context_ref, response=None, context_loader=context_loader)
         contract = session.contract(model_id)
+        if evm_profile is not None:
+            if (type(evm_profile) is not dict or set(evm_profile) !=
+                    {'profile_id', 'settings_version', 'timeout_seconds'}
+                    or type(evm_profile['timeout_seconds']) is not int
+                    or not 5 <= evm_profile['timeout_seconds'] <= 120):
+                raise chat.PreSendDenied('evm_profile_invalid')
+            adapter._evm_profile = dict(evm_profile)
         adapter._limits = chat.RequestLimits(32, 2048, session.approval.max_request_bytes,
-            8192, min(answer_tokens, session.approval.max_answer_tokens, contract.output_tokens), 8)
+            8192, min(answer_tokens, session.approval.max_answer_tokens, contract.output_tokens),
+            evm_profile['timeout_seconds'] if evm_profile is not None else 8)
         adapter._transport = create_real_transport(model_id, authority=session)
         return adapter
 
@@ -96,7 +106,8 @@ class OrdinaryCoreAdapter(OfflineTestAdapter):
                 wire_sha256=hashlib.sha256(wire).hexdigest(), policy=raw,
                 policy_sha256=policy.validate_policy(raw).revision_sha256,
                 grant_id=session.approval.grant_id, model_contract={**vars(contract), 'response_models': list(contract.response_models)},
-                provider_mode='PROTOCOL_TEST' if session.synthetic else 'REAL')
+                provider_mode='PROTOCOL_TEST' if session.synthetic else 'REAL',
+                **({'evm_profile': self._evm_profile} if self._evm_profile is not None else {}))
         endpoint = self._transport.endpoint if type(self._transport) is GigaChatTransport else None
         return admission_snapshot(prepared, endpoint=endpoint)
 

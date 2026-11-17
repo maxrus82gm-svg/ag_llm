@@ -1386,6 +1386,11 @@ class _JsonHandler(BaseHTTPRequestHandler):
                 self._require_local_ui_origin('model_cards_forbidden', 'EVM model cards')
                 if self.command != 'GET' and len(self.headers.get_all('Origin', [])) != 1:
                     raise ApiError(403, 'model_cards_forbidden', 'A same-origin request is required')
+                if self.command == 'POST' and path.endswith('/check'):
+                    try:
+                        self.server.web_alarm_ultra_chat_write_access.require(self.headers)
+                    except UltraChatError as exc:
+                        raise ApiError(exc.status, exc.code, exc.message) from None
             body = self._read_body() if self.command in {"POST", "PUT", "PATCH"} else None
             status, payload = self.api.dispatch(self.command, self.path, body)
             self._send_json(status, payload)

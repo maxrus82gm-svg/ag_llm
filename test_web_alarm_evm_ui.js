@@ -74,6 +74,8 @@ const COLUMN_LEFT = {Fav: 20, Api: 320, Mcp: 620, Local: 920};
 
 function harness() {
   const h = {calls: [], routes: new Map()};
+  h.routes.set('/ui/ultra-chat/write-capability', () => ({ultra_chat_write: {available: true,
+    header: 'X-WebAlarm-Ultra-Chat-Write-Token', token: 'synthetic-local-write-token-00000000000000000000'}}));
   const elements = {};
   for (const m of source.matchAll(/<([a-z0-9]+)[^>]*\bid="([^"]+)"[^>]*>/g)) {
     const e = new Element(m[1]); e.id = m[2]; e.hidden = m[0].includes(' hidden');

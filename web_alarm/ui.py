@@ -581,7 +581,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 </div>
 <div id="evmPaneMore" role="tabpanel" aria-labelledby="evmTabMore" hidden>
 <div class="form-grid"><div><label for="evmSetTimeout">Таймаут запроса, секунд</label><input id="evmSetTimeout" type="number" min="5" max="120" step="1"></div><div><label for="evmSetDiagLimit">Предел текста диагностики, символов</label><input id="evmSetDiagLimit" type="number" min="200" max="4000" step="1"></div><div><label for="evmSetFreshness">Срок актуальности проверки, дней</label><input id="evmSetFreshness" type="number" min="1" max="365" step="1"></div></div>
-<p class="muted">Параметры относятся к профилю подключения и действуют для всех его моделей. Их изменение не сбрасывает статус API: срок актуальности меняет только границу между ✓ и !.</p>
+<p class="muted">Параметры относятся к профилю подключения и действуют для всех его моделей. Изменение таймаута требует нового подтверждения API; срок актуальности меняет только границу между ✓ и !.</p>
 </div>
 <p id="evmSetDraft" class="muted" hidden>Есть несохранённые изменения. Они сохраняются, пока открыта страница, даже если закрыть окно.</p>
 <div id="evmSetError" class="notice error" role="alert" hidden></div>
@@ -1866,7 +1866,11 @@ function checkOutput(r){
 async function sendCheck(){
   const c=evm.window?.kind==='check'?cardData(evm.window.id):null;if(!c||evm.checking)return;
   const id=c.model_id;evm.checking=true;evm.outputs[id]={kind:'info',text:'Проверяем…'};fillCheck();
-  try{evm.outputs[id]=checkOutput(await api('/ultra/model-cards/'+encodeURIComponent(id)+'/check',{method:'POST',body:{},timeoutMs:130000}))}
+  try{
+    if(!chatEdit.token)await loadChatWriteAccess();
+    evm.outputs[id]=checkOutput(await api('/ultra/model-cards/'+encodeURIComponent(id)+'/check',
+      {method:'POST',headers:{[CHAT_WRITE_HEADER]:chatEdit.token},body:{},timeoutMs:130000}))
+  }
   catch(e){evm.outputs[id]={kind:'error',text:'Проверка не выполнена: '+e.message}}
   evm.checking=false;
   await loadEvm()  // the indicator always comes from the server, never from this answer
@@ -2051,7 +2055,8 @@ function showTurn(result){
   const labels={ACCEPTING:'Приём не завершён. Для продолжения нужен исходный текст.',READY:'Принято. Ожидает явного продолжения.',ATTEMPTING:'Выполняется: TEST-имитатор обрабатывает запрос…',SUCCEEDED:'TEST: ответ сохранён.',FAILED:'TEST: выполнение завершилось ошибкой.',CANCELLED:'Отменено до выполнения.',UNKNOWN:'Исход неизвестен. Повтор ключа проверит сохранённые факты; повторного исполнения нет.'};
   if(result.execution_mode==='REAL')Object.assign(labels,{ATTEMPTING:'GigaChat обрабатывает запрос…',SUCCEEDED:'Ответ GigaChat сохранён.',FAILED:'Запрос GigaChat завершился ошибкой.'});
   const detail=modelChat()?' · '+result.references.model_ref+(result.usage?.total_tokens==null?'':' · usage '+result.usage.total_tokens):'';
-  text('chatTurnStatus',labels[result.state]+detail+(typeof result.diagnostic_code==='string'?' · '+result.diagnostic_code:''));
+  text('chatTurnStatus',labels[result.state]+detail+(typeof result.diagnostic_code==='string'?' · '+result.diagnostic_code:'')+
+    (result.evm_status_sync==='UNAVAILABLE'?' · Статус EVM не обновлён; проверьте подключение.':''));
   $('chatTurnNew').hidden=result.state!=='UNKNOWN';
   $('chatTurnCancel').disabled=!['READY','ATTEMPTING'].includes(result.state);
   if(['SUCCEEDED','FAILED','CANCELLED'].includes(result.state)){
