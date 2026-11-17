@@ -1046,7 +1046,7 @@ RECON_PINS = {'launcher.py': {'HOST': '7c633fca520e5ff51d812e2327fc4e006fd6cb51b
                     'BUILTIN_PROVIDERS': '68c85f1d931b3ec76b9dbbed0b86a420f1c742ce9def6b1f99f42cee117d6a9b',
                     'LiveCheckNotAuthorized': '461979486038caa49c60b9332555312754bc3a1adab15ad94a9f8c3d1f3e33c9',
                     'ModelCards.__init__': '23e909e739d4bab26e9f8009b586a0c50b837e235f8ba4e88ba8b0094de7e7c1',
-                    'ModelCards.run_check': 'ec82680003a2fd037a62c9fe901040bdbd2de4769b3f5e8069c73232a8303a4f',
+                    'ModelCards.run_check': 'cd610194f48def1e26107439164ac2d67abdd32350e1f2a4f53553ade07e56a0',
                     'ModelCards._settings_version': '3e86553b206a99f7db28f74f580f7ff7815cb2833c8d28eede7155b98e140b83',
                     'ModelCards.catalog': '3879cc458697eefce244ffa1bbe58d6c191ab2306a13fe4408cb68f9d45b0497'},
  'ordinary_chat_test_adapter.py': {'_FixtureTransport': '6336ff1d3d29155f33823a19c49de1deb9bf2314ed210285c4f21c393c9a4aca',

@@ -234,6 +234,7 @@ class WebAlarmApi:
             tk_state_path = default_tk_state_path() if storage_root is None else None
         self.model_cards = ModelCards(self.tasks.storage_root, self.ultra_connections,
                                       tk_state_path=tk_state_path, checker=api_checker)
+        self.ultra_connections.model_cards = self.model_cards
 
     @property
     def storage_root(self) -> Path:
@@ -425,6 +426,10 @@ class WebAlarmApi:
                 if method != "POST":
                     raise ApiError(405, "method_not_allowed", "the window layout is saved with POST")
                 return 200, {"view": self.model_cards.save_layout(_require_object(body))}
+            if len(parts) == 4 and parts[:2] == ["ultra", "model-cards"] and parts[3] == "enabled":
+                if method != "POST":
+                    raise ApiError(405, "method_not_allowed", "enabled requires POST")
+                return 200, {"card": self.model_cards.set_enabled(parts[2], _require_object(body))}
             if len(parts) == 4 and parts[:2] == ["ultra", "model-cards"] and parts[3] in {"settings", "check"}:
                 if method != "POST":
                     raise ApiError(405, "method_not_allowed", f"{parts[3]} requires POST")
@@ -1386,7 +1391,7 @@ class _JsonHandler(BaseHTTPRequestHandler):
                 self._require_local_ui_origin('model_cards_forbidden', 'EVM model cards')
                 if self.command != 'GET' and len(self.headers.get_all('Origin', [])) != 1:
                     raise ApiError(403, 'model_cards_forbidden', 'A same-origin request is required')
-                if self.command == 'POST' and path.endswith('/check'):
+                if self.command == 'POST' and (path.endswith('/check') or path.endswith('/enabled')):
                     try:
                         self.server.web_alarm_ultra_chat_write_access.require(self.headers)
                     except UltraChatError as exc:

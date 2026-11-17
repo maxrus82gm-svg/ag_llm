@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "1ee8a3dfaa71fecb525cb5c22bf57ea9ff93462bd7232bc28105494f181dc26f",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 394,
+    "b11b": 400,
+    "b11e": 533
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001",
+    "problems": [],
+    "title": "Web Alarm Ultra — EVM: управление моделями, синхронизация Ultra Chat и многооконный режим",
+    "lines": 345
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-UNIFIED-CONNECTION-001",
+    "copy_sha256": "fb5d676d63ec38ffe509543fcb0f848d04a4bdff81ff981af19ac982646a6905",
+    "history_id": "H-CODEX-000040",
+    "history_record": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "1ee8a3dfaa71fecb525cb5c22bf57ea9ff93462bd7232bc28105494f181dc26f",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-UNIFIED-CONNECTION-001",
+    "copy_sha256": "fb5d676d63ec38ffe509543fcb0f848d04a4bdff81ff981af19ac982646a6905",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/handoff_task.md",
+    "archive_sha256": "d5aa0139ccbe0a8f6b0e9e4363c417ca8d9f35eb7319857fdb694c556c515875"
+   },
+   "history_id": "H-CODEX-000041",
+   "new_card_sha256": "75b78f93e1511ddce1b58ee5f30f2c60b9ba9d03e935f53967cadbebaa6ecbe7",
+   "copy_sha256_lf": "95e3572aea6fda7bc302e0f764a3ebfee6c3ab3879727e83332ee20879f4b727",
+   "copy_lines": 345,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "1ee8a3dfaa71fecb525cb5c22bf57ea9ff93462bd7232bc28105494f181dc26f",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-UNIFIED-CONNECTION-001",
+    "copy_sha256": "fb5d676d63ec38ffe509543fcb0f848d04a4bdff81ff981af19ac982646a6905",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/handoff_task.md",
+    "archive_sha256": "d5aa0139ccbe0a8f6b0e9e4363c417ca8d9f35eb7319857fdb694c556c515875"
+   },
+   "history_id": "H-CODEX-000041",
+   "new_card_sha256": "75b78f93e1511ddce1b58ee5f30f2c60b9ba9d03e935f53967cadbebaa6ecbe7",
+   "copy_sha256_lf": "95e3572aea6fda7bc302e0f764a3ebfee6c3ab3879727e83332ee20879f4b727",
+   "copy_lines": 345,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001",
+    "history_id": "H-CODEX-000041",
+    "record": "reports/CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "6d4e20f0d2e729ec35f45acaa4cdf042e08fe2d86084b72ca71ebb5fd34d0ecf",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "75b78f93e1511ddce1b58ee5f30f2c60b9ba9d03e935f53967cadbebaa6ecbe7",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 404
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001",
+    "copy_sha256": "95e3572aea6fda7bc302e0f764a3ebfee6c3ab3879727e83332ee20879f4b727",
+    "history_id": "H-CODEX-000041",
+    "history_record": "reports/CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001",
+ "history": {
+  "id": "CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001",
+  "history_id": "H-CODEX-000041",
+  "record": "reports/CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

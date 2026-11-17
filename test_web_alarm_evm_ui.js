@@ -49,7 +49,7 @@ const api = (color, reason, extra = {}) => ({color, reason, freshness_days: 30, 
   last_success_at: color === 'red' ? null : '2026-10-24T10:00:00+00:00', last_success_source: color === 'red' ? null : 'diagnostic',
   last_failure_at: null, last_failure: null, settings_version: 'v1', ...extra});
 const mcard = (id, name, extra = {}) => ({connection_id: 'api:prov:' + id, model_id: id, display_name: name, provider_id: 'prov',
-  provider_model_id: 'P-' + id, registry_enabled: true, is_local: false, params_billion: null, params_source: 'unknown',
+  provider_model_id: 'P-' + id, registry_enabled: true, enabled: true, is_local: false, params_billion: null, params_source: 'unknown',
   description: '', profile_id: 'prov-default', settings_version: 'v1', last_output: null, api: api('red', 'NEVER_CONFIRMED'),
   roles: ROLE_DEFS.map(r => ({role: r.role, state: r.exists ? 'not_assigned' : 'not_in_runtime'})), ...extra});
 function cards(list, extra = {}) {
@@ -72,8 +72,8 @@ const rect = (left, top, width, height) => ({left, top, width, height, right: le
 // Card i of a column spans y 150+48i … 190+48i (its middle is 170+48i); x 14 px inside its column.
 const COLUMN_LEFT = {Fav: 20, Api: 320, Mcp: 620, Local: 920};
 
-function harness() {
-  const h = {calls: [], routes: new Map()};
+function harness(options = {}) {
+  const h = {calls: [], routes: new Map(), popups: [], bodyClasses: []};
   h.routes.set('/ui/ultra-chat/write-capability', () => ({ultra_chat_write: {available: true,
     header: 'X-WebAlarm-Ultra-Chat-Write-Token', token: 'synthetic-local-write-token-00000000000000000000'}}));
   const elements = {};
@@ -83,7 +83,8 @@ function harness() {
     elements[e.id] = e;
   }
   const all = () => {const s = new Set(Object.values(elements)); const add = e => {for (const c of e.children) {s.add(c); add(c);}}; Object.values(elements).forEach(add); return [...s];};
-  const document = {hidden: false, activeElement: null, getElementById: id => elements[id], createElement: tag => {const e = new Element(tag); e.document = document; return e;}, querySelectorAll: () => []};
+  const document = {hidden: false, activeElement: null, body: {classList: {add: name => h.bodyClasses.push(name)}},
+    getElementById: id => elements[id], createElement: tag => {const e = new Element(tag); e.document = document; return e;}, querySelectorAll: () => []};
   Object.values(elements).forEach(e => e.document = document);
   const operator = url => {
     if (url === '/status') return {service: 'web_alarm_server', mode: 'server', api_version: 1};
@@ -93,9 +94,17 @@ function harness() {
     return {};
   };
   h.document = document;
-  h.context = vm.createContext({document, console, AbortController, setTimeout: (fn, ms) => {const t = setTimeout(fn, ms); t.unref(); return t;}, clearTimeout,
+  const pip = {document: {body: {style: {}, append(child) {this.child = child;}}, createElement: tag => document.createElement(tag)},
+    addEventListener(name, fn) {this.onclose = fn;}, close() {this.closed = true; this.onclose?.();}};
+  h.pip = pip;
+  h.context = vm.createContext({document, console, AbortController,
+    location: {search: options.search || '', hash: options.hash || '', pathname: '/'},
+    ...(options.topmost ? {documentPictureInPicture: {requestWindow: async () => pip}} : {}),
+    setTimeout: (fn, ms) => {const t = setTimeout(fn, ms); t.unref(); return t;}, clearTimeout,
     setInterval: () => 0, Date, localStorage: {getItem: () => null, setItem: () => {}, removeItem: () => {}},
-    window: {confirm: () => true, matchMedia: () => ({matches: false}), scrollTo: () => {}, addEventListener: () => {}},
+    window: {confirm: () => true, matchMedia: () => ({matches: false}), scrollTo: () => {}, addEventListener: () => {},
+      open: (url, name, features) => {h.popups.push({url, name, features}); return options.popupBlocked ? null : {focus() {this.focused = true;}};},
+      close: () => {h.windowClosed = true;}},
     navigator: {locks: {request: async (k, o, fn) => fn({name: k})}, clipboard: {writeText: async () => {}}},
     fetch: async (url, opts) => {
       h.calls.push({url, method: opts.method || 'GET', body: opts.body, headers: opts.headers});
@@ -225,7 +234,7 @@ test('E2 the board: four columns, compact cards in server order, honest empty co
   assert.equal(h.dot(alpha).getAttribute('data-api'), 'green:CONFIRMED');
   assert.doesNotMatch(h.cards()[0].textContent, /млрд/, 'an unknown parameter count is not shown in the compact card');
   for (const card of h.cards()) {
-    assert.deepEqual(h.findAll(card, e => e.tag === 'button').map(b => b.className), ['copen', 'cquick', 'star'], 'the compact card: «open», «⧉» and the star');
+    assert.deepEqual(h.findAll(card, e => e.tag === 'button').map(b => b.className), ['copen', 'cquick', 'cquick', 'star'], 'the compact card: open, pin, external and star');
     assert.deepEqual([h.quickBtn(card).getAttribute('aria-haspopup'), h.quickBtn(card).getAttribute('aria-expanded')], ['dialog', 'false']);
     assert.match(h.quickBtn(card).getAttribute('aria-label'), /^Закрепить в отдельном окне: /);
     assert.equal(h.roles(card).length, 0);
@@ -239,12 +248,12 @@ test('E2 the board: four columns, compact cards in server order, honest empty co
   assert.equal(h.el('evmMcpEmpty').hidden, false); assert.equal(h.el('evmLocalEmpty').hidden, false);
   assert.match(h.el('evmMcpState').textContent, /Ещё не подключено/); assert.match(h.el('evmLocalState').textContent, /Ещё не подключено/);
   assert.match(h.el('evmSelection').textContent, /ещё не выбрана/);
-  assert.equal(h.el('evmSummary').textContent, '✓ 1 · ! 0 · × 2');
+  assert.equal(h.el('evmSummary').textContent, '✓ 1 · ! 0 · × 2 · ○ 0');
   assert.equal(h.el('evmState').textContent, 'Моделей в реестре: 3');
   assert.equal(h.el('showWorkspaces').hidden, true, 'operator-only mobile toggles stay hidden in EVM');
   assert.deepEqual(h.evmCalls().filter(c => c.method === 'GET' && !c.url.includes('selection')).map(c => c.url).sort(), ['/ultra/connections', '/ultra/model-cards']);
   assert.equal(source.includes('id="evmChatModel"'), false, 'the large chat-model block left EVM');
-  assert.match(source, /Нажмите на карточку — она раскроется на месте\. Ctrl \+ наведение — быстрый просмотр сбоку/);
+  assert.match(source, /Нажмите на карточку — она раскроется\. Ctrl \+ наведение — просмотр/);
 });
 
 test('EVM controls reuse personal creation and Ultra Chat LIVE routes, then retain state on F5', async () => {
@@ -674,7 +683,9 @@ test('E22 a click opens the full card in place under its row; several stay open;
   assert.equal(h.opener(a).getAttribute('aria-expanded'), 'true');
   assert.match(a.className, /\bexpanded\b/);
   assert.deepEqual([a.children[1].hidden, h.inline(a).getAttribute('data-connection')], [false, 'api:prov:a']);
-  for (const label of ['Изменить описание', 'Настройки', 'Проверить чат', 'Выше', 'Ниже']) assert.ok(h.button(h.inline(a), label), label);
+  for (const label of ['Изменить описание', 'Настройки', 'Проверить чат', 'Отключить', 'Внешнее окно']) assert.ok(h.button(h.inline(a), label), label);
+  assert.equal(h.button(h.inline(a), 'Выше'), null);
+  assert.equal(h.button(h.inline(a), 'Ниже'), null);
   assert.equal(h.roles(h.inline(a)).length, 4);
   assert.ok(h.dot(h.inline(a)), 'the API status is part of the full card in place');
   assert.deepEqual(h.ids('evmApiList'), ['api:prov:a', 'api:prov:b', 'api:prov:c'], 'the card grows in its own place; the list keeps its order');
@@ -707,36 +718,22 @@ test('E22 a click opens the full card in place under its row; several stay open;
   assert.match(source, /\.roles\{position:relative;display:grid;grid-template-columns:repeat\(auto-fill,minmax\(118px,1fr\)\)/, 'role columns never narrower than a role name');
 });
 
-test('E23 «Выше» / «Ниже» and Alt+arrows save the order of one column; the keyboard keeps its place; the ends are disabled', async () => {
+test('E23 removed move buttons leave Alt+arrows as a keyboard order control', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('a', 'A'), conn('b', 'B'), conn('c', 'C')]);
   h.viewRoute();
   await h.click(h.cards()[0]);
-  assert.equal(h.button(h.inline(h.cards()[0]), 'Выше').disabled, true);
-  let down = h.button(h.inline(h.cards()[0]), 'Ниже'); down.focus(); down.onclick(); await settle();
-  assert.deepEqual(h.posts('/ultra/model-cards/view'), [{base_revision: 7, section: 'api', order: ['api:prov:b', 'api:prov:a', 'api:prov:c']}]);
-  assert.deepEqual(h.ids('evmApiList'), ['api:prov:b', 'api:prov:a', 'api:prov:c']);
-  assert.ok(h.inline(h.cards()[1]), 'the moved card stays open in its new place');
-  assert.equal(h.document.activeElement, h.button(h.inline(h.cards()[1]), 'Ниже'), 'the keyboard keeps its place');
-  down = h.button(h.inline(h.cards()[1]), 'Ниже'); down.onclick(); await settle();
-  assert.deepEqual(h.ids('evmApiList'), ['api:prov:b', 'api:prov:c', 'api:prov:a']);
-  assert.equal(h.document.activeElement, h.button(h.inline(h.cards()[2]), 'Выше'), 'at the end the other command takes the keyboard');
+  assert.equal(h.button(h.inline(h.cards()[0]), 'Выше'), null);
+  assert.equal(h.button(h.inline(h.cards()[0]), 'Ниже'), null);
   const c = h.cards()[1]; h.opener(c).focus();
   const up = ev({key: 'ArrowUp', altKey: true}); h.opener(c).onkeydown(up); await settle();
   assert.equal(up.prevented, true);
-  assert.deepEqual(h.posts('/ultra/model-cards/view')[2], {base_revision: 9, section: 'api', order: ['api:prov:c', 'api:prov:b', 'api:prov:a']});
+  assert.deepEqual(h.posts('/ultra/model-cards/view')[0], {base_revision: 7, section: 'api', order: ['api:prov:b', 'api:prov:a', 'api:prov:c']});
   assert.equal(h.document.activeElement, h.opener(h.cards()[0]), 'Alt+↑ keeps the keyboard on the moved card');
   h.opener(h.cards()[0]).onkeydown(ev({key: 'ArrowUp', altKey: true})); await settle();
   h.opener(h.cards()[1]).onkeydown(ev({key: 'ArrowUp'})); await settle();
-  assert.equal(h.posts('/ultra/model-cards/view').length, 3, 'the first card cannot go higher; an arrow alone moves nothing');
-  await h.quick(h.cards()[1]);  // the same commands in a pinned window
-  const pinB = h.pin('b'), pUp = h.button(h.pinCard(pinB), 'Выше'); pUp.focus(); pUp.onclick(); await settle();
-  assert.deepEqual(h.ids('evmApiList'), ['api:prov:b', 'api:prov:c', 'api:prov:a']);
-  assert.equal(h.pin('b'), pinB, 'the same window stays, on the same model');
-  assert.equal(pinB.hidden, false);
-  assert.equal(h.document.activeElement, h.button(h.pinCard(pinB), 'Ниже'), 'at the top the other command in the window takes the keyboard');
+  assert.equal(h.posts('/ultra/model-cards/view').length, 1, 'the first card cannot go higher; an arrow alone moves nothing');
   assert.ok(h.posts('/ultra/model-cards/view').every(b => !('description' in b) && !('connection_id' in b)), 'ordering saves nothing else');
-  assert.deepEqual(h.posts('/ultra/model-cards/layout').map(b => Object.keys(b)), [['connection_id', 'window']], 'the window: its reference and place only');
 });
 
 test('E24 a press becomes a drag only beyond the threshold; the release never opens the card; first, middle and last cards move', async () => {
@@ -902,7 +899,7 @@ test('E27 favourites by star: a reference, its own order, its source as it is no
   assert.equal(h.list('evmFavList')[0].getAttribute('data-section'), 'favorites');
   await h.click(h.list('evmFavList')[1]);
   assert.equal(h.inline(h.cards()[0]), null, 'a favourite opens on its own: the API card stays closed');
-  h.button(h.inline(h.list('evmFavList')[1]), 'Выше').onclick(); await settle();
+  h.layout(); await h.drag(h.list('evmFavList')[1], [COLUMN_LEFT.Fav + 100, 218], [COLUMN_LEFT.Fav + 100, 155], [[COLUMN_LEFT.Fav + 100, 190]]);
   assert.deepEqual(h.posts('/ultra/model-cards/view')[2], {base_revision: 9, section: 'favorites', order: ['api:prov:a', 'api:prov:b']});
   assert.deepEqual(h.ids('evmApiList'), ['api:prov:a', 'api:prov:b'], 'the API column keeps its own order');
   status = api('green', 'CONFIRMED');
@@ -1054,24 +1051,20 @@ test('E32 a card drag closes the preview and keeps it closed; pinned windows sta
   assert.equal(h.pin(pinnedId), pin, 'the same window, not a new one');
 });
 
-test('E33 a refused order is not kept: the saved state is read again and the reason told (buttons and drag)', async () => {
+test('E33 a refused drag order is not kept: the saved state is read again and the reason told', async () => {
   for (const [answer, told] of [[{httpError: true, status: 409, data: {error: {code: 'settings_revision_conflict', message: 'changed'}}}, /уже изменились в другом окне/],
     [{httpError: true, status: 500, data: {error: {code: 'internal_error', message: 'disk full'}}}, /Порядок не сохранён\. /]]) {
     const h = harness(); await settle();
     await h.openEvm([conn('a', 'A'), conn('b', 'B')]);
     h.routes.set('/ultra/model-cards/view', () => answer);
     await h.click(h.cards()[0]);
-    h.button(h.inline(h.cards()[0]), 'Ниже').onclick(); await settle();
-    assert.deepEqual(h.ids('evmApiList'), ['api:prov:a', 'api:prov:b']);
-    assert.match(h.el('evmError').textContent, told);
-    assert.equal(h.calls.filter(c => c.url === '/ultra/model-cards').length, 2, 'the board is read again');
     h.layout();
     await h.drag(h.cards()[0], [400, 170], [400, 230], [[400, 200]]);
     assert.deepEqual(h.ids('evmApiList'), ['api:prov:a', 'api:prov:b'], 'a refused drop goes back');
     await h.drag(h.cards()[1], [400, 218], [COLUMN_LEFT.Fav + 100, 160], [[400, 230]]);
     assert.deepEqual(h.ids('evmFavList'), [], 'a refused favourite is not kept');
     assert.match(h.el('evmError').textContent, told);
-    assert.equal(h.calls.filter(c => c.url === '/ultra/model-cards').length, 4);
+    assert.equal(h.calls.filter(c => c.url === '/ultra/model-cards').length, 3);
     assert.ok(h.inline(h.cards()[0]), 'the open card is still open after the reload');
   }
 });
@@ -1089,7 +1082,7 @@ test('E34 one constructor for every kind: MCP and local entries, same tail of di
     const full = await h.full(h.list('evmMcpList')[0], mode);
     assert.match(full.textContent, /Подробности появятся, когда источник этого подключения будет подключён/);
     assert.deepEqual(h.roles(full), []);
-    assert.ok(h.button(full, 'Ниже'), 'the order of the column can be changed');
+    assert.ok(h.button(full, 'Внешнее окно'), 'any connection kind can open an external copy');
   }
   assert.equal(h.button(h.list('evmLocalList')[0], 'Настройки'), null);
 });
@@ -1197,7 +1190,7 @@ test('E38 three independent windows: one per model (stable connection_id), the s
   await h.quick(t1); await h.quick(t2);
   assert.deepEqual(h.pins().slice(3).map(p => p.getAttribute('data-connection')), ['api:prov:t1', 'api:prov:t2'], 'the same name, two models, two windows');
   assert.equal(new Set(h.pins().map(p => p.getAttribute('data-connection'))).size, h.pins().length, 'never a duplicate');
-  assert.match(source, /<div id="evmPins" class="evm-pins" role="group" aria-label="Закреплённые окна моделей"><\/div>\s*<div id="evmPeek"/);
+  assert.match(source, /<div id="evmPins" class="evm-pins" role="group" aria-label="Закреплённые окна моделей"><\/div>/);
 });
 
 test('E39 a window moves by its title only, stays reachable at every edge, is saved once on release; Escape puts it back', async () => {
@@ -1403,4 +1396,52 @@ test('E44 browser size and zoom: windows are shown inside the window with the ti
   h.run("openPin('api:prov:b',{x:100,y:20})");
   assert.equal(h.pin('b').style.top, '248px', 'never under the sticky page header');
   assert.equal(h.posts('/ultra/model-cards/layout').length, 0, 'showing a window inside never saves it');
+});
+
+test('E45 one EVM switch updates only its model and survives a fresh page without LIVE calls', async () => {
+  const h = harness(); await settle();
+  const list = [conn('a', 'A'), conn('b', 'B')];
+  const state = cards(list.map(c => mcard(c.model_id, c.display_name)));
+  await h.openEvm(list, state);
+  h.routes.set('/ultra/model-cards', () => state);
+  h.routes.set('/ultra/model-cards/a/enabled', opts => {
+    const body = JSON.parse(opts.body); assert.deepEqual(body, {base_revision: 4, enabled: false});
+    state.settings.revision++; state.cards[0].enabled = body.enabled;
+    return {card: state.cards[0]};
+  });
+  await h.click(h.cards()[0]);
+  h.button(h.inline(h.cards()[0]), 'Отключить').onclick(); await settle();
+  assert.deepEqual(h.posts('/ultra/model-cards/a/enabled'), [{base_revision: 4, enabled: false}]);
+  assert.equal(state.cards[0].enabled, false); assert.equal(state.cards[1].enabled, true);
+  assert.equal(h.button(h.inline(h.cards()[0]), 'Включить').getAttribute('aria-pressed'), 'false');
+  assert.equal(h.calls.filter(c => /\/live\/(start|stop)|\/turns$/.test(c.url)).length, 0);
+  const fresh = harness(); await settle(); await fresh.openEvm(list, state);
+  await fresh.click(fresh.cards()[0]);
+  assert.ok(fresh.button(fresh.inline(fresh.cards()[0]), 'Включить'));
+});
+
+test('E46 three named external popups, blocked popup and one topmost PiP are handled explicitly', async () => {
+  const list = [conn('a', 'A'), conn('b', 'B'), conn('c', 'C')];
+  const h = harness(); await settle(); await h.openEvm(list);
+  for (const card of h.cards()) {
+    const button = h.find(card, e => e.tag === 'button' && e.getAttribute('aria-label')?.startsWith('Открыть внешнее окно'));
+    button.onclick(ev());
+  }
+  assert.equal(h.popups.length, 3);
+  assert.equal(new Set(h.popups.map(p => p.name)).size, 3);
+  assert.ok(h.popups.every(p => p.features.includes('popup=yes') && p.url.includes('evm_window=')));
+  const blocked = harness({popupBlocked: true}); await settle(); await blocked.openEvm(list);
+  blocked.run("openExternal('api:prov:a')");
+  assert.match(blocked.el('evmError').textContent, /заблокировал внешнее окно/);
+  const external = harness({search: '?evm_window=api%3Aprov%3Aa', hash: '#evm', topmost: true}); await settle();
+  await external.openEvm(list);
+  assert.ok(external.bodyClasses.includes('evm-external'));
+  assert.equal(external.el('evmExternal').hidden, false);
+  assert.match(external.el('evmExternalCard').textContent, /A/);
+  external.el('evmTopmost').onclick(); await settle();
+  assert.match(external.pip.document.body.child.src, /evm_window=api%3Aprov%3Aa&evm_top=1/);
+  assert.equal(external.el('evmExternalCard').hidden, true);
+  external.el('evmTopmost').onclick(); await settle();
+  assert.equal(external.pip.closed, true);
+  assert.equal(external.el('evmExternalCard').hidden, false);
 });

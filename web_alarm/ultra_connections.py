@@ -95,6 +95,7 @@ class UltraConnections:
         self.path = root / "ultra" / "connections.json"
         self.lock_path = root / "locks" / "ultra" / "connections.lock"
         self.lock_timeout = lock_timeout
+        self.model_cards = None  # Bound by the existing Web Alarm API; no second settings store.
 
     # --- shared registry -------------------------------------------------------------
 
@@ -112,9 +113,9 @@ class UltraConnections:
         except (KeyError, ValueError) as exc:
             raise UnknownConnectionError(str(exc)) from exc
 
-    @staticmethod
-    def _view(spec: Any, selected_id: str | None) -> dict[str, Any]:
+    def _view(self, spec: Any, selected_id: str | None) -> dict[str, Any]:
         connection_id = connection_id_for(spec)
+        enabled = bool(spec.enabled) and (self.model_cards is None or self.model_cards.is_enabled(spec.model_id))
         return {
             "connection_id": connection_id,
             "kind": API_KIND,
@@ -124,9 +125,9 @@ class UltraConnections:
             "provider_model_id": spec.provider_model_id,
             "is_local": spec.is_local,
             "registry_enabled": spec.enabled,
-            "status": REGISTERED if spec.enabled else DISABLED,
+            "status": REGISTERED if enabled else DISABLED,
             "verification": UNVERIFIED,
-            "selectable": bool(spec.enabled),
+            "selectable": enabled,
             "selected": connection_id == selected_id,
         }
 
@@ -206,6 +207,8 @@ class UltraConnections:
         """Save ``connection_id`` as the web choice of ``role`` (refused unless selectable now)."""
         role = _role(role)
         spec = self._spec(connection_id)
+        if self.model_cards is not None and not self.model_cards.is_enabled(spec.model_id):
+            raise DisabledConnectionError(f"model {spec.model_id!r} is disabled in EVM")
         lock = InterProcessLock(self.lock_path, timeout=self.lock_timeout)
         try:
             lock.acquire()

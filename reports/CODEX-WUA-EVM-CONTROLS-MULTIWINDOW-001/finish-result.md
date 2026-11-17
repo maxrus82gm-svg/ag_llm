@@ -1,0 +1,7 @@
+# Штатная сдача БЛОКА 1
+
+17.11.2026 выполнен `python -B tools/task_slot_rotate.py finish --card 'Документация/000_Задачи Codex.md' --repo . --task-id CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001 --no-chat-amendment --date 2026-11-17 --expected-card-sha256 1ee8a3dfaa71fecb525cb5c22bf57ea9ff93462bd7232bc28105494f181dc26f --headless --apply`.
+
+Результат `ROTATED`, exit 0. Встроенный readback и отдельный `check` подтвердили: БЛОК 1 = `WAITING`; БЛОК 1.1 = дословная копия задачи, SHA256 LF `95e3572aea6fda7bc302e0f764a3ebfee6c3ab3879727e83332ee20879f4b727`; HISTORY ID `H-CODEX-000041`; вне слотов документ не изменён. Предыдущий H40 сохранён в собственном snapshot. Новый постоянный snapshot `handoff_task.md`, `task_record.json` и запись индекса истории созданы. SHA256 snapshot `6d4e20f0d2e729ec35f45acaa4cdf042e08fe2d86084b72ca71ebb5fd34d0ecf`. Hash отчёта и snapshot совпадают с записью H41. Статус истории — `SUBMITTED / REVIEW PENDING`, `review: NOT VERIFIED`.
+
+Evidence: `finish_protocol.json`, `finish_check.json`, `handoff_task.md`, `task_record.json`. `task_history.py read --id H-CODEX-000041 --part record` проходит. Общий `task_history.py validate` возвращает exit 1 из-за **другой**, прежней записи: `Source changed: reports/CHATGPT-WEB30-H36-REVIEW-20261115/review.md`. Файл не менялся в этой задаче; глобальную проверку истории нельзя назвать PASS. Адресные SHA256 данной H41 проверены отдельно и совпали.

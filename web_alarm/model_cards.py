@@ -68,7 +68,7 @@ _SECRETISH = re.compile(r"(?i)\b(basic|bearer)\s+[A-Za-z0-9._~+/=-]{6,}")
 _CONTROL = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 # API status colours shared by the card and the diagnostic window.
-GREEN, ORANGE, RED = "green", "orange", "red"
+GREEN, ORANGE, RED, GRAY = "green", "orange", "red", "gray"
 
 
 class ModelCardsError(RuntimeError):
@@ -294,6 +294,8 @@ class CheckResult:
     reply: str | None = None
     error_code: str | None = None
     error_message: str | None = None
+    uncertain: bool = False
+    turn_id: str | None = None
 
 
 class ApiChecker(Protocol):
@@ -490,7 +492,9 @@ class ModelCards:
         if loaded["state"] == "SAVED" and (isinstance(revision, bool) or not isinstance(revision, int) or revision < 0):
             loaded, data, revision = {"state": "CORRUPT", "reason": "unreadable"}, {}, None
         result = {"state": loaded["state"], "revision": revision, "ignored": 0,
-                  "providers": dict(BUILTIN_PROVIDERS), "profiles": {}, "models": {}}
+                  "providers": dict(BUILTIN_PROVIDERS), "profiles": {}, "models": {}, "invalid_enabled": set()}
+        if data.get("models") is not None and not isinstance(data.get("models"), dict):
+            result.update(state="CORRUPT", reason="invalid_models")
         if loaded["state"] == "CORRUPT":
             result["reason"] = loaded.get("reason", "unreadable")
         for provider in BUILTIN_PROVIDERS.values():
@@ -526,10 +530,16 @@ class ModelCards:
                 profile_id = entry.get("profile_id")
                 if profile_id is not None and profile_id not in result["profiles"]:
                     raise ValueError
-                result["models"][key] = {"description": _clean_description(entry.get("description", "")),
+                enabled = entry.get("enabled", True)
+                if type(enabled) is not bool:
+                    result["invalid_enabled"].add(key)
+                    raise ValueError
+                result["models"][key] = {"enabled": enabled,
+                                         "description": _clean_description(entry.get("description", "")),
                                          "params_billion": _clean_params(entry.get("params_billion")),
                                          "profile_id": profile_id, "updated_at": entry.get("updated_at")}
             except (ValueError, ModelCardRequestError):
+                result["invalid_enabled"].add(key)
                 result["ignored"] += 1
         return result
 
@@ -599,23 +609,32 @@ class ModelCards:
             return result
 
         if not registry_enabled:
-            return verdict(RED, "REGISTRY_DISABLED")
+            return verdict(GRAY, "REGISTRY_DISABLED")
         if adapter_state != "AVAILABLE":
-            return verdict(RED, "ADAPTER_MISSING")
+            return verdict(GRAY, "ADAPTER_MISSING")
         if checks_state == "CORRUPT":
-            return verdict(RED, "STATE_CORRUPT")
+            return verdict(GRAY, "STATE_CORRUPT")
         if ((record.get("last_success_at") is not None and success_at is None)
                 or (record.get("last_failure_at") is not None and failure_at is None)):
-            return verdict(RED, "TIMESTAMP_INVALID")
-        if success_at is None:
-            return verdict(RED, "LAST_CHECK_FAILED" if failure_at else "NEVER_CONFIRMED")
-        if record.get("settings_version") != settings_version:
-            return verdict(RED, "SETTINGS_CHANGED")
-        if failure_at is not None and (failure_at > success_at or
-                (failure_at == success_at and record.get("last_event") == "failure")):
+            return verdict(GRAY, "TIMESTAMP_INVALID")
+        unknown_at = _parse_time(record.get("last_unknown_at"))
+        if record.get("last_unknown_at") is not None and unknown_at is None:
+            return verdict(GRAY, "TIMESTAMP_INVALID")
+        if unknown_at is not None and (success_at is None or unknown_at > success_at or
+                (unknown_at == success_at and record.get("last_event") == "unknown")) and (
+                failure_at is None or unknown_at > failure_at or
+                (unknown_at == failure_at and record.get("last_event") == "unknown")):
+            return verdict(GRAY, "LAST_OUTCOME_UNKNOWN")
+        if (failure_at is not None and record.get("failure_settings_version") == settings_version
+                and (success_at is None or failure_at > success_at or
+                     (failure_at == success_at and record.get("last_event") == "failure"))):
             return verdict(RED, "LAST_CHECK_FAILED")
+        if success_at is None:
+            return verdict(GRAY, "SETTINGS_CHANGED" if failure_at else "NEVER_CONFIRMED")
+        if record.get("settings_version") != settings_version:
+            return verdict(GRAY, "SETTINGS_CHANGED")
         if success_at > now + FUTURE_TOLERANCE:
-            return verdict(RED, "TIMESTAMP_INVALID")
+            return verdict(GRAY, "TIMESTAMP_INVALID")
         age = max(now - success_at, timedelta(0))
         result["age_days"] = age.days
         return verdict(GREEN, "CONFIRMED") if age <= timedelta(days=freshness_days) else verdict(ORANGE, "STALE")
@@ -787,7 +806,8 @@ class ModelCards:
         return {
             "connection_id": connection_id, "model_id": spec.model_id, "display_name": spec.display_name,
             "provider_id": spec.provider, "provider_model_id": spec.provider_model_id,
-            "registry_enabled": bool(spec.enabled), "is_local": bool(spec.is_local),
+            "registry_enabled": bool(spec.enabled),
+            "enabled": settings["state"] != "CORRUPT" and spec.model_id not in settings["invalid_enabled"] and bool(entry.get("enabled", True)), "is_local": bool(spec.is_local),
             "params_billion": params, "params_source": "user" if params is not None else "unknown",
             "description": entry.get("description", ""), "profile_id": profile["profile_id"],
             "settings_version": version, "roles": role_states(spec.model_id, ctx["tk"], ctx["chat"]),
@@ -842,6 +862,36 @@ class ModelCards:
         return {"profile_id": profile["profile_id"], "settings_version": card["settings_version"],
                 "timeout_seconds": profile["timeout_seconds"]}
 
+    def is_enabled(self, model_id: str) -> bool:
+        """One durable EVM switch; corrupt settings fail closed for new sends."""
+        settings = self._settings()
+        return (settings["state"] != "CORRUPT" and model_id not in settings["invalid_enabled"]
+                and settings["models"].get(model_id, {}).get("enabled", True) is True)
+
+    def set_enabled(self, model_id: Any, body: Mapping[str, Any]) -> dict[str, Any]:
+        if (type(body) is not dict or set(body) != {"base_revision", "enabled"}
+                or type(body["enabled"]) is not bool or type(body["base_revision"]) is not int):
+            raise ModelCardRequestError("expected base_revision and boolean enabled")
+        from .ultra_connections import _registry
+        spec = self._spec(_registry(), model_id)
+        lock = self._locked()
+        try:
+            current = self._settings()
+            if current["state"] == "CORRUPT" or current["invalid_enabled"]:
+                raise ModelCardsStoreError("EVM settings require review")
+            if body["base_revision"] != current["revision"]:
+                raise SettingsConflictError("settings changed since they were read; reload and repeat")
+            raw = self._load(self.settings_path, SETTINGS_SCHEMA)["data"]
+            models = dict(raw.get("models") or {})
+            entry = dict(models.get(spec.model_id) or {})
+            entry["enabled"] = body["enabled"]
+            models[spec.model_id] = entry
+            self._write(self.settings_path, {**raw, "schema": SETTINGS_SCHEMA, "version": SCHEMA_VERSION,
+                                             "revision": current["revision"] + 1, "models": models})
+        finally:
+            lock.release()
+        return self.card(spec.model_id)
+
     # --- writes -------------------------------------------------------------------------------------------
 
     def save_settings(self, model_id: Any, body: Mapping[str, Any]) -> dict[str, Any]:
@@ -861,6 +911,8 @@ class ModelCards:
         lock = self._locked()
         try:
             current = self._settings()
+            if current["invalid_enabled"]:
+                raise ModelCardsStoreError("EVM enabled state requires review")
             if body.get("base_revision") != current["revision"]:
                 raise SettingsConflictError("settings changed since they were read; reload and repeat")
             profile_id = body.get("profile_id") or self._profile_for(current, spec)["profile_id"]
@@ -877,7 +929,7 @@ class ModelCards:
             models = dict(raw.get("models") or {}) if isinstance(raw.get("models"), dict) else {}
             profiles = dict(raw.get("profiles") or {}) if isinstance(raw.get("profiles"), dict) else {}
             providers = dict(raw.get("providers") or {}) if isinstance(raw.get("providers"), dict) else {}
-            models[spec.model_id] = {"description": description, "params_billion": params, "profile_id": profile_id,
+            models[spec.model_id] = {**dict(models.get(spec.model_id) or {}), "description": description, "params_billion": params, "profile_id": profile_id,
                                      "updated_at": self.now().isoformat()}
             profiles[profile_id] = {"provider": profile["provider_id"], "title": profile["title"],
                                     "credential_revision": profile["credential_revision"],
@@ -995,14 +1047,29 @@ class ModelCards:
             return True
         return self._record(card["connection_id"], update)
 
+    def record_chat_unknown(self, model_id: str, settings_version: str, *, turn_id: str) -> bool:
+        card = self.card(model_id)
+        if settings_version != card["settings_version"] or not card["registry_enabled"]:
+            return False
+        at = self.now().isoformat()
+        def update(record: dict[str, Any]) -> bool:
+            if not self._mark_chat_turn(record, turn_id):
+                return False
+            record.update(last_unknown_at=at, last_unknown_turn_id=turn_id, last_event="unknown")
+            record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
+                                 {"at": at, "outcome": "UNKNOWN", "source": "chat",
+                                  "settings_version": settings_version, "turn_id": turn_id}]
+            return True
+        return self._record(card["connection_id"], update)
+
     def run_check(self, model_id: Any) -> dict[str, Any]:
         """One fixed short test message through the configured checker; nothing is sent while the live
         check is not authorised, and a simulated answer never confirms the model."""
         ctx = self._context()
         spec = self._spec(ctx["registry"], model_id)
         card = self._card(ctx, spec)
-        if not spec.enabled:
-            raise CheckRefusedError(f"model {spec.model_id!r} is disabled in the shared registry")
+        if not spec.enabled or not card["enabled"]:
+            raise CheckRefusedError(f"model {spec.model_id!r} is disabled")
         if card["api"]["reason"] == "ADAPTER_MISSING":
             raise CheckRefusedError(f"provider {spec.provider!r} has no adapter")
         if not self.checker.authorized:
@@ -1023,13 +1090,18 @@ class ModelCards:
         if not result.live:
             outcome = "SIMULATED"
             text = safe_text(result.reply or result.error_message or "", limit)
+        elif result.uncertain:
+            outcome = "UNKNOWN"
+            text = safe_text(result.error_code or "unknown", limit)
         elif result.ok:
             outcome = "CONFIRMED"
-            self.record_success(card["connection_id"], version, source="diagnostic", reply=result.reply or "", limit=limit)
+            if result.turn_id is None:
+                self.record_success(card["connection_id"], version, source="diagnostic", reply=result.reply or "", limit=limit)
             text = safe_text(result.reply or "", limit)
         else:
             outcome = "FAILED"
-            self.record_failure(card["connection_id"], version, code=result.error_code or "check_failed",
-                                message=result.error_message or "", limit=limit)
+            if result.turn_id is None:
+                self.record_failure(card["connection_id"], version, code=result.error_code or "check_failed",
+                                    message=result.error_message or "", limit=limit)
             text = safe_text(f"{result.error_code or 'check_failed'}: {result.error_message or ''}", limit)
         return {"outcome": outcome, "text": text, "test_message": TEST_MESSAGE, "card": self.card(spec.model_id)}

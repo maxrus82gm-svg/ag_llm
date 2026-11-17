@@ -1,0 +1,11 @@
+.......................................................................s...invalid command name "2675180805184_drain"
+    while executing
+"2675180805184_drain"
+    ("after" script)
+.............Exception ignored in: <function Variable.__del__ at 0x0000026EDBAF8FE0>
+Traceback (most recent call last):
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 414, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Tcl_AsyncDelete: async handler deleted by the wrong thread

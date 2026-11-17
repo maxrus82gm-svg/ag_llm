@@ -148,7 +148,7 @@ class CatalogAndRoles(Fixture):
         self.assertTrue(all(r["hint"] for r in data["role_definitions"]))
         self.assertEqual(data["live_check"]["authorized"], False)
         for card in data["cards"]:
-            self.assertEqual((card["api"]["color"], card["api"]["reason"]), ("red", "NEVER_CONFIRMED"))
+            self.assertEqual((card["api"]["color"], card["api"]["reason"]), ("gray", "NEVER_CONFIRMED"))
             self.assertEqual((card["description"], card["params_billion"], card["params_source"]), ("", None, "unknown"))
 
     def test_m02_role_marks_are_the_real_assignments_and_nothing_else(self):
@@ -246,7 +246,7 @@ class ApiStatus(Fixture):
         api = self.make(FakeChecker(OK))
         self.assertEqual(self.check(api=api)["outcome"], "CONFIRMED")
         for delta, color in ((timedelta(0), "green"), (timedelta(days=30), "green"), (timedelta(days=30, seconds=1), "orange"),
-                             (timedelta(days=400), "orange"), (timedelta(minutes=-4), "green"), (timedelta(minutes=-10), "red")):
+                             (timedelta(days=400), "orange"), (timedelta(minutes=-4), "green"), (timedelta(minutes=-10), "gray")):
             with self.subTest(delta=str(delta)):
                 self.clock.value = T0 + delta
                 restarted = self.make()  # a new server over the same storage
@@ -260,7 +260,7 @@ class ApiStatus(Fixture):
         api = self.make(FakeChecker(OK, OK))
         self.check(api=api)
         self.save(description="Сильная", params_billion=390, profile={"timeout_seconds": 90, "diagnostic_limit_chars": 300})
-        self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("red", "SETTINGS_CHANGED"))
+        self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("gray", "SETTINGS_CHANGED"))
         self.check(api=api)
         self.clock.value = T0 + timedelta(days=11)
         self.assertEqual(self.card()["api"]["color"], "green")
@@ -275,7 +275,7 @@ class ApiStatus(Fixture):
             with self.subTest(change=name):
                 saved = dict(self.env)
                 change()
-                self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("red", "SETTINGS_CHANGED"))
+                self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("gray", "SETTINGS_CHANGED"))
                 self.env.clear(); self.env.update(saved)
                 self.assertEqual(self.card()["api"]["color"], "green")
         moved = dict(model_registry.MODEL_REGISTRY)
@@ -852,6 +852,9 @@ class Http(Fixture):
             ("POST", "/ultra/model-cards/layout", {"Origin": "http://evil.example"}, b'{"connection_id": "api:gigachat:gigachat_2", "window": {"x": 1, "y": 2}}', 403, "model_cards_forbidden"),
             ("POST", "/ultra/model-cards/layout", origin, b'{"connection_id": "api:gigachat:gigachat_2", "window": {"x": 1, "y": 2}}', 200, None),
             ("GET", "/ultra/model-cards/layout", {}, b"", 405, "method_not_allowed"),
+            ("POST", "/ultra/model-cards/gigachat_2/enabled", origin, b'{"base_revision": 1, "enabled": false}', 403, "ultra_chat_write_token_invalid"),
+            ("POST", "/ultra/model-cards/gigachat_2/enabled", authorized, b'{"base_revision": 1, "enabled": false}', 200, None),
+            ("GET", "/ultra/model-cards/gigachat_2/enabled", {}, b"", 405, "method_not_allowed"),
         ]
         bodies = []
         for method, path, headers, body, status, code in cases:
@@ -878,6 +881,98 @@ class Http(Fixture):
                           "urllib", "getenv", "os.environ.get", "save_ui_state(", "load_ui_state("):
             self.assertNotIn(forbidden, source)
         self.assertEqual(source.count('"GIGACHAT_CREDENTIALS"'), 1, "the key is named once, in the provider entry")
+
+
+class PerModelControls(Fixture):
+    def toggle(self, model_id, enabled, api=None):
+        api = api or self.api
+        revision = api.model_cards.catalog()["settings"]["revision"]
+        return api.dispatch("POST", f"/ultra/model-cards/{model_id}/enabled",
+                            {"base_revision": revision, "enabled": enabled})[1]["card"]
+
+    def test_independent_switch_catalog_selection_settings_and_restart(self):
+        a, b = "gigachat_2", "gigachat_2_max"
+        version = self.card(a)["settings_version"]
+        self.assertTrue(self.toggle(a, False)["enabled"] is False)
+        self.assertTrue(self.card(b)["enabled"])
+        catalog = self.api.dispatch("GET", "/ultra/connections")[1]["columns"]["api"]["connections"]
+        self.assertFalse(next(x for x in catalog if x["model_id"] == a)["selectable"])
+        self.assertTrue(next(x for x in catalog if x["model_id"] == b)["selectable"])
+        with self.assertRaises(Exception):
+            self.api.ultra_connections.select("chat", "api:gigachat:" + a)
+        self.api.ultra_connections.select("chat", "api:gigachat:" + b)
+        self.assertEqual(self.card(a)["settings_version"], version, "switch is independent of proof version")
+        self.save(a, description="kept while disabled")
+        self.assertFalse(self.card(a)["enabled"])
+        self.assertEqual(self.card(a)["description"], "kept while disabled")
+        fresh = self.make()
+        self.assertFalse(self.card(a, fresh)["enabled"])
+        self.assertTrue(self.toggle(a, True, fresh)["enabled"])
+        self.assertTrue(self.card(a)["enabled"])
+
+    def test_zero_models_and_corrupt_store_fail_closed_without_erasing_card_data(self):
+        for spec in model_registry.list_model_specs():
+            self.toggle(spec.model_id, False)
+        self.assertFalse(any(c["selectable"] for c in self.api.ultra_connections.catalog()["columns"]["api"]["connections"]))
+        self.assertFalse(any(c["enabled"] for c in self.make().model_cards.catalog()["cards"]))
+        self.api.model_cards.settings_path.write_text("broken", encoding="utf-8")
+        self.assertFalse(self.api.model_cards.is_enabled("gigachat_2"))
+        with self.assertRaises(Exception):
+            self.toggle("gigachat_2", True)
+
+    def test_rejects_malformed_toggle_and_stale_revision(self):
+        path = "/ultra/model-cards/gigachat_2/enabled"
+        before = tree(self.storage)
+        for body in ({"base_revision": 0, "enabled": 1}, {"base_revision": True, "enabled": True},
+                     {"base_revision": 0, "enabled": True, "secret": "x"}):
+            self.refused("POST", path, body)
+        self.assertEqual(tree(self.storage), before)
+        self.toggle("gigachat_2", False)
+        self.refused("POST", path, {"base_revision": 0, "enabled": True})
+        self.assertFalse(self.card()["enabled"])
+
+    def test_invalid_saved_enabled_value_fails_closed(self):
+        self.toggle("gigachat_2", False)
+        path = self.api.model_cards.settings_path
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        raw["models"]["gigachat_2"]["enabled"] = "false"
+        path.write_text(json.dumps(raw), encoding="utf-8")
+        before = path.read_bytes()
+        self.assertFalse(self.api.model_cards.is_enabled("gigachat_2"))
+        self.assertFalse(self.card()["enabled"])
+        self.assertFalse(next(c for c in self.api.ultra_connections.catalog()["columns"]["api"]["connections"]
+                              if c["model_id"] == "gigachat_2")["selectable"])
+        with self.assertRaises(Exception):
+            self.toggle("gigachat_2", True)
+        with self.assertRaises(Exception):
+            self.save("gigachat_2", description="must not rewrite")
+        self.assertEqual(path.read_bytes(), before)
+
+    def test_invalid_model_entry_or_container_cannot_enable_a_disabled_model(self):
+        self.toggle("gigachat_2", False)
+        path = self.api.model_cards.settings_path
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        raw["models"]["gigachat_2"]["profile_id"] = "missing_profile"
+        path.write_text(json.dumps(raw), encoding="utf-8")
+        self.assertFalse(self.api.model_cards.is_enabled("gigachat_2"))
+        self.assertFalse(self.card()["enabled"])
+        raw["models"] = ["broken"]
+        path.write_text(json.dumps(raw), encoding="utf-8")
+        self.assertFalse(self.api.model_cards.is_enabled("gigachat_2"))
+        self.assertFalse(self.card()["enabled"])
+
+    def test_unknown_is_gray_and_deduplicated_after_restart(self):
+        c = self.card()
+        self.api.model_cards.record_chat_success(c["model_id"], c["settings_version"], turn_id="A")
+        self.clock.value += timedelta(seconds=1)
+        self.api.model_cards.record_chat_unknown(c["model_id"], c["settings_version"], turn_id="B")
+        self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("gray", "LAST_OUTCOME_UNKNOWN"))
+        saved = (self.storage / "ultra" / "api_checks.json").read_bytes()
+        self.assertFalse(self.make().model_cards.record_chat_success(c["model_id"], c["settings_version"], turn_id="A"))
+        self.assertEqual((self.storage / "ultra" / "api_checks.json").read_bytes(), saved)
+        self.clock.value += timedelta(seconds=1)
+        self.api.model_cards.record_chat_success(c["model_id"], c["settings_version"], turn_id="C")
+        self.assertEqual(self.card()["api"]["color"], "green")
 
 
 if __name__ == "__main__":

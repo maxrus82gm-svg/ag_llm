@@ -50,3 +50,14 @@ class EvmTurnHandoff(TestCase):
         self.service.submit_turn.assert_not_called()
         self.session.check = Mock(side_effect=PreSendDenied('closed'))
         self.assertFalse(self.checker.authorized)
+
+    def test_unknown_turn_is_reported_uncertain_without_retry(self):
+        self.service.submit_turn.return_value = {'execution_mode': 'REAL', 'state': 'UNKNOWN',
+            'turn_id': 'turn_1', 'diagnostic_code': 'transport_unknown'}
+        record = SimpleNamespace(workspace_id='personal', workspace_root=str(self.root))
+        with patch('web_alarm.standard_live.personal_chat_registration', return_value=record):
+            result = self.checker.check(self.request)
+        self.assertFalse(result.ok)
+        self.assertTrue(result.uncertain)
+        self.assertEqual(result.turn_id, 'turn_1')
+        self.service.submit_turn.assert_called_once()

@@ -20,7 +20,7 @@ from ultra_budget_ledger import BudgetLedger
 from web_alarm.server import WebAlarmApi, create_server
 from web_alarm.ordinary_provider import (OrdinaryApplicationChatService, OrdinaryProviderFactory,
                                        MODEL_ID, RELEASE_HOLDS)
-from web_alarm.ultra_chat import OrdinaryCoreChatService
+from web_alarm.ultra_chat import OrdinaryCoreChatService, UltraChatError
 import test_web_alarm_ultra_chat_s5 as s5
 
 
@@ -95,6 +95,50 @@ class ApplicationTests(s5.Fixture):
             Path(os.environ['H35_TRACE']).write_text(json.dumps(dict(entrypoint='web_alarm.server.create_server',
                 normal_dom=True,mode=cap['mode'],physical_synthetic_posts=len(seen),wire_sha256=seen,
                 terminal='KNOWN_TERMINAL',history_messages=2,usage_total=12,reopen_no_resend=True)),encoding='utf-8')
+
+    def test_evm_disable_blocks_new_send_but_keeps_chat_history_and_accepted_replay(self):
+        ws,cid,server,cap,read,write,base,root,wid = self.application()
+        model = self.body('first offline answer')
+        self.assertEqual(self.http(server,'POST',base+'/model',{'model_ref':MODEL_ID},write)[0],200)
+        first_status,first = self.http(server,'POST',base+'/turns',model,write)
+        self.assertEqual((first_status,first['state']),(200,'SUCCEEDED'))
+        api = server.web_alarm_api
+        rev = api.model_cards.catalog()['settings']['revision']
+        api.dispatch('POST', '/ultra/model-cards/'+MODEL_ID+'/enabled',
+                     {'base_revision':rev,'enabled':False})
+        self.assertFalse(self.http(server,'GET',base+'/model',headers=read)[1]['enabled'])
+        self.assertNotIn(MODEL_ID,{m['model_id'] for m in self.http(server,'GET','/ui/ultra-chat/capability')[1]['turn_test']['models']})
+        denied = self.body('must not send')
+        self.assertEqual(self.http(server,'POST',base+'/turns',denied,write)[0],403)
+        self.assertEqual(self.fixture.token_calls,1)
+        self.assertEqual(self.http(server,'POST',base+'/turns',model,write)[1]['turn_id'],first['turn_id'])
+        self.assertEqual(self.fixture.token_calls,1)
+        page = self.http(server,'GET',base+'/messages?limit=50',headers=read)[1]
+        self.assertEqual([m['text'] for m in page['messages']],['first offline answer','H35 synthetic answer'])
+        for spec in api.model_cards.catalog()['cards']:
+            if spec['enabled']:
+                api.model_cards.set_enabled(spec['model_id'],
+                    {'base_revision':api.model_cards.catalog()['settings']['revision'],'enabled':False})
+        reopened = self.serve(ordinary_factory=self.factory)
+        _,read2,write2 = self.tokens(reopened)
+        self.assertEqual(reopened.web_alarm_api.model_cards.catalog()['cards'][0]['enabled'],False)
+        self.assertEqual(self.http(reopened,'GET','/ui/ultra-chat/capability')[1]['turn_test']['models'],[])
+        self.assertEqual(self.http(reopened,'GET',base+'/messages?limit=50',headers=read2)[1]['messages'],page['messages'])
+        reopened.web_alarm_api.model_cards.set_enabled('gigachat_2',
+            {'base_revision':reopened.web_alarm_api.model_cards.catalog()['settings']['revision'],'enabled':True})
+        self.assertEqual(self.http(reopened,'POST',base+'/model',{'model_ref':'gigachat_2'},write2)[0],200)
+        self.assertEqual(self.http(reopened,'POST',base+'/turns',self.body('continue','gigachat_2'),write2)[0],200)
+        self.assertEqual(self.fixture.token_calls,2)
+
+    def test_all_models_off_refuses_provider_start_before_oauth(self):
+        for spec in self.api.model_cards.catalog()['cards']:
+            self.api.model_cards.set_enabled(spec['model_id'],
+                {'base_revision':self.api.model_cards.catalog()['settings']['revision'],'enabled':False})
+        service = OrdinaryApplicationChatService(self.api.registry, OrdinaryProviderFactory(), api=self.api)
+        with self.assertRaises(UltraChatError) as caught:
+            service.start_live({'confirmation':'GIGACHAT 6'})
+        self.assertEqual(caught.exception.code,'no_enabled_models')
+        self.oauth.assert_not_called()
 
     def test_standard_personal_chat_without_live_is_local_and_durable(self):
         server = self.serve()

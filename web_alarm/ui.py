@@ -185,6 +185,12 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .evm-peek .mcard{border-radius:0 0 12px 12px}
 /* Pinned windows (CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001): their own layer over the board, under the preview (18) and the dialogs (20). */
 .evm-pins{position:fixed;inset:0;z-index:16;pointer-events:none}
+body.evm-external{height:auto;min-height:100dvh;overflow:auto}
+body.evm-external .top,body.evm-external .evm-head,body.evm-external .evm-info,body.evm-external .evm-board,body.evm-external .evm-pins,body.evm-external .evm-peek{display:none!important}
+body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
+.evm-external-head{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.evm-external-card .mcard{max-width:none}
+.evm-top-frame{width:100%;height:100%;border:0}
 .evm-pin{position:absolute;pointer-events:auto;display:flex;flex-direction:column;width:min(460px,calc(100vw - 24px));border:1px solid #4d7fa8;border-radius:12px;background:#16212d;box-shadow:0 14px 40px rgba(0,0,0,.5);overflow:hidden}
 .evm-pin[hidden]{display:none}.evm-pin:focus{outline:none}.evm-pin.active{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue),0 18px 48px rgba(0,0,0,.6)}
 .evm-pin.flash{animation:pin-flash .7s ease-out}@keyframes pin-flash{0%{box-shadow:0 0 0 5px #ffd28e}100%{box-shadow:0 0 0 1px var(--blue),0 18px 48px rgba(0,0,0,.6)}}
@@ -209,6 +215,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .api-dot.green{color:#7be3a6;border-color:#3f9e6f;background:#173a2a}
 .api-dot.orange{color:#ffc06b;border-color:#c8873a;background:#3d2c16}
 .api-dot.red{color:#ff8f98;border-color:#a9505b;background:#3c1e25}
+.api-dot.gray{color:#aab8c6;border-color:#6b7d8d;background:#263340}
 .params{border:1px solid #58708a;border-radius:7px;padding:5px 10px;background:#1c2b38;font:700 13px system-ui,Segoe UI,sans-serif;white-space:nowrap}
 .mcard-sub{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.mcard-sub strong,.mcard-label{font-size:14px;font-weight:700}
 .roles{position:relative;display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:7px 12px}
@@ -350,7 +357,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
 <label for="chatInput">Сообщение</label>
 <textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea>
-<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p><span class="composer-actions"><button type="button" id="chatLiveStart" hidden title="Подключить GigaChat в личном чате">Подключить GigaChat</button><button type="button" id="chatLiveStop" hidden title="Отключить реальные запросы GigaChat">Отключить GigaChat</button><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
+<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Выбрать модель для следующего сообщения">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
 </form>
 </div>
 </div>
@@ -551,9 +558,9 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div id="evmNotice" class="notice success" role="status" hidden></div></div>
 <div class="card spaced evm-info"><div class="evm-info-grid">
 <div><p class="side-title">Модель Ultra Chat</p><p id="evmSelection">—</p><p class="muted">Выбирается в Ultra Chat, у поля ввода сообщения.</p></div>
-<div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ ответ подтверждён в срок актуальности · ! подтверждение устарело · × подтверждения нет</p></div>
+<div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ ответ подтверждён · ! подтверждение устарело · × ошибка · ○ ещё не проверена или исход неизвестен</p></div>
 <div><p class="side-title">GigaChat · все модели</p><p id="evmLiveState">Состояние подключения не проверено</p><div class="row"><button type="button" id="evmLiveStart" disabled>Подключить GigaChat</button><button type="button" id="evmLiveStop" disabled>Отключить GigaChat</button></div><p class="muted">Используются те же подключение и история, что в Ultra Chat. Подключение может обратиться к API; отправка сообщения выполняется отдельно.</p></div>
-<div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Нажмите на карточку — она раскроется на месте. Ctrl + наведение — быстрый просмотр сбоку; нажатие на него, Ctrl + клик или ⧉ дают отдельное окно: его можно перетащить за заголовок, а закрыть — только его крестиком. Потяните карточку мышью, чтобы изменить порядок или добавить её в «Избранное»; есть и кнопки «Выше» / «Ниже».</p></div>
+<div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Нажмите на карточку — она раскроется. Ctrl + наведение — просмотр; Ctrl + клик или ⧉ закрепляют панель внутри страницы. ↗ открывает отдельное окно Windows. Карточки можно перетаскивать и добавлять в избранное.</p></div>
 </div></div>
 <div class="evm-columns evm-board">
 <section class="evm-col" aria-labelledby="evmFavTitle" id="evmFavCol"><div class="section-head"><h3 id="evmFavTitle">★ Избранное</h3><span id="evmFavState" class="tag">0</span></div><div id="evmFavList" class="evm-list" aria-label="Избранное"></div><p id="evmFavEmpty" class="muted">Перетащите модель сюда или отметьте её звёздочкой ☆. Здесь хранится ссылка: модель остаётся в своей колонке.</p></section>
@@ -562,6 +569,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <section class="evm-col" aria-labelledby="evmLocalTitle" id="evmLocalCol"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
 </div>
 <div id="evmPins" class="evm-pins" role="group" aria-label="Закреплённые окна моделей"></div>
+<div id="evmExternal" hidden><div class="evm-external-head"><strong id="evmExternalTitle">Карточка модели</strong><div class="row"><button type="button" id="evmTopmost">Поверх всех окон: ВЫКЛ</button><button type="button" id="evmExternalRefresh">↻ Обновить</button><button type="button" id="evmExternalClose">Закрыть окно ×</button></div></div><div id="evmExternalCard" class="evm-external-card"></div></div>
 <div id="evmPeek" class="evm-peek" role="dialog" aria-modal="false" aria-label="Быстрый просмотр" tabindex="-1" hidden></div>
 <div id="evmGhost" class="evm-ghost" aria-hidden="true" hidden></div><div id="evmDropLine" class="evm-drop-line" aria-hidden="true" hidden></div>
 <div id="evmSettingsWindow" class="evm-backdrop" hidden><div class="evm-window" role="dialog" aria-modal="true" aria-labelledby="evmSetTitle">
@@ -1085,6 +1093,12 @@ const evm={epoch:0,data:null,cards:null,cardsError:null,live:null,liveBusy:false
   ccards:{},cheads:{},copen:{},cquick:{},cexp:{},fk:{},expanded:new Set(),uid:0,peek:{id:null,section:null},peekTimer:0,
   pins:{},pinOrder:[],hinted:null,promote:null,winDrag:null,layoutQueue:Promise.resolve(),layoutLoaded:false,
   hover:null,ctrl:false,press:null,drag:null,scrollFrame:0,suppressUntil:0,returnTo:null,viewSaving:false,noticeTimer:0};
+function queryValue(name){try{const m=String(location.search||'').match(new RegExp('(?:^|[?&])'+name+'=([^&]*)'));return m?decodeURIComponent(m[1]):null}catch(_){return null}}
+const EXTERNAL_MODEL=queryValue('evm_window'),EXTERNAL_TOP=queryValue('evm_top')==='1';
+let externalPip=null;
+if(EXTERNAL_MODEL&&document.body?.getAttribute?.('data-stage5-offline')!=='true')document.body.classList.add('evm-external');
+const evmChannel=typeof BroadcastChannel==='function'?new BroadcastChannel('web-alarm-evm-v1'):null;
+if(evmChannel)evmChannel.onmessage=()=>{if(evm.view==='evm'||EXTERNAL_MODEL)loadEvm();if(chat.started)loadChatAccess()};
 const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
 function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
 // Sections share one shell; their URL hashes also support direct navigation.
@@ -1128,17 +1142,17 @@ function validCards(d){
   return !!d&&Array.isArray(d.cards)&&Array.isArray(d.role_definitions)&&Array.isArray(d.providers)&&Array.isArray(d.profiles)&&!!d.settings&&!!d.limits&&!!d.live_check&&
     d.role_definitions.every(r=>r&&['role','label','hint'].every(k=>typeof r[k]==='string'))&&
     d.cards.every(c=>c&&['connection_id','model_id','display_name','provider_id','provider_model_id','profile_id','settings_version','description'].every(k=>typeof c[k]==='string')&&
-      Array.isArray(c.roles)&&!!c.api&&['green','orange','red'].includes(c.api.color))
+      (c.enabled===undefined||typeof c.enabled==='boolean')&&Array.isArray(c.roles)&&!!c.api&&['green','orange','red','gray'].includes(c.api.color))
 }
-const API_TEXT={CONFIRMED:'Ответ модели подтверждён',STALE:'Подтверждение устарело',NEVER_CONFIRMED:'Успешной проверки ещё не было',SETTINGS_CHANGED:'Настройки подключения изменились — нужна новая проверка',
+const API_TEXT={CONFIRMED:'Ответ модели подтверждён',STALE:'Подтверждение устарело',NEVER_CONFIRMED:'Успешной проверки ещё не было',LAST_OUTCOME_UNKNOWN:'Исход последнего обращения неизвестен',SETTINGS_CHANGED:'Настройки подключения изменились — нужна новая проверка',
   LAST_CHECK_FAILED:'Последняя проверка завершилась отказом',STATE_CORRUPT:'Сведения о проверках повреждены',TIMESTAMP_INVALID:'Дата проверки некорректна',ADAPTER_MISSING:'Для провайдера нет адаптера',REGISTRY_DISABLED:'Модель отключена в реестре'};
-const API_MARK={green:'✓',orange:'!',red:'×'};
+const API_MARK={green:'✓',orange:'!',red:'×',gray:'○'};
 function apiText(a){
   const base=API_TEXT[a.reason]||String(a.reason||'Статус неизвестен');
-  return a.color==='red'?base:base+': '+a.age_days+' дн. назад, срок актуальности '+a.freshness_days+' дн.'
+  return a.age_days==null?base:base+': '+a.age_days+' дн. назад, срок актуальности '+a.freshness_days+' дн.'
 }
 function apiDot(a){  // one component and one server status for the card header and the diagnostic window
-  const color=API_MARK[a.color]?a.color:'red';
+  const color=API_MARK[a.color]?a.color:'gray';
   const d=element('span',API_MARK[color],'api-dot '+color);
   d.setAttribute('role','img');d.setAttribute('aria-label','Статус API: '+apiText(a));d.setAttribute('title',apiText(a));d.setAttribute('data-api',color+':'+a.reason);
   return d
@@ -1181,7 +1195,11 @@ function modelCard(c,data,section,inst){
   strengths.onclick=()=>openWindow('settings',c.model_id,'model',inst+':desc');
   const settings=fk(editButton('⚙ Настройки',c),inst,'settings');settings.onclick=()=>openWindow('settings',c.model_id,null,inst+':settings');
   const check=fk(editButton('▤ Проверить чат',c,'primary'),inst,'check');check.setAttribute('aria-label','Проверка API модели '+c.display_name);check.onclick=()=>openWindow('check',c.model_id,null,inst+':check');
-  const actions=element('div',null,'mcard-actions');actions.append(settings,check,...moveButtons(section,c.connection_id,inst));
+  const enabled=c.enabled!==false;
+  const toggle=fk(editButton(enabled?'Отключить':'Включить',c),inst,'toggle');
+  toggle.setAttribute('aria-pressed',String(enabled));toggle.onclick=()=>toggleModel(c.model_id,!enabled);
+  const external=fk(editButton('↗ Внешнее окно',c),inst,'external');external.onclick=()=>openExternal(c.connection_id);
+  const actions=element('div',null,'mcard-actions');actions.append(settings,check,toggle,external);
   card.append(head,sub,roles,label,strengths,actions);
   if(evm.drafts[c.model_id])card.append(element('p','Есть несохранённые изменения настроек.','mcard-note'));
   return card
@@ -1190,8 +1208,8 @@ function entryCard(e,section,inst){  // an entry without card data (MCP, local, 
   const card=element('article',null,'mcard');card.setAttribute('data-connection',e.base.connection_id);
   const head=element('div',null,'mcard-head');head.append(element('h4',e.base.display_name||e.base.connection_id,'mcard-name'),element('span',KIND_LABEL[e.kind]||e.kind,'mcard-side'));
   card.append(head,element('p',e.kind==='api'?'Подробности карточки недоступны: '+(evm.cardsError||'нет данных сервера'):'Подробности появятся, когда источник этого подключения будет подключён к EVM.','mcard-note'));
-  const moves=moveButtons(section,e.base.connection_id,inst);
-  if(moves.length){const actions=element('div',null,'mcard-actions');actions.append(...moves);card.append(actions)}
+  const external=fk(element('button','↗ Внешнее окно'),inst,'external');external.type='button';external.onclick=()=>openExternal(e.base.connection_id);
+  const actions=element('div',null,'mcard-actions');actions.append(external);card.append(actions);
   return card
 }
 function fullCard(e,section,inst){return e.card&&evm.cards?modelCard(e.card,evm.cards,section,inst):entryCard(e,section,inst)}
@@ -1203,8 +1221,8 @@ function rolesSourceText(cards){
 }
 function summaryText(cards){
   if(!cards)return 'нет данных';
-  const n={green:0,orange:0,red:0};for(const c of cards.cards)n[c.api.color]++;
-  return '✓ '+n.green+' · ! '+n.orange+' · × '+n.red
+  const n={green:0,orange:0,red:0,gray:0};for(const c of cards.cards)n[c.api.color]++;
+  return '✓ '+n.green+' · ! '+n.orange+' · × '+n.red+' · ○ '+n.gray
 }
 // One source per entry for every column: the catalog entry plus its card data, if the server has it.
 function entryOf(id){
@@ -1241,12 +1259,14 @@ function compactCard(id,section){
   quick.setAttribute('aria-expanded',String(!!pinned(id)));quick.setAttribute('aria-label',(pinned(id)?'Показать окно модели: ':'Закрепить в отдельном окне: ')+name);
   quick.setAttribute('title','Отдельное окно (то же — Ctrl + клик); Ctrl + наведение — быстрый просмотр');
   quick.onclick=ev=>{ev?.stopPropagation?.();pinModel(id,section,'quick',ev?.detail===0)};
+  const external=fk(element('button','↗','cquick'),inst,'external');external.type='button';
+  external.setAttribute('aria-label','Открыть внешнее окно: '+name);external.onclick=ev=>{ev?.stopPropagation?.();openExternal(id)};
   const star=fk(element('button',fav?'★':'☆','star'),inst,'star');star.type='button';star.setAttribute('aria-pressed',String(fav));
   star.setAttribute('aria-label',(fav?'Убрать из избранного: ':'Добавить в избранное: ')+name);star.disabled=!evm.cards?.view;
   star.onclick=ev=>{ev?.stopPropagation?.();toggleFavorite(id)};  // the star never opens the card
-  for(const b of [quick,star])b.onpointerdown=ev=>{  // a press on them never starts a drag, and never ends as a click of the card
+  for(const b of [quick,external,star])b.onpointerdown=ev=>{  // a press on them never starts a drag, and never ends as a click of the card
     ev?.stopPropagation?.();evm.suppressUntil=Infinity};  // (released elsewhere on the row, the browser clicks the row)
-  open.append(body);head.append(grip,open,quick,star);
+  open.append(body);head.append(grip,open,quick,external,star);
   const part=element('div',null,'cexp');part.id='evmx'+(++evm.uid);part.setAttribute('role','region');part.setAttribute('aria-label','Карточка: '+name);
   open.setAttribute('aria-controls',part.id);
   el.append(head,part);
@@ -1262,7 +1282,7 @@ function compactCard(id,section){
 function fillExpanded(key){  // the full card in place under its compact card: the cards below move down, nothing covers them
   const part=evm.cexp[key],el=evm.ccards[key];if(!part)return;
   const id=el.getAttribute('data-connection'),section=el.getAttribute('data-section'),e=entryOf(id),on=evm.expanded.has(key)&&!!e;
-  for(const name of ['edit','desc','settings','check','up','down'])delete evm.fk['x:'+key+':'+name];
+  for(const name of ['edit','desc','settings','check','toggle','external'])delete evm.fk['x:'+key+':'+name];
   part.replaceChildren(...(on?[fullCard(e,section,'x:'+key)]:[]));part.hidden=!on;
   mark(el,'expanded',on);evm.copen[key].setAttribute('aria-expanded',String(on))
 }
@@ -1304,7 +1324,55 @@ function renderEvm(){
   text('evmState',count?'Моделей в реестре: '+count:'Реестр пуст');
   if(evm.peek.id){if(entryOf(evm.peek.id)&&evm.ccards[evm.peek.section+'|'+evm.peek.id])fillPeek();else closePeek()}
   for(const id of evm.pinOrder)fillPin(id);  // the same windows, same places: only their content is new
+  if(EXTERNAL_MODEL)renderExternalCard();
   restoreFocus(focusKey)
+}
+function renderExternalCard(){
+  const e=entryOf(EXTERNAL_MODEL),box=$('evmExternalCard');
+  $('evmExternal').hidden=false;
+  text('evmExternalTitle',e?nameOf(EXTERNAL_MODEL):'Карточка недоступна');
+  box.replaceChildren(...(e?[fullCard(e,homeSection(EXTERNAL_MODEL),'external:'+EXTERNAL_MODEL)]:[element('p','Подключение отсутствует в реестре.','muted')]));
+  box.hidden=!!externalPip;
+  text('evmTopmost',EXTERNAL_TOP||externalPip?'Поверх всех окон: ВКЛ — выключить':'Поверх всех окон: ВЫКЛ — включить');
+  $('evmTopmost').disabled=!EXTERNAL_TOP&&!(typeof documentPictureInPicture!=='undefined'&&documentPictureInPicture.requestWindow);
+}
+async function toggleTopmost(){
+  if(!EXTERNAL_MODEL)return;
+  if(EXTERNAL_TOP){window.parent.close();return}
+  if(externalPip){externalPip.close();externalPip=null;renderExternalCard();return}
+  if(typeof documentPictureInPicture==='undefined'||!documentPictureInPicture.requestWindow){
+    notice('evmError','Этот Chromium не поддерживает окно поверх всех окон. Обычное внешнее окно остаётся доступным.');return
+  }
+  try{
+    const pip=await documentPictureInPicture.requestWindow({width:540,height:700});
+    const frame=pip.document.createElement('iframe');frame.className='evm-top-frame';
+    frame.setAttribute('title','EVM: '+nameOf(EXTERNAL_MODEL));
+    frame.src=String(location.pathname||'/')+'?evm_window='+encodeURIComponent(EXTERNAL_MODEL)+'&evm_top=1#evm';
+    pip.document.body.style.cssText='margin:0;width:100vw;height:100vh;overflow:hidden;background:#16212d';
+    pip.document.body.append(frame);
+    externalPip=pip;pip.addEventListener('pagehide',()=>{externalPip=null;renderExternalCard()},{once:true});
+    renderExternalCard();
+  }catch(e){notice('evmError','Режим поверх всех окон недоступен: '+(e?.name||'ошибка браузера'))}
+}
+function openExternal(id){
+  const e=entryOf(id);if(!e||stage5Offline)return;
+  const url=String(location.pathname||'/')+'?evm_window='+encodeURIComponent(id)+'#evm';
+  const child=window.open(url,'wua_evm_'+id.replace(/[^a-zA-Z0-9_]/g,'_'),'popup=yes,width=540,height=740,resizable=yes,scrollbars=yes');
+  if(!child){notice('evmError','Браузер заблокировал внешнее окно. Разрешите всплывающие окна для локального Web Alarm и повторите действие.');return}
+  child.focus?.();
+}
+async function toggleModel(id,enabled){
+  if(!evm.cards||evm.saving)return;
+  const revision=evm.cards.settings.revision;evm.saving=true;
+  try{
+    const r=await chatPost('/ultra/model-cards/'+encodeURIComponent(id)+'/enabled',{base_revision:revision,enabled});
+    if(r?.card?.model_id!==id||r.card.enabled!==enabled)throw Error('Сервер не подтвердил состояние');
+    evmChannel?.postMessage({kind:'model_state'});
+    await loadEvm();
+    if(chat.started){await loadChatAccess();renderTurnComposer()}
+    evmSay((enabled?'Включена: ':'Отключена: ')+nameOf(id));
+  }catch(e){await loadEvm();notice('evmError','Состояние модели не изменено или не подтверждено: '+(e.message||e))}
+  finally{evm.saving=false}
 }
 function restoreFocus(key){
   if(!key)return null;
@@ -1574,17 +1642,7 @@ function restorePins(){  // once per page load: the saved windows come back wher
   for(const w of layout.windows||[])if(entryOf(w.connection_id)&&!evm.pins[w.connection_id])openPin(w.connection_id,{x:w.x,y:w.y})
 }
 function placeAllPins(){for(const p of Object.values(evm.pins))placePin(p)}
-// Manual order: «Выше» / «Ниже» (also Alt+↑/↓) or the mouse. Columns are independent.
-function moveButtons(section,id,inst){
-  if(!section||!evm.cards?.view)return [];
-  const ids=sectionIds(section),i=ids.indexOf(id);if(i<0)return [];
-  const up=fk(element('button','↑ Выше'),inst,'up'),down=fk(element('button','↓ Ниже'),inst,'down');
-  for(const [b,delta,label] of [[up,-1,'Выше'],[down,1,'Ниже']]){
-    b.type='button';b.setAttribute('aria-label',label+' в разделе «'+SECTION_LABEL[section]+'»');
-    b.disabled=delta<0?i===0:i===ids.length-1;b.onclick=()=>moveCard(section,id,delta)
-  }
-  return [up,down]
-}
+// Keyboard Alt+arrows remains available for ordering; visible cards use drag and drop.
 function moveCard(section,id,delta){
   const ids=sectionIds(section),i=ids.indexOf(id),j=i+delta;
   if(i<0||j<0||j>=ids.length)return;
@@ -1747,7 +1805,7 @@ async function loadEvm(){
     renderEvm();
     const damaged=[evm.cards?.settings.state==='CORRUPT'?'настройки карточек':null,evm.cards?.checks?.state==='CORRUPT'?'сведения о проверках API':null].filter(Boolean);
     if(evm.cardsError)notice('evmError','Карточки моделей недоступны: '+evm.cardsError);
-    restorePins();
+    if(!EXTERNAL_MODEL)restorePins();
     if(damaged.length)notice('evmError','Повреждены '+damaged.join(' и ')+'. Файл сохранён для разбора; следующее сохранение начнёт запись заново, статусы до новой проверки — ×.');
     if(evm.window)fillWindow()
   }catch(e){
@@ -2016,10 +2074,6 @@ async function saveChatPreferences(){
 }
 function renderTurnComposer(){
   const liveVisible=chatTurn.ordinary&&!stage5Offline;
-  $('chatLiveStart').hidden=!liveVisible||chatTurn.executionMode==='REAL';
-  $('chatLiveStop').hidden=!liveVisible||chatTurn.executionMode!=='REAL';
-  $('chatLiveStart').disabled=!chat.workspace||chat.workspace!==chatTurn.personalWorkspaceId||chatTurn.liveBusy;
-  $('chatLiveStop').disabled=!!chatTurn.liveBusy;
   const enabled=chatTurn.available&&!!chat.workspace&&!!chat.chat;
   const pending=turnPending();
   $('chatInput').disabled=!enabled||chatTurn.busy;$('chatSend').disabled=!enabled||chatTurn.busy;
@@ -2044,6 +2098,11 @@ function renderTurnComposer(){
       $('chatInput').placeholder=chatTurn.available?'Сообщение TEST-имитатору':'Отправка GigaChat пока закрыта';
       text('chatComposerNote',chatTurn.available?'TEST · проверка штатного чата без обращения к GigaChat.':'Отправка GigaChat закрыта до проверки параметров модели и защит. История и настройки доступны.');
       text('chatSidebarNote','История хранится общим ядром Ultra.');
+      if(chatTurn.model&&!selected){
+        $('chatSend').disabled=true;
+        text('chatModel','Модель отключена в EVM: '+chatTurn.model);
+        text('chatComposerNote','Выбранная модель отключена или больше не поддерживается. История сохранена; включите модель в EVM либо выберите другую.');
+      }
       if(chatTurn.executionMode==='REAL'){
         $('chatInput').placeholder='Сообщение GigaChat';
         text('chatComposerNote','GigaChat · ограниченный серверный допуск. Enter — отправить, Shift+Enter — новая строка.');
@@ -2060,6 +2119,7 @@ function renderTurnComposer(){
             'Эта модель есть в каталоге, но пока не разрешена для текущего сеанса.':
             effective?.availability==='UNAVAILABLE'?
             'Эта модель недоступна в подтверждённом каталоге аккаунта. Выберите другую модель.':
+            chatTurn.model&&!effective?'Выбранная модель отключена в EVM. История сохранена; выберите другую модель.':
             'Выбранная модель не подтверждена для этого LIVE-сеанса.');
         }
         if(pending?.model&&pending.model!==chatTurn.model){
@@ -2403,7 +2463,7 @@ async function loadChatModel(){
       const epoch=chat.epoch,revision=++ordinaryModelRevision;chatTurn.model=null;renderTurnComposer();
       try{const selected=await chatGet(turnBase().replace(/\/turns$/,'/model'));
         if(epoch===chat.epoch&&revision===ordinaryModelRevision)
-          chatTurn.model=chatTurn.models.find(m=>m.model_id===selected.model_ref)?.model_id??null;
+          chatTurn.model=typeof selected.model_ref==='string'?selected.model_ref:null;
       }catch(_){if(epoch===chat.epoch&&revision===ordinaryModelRevision)text('chatModelError','Выбор модели не подтверждён.');}
       if(epoch!==chat.epoch||revision!==ordinaryModelRevision)return;
     }
@@ -2733,8 +2793,9 @@ $('chatNameCancel').onclick=()=>closeChatName();
 $('chatNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeChatName()}};
 $('chatComposer').onsubmit=e=>{e.preventDefault();return sendTurn()};
 $('chatSend').onclick=sendTurn;
-$('chatLiveStart').onclick=startGigaChat;
-$('chatLiveStop').onclick=stopGigaChat;
+$('evmTopmost').onclick=toggleTopmost;
+$('evmExternalRefresh').onclick=()=>loadEvm();
+$('evmExternalClose').onclick=()=>window.close();
 $('chatInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();return sendTurn()}};
 $('chatTurnCheck').onclick=()=>checkTurn(true);
 $('chatTurnCancel').onclick=cancelTurn;
@@ -2758,6 +2819,11 @@ setInterval(()=>{
   if(view.loadedAt&&Date.now()-view.loadedAt>45000&&view.fresh)setFresh(false,'Снимок старше 45 секунд. Обновите перед использованием NEXT SAFE ACTION.')
 }
 ,15000);
+setInterval(()=>{
+  if(stage5Offline||document.hidden||evm.saving||evm.checking||evm.drag)return;
+  if(EXTERNAL_MODEL||evm.view==='evm')loadEvm();
+  else if(chat.started&&chatTurn.ordinary)loadChatAccess();
+},8000);
 showView(initialView(),true);
 if(stage5Offline){
   for(const id of ['viewOperator','viewBlueprint','viewEvm','refresh'])$(id).hidden=true;

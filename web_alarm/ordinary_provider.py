@@ -158,10 +158,12 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 pass
         admitted = {c.model_id for c in session.approval.contracts} if session is not None else set()
         models = [dict(model_id=m.model_id, display_name=m.display_name, provider_model_id=m.provider_model_id,
+            api=(self._api.model_cards.card(m.model_id)['api'] if self._api is not None else None),
             availability=(('UNAVAILABLE' if m.provider_model_id not in session._available else
                            'AVAILABLE' if m.model_id in admitted else 'NOT_APPROVED')
                          if session is not None else 'UNVERIFIED'))
-            for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local]
+            for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local
+            and (self._api is None or self._api.model_cards.is_enabled(m.model_id))]
         return {**contract, 'available': fixture or active, 'real_available': active and not session.synthetic if session else False,
                 'mode': 'ORDINARY', 'core_bridge': True, 'chat_preferences': True,
                 'execution_mode': ('PROTOCOL_TEST' if session.synthetic else 'REAL') if active else 'OFFLINE_APPLICATION' if fixture else 'HOLD',
@@ -206,6 +208,9 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
             raise UltraChatError(400, 'live_confirmation_required', 'Confirm the six-model bounded session')
         if self._api is None or self._factory._fixture is not None:
             raise UltraChatError(403, 'live_unavailable', 'Only normal local STANDARD can start GigaChat')
+        if not any(self._api.model_cards.is_enabled(m.model_id) for m in list_model_specs()
+                   if m.enabled and m.provider == 'gigachat' and not m.is_local):
+            raise UltraChatError(409, 'no_enabled_models', 'Enable a GigaChat model in EVM first')
         import os
         import secrets
         import time
@@ -326,7 +331,8 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
     def chat_model(self, wa_workspace_id, chat_id, update=...):
         allowed = {m.model_id for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local}
         if update is not ... and (type(update) is not dict or set(update) != {'model_ref'}
-                or type(update['model_ref']) is not str or update['model_ref'] not in allowed):
+                or type(update['model_ref']) is not str or update['model_ref'] not in allowed
+                or self._api is not None and not self._api.model_cards.is_enabled(update['model_ref'])):
             raise UltraChatError(400, "ordinary_model_not_allowed", "Select the admitted model")
         core = _core()
         root, wid = self._writable_workspace(core, wa_workspace_id)
@@ -341,16 +347,33 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 if update is not ... and metadata.get('ordinary_chat_model') != selected:
                     core._replace_verified(writer.anchor, parts + ("metadata.json",),
                         core._json_bytes({**metadata, "ordinary_chat_model": selected}))
-                return {"model_ref": selected, "persisted": "ordinary_chat_model" in metadata or update is not ...}
+                return {"model_ref": selected, "persisted": "ordinary_chat_model" in metadata or update is not ...,
+                        "enabled": self._api is None or self._api.model_cards.is_enabled(selected)}
         except (core.StorageWriteError, core.ChatNotFoundError, OSError, ValueError):
             raise UltraChatError(503, "ordinary_model_unavailable", "Chat model could not be verified") from None
 
     def submit_turn(self, wa_workspace_id, chat_id, body):
         if type(body) is not dict or set(body) != {"idempotency_key", "model_ref", "text"}:
             raise UltraChatError(400, "invalid_turn_request", "Expected model, text and retry key")
-        allowed = {m['model_id'] for m in self.capability()['models']}
-        if type(body.get('model_ref')) is not str or body['model_ref'] not in allowed:
+        registry_allowed = {m.model_id for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local}
+        if type(body.get('model_ref')) is not str or body['model_ref'] not in registry_allowed:
             raise UltraChatError(400, "ordinary_model_not_allowed", "Select the admitted model")
+        if self._api is not None and not self._api.model_cards.is_enabled(body['model_ref']):
+            from .turn_service import KEY, TurnService, identities
+            accepted = False
+            key = body.get('idempotency_key')
+            if type(key) is str and KEY.fullmatch(key):
+                root, wid = self._writable_workspace(_core(), wa_workspace_id)
+                reader = TurnService(test_roots=[root])
+                try:
+                    with reader._session(root, wid, chat_id):
+                        reader._load(root, wid, chat_id, identities(wid, chat_id, key)['turn_id'])
+                    accepted = True
+                except UltraChatError as exc:
+                    if exc.code not in ('turn_not_found', 'turn_acceptance_incomplete'):
+                        raise
+            if not accepted:
+                raise UltraChatError(403, "ordinary_model_disabled", "Model is disabled in EVM")
         if self._factory._fixture is None:
             try:
                 self._factory.require_real()
@@ -368,7 +391,10 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 if result.get('state') == 'SUCCEEDED':
                     synced = self._api.model_cards.record_chat_success(body['model_ref'],
                         result['evm_profile']['settings_version'], turn_id=result['turn_id'])
-                elif result.get('state') in ('FAILED', 'UNKNOWN'):
+                elif result.get('state') == 'UNKNOWN':
+                    synced = self._api.model_cards.record_chat_unknown(body['model_ref'],
+                        result['evm_profile']['settings_version'], turn_id=result['turn_id'])
+                elif result.get('state') == 'FAILED':
                     synced = self._api.model_cards.record_chat_failure(body['model_ref'],
                         result['evm_profile']['settings_version'],
                         code=result.get('diagnostic_code') or result['state'].lower(), turn_id=result['turn_id'])
@@ -501,6 +527,7 @@ class _OrdinaryTurnChecker:
         if result.get('execution_mode') != 'REAL':
             raise CheckRefusedError('The provider did not execute a real Turn')
         if result.get('state') == 'SUCCEEDED' and result.get('answer'):
-            return CheckResult(ok=True, live=True, reply=result['answer'])
+            return CheckResult(ok=True, live=True, reply=result['answer'], turn_id=result.get('turn_id'))
         return CheckResult(ok=False, live=True, error_code=result.get('diagnostic_code') or 'turn_not_succeeded',
-                           error_message=result.get('state') or 'unknown')
+                           error_message=result.get('state') or 'unknown',
+                           uncertain=result.get('state') == 'UNKNOWN', turn_id=result.get('turn_id'))
