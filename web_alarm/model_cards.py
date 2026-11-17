@@ -902,10 +902,31 @@ class ModelCards:
             if update(record) is False:
                 return False
             checks[connection_id] = record
+            if len(json.dumps({"schema": CHECKS_SCHEMA, "version": SCHEMA_VERSION, "checks": checks},
+                              ensure_ascii=False, indent=2).encode("utf-8")) + 1 > MAX_STORE_BYTES:
+                raise ModelCardsStoreError("api_checks.json reached its bounded size; evidence was not changed")
             self._write(self.checks_path, {"schema": CHECKS_SCHEMA, "version": SCHEMA_VERSION, "checks": checks})
             return True
         finally:
             lock.release()
+
+    @staticmethod
+    def _mark_chat_turn(record: dict[str, Any], turn_id: str) -> bool:
+        """Durable cross-outcome dedup; the short visible history cannot be the replay fence."""
+        seen = record.get("seen_chat_turn_ids")
+        if seen is None:
+            history = record.get("history")
+            seen = ([entry["turn_id"] for entry in history if type(entry) is dict
+                     and type(entry.get("turn_id")) is str] if type(history) is list else [])
+            seen.extend(value for value in (record.get("last_success_turn_id"), record.get("last_failure_turn_id"))
+                        if type(value) is str and value not in seen)
+        if (type(seen) is not list or any(type(value) is not str or not 0 < len(value) <= 128 for value in seen)
+                or type(turn_id) is not str or not 0 < len(turn_id) <= 128):
+            raise ModelCardsStoreError("chat Turn dedup evidence is invalid")
+        if turn_id in seen:
+            return False
+        record["seen_chat_turn_ids"] = [*seen, turn_id]
+        return True
 
     def record_success(self, connection_id: str, settings_version: str, *, source: str, reply: str | None,
                        limit: int) -> None:
@@ -946,7 +967,7 @@ class ModelCards:
             return False
         at = self.now().isoformat()
         def update(record: dict[str, Any]) -> bool:
-            if turn_id is not None and record.get("last_success_turn_id") == turn_id:
+            if turn_id is not None and not self._mark_chat_turn(record, turn_id):
                 return False
             record.update(settings_version=settings_version, last_success_at=at,
                           last_success_source="chat", last_success_turn_id=turn_id, last_event="success")
@@ -964,7 +985,7 @@ class ModelCards:
         at = self.now().isoformat()
         safe_code = safe_text(code, 60)
         def update(record: dict[str, Any]) -> bool:
-            if record.get("last_failure_turn_id") == turn_id:
+            if not self._mark_chat_turn(record, turn_id):
                 return False
             record.update(last_failure_at=at, last_failure={"code": safe_code, "message": "Turn did not succeed"},
                           failure_settings_version=settings_version, last_failure_turn_id=turn_id, last_event="failure")

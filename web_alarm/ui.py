@@ -544,7 +544,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <section id="evmView" class="evm" aria-labelledby="evmHeading" hidden>
 <div class="evm-head">
 <div><span class="eyebrow">EVM · общее ядро Ultra</span><h2 id="evmHeading" tabindex="-1">Подключения Ultra</h2>
-<p class="muted">Модели берутся из общего реестра Ultra (model_registry). Статус API считает сервер по подтверждённым ответам моделей; в этой версии настоящие запросы к API не отправляются.</p></div>
+<p class="muted">Модели берутся из общего реестра Ultra. Статус API считает сервер по подтверждённым ответам; подключение и проверка выполняются только по вашему действию.</p></div>
 <div class="row"><span id="evmState" class="live" role="status">Реестр ещё не загружен</span><button type="button" id="evmRefresh">↻ Обновить список</button></div>
 </div>
 <div class="evm-toasts"><div id="evmError" class="notice error" role="alert" hidden></div>
@@ -552,6 +552,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div class="card spaced evm-info"><div class="evm-info-grid">
 <div><p class="side-title">Модель Ultra Chat</p><p id="evmSelection">—</p><p class="muted">Выбирается в Ultra Chat, у поля ввода сообщения.</p></div>
 <div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ ответ подтверждён в срок актуальности · ! подтверждение устарело · × подтверждения нет</p></div>
+<div><p class="side-title">GigaChat · все модели</p><p id="evmLiveState">Состояние подключения не проверено</p><div class="row"><button type="button" id="evmLiveStart" disabled>Подключить GigaChat</button><button type="button" id="evmLiveStop" disabled>Отключить GigaChat</button></div><p class="muted">Используются те же подключение и история, что в Ultra Chat. Подключение может обратиться к API; отправка сообщения выполняется отдельно.</p></div>
 <div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Нажмите на карточку — она раскроется на месте. Ctrl + наведение — быстрый просмотр сбоку; нажатие на него, Ctrl + клик или ⧉ дают отдельное окно: его можно перетащить за заголовок, а закрыть — только его крестиком. Потяните карточку мышью, чтобы изменить порядок или добавить её в «Избранное»; есть и кнопки «Выше» / «Ниже».</p></div>
 </div></div>
 <div class="evm-columns evm-board">
@@ -1080,7 +1081,7 @@ $('copyContext').onclick=()=>{
 // a click opens a card in place inside its column; Ctrl + hover (or «⧉») shows the same full card in a side panel;
 // a press that moves more than a few pixels drags the card (Pointer Events only, no native drag-and-drop).
 // The manual order and favourites are saved on the server (/ultra/model-cards/view).
-const evm={epoch:0,data:null,cards:null,cardsError:null,view:'chat',drafts:{},outputs:{},window:null,tab:'conn',saving:false,checking:false,setError:'',
+const evm={epoch:0,data:null,cards:null,cardsError:null,live:null,liveBusy:false,view:'chat',drafts:{},outputs:{},window:null,tab:'conn',saving:false,checking:false,setError:'',
   ccards:{},cheads:{},copen:{},cquick:{},cexp:{},fk:{},expanded:new Set(),uid:0,peek:{id:null,section:null},peekTimer:0,
   pins:{},pinOrder:[],hinted:null,promote:null,winDrag:null,layoutQueue:Promise.resolve(),layoutLoaded:false,
   hover:null,ctrl:false,press:null,drag:null,scrollFrame:0,suppressUntil:0,returnTo:null,viewSaving:false,noticeTimer:0};
@@ -1280,6 +1281,10 @@ function headClick(ev,id,section){
 function renderEvm(){
   const data=evm.data;if(!data)return;
   const cols=data.columns,s=data.selection.chat,cards=evm.cards;
+  const live=evm.live,ready=live?.mode==='ORDINARY'&&live.execution_mode!=='PROTOCOL_TEST'&&!stage5Offline;
+  text('evmLiveState',!ready?'Управление доступно только в локальном STANDARD':live.real_available?'Подключён · реальные отправки разрешены':'Отключён · история доступна');
+  $('evmLiveStart').disabled=!ready||live.real_available||evm.liveBusy;
+  $('evmLiveStop').disabled=!ready||!live.real_available||evm.liveBusy;
   $('evmApiState').replaceChildren(evmTag(cols.api.state));
   $('evmMcpState').replaceChildren(evmTag(cols.mcp_agents.state));
   $('evmLocalState').replaceChildren(evmTag(cols.local_llm.state));
@@ -1730,12 +1735,13 @@ async function saveOrder(section,order,done){
 }
 async function loadEvm(){
   const epoch=++evm.epoch;$('evmRefresh').disabled=true;notice('evmError','');text('evmState','Загружаем реестр…');
-  const [catalog,cards]=await Promise.allSettled([api('/ultra/connections'),api('/ultra/model-cards')]);
+  const [catalog,cards,capability]=await Promise.allSettled([api('/ultra/connections'),api('/ultra/model-cards'),api('/ui/ultra-chat/capability')]);
   if(epoch!==evm.epoch)return;
   try{
     if(catalog.status==='rejected')throw catalog.reason;
     if(!validEvm(catalog.value))throw new Error('Некорректный ответ сервера о подключениях');
     evm.data=catalog.value;
+    evm.live=capability.status==='fulfilled'?capability.value?.turn_test||null:null;
     if(cards.status==='fulfilled'&&validCards(cards.value)){evm.cards=cards.value;evm.cardsError=null}
     else{evm.cards=null;evm.cardsError=cards.status==='rejected'?cards.reason.message:'некорректный ответ сервера о карточках'}
     renderEvm();
@@ -1747,6 +1753,33 @@ async function loadEvm(){
   }catch(e){
     notice('evmError','Не удалось получить подключения: '+e.message);text('evmState','Список не обновлён')
   }finally{$('evmRefresh').disabled=false}
+}
+const GIGACHAT_CONNECT_PROMPT='Включить 6 моделей GigaChat на 24 часа? Каждая отправка требует вашего действия. Предпочтительный максимум ответа задаётся в настройках чата (до 20 000 токенов); технический предел запроса 4096 байт. API может быть платным. Автоматических повторов нет.';
+async function evmLiveControl(start){
+  const live=evm.live;
+  if(stage5Offline||evm.liveBusy||chatTurn.liveBusy||live?.mode!=='ORDINARY'||live.execution_mode==='PROTOCOL_TEST'||
+      (start?live.real_available:!live.real_available))return;
+  if(start&&!window.confirm(GIGACHAT_CONNECT_PROMPT))return;
+  evm.liveBusy=true;chatTurn.liveBusy=true;renderEvm();renderTurnComposer();
+  let committed=false,error='';
+  try{
+    if(start&&!live.personal_workspace_id){
+      const personal=await chatPost('/ultra/chat/personal',{});
+      if(typeof personal?.wa_workspace_id!=='string')throw Error('Личная история не подтверждена');
+    }
+    const result=await chatPost(start?'/ultra/chat/live/start':'/ultra/chat/live/stop',
+      start?{confirmation:'GIGACHAT 6'}:{});
+    if(result?.state!==(start?'ACTIVE':'INACTIVE'))throw Error('Состояние подключения не подтверждено');
+    committed=true;
+  }catch(e){error=e.code||e.message||'проверьте состояние подключения'}
+  finally{
+    evm.liveBusy=false;chatTurn.liveBusy=false;
+    await loadEvm();
+    if(chat.started){try{await loadChatAccess();await loadChatWorkspaces()}catch(_){/* EVM readback stays authoritative */}}
+    renderEvm();renderTurnComposer();
+  }
+  if(committed)evmSay(start?'GigaChat подключён. Модели доступны в Ultra Chat.':'GigaChat отключён. История сохранена.');
+  else notice('evmError','Состояние не изменено или не подтверждено: '+error+'. Проверьте его перед повтором.');
 }
 // Settings and diagnostics windows. Only one is shown at a time; closing or switching keeps the draft of every
 // model and the last diagnostic answer, so opening one window never destroys the state of the other.
@@ -1890,6 +1923,8 @@ $('evmSetSave').onclick=()=>saveSettings();
 $('evmSetClose').onclick=()=>closeWindow();
 $('evmCheckClose').onclick=()=>closeWindow();
 $('evmCheckSend').onclick=()=>sendCheck();
+$('evmLiveStart').onclick=()=>evmLiveControl(true);
+$('evmLiveStop').onclick=()=>evmLiveControl(false);
 for(const id of ['evmSettingsWindow','evmCheckWindow'])$(id).onclick=e=>{if(e?.target===$(id))closeWindow()};
 function escapeKey(e){
   if(e?.key!=='Escape')return;
@@ -2097,7 +2132,7 @@ async function checkTurn(manual=false){
 }
 async function startGigaChat(){
   if(!chatTurn.ordinary||chatTurn.liveBusy||chat.workspace!==chatTurn.personalWorkspaceId)return;
-  if(!window.confirm('Включить 6 моделей GigaChat на 24 часа? Каждая отправка требует вашего действия. Предпочтительный максимум ответа задаётся в настройках чата (до 20 000 токенов); технический предел запроса 4096 байт. API может быть платным. Автоматических повторов нет.'))return;
+  if(!window.confirm(GIGACHAT_CONNECT_PROMPT))return;
   chatTurn.liveBusy=true;renderTurnComposer();
   try{
     await chatPost('/ultra/chat/live/start',{confirmation:'GIGACHAT 6'});

@@ -24,4 +24,15 @@ The first system-Python attempt could not import `httpx`; the project `.venv` wa
 
 No real OAuth, catalog or inference call was made. Physical browser and paid API checks were not run.
 
+## Chat-only clarification: EVM replay and control
+
+| Check | Result |
+|---|---|
+| `.venv\\Scripts\\python.exe -B -m unittest -q test_web_alarm_model_cards test_web_alarm_ordinary_application test_web_alarm_gigachat_multimodel test_web_alarm_evm_unified test_web_alarm_gigachat_live_control test_web_alarm_standard_live` | **90/90 PASS**, `evidence/python_chat_amendment.txt`. A→B→A in both outcome orders, byte-identical EVM store, reload, and replay after 55 later events. |
+| `node --test test_web_alarm_evm_ui.js test_web_alarm_ultra_chat_ui.js` | **122/122 PASS**, `evidence/ui_chat_amendment.tap`. Direct EVM connect/stop through existing routes, F5-style readback, TEST denial and no retry after an uncertain connect. |
+| `.venv\\Scripts\\python.exe -B test_rt002_s1_routes.py` | **69/69 PASS**, zero isolation violations, `evidence/s1_chat_amendment.txt`. |
+| `.venv\\Scripts\\python.exe -B test_rt002_s2_budget_policy.py` | **73/73 PASS**, zero isolation violations, `evidence/s2_chat_amendment.txt`. |
+
+The first three-test targeted command used the wrong test class and collected no tests; it was corrected to `ApiStatus` and the three tests passed. No real API requests, Git or GitHub operations were made. Physical UI, live provider and independent Windows CI remain NOT RUN.
+
 An initial Python run had an obsolete EVM timeout oracle and a stale source-text check for credential ownership; both test expectations were updated to the existing runtime owner/new timeout contract. An initial JS run expected a check POST without a write token; the fixture now supplies the required capability. Early S1/S2 runs exposed stale exact AST pins from current source and the new EVM/Turn changes; pins were reviewed and reconciled before final green runs. Full Windows CI and physical browser/live provider checks were not run. Real model caps, entitlement, tariff and additional six-model inference remain unknown.

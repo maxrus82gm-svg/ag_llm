@@ -385,6 +385,53 @@ class ApiStatus(Fixture):
         self.save(profile={'timeout_seconds': 68})
         self.assertEqual(self.card()['api']['reason'], 'SETTINGS_CHANGED')
 
+    def test_replayed_old_success_after_later_failure_keeps_red_after_reload(self):
+        cards = self.api.model_cards
+        version = self.card()['settings_version']
+        self.assertTrue(cards.record_chat_success('gigachat_2', version, turn_id='turn-A'))
+        self.clock.value += timedelta(minutes=1)
+        self.assertTrue(cards.record_chat_failure('gigachat_2', version, code='failed', turn_id='turn-B'))
+        before = cards.checks_path.read_bytes()
+        api_before = self.card()['api']
+        self.assertEqual(api_before['color'], 'red')
+        self.clock.value += timedelta(minutes=1)
+        self.assertFalse(cards.record_chat_success('gigachat_2', version, turn_id='turn-A'))
+        self.assertEqual(cards.checks_path.read_bytes(), before)
+        reopened = self.make()  # F5/server readback uses the saved EVM evidence.
+        self.assertEqual(self.card(api=reopened)['api'], api_before)
+        self.assertFalse(reopened.model_cards.record_chat_success('gigachat_2', version, turn_id='turn-A'))
+        self.assertEqual(cards.checks_path.read_bytes(), before)
+        record = json.loads(before)['checks']['api:gigachat:gigachat_2']
+        self.assertEqual([event['turn_id'] for event in record['history']], ['turn-A', 'turn-B'])
+
+    def test_replayed_old_failure_after_later_success_keeps_green_after_reload(self):
+        cards = self.api.model_cards
+        version = self.card()['settings_version']
+        self.assertTrue(cards.record_chat_failure('gigachat_2', version, code='failed', turn_id='turn-A'))
+        self.clock.value += timedelta(minutes=1)
+        self.assertTrue(cards.record_chat_success('gigachat_2', version, turn_id='turn-B'))
+        before = cards.checks_path.read_bytes()
+        api_before = self.card()['api']
+        self.assertEqual(api_before['color'], 'green')
+        self.clock.value += timedelta(minutes=1)
+        self.assertFalse(cards.record_chat_failure('gigachat_2', version, code='failed', turn_id='turn-A'))
+        self.assertEqual(cards.checks_path.read_bytes(), before)
+        self.assertEqual(self.card(api=self.make())['api'], api_before)
+
+    def test_replayed_turn_stays_blocked_after_visible_history_rolls_over(self):
+        cards = self.api.model_cards
+        version = self.card()['settings_version']
+        self.assertTrue(cards.record_chat_success('gigachat_2', version, turn_id='turn-old'))
+        for number in range(55):
+            self.assertTrue(cards.record_chat_failure('gigachat_2', version,
+                code='failed', turn_id=f'turn-{number}'))
+        before = cards.checks_path.read_bytes()
+        record = json.loads(before)['checks']['api:gigachat:gigachat_2']
+        self.assertNotIn('turn-old', [event.get('turn_id') for event in record['history']])
+        self.assertFalse(cards.record_chat_success('gigachat_2', version, turn_id='turn-old'))
+        self.assertEqual(cards.checks_path.read_bytes(), before)
+        self.assertEqual(self.card(api=self.make())['api']['color'], 'red')
+
     def test_diagnostic_limit_clips_display_but_preserves_saved_reply(self):
         cards = self.api.model_cards
         self.save(profile={'diagnostic_limit_chars': 200})

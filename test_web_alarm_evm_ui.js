@@ -247,6 +247,56 @@ test('E2 the board: four columns, compact cards in server order, honest empty co
   assert.match(source, /Нажмите на карточку — она раскроется на месте\. Ctrl \+ наведение — быстрый просмотр сбоку/);
 });
 
+test('EVM controls reuse personal creation and Ultra Chat LIVE routes, then retain state on F5', async () => {
+  const h = harness(); await settle();
+  let personal = false, active = false;
+  h.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: active ? 'REAL' : 'HOLD',
+    real_available: active, personal_workspace_id: personal ? 'wa_personal' : null},
+    ultra_chat: {available: true, header: 'X-WebAlarm-Ultra-Chat-Token', token: 'synthetic-read-token-00000000000000000000'}}));
+  h.routes.set('/ultra/chat/personal', () => {personal = true; return {wa_workspace_id: 'wa_personal', created: true};});
+  h.routes.set('/ultra/chat/live/start', () => {active = true; return {state: 'ACTIVE'};});
+  h.routes.set('/ultra/chat/live/stop', () => {active = false; return {state: 'INACTIVE'};});
+  await h.openEvm([conn('alpha', 'Alpha')]);
+  assert.equal(h.el('evmLiveStart').disabled, false);
+  assert.equal(h.el('evmLiveStop').disabled, true);
+  await h.el('evmLiveStart').onclick(); await settle();
+  assert.equal(h.posts('/ultra/chat/personal').length, 1);
+  assert.deepEqual(h.posts('/ultra/chat/live/start'), [{confirmation: 'GIGACHAT 6'}]);
+  assert.equal(h.el('evmLiveStart').disabled, true);
+  assert.equal(h.el('evmLiveStop').disabled, false);
+  assert.match(h.el('evmLiveState').textContent, /Подключён/);
+  assert.equal(h.calls.filter(c => c.url.includes('/turns') || c.url.includes('/chat/completions')).length, 0);
+  await h.run('loadEvm()'); await settle(); // F5-style server readback; no write or provider call.
+  assert.match(h.el('evmLiveState').textContent, /Подключён/);
+  assert.equal(h.posts('/ultra/chat/live/start').length, 1);
+  await h.el('evmLiveStop').onclick(); await settle();
+  assert.deepEqual(h.posts('/ultra/chat/live/stop'), [{}]);
+  assert.match(h.el('evmLiveState').textContent, /Отключён/);
+  assert.equal(h.posts('/ultra/chat/personal').length, 1);
+});
+
+test('EVM control stays closed in TEST and an uncertain connect is never retried', async () => {
+  const testMode = harness(); await settle();
+  testMode.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'TEST_OFFLINE', execution_mode: 'TEST_OFFLINE'},
+    ultra_chat: {available: false, header: 'X-WebAlarm-Ultra-Chat-Token'}}));
+  await testMode.openEvm([conn('alpha', 'Alpha')]);
+  assert.equal(testMode.el('evmLiveStart').disabled, true);
+  await testMode.run('evmLiveControl(true)'); await settle();
+  assert.equal(testMode.posts('/ultra/chat/live/start').length, 0);
+
+  const h = harness(); await settle();
+  h.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: 'HOLD',
+    real_available: false, personal_workspace_id: 'wa_personal'},
+    ultra_chat: {available: true, header: 'X-WebAlarm-Ultra-Chat-Token', token: 'synthetic-read-token-00000000000000000000'}}));
+  h.routes.set('/ultra/chat/live/start', () => ({httpError: true, status: 503,
+    data: {error: {code: 'live_catalog_unavailable', message: 'uncertain'}}}));
+  await h.openEvm([conn('alpha', 'Alpha')]);
+  await h.el('evmLiveStart').onclick(); await settle();
+  assert.equal(h.posts('/ultra/chat/live/start').length, 1);
+  assert.equal(h.el('evmLiveStop').disabled, true);
+  assert.match(h.el('evmError').textContent, /Проверьте его перед повтором/);
+});
+
 test('E3 the chat-model picker next to the composer: reads the list only when opened, saves only the preference', async () => {
   const h = harness(); await settle();
   let saved = null;
