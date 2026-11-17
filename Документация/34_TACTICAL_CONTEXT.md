@@ -2,20 +2,34 @@
 
 **CURRENT / 17.11.2026 / WEB33–34 / FACTUAL DOCUMENTATION UPDATE.** Источник: `main@70870380fc2828087f785357eeb70c0ac343da9f` (№641). Полные исходные 74 051 символ прежней редакции сохранены без сокращения в `reports/CHATGPT-WUA-DOC-CONTINUITY-20261117-001/preservation/34_TACTICAL_CONTEXT_before.md`; также доступны в неизменяемой истории commit №641. Исторические заметки не пересматриваются задним числом. Этот краткий документ не является новым техническим PASS.
 
+## CURRENT / 17.11.2026 — H42 SOURCE REVIEW / БЛОК 1 WAITING
+
+**Source:** `main@a216c45f19d855f7049c30aee5df93b045e0a0ac` (рабочий коммит №642), затем `main@238f69ab5456259e4b802fa9f82909327cc4da15` (пользовательский технический merge предыдущей GPT-документации и H42). Исторические два №642 не переименовывать. **TASK** `CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001`, **HISTORY** `H-CODEX-000042`: автор `PARTIAL / SUBMITTED / REVIEW PENDING`; техническая независимая проверка ограничена чтением опубликованного source/diff и evidence. GitHub-hosted Windows test, physical GUI и REAL provider **NOT RUN**. БЛОК 1 WAITING, БЛОК 1.1 содержит H42. Новой TASK нет.
+
+**Факт исправлений по source:** F-02 — EVM «Проверить чат» объясняет отсутствие сессии, подключает через прежний EVM route и требует отдельного согласия на платный Turn; нет нового sender/автоповтора. F-03 — отдельные «Модель включена», «Провайдер подключён», «Работоспособность API». F-04 — точный AST fingerprint S2 обновлён, автор S2 **73/73 PASS**, in-memory negative mutation detects 12 violations. F-05 — test-only Tk cleanup на главном потоке, автор combined **97 run: 96 PASS, 1 SKIP**, без Tcl abort. Остальные авторские EVM JS 50/50, Ultra Chat JS 76/76, S1 69/69, STANDARD OFFLINE 13/13. Реальных OAuth/catalog/inference = 0/0/0.
+
+**Не сошлось:** F-01 ограничена инструкцией перетаскивания popup за системный заголовок/Win+Shift+стрелка; два монитора/topmost и UX одного окна не приняты. Обычный STANDARD Send после H42 **не подтверждён** реальной перепиской, 24-часовой provider session grant остался. Реальная проверка API не выполнена. Отдельная **гипотеза**: `record_unknown` может применить поздний UNKNOWN старой settings_version после смены профиля; отрицательный тест необходим, пока не называем дефектом. Исходный H41 S2 FAIL и Tcl abort остаются в истории; H42 author fix не выдавать за independent PASS.
+
+**Документооборот:** H42 добавлена в полный №05, последние десять №001, событие №06 и review `reports/CHATGPT-WUA-H42-SOURCE-REVIEW-20261117-001/review.md`. №05 FOLLOWUP F-02 и F-04/F-05 отмечены «AUTHOR FIX / INDEPENDENT OPEN», окна/обычная отправка LIVE остаются OPEN, новая гипотеза получила `FOLLOWUP-WUA-H42-UNKNOWN-VERSION-RACE-001`. Старый H36 review drift в общей task_history validation также OPEN.
+
+**NEXT:** независимый Windows CI по H42 SHA и физический owner smoke, далее действующий STANDARD+REAL check только под отдельный пользовательский GO; оконный UI согласовать по макету. Не назначать Codex следующую задачу до решения владельца.
+
 ## Цель и фактическая точка
 
 Web Alarm Ultra: единый Web Alarm/Ultra Chat на общем Python Core, независимые Workspace/«Личные чаты», сохранение истории/RAW/Turn, реальные LLM с выбором через EVM, дальнейшие Blueprint LLM и подключение локальных LLM через Colibri. Не создавать новый транспорт, дублирующее ядро или менеджер моделей. Основные пользовательские входы: `Start_WebAlarm_Standard.cmd` (постоянный рабочий режим REAL) и `Start_WebAlarm_Test.cmd` (изолированный OFFLINE TEST). Старые истории, Tkinter, бюджетный ledger и оба CMD сохранять.
 
 **Ближайшая цель: работающая пользовательская переписка в STANDARD и проверка GigaChat через EVM, затем согласованный UX окон.** STANDARD — производственный обычный режим, а не временная демоверсия. Нет пользовательского согласия на искусственные пробные ограничения 12 сообщений/30 минут/128 токенов; эти старые условия заменены в H40, но остаётся конечный 24-часовой session grant, необходимость которого пользователь поставил под сомнение 17.11. Не путать намерение пользователя отменить произвольные блокировки с разрешением обходить реальные ограничения провайдера, остаток бюджета, безопасность хранения и защиту от случайных повторов/оплаты. Новые runtime/paid/production изменения только по отдельному пользовательскому поручению.
 
-## Последние четыре задачи и доказательная граница
+## Последние пять задач и доказательная граница
 
 1. `H-CODEX-000038` / `CODEX-WUA-CHAT-GIGACHAT-REAL-MULTIMODEL-MVP-001`: REAL transport/factory для шести моделей, единые OAuth/catalog/inference, существующие Turn/RAW/S3a ledger. Авторские OFFLINE проверки, **OAuth/catalog/inference = 0** в H38; source/REAL rollout ещё OPEN.
 2. `H-CODEX-000039` / `CODEX-WUA-CHAT-GIGACHAT-LIVE-BOOTSTRAP-001`: первый реально разрешённый GigaChat-2 Turn 15.11: «Готово», 1 OAuth + 1 catalog + 1 inference в успешной отдельной попытке, 100+4=104 usage, сохранены Turn/RAW/ledger/history, one-use grant CLOSED. Это **только ONE MODEL / ONE TURN BOUNDED PASS**, другие пять моделей не проверены inference.
 3. `H-CODEX-000040` / `CODEX-WUA-EVM-UNIFIED-CONNECTION-001`: EVM connect/disconnect переиспользует существующие маршруты Ultra Chat, REAL Turn обновляет доказательный EVM статус, «Проверить чат» через единый Turn, A→B→replay A дедуп. Удалены trial 12/30/128 для новых user sessions, но session grant истекает через **24 часа от подключения**, не от бездействия. Авторские Python 90/90, JS 122/122, S1 69/69, S2 73/73; REAL API и физический EVM в задаче NOT RUN. `SUBMITTED / REVIEW PENDING`.
 4. `H-CODEX-000041` / `CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001`: EVM per-model enabled, связанный picker/серверный запрет нового Turn у выключенной модели, хранение старых чатов, синхронизация окон, DOM pins, отдельные browser popup и Picture-in-Picture topmost. Авторские Python 53/53, JS 124/124, S1 69/69; **S2 72/73 FAIL** по цепочке `ultra_ui -> web_alarm.server -> web_alarm.ordinary_provider -> ultra_budget_ledger -> ultra_budget_policy`. Общий Python abort при Tcl/Tk cleanup. Внешние окна на двух мониторах и topmost физически исполнителем NOT RUN; REAL OAuth/catalog/inference 0/0/0. `PARTIAL / SUBMITTED / REVIEW PENDING`, полный PASS отсутствует.
 
-Источники H38–H41: `reports/<точный TASK-ID>/report.md`, `integration-map.md`, `tests.md` (если файл существует), `task_record.json`, `manifest.json`. Полные постановки в snapshots `handoff_task.md`. БЛОК 1 в `Документация/000_Задачи Codex.md` = **WAITING**, БЛОК 1.1 = **H41**; новая задача Codex **не назначена**, текущая активность отдельного локального чата UNKNOWN. Один рабочий коммит на одну логическую сдачу, ChatGPT пишет в `GPT`, владелец merge в `main`.
+5. `H-CODEX-000042` / `CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001`: F02–F05 author OFFLINE fixes, F01 physical and STANDARD LIVE still OPEN; source review only, Windows/REAL NOT RUN. См. CURRENT выше.
+
+Источники H38–H42: `reports/<точный TASK-ID>/report.md`, `integration-map.md`, `tests.md` (если файл существует), `task_record.json`, `manifest.json`. Полные постановки в snapshots `handoff_task.md`. БЛОК 1 в `Документация/000_Задачи Codex.md` = **WAITING**, БЛОК 1.1 = **H42**; новая задача Codex **не назначена**, текущая активность отдельного локального чата UNKNOWN. Один рабочий коммит на одну логическую сдачу, ChatGPT пишет в `GPT`, владелец merge в `main`.
 
 ## Наблюдения владельца 17.11 — не выдавать за инженерную независимую приёмку
 
@@ -31,7 +45,7 @@ Web Alarm Ultra: единый Web Alarm/Ultra Chat на общем Python Core, 
 
 **P0 EVM check:** маршрутизировать единственный проверочный REAL Turn через существующий approved sender, без второго OAuth/транспорта и без ложного зелёного статуса. Сохранить статус UNKNOWN и дедупликацию Turn.
 
-**P0 H41 S2:** разобраться в новой цепочке production импортов и независимом FAIL 72/73, без ослабления защитного теста или выдуманного зелёного. Сводный Tcl/Tk abort — отдельный gate. Нужна независимая GitHub-hosted Windows проверка по №36/36.1 и источникам точного SHA.
+**P0 H41→H42 S2/Tcl:** H41 original S2 FAIL/Tcl abort сохранены. H42 author S2 73/73 PASS и combined 96 PASS/1 SKIP без Tcl; независимая GitHub-hosted Windows проверка с негативным аудитом ещё OPEN.
 
 **P1 UX:** пользовательский макет объединённого окна ещё ожидается. Локальные pins работают по своей области; текущие browser popup/PiP избыточны для желаемого UX. Физический topmost/multi-monitor, несколько окон, focus/clipboard/Snipping Tool и F5 — NOT RUN/GUI finding. Не менять Windows права/приложения ради теста.
 
