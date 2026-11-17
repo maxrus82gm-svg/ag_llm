@@ -27,6 +27,29 @@ _LOCK = threading.Lock()
 _SCOPES = {'GIGACHAT_API_PERS', 'GIGACHAT_API_B2B', 'GIGACHAT_API_CORP'}
 
 
+class _AccountOwnerLock:
+    """Lifetime lock using the existing context-storage OS byte-lock primitives."""
+    def __init__(self, path):
+        self.path = path
+        self.handle = None
+
+    def acquire(self):
+        handle = self.path.open('a+b')
+        try:
+            if not core._try_lock_byte(handle):
+                raise PreSendDenied('account_owner_live')
+            self.handle = handle
+        except BaseException:
+            if self.handle is None:
+                handle.close()
+            raise
+
+    def release(self):
+        if self.handle is not None:
+            handle, self.handle = self.handle, None
+            core._release_lock_byte(handle)
+
+
 @dataclass(frozen=True)
 class ModelContract:
     model_id: str
@@ -177,33 +200,54 @@ class ProviderSession:
         self._counts = dict(oauth=0, catalog=0, inference=0, liability=0)
         self._parts = (core.ULTRA_DIRNAME, 'provider_sessions', approval.grant_id+'.json')
         self._account_parts = self._parts[:-1]+('account_'+hashlib.sha256(self.account_id.encode()).hexdigest()+'.json',)
+        # Held for the whole runtime session. An OS lock survives neither a crash
+        # nor process exit; legacy ACTIVE records have no such proof of death.
+        lock_name = hashlib.sha256((self.account_id + ':' + str(self.synthetic)).encode()).hexdigest()
+        self._owner_lock = _AccountOwnerLock(Path(tempfile.gettempdir()) / ('web-alarm-gigachat-owner-' + lock_name + '.lock'))
+        self._owner_lock.acquire()
         # Explicit enrollment, never on a browser send or read. No automatic
         # historical ledger adoption; a previously initialized S3a is required.
         from ultra_budget_ledger import BudgetLedger
-        with core._existing_workspace_writer(self.root, workspace_id) as writer:
-            BudgetLedger(self.root, workspace_id).recover()
-            core._ensure_write_directory(writer.anchor, self._parts[:-1])
-            if core._read_existing_raw(writer, self._parts) is not None:
-                raise PreSendDenied('grant_already_used_requires_new_go')
-            prior = core._read_existing_raw(writer, self._account_parts)
-            if prior is not None and prior.get('state') != 'CLOSED':
-                raise PreSendDenied('account_owner_unresolved')
-            pinned = prior.get('confirmed_versions', {}) if prior is not None else {}
-            if (type(pinned) is not dict or any(type(k) is not str or type(v) is not str
-                    for k, v in pinned.items())):
-                raise PreSendDenied('confirmed_versions_unreadable')
-            if pinned.get('gigachat_2'):
-                if discovering or any(c.model_id == 'gigachat_2' and
-                        (c.version_mode != 'EXACT' or c.response_models != (pinned['gigachat_2'],))
-                        for c in approval.contracts):
-                    raise PreSendDenied('confirmed_version_requires_exact_pin')
-            self._confirmed_versions = dict(pinned)
-            self._save(writer)
-            core._replace_verified(writer.anchor, self._account_parts, core._json_bytes(self._account_record()))
+        try:
+            with core._existing_workspace_writer(self.root, workspace_id) as writer:
+                BudgetLedger(self.root, workspace_id).recover()
+                core._ensure_write_directory(writer.anchor, self._parts[:-1])
+                if core._read_existing_raw(writer, self._parts) is not None:
+                    raise PreSendDenied('grant_already_used_requires_new_go')
+                prior = core._read_existing_raw(writer, self._account_parts)
+                if prior is not None and prior.get('state') != 'CLOSED':
+                    if (type(prior) is not dict or prior.get('state') != 'ACTIVE'
+                            or prior.get('owner_lock') != 'OS_LOCK_V1'
+                            or type(prior.get('grant_id')) is not str
+                            or not re.fullmatch(r'[A-Za-z0-9_-]{16,80}', prior['grant_id'])):
+                        raise PreSendDenied('account_owner_unresolved_legacy_active')
+                pinned = prior.get('confirmed_versions', {}) if prior is not None else {}
+                if (type(pinned) is not dict or any(type(k) is not str or type(v) is not str
+                        for k, v in pinned.items())):
+                    raise PreSendDenied('confirmed_versions_unreadable')
+                if pinned.get('gigachat_2'):
+                    if discovering or any(c.model_id == 'gigachat_2' and
+                            (c.version_mode != 'EXACT' or c.response_models != (pinned['gigachat_2'],))
+                            for c in approval.contracts):
+                        raise PreSendDenied('confirmed_version_requires_exact_pin')
+                if prior is not None and prior.get('state') == 'ACTIVE':
+                    # The old owner cannot still hold this lock. Keep its exact
+                    # account state as evidence; do not rewrite the old grant.
+                    recovery = self._parts[:-1] + ('recovery_' + prior['grant_id'] + '.json',)
+                    if core._read_existing_raw(writer, recovery) is not None:
+                        raise PreSendDenied('account_recovery_evidence_exists')
+                    core._replace_verified(writer.anchor, recovery, core._json_bytes(
+                        {'schema': 1, 'reason': 'owner_os_lock_released', 'previous': prior}))
+                self._confirmed_versions = dict(pinned)
+                self._save(writer)
+                core._replace_verified(writer.anchor, self._account_parts, core._json_bytes(self._account_record()))
+        except BaseException:
+            self._owner_lock.release()
+            raise
 
     def _account_record(self):
         return dict(schema=1, grant_id=self.approval.grant_id, state='CLOSED' if self._closed else 'ACTIVE',
-                    confirmed_versions=self._confirmed_versions)
+                    confirmed_versions=self._confirmed_versions, owner_lock='OS_LOCK_V1')
 
     def pin_discovered_version(self, observed, model_id='gigachat_2'):
         c = self.contract(model_id)
@@ -350,6 +394,7 @@ class ProviderSession:
         with core._existing_workspace_writer(self.root, self.workspace_id) as writer:
             self._save(writer)
             core._replace_verified(writer.anchor, self._account_parts, core._json_bytes(self._account_record()))
+        self._owner_lock.release()
 
 
 class RealGigaChatTransport:

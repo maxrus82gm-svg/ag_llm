@@ -1,0 +1,28 @@
+======================================================================
+ERROR: test_interactive_standard_with_credentials_starts_without_live_question (test_web_alarm_standard_live.LauncherIsolationTests.test_interactive_standard_with_credentials_starts_without_live_question)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_standard_live.py", line 193, in test_interactive_standard_with_credentials_starts_without_live_question
+    result = launcher.run_web_alarm(launcher.standard_launch(),
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\launcher.py", line 409, in run_web_alarm
+    with tracker['condition']:
+         ~~~~~~~^^^^^^^^^^^^^
+TypeError: 'Mock' object is not subscriptable
+
+======================================================================
+ERROR: test_noninteractive_standard_never_asks_for_live (test_web_alarm_standard_live.LauncherIsolationTests.test_noninteractive_standard_never_asks_for_live)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_standard_live.py", line 152, in test_noninteractive_standard_never_asks_for_live
+    result = launcher.run_web_alarm(launcher.standard_launch(),
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\launcher.py", line 409, in run_web_alarm
+    with tracker['condition']:
+         ~~~~~~~^^^^^^^^^^^^^
+TypeError: 'Mock' object is not subscriptable
+
+----------------------------------------------------------------------
+Ran 49 tests in 68.007s
+
+FAILED (errors=2)

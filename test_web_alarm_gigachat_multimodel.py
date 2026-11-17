@@ -293,7 +293,7 @@ class ProtocolTests(s5.Fixture):
         self.assertEqual(len(self.posts()),2)
 
     def test_approval_reuse_expiry_tls_and_default_authority_denied(self):
-        with self.assertRaisesRegex(PreSendDenied,'grant_already_used'):
+        with self.assertRaisesRegex(PreSendDenied,'account_owner_live'):
             ProviderSession.offline(self.workspace,self.wid,self.approval,self.transport)
         insecure=ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
         insecure.check_hostname=False;insecure.verify_mode=ssl.CERT_NONE
@@ -444,9 +444,42 @@ class ProtocolTests(s5.Fixture):
         self.assertTrue(census.analyze_module(path.name,weakened)['reconciliation_issues'])
 
     def test_account_owner_fences_other_grant_and_restart(self):
-        with self.assertRaisesRegex(PreSendDenied,'account_owner_unresolved'):
+        with self.assertRaisesRegex(PreSendDenied,'account_owner_live'):
             ProviderSession.offline(self.workspace,self.wid,replace(self.approval,grant_id=uuid4().hex),self.transport)
         self.assertEqual(self.calls,[])
+
+    def test_crashed_lock_owner_recovers_without_reusing_grant_or_provider_calls(self):
+        old = self.session
+        old._owner_lock.release()  # Simulates OS release at process death.
+        old._closed = True  # The dead process cannot execute test cleanup.
+        next_grant = replace(self.approval, grant_id=uuid4().hex)
+        recovered = ProviderSession.offline(self.workspace,self.wid,next_grant,self.transport)
+        self.addCleanup(recovered.close)
+        with core._existing_workspace_writer(self.workspace,self.wid) as writer:
+            evidence = core._read_existing_raw(writer, old._parts[:-1]+('recovery_'+old.approval.grant_id+'.json',))
+            previous = core._read_existing_raw(writer, old._parts)
+        self.assertEqual(evidence['reason'], 'owner_os_lock_released')
+        self.assertEqual(evidence['previous']['grant_id'], old.approval.grant_id)
+        self.assertEqual(previous['state'], 'ACTIVE')
+        old._closed = False
+        with self.assertRaisesRegex(PreSendDenied, 'account_owner_changed'):
+            old.check()
+        old._closed = True
+        self.assertEqual(self.calls, [])
+
+    def test_legacy_active_without_owner_proof_is_preserved(self):
+        old = self.session
+        old._owner_lock.release()
+        old._closed = True
+        with core._existing_workspace_writer(self.workspace,self.wid) as writer:
+            prior = core._read_existing_raw(writer, old._account_parts)
+            legacy = {key:value for key,value in prior.items() if key != 'owner_lock'}
+            core._replace_verified(writer.anchor, old._account_parts, core._json_bytes(legacy))
+        with self.assertRaisesRegex(PreSendDenied, 'account_owner_unresolved_legacy_active'):
+            ProviderSession.offline(self.workspace,self.wid,replace(self.approval,grant_id=uuid4().hex),self.transport)
+        with core._existing_workspace_writer(self.workspace,self.wid) as writer:
+            self.assertEqual(core._read_existing_raw(writer, old._account_parts), legacy)
+        self.assertEqual(self.calls, [])
 
     def test_probe_only_approval_has_zero_inference_without_model_caps(self):
         grant=replace(self.approval,grant_id=uuid4().hex,account_id=uuid4().hex,

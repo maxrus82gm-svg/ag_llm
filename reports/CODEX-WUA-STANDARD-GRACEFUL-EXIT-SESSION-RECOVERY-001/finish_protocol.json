@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "caa65e7388d82af3e2ad064c8a8a99d934ad9f1c3d646ee713de2e5a3a96c640",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 301,
+    "b11b": 307,
+    "b11e": 617
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+    "problems": [],
+    "title": "CODEX — Web Alarm Ultra: восстановление STANDARD и корректное завершение приложения",
+    "lines": 252
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001",
+    "copy_sha256": "2211fe7c081f5f1bead7550cc7edd7e9bbd17a368c190b1ae198e16eb5f333c4",
+    "history_id": "H-CODEX-000042",
+    "history_record": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "caa65e7388d82af3e2ad064c8a8a99d934ad9f1c3d646ee713de2e5a3a96c640",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001",
+    "copy_sha256": "2211fe7c081f5f1bead7550cc7edd7e9bbd17a368c190b1ae198e16eb5f333c4",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/handoff_task.md",
+    "archive_sha256": "049580a5990425e7474aed9d6ef8dcad9deb2cf0adbd24e9198477186b12e48c"
+   },
+   "history_id": "H-CODEX-000043",
+   "new_card_sha256": "b3f148fee2b968bc09179f78675a2bbf02d088aa8fef63c482fb8fe655d197ec",
+   "copy_sha256_lf": "d5221c7d19e74008a9f5771c44ae7faf6b4ceda3ae4e334d13dc5f2eb90cc803",
+   "copy_lines": 252,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "caa65e7388d82af3e2ad064c8a8a99d934ad9f1c3d646ee713de2e5a3a96c640",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001",
+    "copy_sha256": "2211fe7c081f5f1bead7550cc7edd7e9bbd17a368c190b1ae198e16eb5f333c4",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/handoff_task.md",
+    "archive_sha256": "049580a5990425e7474aed9d6ef8dcad9deb2cf0adbd24e9198477186b12e48c"
+   },
+   "history_id": "H-CODEX-000043",
+   "new_card_sha256": "b3f148fee2b968bc09179f78675a2bbf02d088aa8fef63c482fb8fe655d197ec",
+   "copy_sha256_lf": "d5221c7d19e74008a9f5771c44ae7faf6b4ceda3ae4e334d13dc5f2eb90cc803",
+   "copy_lines": 252,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+    "history_id": "H-CODEX-000043",
+    "record": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "1d637883ea5fc6d7d3b82d28670761768efb0959058c0761c72c87dd30760d2c",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "b3f148fee2b968bc09179f78675a2bbf02d088aa8fef63c482fb8fe655d197ec",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 311
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+    "copy_sha256": "d5221c7d19e74008a9f5771c44ae7faf6b4ceda3ae4e334d13dc5f2eb90cc803",
+    "history_id": "H-CODEX-000043",
+    "history_record": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+ "history": {
+  "id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+  "history_id": "H-CODEX-000043",
+  "record": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

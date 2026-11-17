@@ -102,6 +102,24 @@ function harness({routes = {}, hash = null, storage = null, offline = false} = {
 const S5_TURN = '/ultra/chat/workspaces/ws_a/chats/chat_a/turns';
 const S5_SCOPE = 'webAlarm.testTurn.ws_a.chat_a';
 const S5_WRITE = 'X-WebAlarm-Ultra-Chat-Write-Token';
+test('shutdown requires confirmation and sends one scoped POST', async () => {
+  const routes={
+    '/ui/ultra-chat/write-capability':()=>({ultra_chat_write:{available:true,header:S5_WRITE,token:'W'.repeat(43)}}),
+    '/ui/shutdown':()=>({state:'STOPPING',scope:'THIS_INSTANCE'})
+  };
+  const h=harness({routes});await settle();
+  h.context.window.confirm=()=>false;
+  await h.el('shutdownWebAlarm').onclick();
+  assert.equal(h.calls.filter(c=>c.url==='/ui/shutdown').length,0);
+  h.context.window.confirm=()=>true;
+  await h.el('shutdownWebAlarm').onclick();
+  const posts=h.calls.filter(c=>c.url==='/ui/shutdown');
+  assert.equal(posts.length,1);
+  assert.equal(posts[0].method,'POST');
+  assert.equal(posts[0].headers[S5_WRITE],'W'.repeat(43));
+  assert.deepEqual(JSON.parse(posts[0].body),{confirmation:'SHUTDOWN WEB ALARM'});
+  assert.match(h.el('shutdownResult').textContent,/вкладку можно закрыть/);
+});
 function offlineRoutes(routes = {}) {
   return {
     '/ui/ultra-chat/capability': () => ({...cap(), turn_test: {available: true, mode: 'TEST_OFFLINE',
@@ -1323,7 +1341,7 @@ test('STANDARD Ordinary sends selected model without local-test refs through nor
 test('STANDARD HOLD keeps per-chat model/preferences but sends nothing',async()=>{
   const h=harness({routes:ordinaryRoutes(false)});await settle();
   assert.equal(h.el('chatInput').disabled,true);assert.equal(h.el('chatSend').disabled,true);
-  assert.match(h.el('chatComposerNote').textContent,/Отправка GigaChat закрыта/);
+  assert.match(h.el('chatComposerNote').textContent,/GigaChat не подключён в этом процессе/);
   assert.equal(h.el('chatPreferences').hidden,false);assert.match(h.el('chatUsage').textContent,/UNKNOWN/);
   h.el('chatInput').value='forged enabled';await h.el('chatSend').onclick();
   assert.equal(h.calls.filter(c=>c.method==='POST').length,0);

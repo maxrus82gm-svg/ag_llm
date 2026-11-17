@@ -303,8 +303,10 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <label>
 <input type="checkbox" id="autoRefresh"> Наблюдать · 15 с</label>
 <button id="refresh">↻ Обновить</button>
+<button type="button" id="shutdownWebAlarm">Завершить Web Alarm</button>
 </div>
 </header>
+<div id="shutdownResult" class="notice info" role="status" hidden></div>
 <section id="chatView" class="chat-view" aria-labelledby="chatHeading">
 <div class="chat-layout">
 <nav class="chat-side" aria-label="Workspace и диалоги Ultra">
@@ -1840,7 +1842,7 @@ async function evmLiveControl(start){
       start?{confirmation:'GIGACHAT 6'}:{});
     if(result?.state!==(start?'ACTIVE':'INACTIVE'))throw Error('Состояние подключения не подтверждено');
     committed=true;
-  }catch(e){error=e.code||e.message||'проверьте состояние подключения'}
+  }catch(e){error=e.message||e.code||'проверьте состояние подключения'}
   finally{
     evm.liveBusy=false;evm.liveAction=null;evm.liveFailure=committed?null:(start?'connect':'disconnect');chatTurn.liveBusy=false;
     await loadEvm();
@@ -2125,7 +2127,7 @@ function renderTurnComposer(){
     if(chatTurn.ordinary){
       text('chatModel',selected?'Модель: '+selected.display_name:'Выберите модель');
       $('chatInput').placeholder=chatTurn.available?'Сообщение TEST-имитатору':'Отправка GigaChat пока закрыта';
-      text('chatComposerNote',chatTurn.available?'TEST · проверка штатного чата без обращения к GigaChat.':'Отправка GigaChat закрыта до проверки параметров модели и защит. История и настройки доступны.');
+      text('chatComposerNote',chatTurn.available?'TEST · проверка штатного чата без обращения к GigaChat.':'GigaChat не подключён в этом процессе. Подключите провайдера через EVM; если подключение отклонено, проверьте указанную там причину. История и настройки доступны.');
       text('chatSidebarNote','История хранится общим ядром Ultra.');
       if(chatTurn.model&&!selected){
         $('chatSend').disabled=true;
@@ -2227,7 +2229,7 @@ async function startGigaChat(){
     await chatPost('/ultra/chat/live/start',{confirmation:'GIGACHAT 6'});
     await loadChatAccess();await loadChatModel();
     notice('chatNotice','GigaChat подключён. Выбери модель и отправь короткое сообщение.');
-  }catch(e){notice('chatNotice','Подключение не выполнено: '+(e.code||'проверь существующие настройки доступа'));}
+  }catch(e){notice('chatNotice','Подключение не выполнено: '+(e.message||e.code||'проверь существующие настройки доступа'));}
   finally{chatTurn.liveBusy=false;renderTurnComposer()}
 }
 async function stopGigaChat(){
@@ -2825,6 +2827,24 @@ $('chatSend').onclick=sendTurn;
 $('evmTopmost').onclick=toggleTopmost;
 $('evmExternalRefresh').onclick=()=>loadEvm();
 $('evmExternalClose').onclick=()=>window.close();
+$('shutdownWebAlarm').onclick=async()=>{
+  const busy=chatTurn.busy||chatTurn.liveBusy||evm.liveBusy;
+  if(!window.confirm('Завершить Web Alarm в этом окне? '+
+      (busy?'Есть выполняющиеся операции: сервер дождётся их завершения в пределах тайм-аута. ':'')+
+      'Настройки EVM, модели, история и бюджеты сохранятся.'))return;
+  $('shutdownWebAlarm').disabled=true;
+  try{
+    if(!chatEdit.token)await loadChatWriteAccess();
+    const result=await api('/ui/shutdown',{method:'POST',headers:{[CHAT_WRITE_HEADER]:chatEdit.token},body:{confirmation:'SHUTDOWN WEB ALARM'}});
+    if(result.state!=='STOPPING')throw Error('Сервер не подтвердил остановку');
+    text('shutdownResult','Web Alarm завершает работу. Дождитесь остановки сервера; эту вкладку можно закрыть.');
+    $('shutdownResult').hidden=false;
+  }catch(error){
+    text('shutdownResult','Остановка не подтверждена: '+(error.message||'неизвестная ошибка'));
+    $('shutdownResult').hidden=false;
+    $('shutdownWebAlarm').disabled=false;
+  }
+};
 $('chatInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();return sendTurn()}};
 $('chatTurnCheck').onclick=()=>checkTurn(true);
 $('chatTurnCancel').onclick=cancelTurn;

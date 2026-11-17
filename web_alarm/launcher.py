@@ -316,7 +316,7 @@ def _stop_on_break() -> None:
 def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bool = True,
                   self_test: Path | None = None, port: int | None = None,
                   sleep: Callable[[float], None] = time.sleep, opener: Callable[[str], Any] = webbrowser.open,
-                  request_live: bool = False) -> int:
+                  request_live: bool = False, shutdown_wait_seconds: float = 20.0) -> int:
     storage_root = None if launch.standard else Path(tempfile.mkdtemp(prefix=f"wa-test-launch-{launch.name}-"))
     storage_text = str(default_storage_root() if launch.standard else storage_root)
     bind_port = launch.port if port is None else port
@@ -405,6 +405,12 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
     except KeyboardInterrupt:
         pass
     finally:
+        tracker = server.web_alarm_shutdown_tracker
+        if type(tracker) is dict:
+            with tracker['condition']:
+                drained = tracker['condition'].wait_for(lambda: tracker['active'] == 0, timeout=shutdown_wait_seconds)
+            if not drained:
+                out.write('[STOP] Активные операции не завершились вовремя; исход требует проверки.\n')
         server.server_close()
         in_app = getattr(getattr(server.web_alarm_ultra_chat, '_factory', None), '_session', None)
         if in_app is not None and in_app is not live_session:

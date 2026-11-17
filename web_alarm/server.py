@@ -16,6 +16,7 @@ import sys
 from dataclasses import asdict, is_dataclass
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import threading
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 from urllib.parse import parse_qs, urlsplit
@@ -1366,11 +1367,50 @@ class _JsonHandler(BaseHTTPRequestHandler):
         except BlueprintError as exc:
             raise ApiError(exc.status, exc.code, exc.message, details=exc.details) from None
 
+    def _shutdown_request(self) -> None:
+        self._require_local_ui_origin('shutdown_forbidden', 'Shutdown')
+        if self.command != 'POST' or urlsplit(self.path).query:
+            raise ApiError(405, 'shutdown_post_required', 'Explicit POST is required')
+        try:
+            self.server.web_alarm_ultra_chat_write_access.require(self.headers)
+        except UltraChatError as exc:
+            raise ApiError(exc.status, exc.code, exc.message) from None
+        if self._read_body() != {'confirmation': 'SHUTDOWN WEB ALARM'}:
+            raise ApiError(400, 'shutdown_confirmation_required', 'Confirm application shutdown')
+        tracker = self.server.web_alarm_shutdown_tracker
+        with tracker['condition']:
+            if tracker['stopping']:
+                self._send_json(202, {'state': 'STOPPING', 'scope': 'THIS_INSTANCE'})
+                return
+            tracker['stopping'] = True
+        threading.Thread(target=self.server.shutdown, name='web-alarm-shutdown', daemon=True).start()
+        self._send_json(202, {'state': 'STOPPING', 'scope': 'THIS_INSTANCE'})
+
     def _run(self) -> None:
+        tracker = self.server.web_alarm_shutdown_tracker
+        with tracker['condition']:
+            if tracker['stopping']:
+                if urlsplit(self.path).path == '/ui/shutdown':
+                    self._shutdown_request()
+                    return
+                self._send_json(503, {'error': {'code': 'application_stopping', 'message': 'Web Alarm is stopping'}})
+                return
+            tracker['active'] += 1
+        try:
+            self._run_inner()
+        finally:
+            with tracker['condition']:
+                tracker['active'] -= 1
+                tracker['condition'].notify_all()
+
+    def _run_inner(self) -> None:
         try:
             path = urlsplit(self.path).path
+            if path == '/ui/shutdown':
+                self._shutdown_request()
+                return
             offline = getattr(self.server, "web_alarm_offline_chat", None)
-            if offline and not (path in {'/', '/ui', ULTRA_CHAT_CAPABILITY_PATH, ULTRA_CHAT_WRITE_CAPABILITY_PATH}
+            if offline and not (path in {'/', '/ui', '/ui/shutdown', ULTRA_CHAT_CAPABILITY_PATH, ULTRA_CHAT_WRITE_CAPABILITY_PATH}
                                 or path.startswith('/ultra/chat/')):
                 raise ApiError(404, 'not_found', 'Only TEST Chat routes are available')
             if path == BLUEPRINT_CAPABILITY_PATH or path == '/ultra/blueprints' or path.startswith('/ultra/blueprints/'):
@@ -1486,6 +1526,7 @@ def create_server(
     picker = FolderPicker(enabled=enable_folder_picker and host in LOOPBACK_HOSTS, timeout=folder_picker_timeout)
     server = ThreadingHTTPServer((host, port), Handler)
     server.daemon_threads = True
+    server.web_alarm_shutdown_tracker = {'condition': threading.Condition(), 'active': 0, 'stopping': False}  # type: ignore[attr-defined]
     server.web_alarm_api = api  # type: ignore[attr-defined]
     server.web_alarm_folder_picker = picker  # type: ignore[attr-defined]
     # Independent of the folder picker: own token, loopback only, off with --disable-ultra-chat.

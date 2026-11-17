@@ -1,0 +1,264 @@
+{
+  "task_id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+  "date": "2026-11-17",
+  "status": "PARTIAL_SUBMITTED_REVIEW_PENDING",
+  "provider_calls": {
+    "oauth_post": 0,
+    "models_get": 0,
+    "inference_post": 0
+  },
+  "files": [
+    {
+      "role": "changed",
+      "path": "gigachat_runtime.py",
+      "bytes": 26962,
+      "sha256": "53e518cbcab622d01fb05fe4cf9f2f9183de6d2f6f5bf515ea6853671be97c21"
+    },
+    {
+      "role": "changed",
+      "path": "web_alarm/server.py",
+      "bytes": 80854,
+      "sha256": "7bc60dc58361434787a290c4392c41f0f08c57c2b12a58c397237cff72ecbddd"
+    },
+    {
+      "role": "changed",
+      "path": "web_alarm/launcher.py",
+      "bytes": 27217,
+      "sha256": "af66ff2c9e128a7eb68b0aa6e75408c25fd20c692a7b45d9045b021f1b40f859"
+    },
+    {
+      "role": "changed",
+      "path": "web_alarm/ui.py",
+      "bytes": 239724,
+      "sha256": "92d5e435fb424319bf299a1fc508adc0cc5f75d7a48d779be3e8fd3bc11d3c30"
+    },
+    {
+      "role": "changed",
+      "path": "rt002_multimodel_reconciliation.json",
+      "bytes": 3052,
+      "sha256": "f77036268fb46c0dcc139195b9a49665bc398e91a3a152b206af485ebe487fb4"
+    },
+    {
+      "role": "changed",
+      "path": "test_web_alarm_gigachat_multimodel.py",
+      "bytes": 33920,
+      "sha256": "b58f3c0ef4968a20806bcdfcfae30c0ab64da41731dc20409c1a2e7c5bc66a65"
+    },
+    {
+      "role": "changed",
+      "path": "test_web_alarm_ultra_chat_ui.js",
+      "bytes": 107380,
+      "sha256": "43c34af64406a3304c26fc6a40aa49455ac5b2802989e8af30bad331a7531057"
+    },
+    {
+      "role": "changed",
+      "path": "test_web_alarm_graceful_exit.py",
+      "bytes": 4026,
+      "sha256": "68abb600cf444a6a9318f4cd786bd401ead2a2f914db7cebe8225a13f5cab751"
+    },
+    {
+      "role": "reused_reference",
+      "path": "web_alarm/ordinary_provider.py",
+      "bytes": 32130,
+      "sha256": "2eaad9e5a91b689270507bec12d07ce8c54fdb36878dd5d2638954c77fee025b"
+    },
+    {
+      "role": "reused_reference",
+      "path": "web_alarm/model_cards.py",
+      "bytes": 65354,
+      "sha256": "e456fa8102984ab3a340ef4f3b9986e5f2c900d92537774959f24a35fbd31c26"
+    },
+    {
+      "role": "reused_reference",
+      "path": "web_alarm/ultra_chat.py",
+      "bytes": 60088,
+      "sha256": "566f3369ca069c3a52badd5dc50fa913565b6dde3c71d234995f4ea4267f4080"
+    },
+    {
+      "role": "reused_reference",
+      "path": "web_alarm/ordinary_chat_bridge.py",
+      "bytes": 9843,
+      "sha256": "66e4084dc0b6e8d78c3b1a367b898a0f596225c67eaa006eff222698b3a2de79"
+    },
+    {
+      "role": "reused_reference",
+      "path": "web_alarm/standard_live.py",
+      "bytes": 7514,
+      "sha256": "72230705ad53c2a928090bcba2e33954c3db614545f6e2751108abfa5cb2158b"
+    },
+    {
+      "role": "reused_reference",
+      "path": "gigachat_admission.py",
+      "bytes": 21826,
+      "sha256": "a8ae4e2f2eac9f85e8b7d3f391e38cb35b264e0a11cc63116bb1e7aa5a78e3be"
+    },
+    {
+      "role": "reused_reference",
+      "path": "ultra_budget_ledger.py",
+      "bytes": 13219,
+      "sha256": "cf254d60b128190ed68efee64a7fd9c74984ba7e672486652865dae3aa46f592"
+    },
+    {
+      "role": "reused_reference",
+      "path": "Start_WebAlarm_Standard.cmd",
+      "bytes": 922,
+      "sha256": "79468ca15e53bc595521278f67ed147304787a2789567ab33096e3075e3dc372"
+    },
+    {
+      "role": "reused_reference",
+      "path": "Start_WebAlarm_Test.cmd",
+      "bytes": 1199,
+      "sha256": "157091918484c159ecef497a60c78e95b45068fbc42c38c2682b6709a12bb6e3"
+    },
+    {
+      "role": "report",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/integration-map.md",
+      "bytes": 1252,
+      "sha256": "63943ba8be02dce7e1be1b3621a9545c6b996a63bcc067edd145b0f804f163b4"
+    },
+    {
+      "role": "report",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/manual-review.md",
+      "bytes": 1985,
+      "sha256": "e028b01b4f421895a7b22acb3ef6e820c28081f4c51597e181f9d7513c5e756a"
+    },
+    {
+      "role": "report",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/process-lifecycle.md",
+      "bytes": 1858,
+      "sha256": "bd19ed7677c1d4482c658a66b062a7d287014ac6f806be3ce41613802558d08d"
+    },
+    {
+      "role": "report",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/report.md",
+      "bytes": 6062,
+      "sha256": "45c233282b0566f4aa588011dcaafade051e42e0a2fd62b0cca9cb0655cbbba9"
+    },
+    {
+      "role": "report",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/root-cause.md",
+      "bytes": 2941,
+      "sha256": "a30b71bdef8d772ee0a9920ae0afb0961ea928f6c023afb98791013b99307394"
+    },
+    {
+      "role": "report",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/tests.md",
+      "bytes": 2939,
+      "sha256": "4903b7f69f065305a7ccbf05c5434afa3a1736898ea09a2af9fe2df23f7c6894"
+    },
+    {
+      "role": "report",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/user-smoke.md",
+      "bytes": 1724,
+      "sha256": "30893ff45b53d217a8c744efd61bc0b416630618a8aefe060ba87e15d3213374"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/adjacent_python.txt",
+      "bytes": 115,
+      "sha256": "37a9c806414a709093f9c5b02ec05ea6486e24475c811e501d08167e96457e15"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/compile.txt",
+      "bytes": 8,
+      "sha256": "2095d5302e465922147e220c0389f7a923ea0c1509a23097f04b3c220798aef8"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/js_final.txt",
+      "bytes": 33374,
+      "sha256": "11274df95fdee21a7f2fe2408497c32d2e1fef029db04aed28c92d0f8a9481e9"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/js_initial.txt",
+      "bytes": 34357,
+      "sha256": "113cb63f3fa2fd9eb42b14819adedde3695cec0bc19397e20743d403f601b74d"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/runtime_final.txt",
+      "bytes": 103,
+      "sha256": "2d9492f4a037657153c28a7fcb83ca21cfa58eecdb4196439784762b03af560c"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/runtime_initial.txt",
+      "bytes": 1749,
+      "sha256": "19799b6378aed95909d393b48b1c14c3073dfc3005f8d78d251a06100127addf"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/s1_final.txt",
+      "bytes": 88028,
+      "sha256": "70edb66d9490315f2c249401f8865119bf6ef7c59257f7b5f08e2c9448bf84e2"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/s1_initial.txt",
+      "bytes": 89081,
+      "sha256": "d6e84a6880ba9dfac3eba6d897e3136469c2e0aaebfb8eabde22ee9c74f83f70"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/s2_final.txt",
+      "bytes": 840,
+      "sha256": "cb45ae38aadde0ca6afae600a33dc48e631f4f5cd533a5436635e1233ecedf4b"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/s2_initial.txt",
+      "bytes": 840,
+      "sha256": "e0cb9035a4134930e1c9f957ba1ce5fdc7293f345b34c049e9f4f7bd34243290"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/shutdown_final.txt",
+      "bytes": 616,
+      "sha256": "73ea51d8abbfb70781c04d167d419cb60b3891450e8732306263e19967a50be6"
+    },
+    {
+      "role": "report",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/finish-result.md",
+      "bytes": 1458,
+      "sha256": "5963f667efd12fe68227c5e0d8f404c3d2292efc8a0ebcb1f65651fb432e7295"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/finish_dry_run.json",
+      "bytes": 2414,
+      "sha256": "dec848a831ee24fe0447c5d6610dc71967c3dcfaae1caad73e215192d70b4d17"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/finish_protocol.json",
+      "bytes": 5103,
+      "sha256": "3caa6ff09d5a4f6d31d33c179ae8a30d5148f7f5af74e0a0d1dfbc37f466921a"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/finish_check.json",
+      "bytes": 741,
+      "sha256": "2b4edba019f07dc57e881f8c76c58c977665ebd009125d20604627df4265b158"
+    },
+    {
+      "role": "evidence",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/evidence/history_validate.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "archive",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/handoff_task.md",
+      "bytes": 22081,
+      "sha256": "1d637883ea5fc6d7d3b82d28670761768efb0959058c0761c72c87dd30760d2c"
+    },
+    {
+      "role": "archive",
+      "path": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/task_record.json",
+      "bytes": 813,
+      "sha256": "7bacbfff39bdc76020fd5bf8b01bda1adb2d932afa056fe21455ea72b3cacd4e"
+    }
+  ]
+}
