@@ -7,7 +7,7 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 <!-- TASK-HISTORY-INDEX:BEGIN -->
 | Дата | ID | Задача | Статус / проверка | Адрес подробностей |
 | --- | --- | --- | --- | --- |
-| 2026-11-17 | `H-CODEX-000043` / `CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001` | STANDARD — завершение, legacy GigaChat session и экземпляры | AUTHOR PARTIAL / LOCAL ChatGPT REPAIR OFFLINE PASS; INDEPENDENT CI, OWNER GUI, REAL APPLY NOT RUN | `reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/task_record.json` |
+| 2026-11-17 | `H-CODEX-000043` / `CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001` | STANDARD — завершение, legacy GigaChat session и экземпляры | AUTHOR PARTIAL; successor personal account RECOVERED (owner-authorised, local readback PASS); INDEPENDENT CI, OWNER GUI, REAL PROVIDER NOT RUN | `reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/task_record.json` |
 | 2026-11-17 | `H-CODEX-000042` / `CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001` | EVM — восстановление проверки и инженерные исправления | AUTHOR PARTIAL / SOURCE REVIEW; OFFLINE F02–F05; F01, CI, REAL, UX OPEN | `reports/CODEX-WUA-EVM-OWNER-SMOKE-REPAIR-001/task_record.json` |
 | 2026-11-17 | `H-CODEX-000041` / `CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001` | EVM — управление моделями, чат и многооконный режим | SUBMITTED / REVIEW PENDING; AUTHOR PARTIAL; S2 72/73 FAIL; GUI/REAL NOT VERIFIED | `reports/CODEX-WUA-EVM-CONTROLS-MULTIWINDOW-001/task_record.json` |
 | 2026-11-17 | `H-CODEX-000040` / `CODEX-WUA-EVM-UNIFIED-CONNECTION-001` | EVM ↔ GigaChat — единая сессия, Turn, статусы | SUBMITTED / REVIEW PENDING; AUTHOR OFFLINE PASS; GUI/REAL NOT VERIFIED | `reports/CODEX-WUA-EVM-UNIFIED-CONNECTION-001/task_record.json` |

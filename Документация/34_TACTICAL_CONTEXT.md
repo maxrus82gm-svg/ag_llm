@@ -2,7 +2,11 @@
 
 **CURRENT / 17.11.2026 / WEB33–34 / FACTUAL DOCUMENTATION UPDATE.** Источник: `main@70870380fc2828087f785357eeb70c0ac343da9f` (№641). Полные исходные 74 051 символ прежней редакции сохранены без сокращения в `reports/CHATGPT-WUA-DOC-CONTINUITY-20261117-001/preservation/34_TACTICAL_CONTEXT_before.md`; также доступны в неизменяемой истории commit №641. Исторические заметки не пересматриваются задним числом. Этот краткий документ не является новым техническим PASS.
 
-## CURRENT / 17.11.2026 — H43 LEGACY RECOVERY: LOCAL REPAIR PARTIAL / REAL HOLD
+## CURRENT / 17.11.2026 — H43 PERSONAL ACCOUNT RECOVERED / OWNER GO / REAL MODEL HOLD
+
+**USER GO:** владелец 17.11 разрешил адресное восстановление personal GigaChat legacy account. На домашнем `DESKTOP-SC96D3U` отдельно проверены резервные JSON 4/4, embedded identity и ledger 30 событий/10 попыток, включая UNKNOWN_TERMINAL, 3 model pins, отсутствие действующих локальных владельцев/портов. Код #645 `ededb63d`, `tools/legacy_session_recovery.py`. Реальная процедура вернула `RECOVERED_ACCOUNT_ONLY` / exit 0: только личная account `ACTIVE`→`CLOSED` с evidence исходных байтов; старый grant и все 3 других JSON byte-identical backup; ledger и pins не изменены. Внепроцессный readback `RECHECK=PASS`. Второй legacy `ACTIVE` account в прежнем Workspace оставлен без изменений, отдельный FOLLOWUP/GO. GigaChat OAuth/catalog/inference 0/0/0, оплаченных Turn/повторов 0. **Это восстановление хранения, НЕ успешное подключение модели и НЕ H43 release/GUI/CI PASS.** Источник `reports/CHATGPT-WUA-H43-LEGACY-RECOVERY-APPLY-20261117-001/report.md`. NEXT: owner merge #645/#646, осторожная синхронизация локального main с незакоммиченными файлами, физический STANDARD/F5 и потом отдельный разрешённый REAL model smoke. Кодексу новую задачу не ставить, БЛОК 1/1.1 не менять.
+
+## PREVIOUS / 17.11.2026 — H43 LEGACY RECOVERY: LOCAL REPAIR PARTIAL / REAL HOLD
 
 **Source:** HOME `DESKTOP-SC96D3U`, `main@7504b761` (#644), GPT #643 before publication. Codex `H-CODEX-000043` / `CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001` submitted **PARTIAL**, with uncommitted H43 instance-control amendment; original author verdict not changed. OWNER directly authorised ChatGPT to continue local engineering and OFFLINE checks, but **not** real account/grant mutation or paid inference. Backup personal provider_sessions `%LOCALAPPDATA%/WebAlarmRecovery/H43_20261117_222742`: 4/4 SHA256 verified.
 
