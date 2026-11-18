@@ -1,0 +1,199 @@
+{
+  "schema_version": 2,
+  "workspace_id": "ws_fb5782eafe074e949194b05405d63c22",
+  "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+  "task_block_id": "tb_8bb3af1c3058b010e864fb66ecd168c0",
+  "task_display_id": "T-004",
+  "run_id": "turn_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd",
+  "run_display_id": "R-004",
+  "run_status": "COMPLETED",
+  "final_audit": "PENDING",
+  "api_requests": 0,
+  "tool_calls": 0,
+  "usage": {
+    "planner": {
+      "calls": 0,
+      "attempts_started": 0,
+      "attempts_terminal": 0,
+      "unknown_usage_calls": 0,
+      "known_prompt_tokens": 0,
+      "known_completion_tokens": 0,
+      "known_total_tokens": 0,
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "total_tokens": null,
+      "complete": true
+    },
+    "executor": {
+      "calls": 0,
+      "attempts_started": 0,
+      "attempts_terminal": 0,
+      "unknown_usage_calls": 0,
+      "known_prompt_tokens": 0,
+      "known_completion_tokens": 0,
+      "known_total_tokens": 0,
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "total_tokens": null,
+      "complete": true
+    },
+    "dredd": {
+      "calls": 0,
+      "attempts_started": 0,
+      "attempts_terminal": 0,
+      "unknown_usage_calls": 0,
+      "known_prompt_tokens": 0,
+      "known_completion_tokens": 0,
+      "known_total_tokens": 0,
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "total_tokens": null,
+      "complete": true
+    },
+    "total": {
+      "calls": 0,
+      "attempts_started": 0,
+      "attempts_terminal": 0,
+      "unknown_usage_calls": 0,
+      "known_prompt_tokens": 0,
+      "known_completion_tokens": 0,
+      "known_total_tokens": 0,
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "total_tokens": null,
+      "complete": true
+    }
+  },
+  "provider_accounting": {
+    "schema_version": 1,
+    "started_ids": [],
+    "terminal_ids": [],
+    "orphan_terminal_ids": [],
+    "duplicate_terminal_ids": [],
+    "complete": true
+  },
+  "turn": {
+    "schema_version": 2,
+    "workspace_id": "ws_fb5782eafe074e949194b05405d63c22",
+    "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+    "turn_id": "turn_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd",
+    "run_id": "turn_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd",
+    "task_block_id": "tb_8bb3af1c3058b010e864fb66ecd168c0",
+    "user_message_id": "msg_56c6c5abb0d793d7fd43abfd4042baad",
+    "assistant_message_id": "msg_5d1bdb1d264fe40f1d6d2df0ad774340",
+    "attempt_id": "attempt_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd",
+    "idempotency_key": "1f09629b-289c-42c5-ac39-53f2c5519f19",
+    "request_sha256": "4cf674fde0e2db7679a18fde44c3dc614d818b63542403663785962d04d3f541",
+    "references": {
+      "model_ref": "gigachat_2_max",
+      "context_ref": "stage5:chat_ff91ab9f3055b380881cc6cb82d32874",
+      "config_ref": "s4b-offline:v1"
+    },
+    "state": "SUCCEEDED",
+    "cancel_requested": false,
+    "prepared": {
+      "model": {
+        "model_id": "gigachat_2_max",
+        "display_name": "GigaChat 2 Max",
+        "provider": "gigachat",
+        "provider_model_id": "GigaChat-2-Max",
+        "enabled": true,
+        "is_local": false
+      },
+      "limits": {
+        "max_messages": 32,
+        "max_message_bytes": 2048,
+        "max_request_bytes": 4096,
+        "max_response_bytes": 524288,
+        "max_output_tokens": 10000,
+        "timeout_seconds": 30.0
+      },
+      "context": [
+        {
+          "role": "system",
+          "content": "# PROJECT CONTEXT\n\nПока не заполнен.\n\nЭтот файл — общий подтверждённый контекст WORKSPACE для всех его чатов.\nОн читается системой перед каждым новым RUN.\n\nВажно:\n- сюда попадают только важные и актуальные сведения о проекте;\n- LLM не должна молча менять этот контекст;\n- изменения PROJECT CONTEXT должны подтверждаться пользователем.\n"
+        },
+        {
+          "role": "user",
+          "content": "asdasd"
+        },
+        {
+          "role": "assistant",
+          "content": "Вы ввели «asdasd». Это слово не несёт смысловой нагрузки и, скорее всего, является случайным набором букв.\n\nЕсли вы хотели проверить, работает ли чат, то всё в порядке.\n\nЕсли же у вас есть какой-то вопрос, задача или тема для обсуждения, пожалуйста, сформулируйте её, и я постараюсь помочь."
+        },
+        {
+          "role": "user",
+          "content": "asdasd"
+        },
+        {
+          "role": "assistant",
+          "content": "Похоже, ваше сообщение состоит из повторяющихся символов. Возможно, произошла ошибка ввода. Сообщите, когда будете готовы начать общение или задать вопрос."
+        }
+      ],
+      "request_ref": "sha256:14cc006d387ff48ed3e1ab43d2b0d80eef56cc78cfb44ea84bc77696e450094a"
+    },
+    "ordinary_admission": {
+      "endpoint": "https://api.giga.chat/v1/chat/completions",
+      "wire_bytes": 1670,
+      "wire_sha256": "5b2340d104d780f34ef2d73026d0b4e9d6cdeb5218a0e783e6c039841181632e",
+      "policy": {
+        "schema_version": 1,
+        "revision_label": "Ordinary bounded provider InAppGigaChata23aab3f67c7f4a3097b9dd5a23b71e2",
+        "run": {
+          "max_request_bytes": 8192,
+          "max_request_input_tokens_est": 8192,
+          "max_verification_request_bytes": 8192,
+          "max_verification_request_input_tokens_est": 8192,
+          "max_run_liability_tokens": 8320,
+          "max_run_attempts": 1,
+          "max_attempts_per_role": {
+            "planner": null,
+            "executor": null,
+            "dredd": null
+          },
+          "verification_reserve_tokens": 0,
+          "verification_reserve_attempts": 0
+        },
+        "estimation": {
+          "profiles": [],
+          "missing_profile": "HARD_BOUND"
+        },
+        "output_reserve": "MAX_TOKENS",
+        "compressor": {
+          "mode": "DENY"
+        },
+        "mcp": {
+          "mode": "DENY"
+        },
+        "read": {
+          "max_full_read_bytes": 2048
+        },
+        "ordinary": {
+          "mode": "BUDGET",
+          "max_request_bytes": 4096,
+          "max_request_input_tokens_est": 4096,
+          "max_scope_liability_tokens": 14096,
+          "max_scope_attempts": 1
+        }
+      },
+      "policy_sha256": "9e70a2e068ae16208214e8c59fab4c99132a900da2483c157ef60791d1979005",
+      "grant_id": "InAppGigaChata23aab3f67c7f4a3097b9dd5a23b71e2",
+      "model_contract": {
+        "model_id": "gigachat_2_max",
+        "context_tokens": 128000,
+        "output_tokens": 20000,
+        "response_models": [],
+        "evidence": "Operator output preference ceiling 20000; 2-series and 3-Ultra context 128000 from official docs, other 3-series context admission ceiling 32768, provider context/output maximum UNKNOWN; exact GigaChat-2 previously observed; other versions pinned on first bounded response",
+        "provider_output_cap_tokens": null,
+        "version_mode": "DISCOVER_FAMILY"
+      },
+      "provider_mode": "REAL",
+      "evm_profile": {
+        "profile_id": "gigachat-default",
+        "settings_version": "21e1bddad8c6f45a",
+        "timeout_seconds": 30
+      }
+    },
+    "binding_sha256": "8942626c6e6303c383f25ea32adb3dad0760d9dc3a97b08cb86ba590194bb44d"
+  }
+}

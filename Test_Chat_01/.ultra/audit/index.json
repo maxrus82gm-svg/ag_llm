@@ -1,0 +1,395 @@
+{
+  "schema_version": 2,
+  "revision": 25,
+  "next_task_number": 5,
+  "next_run_number": 5,
+  "tasks": {
+    "tb_f5da0accdd1bfecadd821d774613f169": {
+      "display_id": "T-001",
+      "task_block_id": "tb_f5da0accdd1bfecadd821d774613f169",
+      "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+      "runs": [
+        "turn_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d"
+      ]
+    },
+    "tb_a17b1222c3a5a3f7b584637362ea403e": {
+      "display_id": "T-002",
+      "task_block_id": "tb_a17b1222c3a5a3f7b584637362ea403e",
+      "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+      "runs": [
+        "turn_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05"
+      ]
+    },
+    "tb_b70a424f29d7ac94ebd8992a106a55d1": {
+      "display_id": "T-003",
+      "task_block_id": "tb_b70a424f29d7ac94ebd8992a106a55d1",
+      "chat_id": "chat_c8075880ca0ef23074b0430a7bdd7256",
+      "runs": [
+        "turn_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9"
+      ]
+    },
+    "tb_8bb3af1c3058b010e864fb66ecd168c0": {
+      "display_id": "T-004",
+      "task_block_id": "tb_8bb3af1c3058b010e864fb66ecd168c0",
+      "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+      "runs": [
+        "turn_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd"
+      ]
+    }
+  },
+  "runs": {
+    "turn_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d": {
+      "display_id": "R-001",
+      "run_id": "turn_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d",
+      "task_block_id": "tb_f5da0accdd1bfecadd821d774613f169",
+      "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+      "run_status": "COMPLETED",
+      "final_audit": "PENDING",
+      "storage_version": 2,
+      "summary_path": "chat_ff91ab9f3055b380881cc6cb82d32874/turn_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d/summary.json"
+    },
+    "turn_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05": {
+      "display_id": "R-002",
+      "run_id": "turn_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05",
+      "task_block_id": "tb_a17b1222c3a5a3f7b584637362ea403e",
+      "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+      "run_status": "COMPLETED",
+      "final_audit": "PENDING",
+      "storage_version": 2,
+      "summary_path": "chat_ff91ab9f3055b380881cc6cb82d32874/turn_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05/summary.json"
+    },
+    "turn_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9": {
+      "display_id": "R-003",
+      "run_id": "turn_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9",
+      "task_block_id": "tb_b70a424f29d7ac94ebd8992a106a55d1",
+      "chat_id": "chat_c8075880ca0ef23074b0430a7bdd7256",
+      "run_status": "COMPLETED",
+      "final_audit": "PENDING",
+      "storage_version": 2,
+      "summary_path": "chat_c8075880ca0ef23074b0430a7bdd7256/turn_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9/summary.json"
+    },
+    "turn_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd": {
+      "display_id": "R-004",
+      "run_id": "turn_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd",
+      "task_block_id": "tb_8bb3af1c3058b010e864fb66ecd168c0",
+      "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+      "run_status": "COMPLETED",
+      "final_audit": "PENDING",
+      "storage_version": 2,
+      "summary_path": "chat_ff91ab9f3055b380881cc6cb82d32874/turn_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd/summary.json"
+    }
+  },
+  "budget_ledger": {
+    "schema_version": 1,
+    "workspace_id": "ws_fb5782eafe074e949194b05405d63c22",
+    "ledger_id": "d7b72657f59c47b6894f7e67fac3b8de",
+    "policy_engine_sha256": "f6037d86fe966fdadb4d488411bc1be21d327b158546b7c01017da7f2394e14a",
+    "events": [
+      {
+        "data": {
+          "binding": {
+            "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+            "logical_call_id": "ordinary:96dd17575e144a0ab9a95417ccb2cf2ebe449f6b294140e6032e4c5827b14d34",
+            "run_id": "turn_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d",
+            "turn_id": "turn_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d"
+          },
+          "context": {
+            "final_audit_enabled": false,
+            "scope_id": "attempt_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d"
+          },
+          "policy": {
+            "compressor": {
+              "mode": "DENY"
+            },
+            "estimation": {
+              "missing_profile": "HARD_BOUND",
+              "profiles": []
+            },
+            "mcp": {
+              "mode": "DENY"
+            },
+            "ordinary": {
+              "max_request_bytes": 4096,
+              "max_request_input_tokens_est": 4096,
+              "max_scope_attempts": 1,
+              "max_scope_liability_tokens": 14096,
+              "mode": "BUDGET"
+            },
+            "output_reserve": "MAX_TOKENS",
+            "read": {
+              "max_full_read_bytes": 2048
+            },
+            "revision_label": "Ordinary bounded provider InAppGigaChata23aab3f67c7f4a3097b9dd5a23b71e2",
+            "run": {
+              "max_attempts_per_role": {
+                "dredd": null,
+                "executor": null,
+                "planner": null
+              },
+              "max_request_bytes": 8192,
+              "max_request_input_tokens_est": 8192,
+              "max_run_attempts": 1,
+              "max_run_liability_tokens": 8320,
+              "max_verification_request_bytes": 8192,
+              "max_verification_request_input_tokens_est": 8192,
+              "verification_reserve_attempts": 0,
+              "verification_reserve_tokens": 0
+            },
+            "schema_version": 1
+          },
+          "route_id": "ordinary_chat",
+          "wire_utf8": "{\"model\":\"GigaChat-3-Ultra\",\"stream\":false,\"max_tokens\":10000,\"messages\":[{\"role\":\"system\",\"content\":\"# PROJECT CONTEXT\\n\\nПока не заполнен.\\n\\nЭтот файл — общий подтверждённый контекст WORKSPACE для всех его чатов.\\nОн читается системой перед каждым новым RUN.\\n\\nВажно:\\n- сюда попадают только важные и актуальные сведения о проекте;\\n- LLM не должна молча менять этот контекст;\\n- изменения PROJECT CONTEXT должны подтверждаться пользователем.\\n\"},{\"role\":\"user\",\"content\":\"asdasd\"}]}"
+        },
+        "op": "reserve",
+        "provider_attempt_id": "attempt_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d"
+      },
+      {
+        "data": {},
+        "op": "mark_sent",
+        "provider_attempt_id": "attempt_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d"
+      },
+      {
+        "data": {
+          "outcome": "completed",
+          "usage": {
+            "completion_tokens": 70,
+            "precached_prompt_tokens": 0,
+            "prompt_tokens": 90,
+            "total_tokens": 160
+          }
+        },
+        "op": "terminal",
+        "provider_attempt_id": "attempt_f5da0accdd1bfecadd821d774613f1695ab7a6bc557c8c06b3b59007b1aa1c1d"
+      },
+      {
+        "data": {
+          "binding": {
+            "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+            "logical_call_id": "ordinary:65bfe42de06203a5687e9c50d9340f647da3ad5e80370bfa5053467d3967507e",
+            "run_id": "turn_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05",
+            "turn_id": "turn_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05"
+          },
+          "context": {
+            "final_audit_enabled": false,
+            "scope_id": "attempt_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05"
+          },
+          "policy": {
+            "compressor": {
+              "mode": "DENY"
+            },
+            "estimation": {
+              "missing_profile": "HARD_BOUND",
+              "profiles": []
+            },
+            "mcp": {
+              "mode": "DENY"
+            },
+            "ordinary": {
+              "max_request_bytes": 4096,
+              "max_request_input_tokens_est": 4096,
+              "max_scope_attempts": 1,
+              "max_scope_liability_tokens": 14096,
+              "mode": "BUDGET"
+            },
+            "output_reserve": "MAX_TOKENS",
+            "read": {
+              "max_full_read_bytes": 2048
+            },
+            "revision_label": "Ordinary bounded provider InAppGigaChata23aab3f67c7f4a3097b9dd5a23b71e2",
+            "run": {
+              "max_attempts_per_role": {
+                "dredd": null,
+                "executor": null,
+                "planner": null
+              },
+              "max_request_bytes": 8192,
+              "max_request_input_tokens_est": 8192,
+              "max_run_attempts": 1,
+              "max_run_liability_tokens": 8320,
+              "max_verification_request_bytes": 8192,
+              "max_verification_request_input_tokens_est": 8192,
+              "verification_reserve_attempts": 0,
+              "verification_reserve_tokens": 0
+            },
+            "schema_version": 1
+          },
+          "route_id": "ordinary_chat",
+          "wire_utf8": "{\"model\":\"GigaChat-2-Max\",\"stream\":false,\"max_tokens\":10000,\"messages\":[{\"role\":\"system\",\"content\":\"# PROJECT CONTEXT\\n\\nПока не заполнен.\\n\\nЭтот файл — общий подтверждённый контекст WORKSPACE для всех его чатов.\\nОн читается системой перед каждым новым RUN.\\n\\nВажно:\\n- сюда попадают только важные и актуальные сведения о проекте;\\n- LLM не должна молча менять этот контекст;\\n- изменения PROJECT CONTEXT должны подтверждаться пользователем.\\n\"},{\"role\":\"user\",\"content\":\"asdasd\"},{\"role\":\"assistant\",\"content\":\"Вы ввели «asdasd». Это слово не несёт смысловой нагрузки и, скорее всего, является случайным набором букв.\\n\\nЕсли вы хотели проверить, работает ли чат, то всё в порядке.\\n\\nЕсли же у вас есть какой-то вопрос, задача или тема для обсуждения, пожалуйста, сформулируйте её, и я постараюсь помочь.\"},{\"role\":\"user\",\"content\":\"asdasd\"}]}"
+        },
+        "op": "reserve",
+        "provider_attempt_id": "attempt_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05"
+      },
+      {
+        "data": {},
+        "op": "mark_sent",
+        "provider_attempt_id": "attempt_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05"
+      },
+      {
+        "data": {
+          "outcome": "completed",
+          "usage": {
+            "completion_tokens": 32,
+            "precached_prompt_tokens": 4,
+            "prompt_tokens": 190,
+            "total_tokens": 222
+          }
+        },
+        "op": "terminal",
+        "provider_attempt_id": "attempt_a17b1222c3a5a3f7b584637362ea403e482654cfaf74a7b6dd8dbc2ceca5df05"
+      },
+      {
+        "data": {
+          "binding": {
+            "chat_id": "chat_c8075880ca0ef23074b0430a7bdd7256",
+            "logical_call_id": "ordinary:1f372169012b09bee4e004103e33fa95dc63827e06d8714355514aac768f138a",
+            "run_id": "turn_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9",
+            "turn_id": "turn_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9"
+          },
+          "context": {
+            "final_audit_enabled": false,
+            "scope_id": "attempt_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9"
+          },
+          "policy": {
+            "compressor": {
+              "mode": "DENY"
+            },
+            "estimation": {
+              "missing_profile": "HARD_BOUND",
+              "profiles": []
+            },
+            "mcp": {
+              "mode": "DENY"
+            },
+            "ordinary": {
+              "max_request_bytes": 4096,
+              "max_request_input_tokens_est": 4096,
+              "max_scope_attempts": 1,
+              "max_scope_liability_tokens": 24096,
+              "mode": "BUDGET"
+            },
+            "output_reserve": "MAX_TOKENS",
+            "read": {
+              "max_full_read_bytes": 2048
+            },
+            "revision_label": "Ordinary bounded provider InAppGigaChata23aab3f67c7f4a3097b9dd5a23b71e2",
+            "run": {
+              "max_attempts_per_role": {
+                "dredd": null,
+                "executor": null,
+                "planner": null
+              },
+              "max_request_bytes": 8192,
+              "max_request_input_tokens_est": 8192,
+              "max_run_attempts": 1,
+              "max_run_liability_tokens": 8320,
+              "max_verification_request_bytes": 8192,
+              "max_verification_request_input_tokens_est": 8192,
+              "verification_reserve_attempts": 0,
+              "verification_reserve_tokens": 0
+            },
+            "schema_version": 1
+          },
+          "route_id": "ordinary_chat",
+          "wire_utf8": "{\"model\":\"GigaChat-3-Lightning\",\"stream\":false,\"max_tokens\":20000,\"messages\":[{\"role\":\"system\",\"content\":\"# PROJECT CONTEXT\\n\\nПока не заполнен.\\n\\nЭтот файл — общий подтверждённый контекст WORKSPACE для всех его чатов.\\nОн читается системой перед каждым новым RUN.\\n\\nВажно:\\n- сюда попадают только важные и актуальные сведения о проекте;\\n- LLM не должна молча менять этот контекст;\\n- изменения PROJECT CONTEXT должны подтверждаться пользователем.\\n\"},{\"role\":\"user\",\"content\":\"asdasd\"}]}"
+        },
+        "op": "reserve",
+        "provider_attempt_id": "attempt_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9"
+      },
+      {
+        "data": {},
+        "op": "mark_sent",
+        "provider_attempt_id": "attempt_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9"
+      },
+      {
+        "data": {
+          "outcome": "completed",
+          "usage": {
+            "completion_tokens": 45,
+            "precached_prompt_tokens": 0,
+            "prompt_tokens": 90,
+            "total_tokens": 135
+          }
+        },
+        "op": "terminal",
+        "provider_attempt_id": "attempt_b70a424f29d7ac94ebd8992a106a55d13189646c178afa0278aa1ce84c48b9a9"
+      },
+      {
+        "data": {
+          "binding": {
+            "chat_id": "chat_ff91ab9f3055b380881cc6cb82d32874",
+            "logical_call_id": "ordinary:bb2464933e17c39ce376b85c234d6b9f33a752588f942fa1ccde99debadbcc3e",
+            "run_id": "turn_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd",
+            "turn_id": "turn_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd"
+          },
+          "context": {
+            "final_audit_enabled": false,
+            "scope_id": "attempt_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd"
+          },
+          "policy": {
+            "compressor": {
+              "mode": "DENY"
+            },
+            "estimation": {
+              "missing_profile": "HARD_BOUND",
+              "profiles": []
+            },
+            "mcp": {
+              "mode": "DENY"
+            },
+            "ordinary": {
+              "max_request_bytes": 4096,
+              "max_request_input_tokens_est": 4096,
+              "max_scope_attempts": 1,
+              "max_scope_liability_tokens": 14096,
+              "mode": "BUDGET"
+            },
+            "output_reserve": "MAX_TOKENS",
+            "read": {
+              "max_full_read_bytes": 2048
+            },
+            "revision_label": "Ordinary bounded provider InAppGigaChata23aab3f67c7f4a3097b9dd5a23b71e2",
+            "run": {
+              "max_attempts_per_role": {
+                "dredd": null,
+                "executor": null,
+                "planner": null
+              },
+              "max_request_bytes": 8192,
+              "max_request_input_tokens_est": 8192,
+              "max_run_attempts": 1,
+              "max_run_liability_tokens": 8320,
+              "max_verification_request_bytes": 8192,
+              "max_verification_request_input_tokens_est": 8192,
+              "verification_reserve_attempts": 0,
+              "verification_reserve_tokens": 0
+            },
+            "schema_version": 1
+          },
+          "route_id": "ordinary_chat",
+          "wire_utf8": "{\"model\":\"GigaChat-2-Max\",\"stream\":false,\"max_tokens\":10000,\"messages\":[{\"role\":\"system\",\"content\":\"# PROJECT CONTEXT\\n\\nПока не заполнен.\\n\\nЭтот файл — общий подтверждённый контекст WORKSPACE для всех его чатов.\\nОн читается системой перед каждым новым RUN.\\n\\nВажно:\\n- сюда попадают только важные и актуальные сведения о проекте;\\n- LLM не должна молча менять этот контекст;\\n- изменения PROJECT CONTEXT должны подтверждаться пользователем.\\n\"},{\"role\":\"user\",\"content\":\"asdasd\"},{\"role\":\"assistant\",\"content\":\"Вы ввели «asdasd». Это слово не несёт смысловой нагрузки и, скорее всего, является случайным набором букв.\\n\\nЕсли вы хотели проверить, работает ли чат, то всё в порядке.\\n\\nЕсли же у вас есть какой-то вопрос, задача или тема для обсуждения, пожалуйста, сформулируйте её, и я постараюсь помочь.\"},{\"role\":\"user\",\"content\":\"asdasd\"},{\"role\":\"assistant\",\"content\":\"Похоже, ваше сообщение состоит из повторяющихся символов. Возможно, произошла ошибка ввода. Сообщите, когда будете готовы начать общение или задать вопрос.\"},{\"role\":\"user\",\"content\":\"Доброй ночи\"}]}"
+        },
+        "op": "reserve",
+        "provider_attempt_id": "attempt_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd"
+      },
+      {
+        "data": {},
+        "op": "mark_sent",
+        "provider_attempt_id": "attempt_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd"
+      },
+      {
+        "data": {
+          "outcome": "completed",
+          "usage": {
+            "completion_tokens": 22,
+            "precached_prompt_tokens": 4,
+            "prompt_tokens": 248,
+            "total_tokens": 270
+          }
+        },
+        "op": "terminal",
+        "provider_attempt_id": "attempt_8bb3af1c3058b010e864fb66ecd168c02458c55d60c972d24f302332e87e52dd"
+      }
+    ],
+    "events_sha256": "72f81a12e75904faaa902db0a48c07665e4183daf880b6cd892065f3d10121d2"
+  }
+}
