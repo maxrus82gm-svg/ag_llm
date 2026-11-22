@@ -559,6 +559,7 @@ def create_chat_record(
     *,
     chat_id: str | None = None,
     expected_workspace_id: str | None = None,
+    auto_title: bool = False,
 ) -> dict[str, Any]:
     """Create one Chat through the shared writer contract; ``{"chat": metadata, "created": bool}``.
 
@@ -584,7 +585,7 @@ def create_chat_record(
                 raise StorageWriteError(
                     "chat_id_conflict", f"Папка с этим chat_id уже существует без карточки чата: {chat_id}"
                 ) from None
-            if requested_title is not None and existing.get("title") != requested_title:
+            if requested_title is not None and existing.get("title") != requested_title and not (auto_title and existing.get("web_auto_title_created") is True):
                 raise StorageWriteError(
                     "chat_id_conflict", f"Чат {chat_id} уже создан с другим названием: повтор отклонён."
                 )
@@ -620,6 +621,8 @@ def create_chat_record(
             "title": clean_title,
             "created_at": _utc_now_iso(),
         }
+        if auto_title:
+            metadata.update(web_auto_title_created=True, web_auto_title_pending=True)
         try:
             (staging_dir / "messages").mkdir(parents=False, exist_ok=False)
             (staging_dir / "summaries").mkdir(parents=False, exist_ok=False)
@@ -678,7 +681,7 @@ def rename_chat(
     _chat_root(Path("."), chat_id)  # the ID is checked before any lock or disk access
     with _existing_workspace_writer(workspace_root, expected_workspace_id) as writer:
         parts, metadata = _require_chat_for_write(writer, chat_id)
-        if metadata.get("title") == clean_title:
+        if metadata.get("title") == clean_title and not metadata.get("web_auto_title_pending"):
             return metadata
         if expected_title is not None and metadata.get("title") != expected_title:
             raise StorageWriteError(
@@ -686,6 +689,7 @@ def rename_chat(
                 "Название чата уже изменено в другом окне: обновите список и повторите.",
             )
         updated = {**metadata, "title": clean_title}
+        updated.pop("web_auto_title_pending", None)
         # verified replace: the temporary file's location is checked before any byte, the result is read back
         _replace_verified(writer.anchor, parts + ("metadata.json",), _json_bytes(updated))
         return updated
@@ -715,6 +719,28 @@ def _validated_raw_fields(
     if task_block_id is not None:
         fields["task_block_id"] = validate_task_block_id(task_block_id)
     return fields
+
+
+def _web_first_title(writer, chat_parts, metadata, chat_id):
+    """Best-effort projection; RAW ownership and Turn result never depend on a label."""
+    if metadata.get("web_auto_title_pending") is not True:
+        return
+    try:
+        history = read_chat_history_bounded(writer.root, chat_id)
+        if history["excluded"]:
+            return
+        first = next((m for m in history["messages"] if m["role"] == "user"), None)
+        if first is None:
+            return
+        title = " ".join(first["text"].split()[:4])[:40].rstrip()
+        if not title:
+            return
+        updated = {**metadata, "title": title}
+        updated.pop("web_auto_title_pending", None)
+        _replace_verified(writer.anchor, chat_parts + ("metadata.json",), _json_bytes(updated))
+    except (OSError, ValueError, KeyError, StorageReadError, StorageWriteError):
+        # RAW was already committed; pending marker allows a later user RAW/retry to reconcile.
+        return
 
 
 def commit_raw_message(
@@ -768,6 +794,8 @@ def commit_raw_message(
                     message[key] = fields[key]
             try:
                 _publish_new_file(writer.anchor, target_parts, _json_bytes(message))
+                if fields["role"] == "user":
+                    _web_first_title(writer, chat_parts, _chat_metadata, chat_id)
                 return {**message, "path": str(target_path), "created": True}
             except FileExistsError:
                 existing = _read_existing_raw(writer, target_parts)
@@ -778,6 +806,8 @@ def commit_raw_message(
                 "message_id_conflict",
                 f"RAW MESSAGE {message_id} уже сохранён с другим содержимым или идентичностью: перезапись запрещена.",
             )
+        if fields["role"] == "user":
+            _web_first_title(writer, chat_parts, _chat_metadata, chat_id)
         return {**existing, "path": str(target_path), "created": False}
 
 

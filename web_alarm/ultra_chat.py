@@ -265,7 +265,7 @@ class UltraChatService:
         return record.workspace_root, identity["workspace_id"]
 
     def create_chat(self, wa_workspace_id: str, body: Any) -> tuple[int, dict[str, Any]]:
-        if (not isinstance(body, dict) or "chat_id" not in body or set(body) - {"chat_id", "title", "initialize_workspace"}
+        if (not isinstance(body, dict) or "chat_id" not in body or set(body) - {"chat_id", "title", "initialize_workspace", "auto_title"}
                 or ("initialize_workspace" in body and body["initialize_workspace"] is not True)):
             raise UltraChatError(400, "invalid_ultra_chat_request", "Expected {chat_id, title?, initialize_workspace?: true}")
         chat_id, title = body["chat_id"], body.get("title")
@@ -273,10 +273,13 @@ class UltraChatService:
             raise UltraChatError(400, "invalid_ultra_chat_request", "Invalid chat_id")
         if title is not None and not isinstance(title, str):
             raise UltraChatError(400, "invalid_ultra_chat_request", "Invalid title")
+        if "auto_title" in body and (body["auto_title"] is not True or title != "Новый чат"):
+            raise UltraChatError(400, "invalid_ultra_chat_request", "Invalid automatic title request")
         core = _core()
         root, ultra_workspace_id = self._writable_workspace(core, wa_workspace_id, initialize=body.get("initialize_workspace") is True)
         try:
-            result = core.create_chat_record(root, title, chat_id=chat_id, expected_workspace_id=ultra_workspace_id)
+            result = core.create_chat_record(root, title, chat_id=chat_id, expected_workspace_id=ultra_workspace_id,
+                                             auto_title=body.get("auto_title") is True)
         except Exception as exc:  # mapped to a safe code; anything unknown stays a 500 without detail
             raise _write_error(core, exc) from None
         status = 201 if result["created"] else 200
@@ -672,7 +675,12 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
     def capability(self):
         return {**super().capability(), "core_bridge": True, "real_available": False,
                 "real_denial_reason": "provider_admission_required", "chat_preferences": True,
-                "chat_model_preferences": True}
+                "chat_model_preferences": True, "compact_sidebar": True,
+                "personal_workspace_id": self.sidebar().personal_id()}
+
+    def sidebar(self):
+        from .chat_sidebar import ChatSidebar
+        return ChatSidebar(self)
 
     @staticmethod
     def _test_model_path(path):
@@ -688,7 +696,8 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
 
     @staticmethod
     def is_write_path(path):
-        return (OrdinaryCoreChatService._settings_path(path) or OrdinaryCoreChatService._test_model_path(path)
+        from .chat_sidebar import ChatSidebar
+        return (ChatSidebar.is_write_path(path) or OrdinaryCoreChatService._settings_path(path) or OrdinaryCoreChatService._test_model_path(path)
                 or OfflineUltraChatService.is_write_path(path))
 
     def _settings_route(self, path, query):
@@ -699,6 +708,9 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
         return _wa_id(parts[3]), parts[5]
 
     def route(self, path, raw_query):
+        if path == "/ultra/chat/sidebar":
+            parse_query(raw_query, frozenset())
+            return self.sidebar().view
         if self._test_model_path(path):
             ws, chat = self._settings_route(path, raw_query)
             return lambda: self.test_chat_model(ws, chat)
@@ -708,6 +720,10 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
         return super().route(path, raw_query)
 
     def write_route(self, path, raw_query):
+        from .chat_sidebar import ChatSidebar
+        if ChatSidebar.is_write_path(path):
+            parse_query(raw_query, frozenset())
+            return lambda body: self.sidebar().mutate(path, body)
         if self._test_model_path(path):
             ws, chat = self._settings_route(path, raw_query)
             return lambda body: (200, self.test_chat_model(ws, chat, body))

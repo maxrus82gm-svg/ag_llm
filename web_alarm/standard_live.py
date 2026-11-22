@@ -58,7 +58,7 @@ def personal_chat_registration(registry):
         return None
 
 
-def prepare_personal_chat(api):
+def prepare_personal_chat(api, *, initial_chat_id=None):
     """Create the private local chat store only after an explicit owner action.
 
     A browser personal-create POST or optional operator LIVE consent can create
@@ -87,7 +87,11 @@ def prepare_personal_chat(api):
         identity = core.ensure_workspace_storage(root)
         wid = identity["workspace_id"]
         BudgetLedger(root, wid).initialize()
-        core.create_chat_record(root, title="Первый диалог", expected_workspace_id=wid)
+        if initial_chat_id is None:
+            core.create_chat_record(root, title="Первый диалог", expected_workspace_id=wid)
+        else:
+            core.create_chat_record(root, title="Новый чат", chat_id=initial_chat_id,
+                                    expected_workspace_id=wid, auto_title=True)
         record = registry.register(PERSONAL_LABEL, root)
         verified, saved_id = _verified_workspace(api, record.workspace_id)
         if verified != root or saved_id != wid:

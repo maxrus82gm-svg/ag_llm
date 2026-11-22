@@ -206,7 +206,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
             for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local
             and (self._api is None or self._api.model_cards.is_enabled(m.model_id))]
         return {**contract, 'available': fixture or active, 'real_available': active and not session.synthetic if session else False,
-                'mode': 'ORDINARY', 'core_bridge': True, 'chat_preferences': True,
+                'mode': 'ORDINARY', 'core_bridge': True, 'chat_preferences': True, 'compact_sidebar': True,
                 'execution_mode': ('PROTOCOL_TEST' if session.synthetic else 'REAL') if active else 'OFFLINE_APPLICATION' if fixture else 'HOLD',
                 'models': models,
                 'personal_workspace_id': personal.workspace_id if personal else None,
@@ -218,7 +218,8 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
 
     @staticmethod
     def is_write_path(path):
-        return (path in ('/ultra/chat/personal', '/ultra/chat/live/start', '/ultra/chat/live/stop')
+        from .chat_sidebar import ChatSidebar
+        return (ChatSidebar.is_write_path(path) or path in ('/ultra/chat/personal', '/ultra/chat/live/start', '/ultra/chat/live/stop')
                 or OrdinaryApplicationChatService._model_path(path)
                 or OrdinaryCoreChatService._settings_path(path) or UltraChatService.is_write_path(path))
 

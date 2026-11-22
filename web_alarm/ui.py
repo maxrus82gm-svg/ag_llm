@@ -294,6 +294,38 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 #chatView .chat-personal-heading button,#chatView #chatRegisterWorkspace{background:#817cf2;color:#fff;border-color:#9b98ff;font-size:12px;padding:6px 9px}
 #chatView .chat-icon-button{background:transparent;border-color:transparent;color:#a7b7cb}
 #chatView .chat-icon-button:hover{background:#253248;border-color:#526584}
+#chatView .chat-side .compact-heading{display:flex;align-items:center;justify-content:space-between;gap:5px}
+#chatView .chat-side .compact-heading .side-title{margin:0;min-width:0}
+#chatView .compact-heading button{flex:none;min-height:24px;padding:3px 6px}
+#chatView .compact-workspace{width:100%;min-width:0;max-width:100%;box-sizing:border-box;padding:7px}
+#chatView .compact-workspace .chat-workspace-row,#chatView .compact-dialog{display:flex;gap:2px;min-width:0;align-items:center;padding:0}
+#chatView .compact-workspace .chat-workspace-row .chat-pick:before{display:none;content:none}
+#chatView .compact-workspace .chat-workspace-row .chat-pick{color:#92acc6;text-transform:uppercase;letter-spacing:.04em;font-size:10px;font-weight:700}
+#chatView .compact-dialog .chat-pick,#chatView .compact-workspace .chat-workspace-row .chat-pick{min-width:0;flex:1;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:5px 4px;border:1px solid transparent;background:transparent;border-radius:5px;text-align:left;font-size:12px;line-height:1.35}
+#chatView .compact-workspace .chat-workspace-row .chat-pick{font-size:10px}
+#chatView .compact-dialog .chat-pick[aria-current=true]{background:#29283f;color:#f3f2ff;border-color:transparent}
+#chatView .compact-dialog .chat-pick:hover,#chatView .compact-workspace .chat-workspace-row .chat-pick:hover{background:#253248}
+#chatView .compact-dialog .chat-pick strong,#chatView .compact-workspace .chat-pick strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+#chatView .compact-workspace .chat-workspace-row .chat-pick strong{font-weight:700}
+#chatView .compact-dialog .chat-icon-button,#chatView .compact-workspace .chat-icon-button{min-width:23px;width:23px;height:24px;min-height:24px;flex:none;font-size:12px;padding:2px;border-radius:5px}
+#chatView .compact-workspace .chat-icon-button.compact-plus{color:#fff;background:#817cf2;border-color:#9b98ff}
+#chatView .compact-folder{display:flex;align-items:center;gap:3px;margin:3px 0 5px;min-width:0}
+#chatView .compact-folder small{display:block;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;color:#91a0b2}
+#chatView .compact-content{border-top:1px solid #303d50;min-width:0;padding-top:4px}
+#chatView .compact-content:not(:has(.compact-dialog)):not(:has(.chat-name-form:not([hidden]))){border:0;padding:0}
+#chatView .compact-content .chat-picks{gap:1px;min-width:0}
+#chatView .compact-personal-list{gap:1px}
+#chatView .compact-dialog .chat-icon-button:not(:disabled):hover{color:#fff}
+#chatView .compact-icon{font-size:0!important;position:relative}
+#chatView .compact-icon:after{content:'';display:block;width:14px;height:14px;margin:auto;background:currentColor;mask:var(--compact-icon) center/contain no-repeat}
+#chatView .compact-edit{--compact-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 20 4-1 12-12-4-4L4 15zM14 5l4 4'/%3E%3C/svg%3E")}
+#chatView .compact-trash{--compact-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6'/%3E%3C/svg%3E")}
+#chatView .compact-folder-icon{--compact-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 19V5h6l2 3h10v11zM3 19l4-8h15l-4 8z'/%3E%3C/svg%3E")}
+#chatView .compact-workspace .chat-name-form{margin:5px 0;min-width:0}
+#chatView .compact-workspace .chat-name-form input{width:100%;min-width:0}
+#chatView .compact-workspace .chat-name-form button{font-size:11px;padding:3px 5px}
+#chatView .compact-personal-list .chat-name-form{margin:5px 0}
+
 #chatView .muted{color:var(--chat-muted)}
 #chatView .msg{background:#222d3d;color:#e5edf6;border-color:transparent;border-radius:14px;padding:14px 17px;max-width:min(88%,880px);min-width:min(220px,100%);font-size:13px;flex:none}
 #chatView .msg[data-role=user]{background:#373565;color:#f4f1ff;border-color:transparent}
@@ -2352,6 +2384,7 @@ function chatCount(map){return Object.values(map||{}).reduce((sum,n)=>sum+(Numbe
 async function loadChatAccess(){
   const access=await api('/ui/ultra-chat/capability'),c=access?.ultra_chat;
   chatTurn.ordinary=access?.turn_test?.mode==='ORDINARY';
+  chatTurn.compact=access?.turn_test?.compact_sidebar===true;
   chatTurn.executionMode=access?.turn_test?.execution_mode;
   chatTurn.personalWorkspaceId=typeof access?.turn_test?.personal_workspace_id==='string'?access.turn_test.personal_workspace_id:null;
   chatTurn.liveWorkspaceId=typeof access?.turn_test?.live_workspace_id==='string'?access.turn_test.live_workspace_id:null;
@@ -2394,6 +2427,7 @@ function chatIcon(label,title,onClick,enabled=true){
   b.disabled=!enabled;b.onclick=e=>{e?.stopPropagation?.();return onClick()};return b
 }
 function renderChatWorkspaces(){
+  if(chatTurn.compact)return renderCompactWorkspaces();
   const selected=chat.workspace;
   const personal=chat.workspaces.find(w=>w.wa_workspace_id===chatTurn.personalWorkspaceId&&w.history==='ok');
   $('chatPersonalNew').hidden=!chatTurn.ordinary;
@@ -2422,6 +2456,129 @@ function renderChatWorkspaces(){
   $('chatPersonalList').replaceChildren(...groups.filter(g=>g.personal).map(g=>g.group));
   $('chatWorkspaceList').replaceChildren(...groups.filter(g=>!g.personal).map(g=>g.group));
   syncChatActions()
+}
+function compactIcon(label,title,action,enabled=true,kind=''){
+  const b=chatIcon(label,title,action,enabled);
+  if(kind)b.className+=' compact-'+kind+(kind==='plus'?'':' compact-icon');
+  return b
+}
+function compactDialogRow(w,c){
+  const ws=w.wa_workspace_id,ok=c.status==='ok',row=element('div',null,'chat-dialog-row compact-dialog');
+  const label=ok?c.title:'Диалог недоступен';
+  const b=chatPick(label,'',chat.workspace===ws&&chat.chat===c.chat_id,async()=>{
+    if(chat.workspace!==ws)await selectChatWorkspace(ws);
+    if(chat.workspace===ws&&chat.chat!==c.chat_id)await selectChat(c.chat_id)
+  });
+  b.title=label;b.disabled=!ok;b.setAttribute('data-status',c.status);
+  row.append(b,compactIcon('✎','Переименовать чат «'+label+'»',async()=>{
+    if(chat.workspace!==ws)await selectChatWorkspace(ws);
+    if(chat.workspace===ws&&chat.chat!==c.chat_id)await selectChat(c.chat_id);
+    if(chat.workspace===ws&&chat.chat===c.chat_id)openChatName('rename')
+  },ok&&!chatEdit.busy,'edit'),compactIcon('×','Убрать чат «'+label+'» в архив',()=>archiveCompact(ws,c.chat_id),ok&&!chatEdit.busy,'trash'));
+  return row
+}
+function renderCompactWorkspaces(){
+  const nested=['chatWorkspaceNameForm','chatListState','chatList','chatNameForm'].map($);
+  $('chatListDock').append(...nested);
+  const [workspaceForm,listState,chatList,nameForm]=nested;
+  const personal=$('chatPersonalList');personal.className='chat-picks compact-personal-list';
+  const plus=$('chatPersonalNew');plus.hidden=false;plus.disabled=chatEdit.busy||chat.creatingWorkspace;
+  plus.textContent='+';plus.title='Новый личный чат';plus.setAttribute('aria-label','Новый личный чат');
+  if(plus.parentNode)plus.parentNode.className='chat-personal-heading compact-heading';
+  $('chatRegisterWorkspace').title='Создать пустой Workspace';
+  text('chatSidebarNote','');
+  const groups=[],personalRows=[];
+  for(const w of chat.workspaces){
+    const ws=w.wa_workspace_id,active=chat.workspace===ws;
+    const chats=active?chat.chats:(w.chats||[]);
+    if(w.personal||ws===chatTurn.personalWorkspaceId){
+      if(active){chatList.replaceChildren(...chats.map(c=>compactDialogRow(w,c)));personalRows.push(chatList,nameForm)}
+      else personalRows.push(...chats.map(c=>compactDialogRow(w,c)));
+      continue
+    }
+    const g=element('div',null,'chat-workspace-group compact-workspace');g.dataset.active=String(active);g.dataset.workspaceId=ws;
+    const head=element('div',null,'chat-workspace-row');
+    const b=chatPick(w.display_name,'',active,()=>{if(!active)return selectChatWorkspace(ws)});b.title=w.display_name;
+    head.append(b,compactIcon('✎','Переименовать Workspace',()=>openWorkspaceName(ws),!chatEdit.busy,'edit'),
+      compactIcon('×','Убрать Workspace в архив',()=>archiveCompact(ws),!chatEdit.busy,'trash'),
+      compactIcon('+','Новый чат в Workspace',()=>createCompactChat(ws),!chatEdit.busy&&['ok','missing_history'].includes(w.history),'plus'));
+    g.append(head);
+    const folder=element('div',null,'compact-folder'),path=element('small',w.folder||'Папка не выбрана');
+    path.title=w.folder||'Папка не выбрана';
+    folder.append(compactIcon('📁','Выбрать папку Workspace',()=>attachCompactFolder(ws),!chatEdit.busy,'folder-icon'),path);g.append(folder);
+    if(active)g.append(workspaceForm);
+    const list=element('div',null,'compact-content');
+    if(active){chatList.replaceChildren(...chats.map(c=>compactDialogRow(w,c)));list.append(chatList,nameForm)}
+    else list.append(...chats.map(c=>compactDialogRow(w,c)));
+    if(chats.length||active&&!nameForm.hidden)g.append(list);
+    else if(active)g.append(list); // keep active editors connected; CSS removes the empty separator
+    groups.push(g)
+  }
+  personal.replaceChildren(...personalRows);
+  $('chatWorkspaceList').replaceChildren(...groups);
+  syncChatActions()
+}
+async function createCompactChat(ws=null){
+  if(chatEdit.busy||chat.creatingWorkspace)return;
+  const id=newChatId();
+  chatEdit.busy=true;renderCompactWorkspaces();
+  try{
+    const body=ws?{workspace_id:ws,chat_id:id}:{chat_id:id};
+    const result=await chatPost('/ultra/chat/sidebar/'+(ws?'chat':'personal'),body);
+    if(result?.chat?.chat_id!==id||typeof result.wa_workspace_id!=='string')throw Error('unconfirmed');
+    chat.workspace=result.wa_workspace_id;chat.expanded=chat.workspace;chat.chat=id;
+    chat.epoch++;chat.chats=[];chat.messages=[];chat.page=null;clearChatHistory('Новый чат');
+    await loadChatAccess();await loadChatWorkspaces();
+    if(chat.workspace===result.wa_workspace_id&&chat.chat===id)await selectChat(id);
+  }catch(_){notice('chatError','Не удалось подтвердить создание чата. Обновите список перед повтором.')}
+  finally{chatEdit.busy=false;renderCompactWorkspaces()}
+}
+async function createCompactWorkspace(){
+  if(chat.creatingWorkspace||chatEdit.busy)return;
+  chat.creatingWorkspace=true;$('chatRegisterWorkspace').disabled=true;
+  try{
+    const ws='ws_'+newChatId().slice(5);
+    const result=await chatPost('/ultra/chat/sidebar/workspace',{workspace_id:ws});
+    if(result?.wa_workspace_id!==ws)throw Error('unconfirmed');
+    chat.epoch++;chat.workspace=ws;chat.expanded=ws;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;
+    clearChatHistory('Создайте чат');await loadChatWorkspaces();
+  }catch(_){notice('chatError','Не удалось подтвердить создание Workspace. Обновите список перед повтором.')}
+  finally{chat.creatingWorkspace=false;$('chatRegisterWorkspace').disabled=false;renderCompactWorkspaces()}
+}
+async function archiveCompact(ws,cid=null){
+  if(chatEdit.busy||chatTurn.busy||chat.creatingWorkspace)return;
+  if(!window.confirm(cid?'Убрать чат из списка? История сохранится.':'Убрать Workspace из списка? Папка и история сохранятся.'))return;
+  chatEdit.busy=true;
+  try{
+    const body={workspace_id:ws};if(cid)body.chat_id=cid;
+    const result=await chatPost('/ultra/chat/sidebar/archive',body);
+    if(result?.archived!==true)throw Error('unconfirmed');
+    if(chat.workspace===ws&&(!cid||chat.chat===cid)){
+      if(!cid)chat.workspace=null;
+      chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;chat.epoch++;clearChatHistory('Выберите диалог');
+    }
+    await loadChatWorkspaces()
+  }catch(_){notice('chatError','Не удалось подтвердить удаление из списка. Историю не удаляем.')}
+  finally{chatEdit.busy=false;renderCompactWorkspaces()}
+}
+async function attachCompactFolder(ws){
+  if(chat.creatingWorkspace||chatEdit.busy)return;
+  chat.creatingWorkspace=true;
+  try{
+    let folder=null;
+    if(!stage5Offline){
+      const capability=(await api('/ui/capabilities'))?.folder_picker;
+      if(!capability?.available||typeof capability.token!=='string')throw Error('picker unavailable');
+      const picked=await api('/ui/pick-workspace-folder',{method:'POST',body:{},headers:{'X-WebAlarm-Folder-Token':capability.token},timeoutMs:125000});
+      if(picked?.status==='CANCELLED')return;
+      if(picked?.status!=='SELECTED'||typeof picked.workspace_root!=='string')throw Error('picker invalid');
+      folder=picked.workspace_root;
+    }
+    const result=await chatPost('/ultra/chat/sidebar/folder',{workspace_id:ws,folder});
+    if(typeof result?.folder!=='string')throw Error('unconfirmed');
+    await loadChatWorkspaces();
+  }catch(_){notice('chatError','Не удалось привязать папку. История остаётся на прежнем месте.')}
+  finally{chat.creatingWorkspace=false;renderCompactWorkspaces()}
 }
 function openWorkspaceName(id){
   if(chat.renamingWorkspace?.busy||chatEdit.busy)return;
@@ -2461,6 +2618,7 @@ async function saveWorkspaceName(){
   }finally{edit.busy=false;$('chatWorkspaceNameSave').disabled=false}
 }
 function renderChatList(){
+  if(chatTurn.compact)return renderCompactWorkspaces();
   const workspace=chat.workspace;
   $('chatList').replaceChildren(...chat.chats.map(c=>{
     const ok=c.status==='ok',row=element('div',null,'chat-dialog-row');
@@ -2527,6 +2685,7 @@ function validChatHistory(d){
 }
 function renderChatHistory(data,older=false){
   text('chatTitle',data.chat?.title||chat.chats.find(c=>c.chat_id===chat.chat)?.title||'Диалог');
+  if(chatTurn.compact&&typeof data.chat?.title==='string'){const item=chat.chats.find(c=>c.chat_id===chat.chat);if(item&&item.title!==data.chat.title){item.title=data.chat.title;renderCompactWorkspaces()}}
   const notes=[];
   if(data.history_state==='unavailable')notes.push(['error','История недоступна: '+chatReason(data.reason)+'.']);
   else if(data.history_state==='too_large')notes.push(['error',chatReason('history_too_large')+'. История не показана и не обрезана.']);
@@ -2669,15 +2828,18 @@ async function chooseChatModel(id){
 async function loadChatWorkspaces(){
   const epoch=chat.epoch;text('chatWorkspaceState','Загружаем Workspace…');notice('chatError','');
   try{
-    const data=await chatGet('/ultra/chat/workspaces');
+    if(!chat.token)await loadChatAccess();
+    const data=await chatGet(chatTurn.compact?'/ultra/chat/sidebar':'/ultra/chat/workspaces');
     if(epoch!==chat.epoch)return;
+    if(chatTurn.compact)chatTurn.personalWorkspaceId=data.personal_workspace_id??null;
     if(!validChatWorkspaces(data))throw Error('Некорректный ответ сервера о Workspace');
     text('chatAccess',chatTurn.ordinary?(chatTurn.available?'GigaChat · провайдер подключён':'Личные чаты доступны · отправка GigaChat пока закрыта'):
       chatTurn.available?'TEST · локальный имитатор · без LLM':'Данные проверяет сервер · сообщения не отправляются');chat.workspaces=data.workspaces;
-    text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.length?'':'Нет зарегистрированных Workspace. Нажмите «+ Создать Workspace».');
+    text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.some(w=>!chatTurn.compact||!w.personal)?'':chatTurn.compact?'Нет Workspace':'Нет зарегистрированных Workspace. Нажмите «+ Создать Workspace».');
     if(chat.workspace&&!chat.workspaces.some(w=>w.wa_workspace_id===chat.workspace)){chat.workspace=null;chat.expanded=null;chat.chat=null;chat.chats=[];renderChatList();clearChatHistory('Выберите диалог')}
     const selected=chat.workspaces.find(w=>w.wa_workspace_id===chat.workspace);
     text('chatWorkspaceName',selected?selected.display_name:'Ultra Chat');
+    if(chatTurn.compact&&selected)chat.chats=selected.chats||[];
     renderChatWorkspaces();
     if(chat.workspace){await loadChatList();return true}
     const saved=modelChat()?testChatSelection():null;
@@ -2693,11 +2855,11 @@ async function loadChatWorkspaces(){
 function selectChatWorkspace(id){
   if(chat.renamingWorkspace?.busy)return Promise.resolve();
   closeWorkspaceName();
-  if(chat.workspace===id){chat.expanded=chat.expanded===id?null:id;renderChatWorkspaces();return Promise.resolve()}
+  if(chat.workspace===id){if(!chatTurn.compact)chat.expanded=chat.expanded===id?null:id;renderChatWorkspaces();return Promise.resolve()}
   closeChatName();
   $('chatNameForm').hidden=true;// a pending save of the old Workspace must not expose its editor in the new one
   chat.epoch++;chat.workspace=id;chat.expanded=id;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;chat.olderBusy=false;
-  const w=chat.workspaces.find(item=>item.wa_workspace_id===id);text('chatWorkspaceName',w?w.display_name:'Ultra Chat');
+  const w=chat.workspaces.find(item=>item.wa_workspace_id===id);if(chatTurn.compact)chat.chats=w?.chats||[];text('chatWorkspaceName',w?w.display_name:'Ultra Chat');
   renderChatWorkspaces();renderChatList();clearChatHistory('Выберите диалог');
   return loadChatList()
 }
@@ -2708,7 +2870,11 @@ async function loadChatList(){
     const data=await chatGet('/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats');
     if(epoch!==chat.epoch)return;
     if(!validChatList(data))throw Error('Некорректный ответ сервера о диалогах');
-    notice('chatError','');chat.chats=data.chats;const hidden=chatCount(data.excluded);
+    notice('chatError','');
+    const entry=chat.workspaces.find(w=>w.wa_workspace_id===chat.workspace);
+    chat.chats=chatTurn.compact?data.chats.filter(c=>!entry?.hidden_chats?.includes(c.chat_id)):data.chats;
+    if(chatTurn.compact&&entry)entry.chats=chat.chats;
+    const hidden=chatCount(data.excluded);
     text('chatListState',data.state!=='ok'?chatReason(data.reason):(data.chats.length?'Диалогов: '+data.chats.length:'В этом Workspace нет сохранённых диалогов.')+(hidden?' · не показано посторонних записей: '+hidden:''));
     if(chat.chat&&!chat.chats.some(c=>c.chat_id===chat.chat&&c.status==='ok')){chat.chat=null;clearChatHistory('Выберите диалог')}
     renderChatList();
@@ -2843,6 +3009,7 @@ async function createTestWorkspace(){
 }
 async function createChatWorkspace(){
   if(chat.creatingWorkspace||chat.renamingWorkspace?.busy||chatEdit.busy)return;
+  if(chatTurn.compact)return createCompactWorkspace();
   if(stage5Offline){
     $('chatTestWorkspaceForm').hidden=false;$('chatTestWorkspaceTitle').value='';$('chatTestWorkspaceTitle').focus();
     return
@@ -2872,6 +3039,7 @@ async function createChatWorkspace(){
   }finally{chat.creatingWorkspace=false;$('chatRegisterWorkspace').disabled=false}
 }
 async function createPersonalChat(){
+  if(chatTurn.compact)return createCompactChat();
   const target=chatTurn.personalWorkspaceId;
   const personal=chat.workspaces.find(w=>w.wa_workspace_id===target&&w.history==='ok');
   if(!chatTurn.ordinary||chatEdit.busy)return;

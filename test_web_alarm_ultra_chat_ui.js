@@ -1643,3 +1643,85 @@ test('Colibri composer resize and copy are local-only; message metrics reflect s
   assert.equal(h.run("chatMessage({message_id:'old',role:'assistant',outcome:'legacy',text:'old'}).children.length"),3);
   assert.equal(h.run("chatMessage({message_id:'large',role:'assistant',outcome:'legacy',too_large_for_page:true,size_bytes:100}).children.length"),2);
 });
+
+test('Compact sidebar creates personal and empty Workspace directly, renders all nested lists, archives by ID', async()=>{
+  let personal=null, workspaces=[], pendingId=null;
+  const personalId='ws_'+'1'.repeat(32);
+  const base='/ultra/chat/sidebar';
+  const routes=offlineRoutes({
+    '/ui/ultra-chat/capability':()=>({...cap(),turn_test:{available:true,mode:'TEST_OFFLINE',compact_sidebar:true,
+      chat_model_preferences:true,personal_workspace_id:personal&&personalId,
+      models:[{model_id:'gigachat_2_pro',display_name:'TEST Pro'}]}}),
+    [base]:()=>({state:'ok',workspaces:[...(personal?[personal]:[]),...workspaces],personal_workspace_id:personal&&personalId}),
+    [base+'/personal']:opts=>{
+      const body=JSON.parse(opts.body);
+      assert.deepEqual(Object.keys(body),['chat_id']);
+      const c=chatItem(body.chat_id,'Новый чат');
+      personal={...ws(personalId,'Личные чаты'),personal:true,chats:[c],hidden_chats:[]};
+      install(personal);return {wa_workspace_id:personalId,chat:c};
+    },
+    [base+'/workspace']:opts=>{
+      const body=JSON.parse(opts.body);
+      const w={...ws(body.workspace_id,'Новый Workspace','missing_history'),folder:null,chats:[],hidden_chats:[]};
+      workspaces.push(w);install(w);return {wa_workspace_id:w.wa_workspace_id};
+    },
+    [base+'/chat']:opts=>{
+      const body=JSON.parse(opts.body), w=workspaces.find(w=>w.wa_workspace_id===body.workspace_id);
+      const c=chatItem(body.chat_id,'Новый чат'); pendingId=body.chat_id;w.chats.push(c);w.history='ok';install(w);
+      return {wa_workspace_id:w.wa_workspace_id,chat:c};
+    },
+    [base+'/archive']:opts=>{
+      const body=JSON.parse(opts.body), w=[personal,...workspaces].find(w=>w.wa_workspace_id===body.workspace_id);
+      if(body.chat_id){w.hidden_chats.push(body.chat_id);w.chats=w.chats.filter(c=>c.chat_id!==body.chat_id)}
+      else workspaces=workspaces.filter(x=>x!==w);
+      return {archived:true};
+    },
+    [base+'/folder']:opts=>{
+      const body=JSON.parse(opts.body);assert.equal(body.folder,null);
+      const w=workspaces.find(w=>w.wa_workspace_id===body.workspace_id);
+      w.folder='TEST · folder';return {folder:w.folder};
+    }
+  });
+  let h;
+  function install(w){
+    const a='/ultra/chat/workspaces/'+w.wa_workspace_id+'/chats';
+    h.routes.set(a,()=>({state:'ok',chats:w.chats,excluded:{}}));
+    for(const c of w.chats){
+      const b=a+'/'+c.chat_id;
+      h.routes.set(b+'/messages?limit=50',()=>page([], {wa_workspace_id:w.wa_workspace_id,chat_id:c.chat_id,chat:c}));
+      h.routes.set(b+'/model',()=>({model_ref:'gigachat_2_pro',persisted:true}));
+      h.routes.set(b+'/turns/latest',()=>({turn:null,text:null}));
+    }
+  }
+  h=harness({offline:true,routes});await settle();
+  assert.equal(h.el('chatPersonalNew').hidden,false);
+  await h.el('chatPersonalNew').onclick();await settle();
+  assert.equal(h.run('chat.workspace'),personalId);
+  assert.equal(h.run('chat.chat'),personal.chats[0].chat_id);
+  assert.equal(h.el('chatInput').disabled,false);
+  assert.equal(h.run('chatTurn.testModelLoaded'),true);
+  assert.equal(h.chatCalls().filter(c=>c.method==='POST'&&c.url.endsWith('/turns')).length,0);
+  assert.equal(h.el('chatNameForm').hidden,true);
+  await h.el('chatRegisterWorkspace').onclick();await settle();
+  assert.equal(h.el('chatTestWorkspaceForm').hidden,true);
+  assert.equal(h.el('chatWorkspaceList').children.length,1);
+  assert.equal(h.el('chatPersonalList').children.length,1,'personal chat remains visible when another workspace selected');
+  let group=h.el('chatWorkspaceList').children[0];
+  assert.equal(group.children[0].children.length,4);
+  assert.match(group.children[1].textContent,/Папка не выбрана/);
+  await group.children[1].children[0].onclick();await settle();
+  group=h.el('chatWorkspaceList').children[0];
+  assert.match(group.children[1].textContent,/TEST · folder/);
+  await group.children[0].children[3].onclick();await settle();
+  assert.equal(h.run('chat.chat'),pendingId);
+  assert.equal(h.el('chatNameForm').hidden,true);
+  assert.equal(h.el('chatList').children.length,1);
+  assert.equal(h.el('chatList').children[0].children.length,3);
+  assert.equal(h.el('chatPersonalList').children.length,1);
+  await h.el('chatList').children[0].children[2].onclick();await settle();
+  assert.equal(h.el('chatList').children.length,0);
+  group=h.el('chatWorkspaceList').children[0];
+  await group.children[0].children[2].onclick();await settle();
+  assert.equal(h.el('chatWorkspaceList').children.length,0);
+  assert.equal(h.el('chatPersonalList').children.length,2,'active personal list and editor dock');
+});

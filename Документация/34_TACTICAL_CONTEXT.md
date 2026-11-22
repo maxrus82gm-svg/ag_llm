@@ -1,5 +1,9 @@
 # Оперативная память проекта — №34
 
+## CURRENT 22.11.2026 — компактный sidebar
+TASK CHATGPT-WUA-COMPACT-SIDEBAR-20261122-001 / H-CHATGPT-000009, #653; владелец согласовал минимальные строки чатов + рамки Workspace; прямое создание без диалогов, привязка папки отдельно, архив без физического удаления, автоназвание первого RAW до 4 слов/40 символов. AUTHOR 206 JS + 4 new HTTP/core + actual Chrome TEST + activation rerun PASS; D8 baseline FAIL, owner GUI/CI/LIVE NOT RUN. Связь каталога — metadata, не миграция истории/прав; отчёт reports/CHATGPT-WUA-COMPACT-SIDEBAR-20261122-001/report.md. После owner merge проверить обычный TEST. 🟢 ОБНОВИТЬ GITHUB — №653 при готовом опубликованном коммите; пользователь Fetch → Choose GPT → Merge → Push. Все прочие OPEN сохранены.
+
+
 
 ## OWNER GO 22.11.2026 — межпроектная работа
 
