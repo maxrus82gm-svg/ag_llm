@@ -769,14 +769,24 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
     def messages(self, wa_workspace_id, chat_id, before, limit):
         page = super().messages(wa_workspace_id, chat_id, before, limit)
         try:
-            page["usage_summary"] = self.chat_usage(wa_workspace_id, chat_id)
+            page["usage_summary"] = self._project_message_usage(wa_workspace_id, chat_id, page)
         except (UltraChatError, OSError, ValueError, KeyError, TypeError):
             # Optional display projection is not authority and never replaces
             # missing/corrupt accounting with a fabricated zero.
             page["usage_summary"] = {"available": False, "synthetic": True}
         return page
 
-    def chat_usage(self, wa_workspace_id, chat_id):
+    def _project_message_usage(self, wa_workspace_id, chat_id, page):
+        ids = {m["message_id"] for m in page["messages"]
+               if m["role"] == "assistant" and not m.get("too_large_for_page")}
+        summary = self.chat_usage(wa_workspace_id, chat_id, message_ids=ids)
+        metrics = summary.pop("message_metrics", {})
+        for item in page["messages"]:
+            if item["message_id"] in metrics:
+                item["metrics"] = metrics[item["message_id"]]
+        return summary
+
+    def chat_usage(self, wa_workspace_id, chat_id, *, message_ids=None):
         """Read existing durable attempts once each; no ledger or stored totals."""
         import run_store
         from .turn_service import TURN
@@ -786,6 +796,7 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
         known, missing = dict.fromkeys(keys, 0), dict.fromkeys(keys, 0)
         cached_input = dict(known=0, missing=0, full_input_known=0, full_input_missing=0)
         last, seen = None, set()
+        message_metrics = {}
         with turns._session(root, workspace_id, chat_id):
             index = run_store.load_workspace_run_index(root)
             entries = [(int(entry["display_id"].split("-")[-1]), run_id)
@@ -807,6 +818,16 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
                     raise ValueError("Duplicate attempt identity")
                 seen.add(attempt)
                 usage = view.get("usage") or {}
+                if (message_ids is not None and view["state"] == "SUCCEEDED"
+                        and view["assistant_message_id"] in message_ids):
+                    metric = {"usage": {key: usage.get(key) for key in (*keys, "precached_prompt_tokens")},
+                              "synthetic": view.get("execution_mode") != "REAL"}
+                    started = next((r.get("timestamp") for r in records if r["event"] == "turn_started"), None)
+                    ended = next((r.get("timestamp") for r in records if r["event"] == "turn_result"), None)
+                    if (type(started) in (int, float) and type(ended) in (int, float)
+                            and 0 <= ended - started < float("inf")):
+                        metric["elapsed_seconds"] = ended - started
+                    message_metrics[view["assistant_message_id"]] = metric
                 cached = usage.get('precached_prompt_tokens')
                 if cached is None:
                     cached_input['missing'] += 1
@@ -825,7 +846,8 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
                 last = {"turn_id": run_id, "state": view["state"], "usage": usage}
         return {"available": True, "synthetic": True, "attempts": len(seen),
                 "known": known, "missing": missing, "complete": missing["total_tokens"] == 0,
-                "last": last, 'cached_input': cached_input}
+                "last": last, 'cached_input': cached_input,
+                **({"message_metrics": message_metrics} if message_ids is not None else {})}
 
     def _context(self, root, workspace_id, chat_id, turns):
         # Actual projection happens in adapter.freeze under Turn's shared writer

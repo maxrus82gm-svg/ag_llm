@@ -6,7 +6,7 @@ INDEX_HTML = r'''<!doctype html>
 <meta charset="utf-8">
 <meta id="waUiVersion" name="web-alarm-ui-version" content="__WA_UI_VERSION__">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Web Alarm Workspace</title>
+<title>Web Alarm Ultra</title>
 <style>
 :root{color-scheme:dark;--bg:#10151d;--panel:#17212c;--line:#344454;--text:#edf3fa;--muted:#adbdcd;--blue:#8ec9ff;--green:#8ee0ba;--amber:#ffd28e;--red:#ffaaaa;--purple:#d1b4ff;font-family:system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
 
@@ -279,6 +279,65 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 @media(max-width:1200px){.layout{grid-template-columns:190px minmax(0,1fr) 240px}.columns{grid-template-columns:1fr}main{padding:22px 18px}.overview h2{font-size:24px}}
 @media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}.top-nav{order:3;width:100%;justify-content:flex-start}.evm{height:auto;padding:18px 12px;overflow:visible}.evm-columns{grid-template-columns:1fr}}
 @media(max-width:850px){.chat-layout{display:flex;flex-direction:column;height:auto}.chat-side{border-right:0;border-bottom:1px solid var(--line);overflow:visible;max-height:none}.chat-main{padding:16px 12px}.chat-history{overflow:visible}.chat-composer .row{flex-wrap:wrap}}
+
+/* Ultra Chat: Colibri visual language; deliberately scoped to chat, not the other workspaces. */
+#chatView{--chat-bg:#0c1017;--chat-panel:#151b25;--chat-card:#1c2634;--chat-accent:#8f8cff;--chat-line:#303d50;--chat-muted:#91a0b2;background:var(--chat-bg)}
+#chatView .chat-side{background:var(--chat-bg);padding:16px 12px;border-color:#283140}
+#chatView .chat-main{background:var(--chat-panel);padding:16px 20px 12px;gap:9px}
+#chatView .chat-pick{background:var(--chat-card);border-color:var(--chat-line);border-radius:10px;color:#ccd8e6;padding:9px 10px;font-size:13px}
+#chatView .chat-pick:hover{background:#253248}
+#chatView .chat-pick[aria-current=true]{background:#282640;border-color:#8f8aff;box-shadow:none}
+#chatView .chat-workspace-group{border-color:#303d50;background:#151b25}
+#chatView .chat-workspace-group[data-active=true]{border-color:#8f8aff;background:#19212d}
+#chatView .chat-workspace-row .chat-pick{background:transparent}
+#chatView .chat-workspace-row .chat-pick:before{color:#8f8cff}
+#chatView .chat-personal-heading button,#chatView #chatRegisterWorkspace{background:#817cf2;color:#fff;border-color:#9b98ff;font-size:12px;padding:6px 9px}
+#chatView .chat-icon-button{background:transparent;border-color:transparent;color:#a7b7cb}
+#chatView .chat-icon-button:hover{background:#253248;border-color:#526584}
+#chatView .muted{color:var(--chat-muted)}
+#chatView .msg{background:#222d3d;color:#e5edf6;border-color:transparent;border-radius:14px;padding:14px 17px;max-width:min(88%,880px);min-width:min(220px,100%);font-size:13px;flex:none}
+#chatView .msg[data-role=user]{background:#373565;color:#f4f1ff;border-color:transparent}
+#chatView .msg[data-outcome=failed]{background:#2c1d23;border-color:#86505b}
+#chatView .msg-meta{color:#a7b7cb;font-size:11px}
+#chatView .msg-text{line-height:1.65}
+#chatView .msg-footer{display:flex;align-items:center;gap:8px;min-height:25px;flex-wrap:wrap;color:#a7b7cb;font-size:11px}
+#chatView .msg-copy{position:relative;width:26px;height:26px;padding:0;background:transparent;border:1px solid transparent;color:#a7b7cb;font-size:0}
+#chatView .msg-copy:before,#chatView .msg-copy:after{content:'';position:absolute;width:9px;height:9px;border:1px solid currentColor;border-radius:2px}
+#chatView .msg-copy:before{top:6px;left:6px}
+#chatView .msg-copy:after{top:9px;left:9px;background:#222d3d}
+#chatView .msg[data-role=user] .msg-copy:after{background:#373565}
+#chatView .msg-copy:hover{border-color:#526584;color:#eef3fa}
+#chatView .msg-metrics{color:#d7bd89;font-size:11px;line-height:1.4;overflow-wrap:anywhere}
+#chatView .chat-composer{background:#151b25;border:1px solid #303d50;border-radius:13px;padding:9px 12px 12px;gap:5px;flex:none}
+#chatView .chat-composer .row{align-items:center;flex-wrap:wrap;gap:5px}
+#chatView .chat-composer .row label{font-size:12px;color:#a7b7cb}
+#chatView .composer-actions{margin-left:auto;min-width:0;flex-wrap:wrap;justify-content:flex-end}
+#chatView #chatModelPick{background:#172332;border-color:#526584;padding:5px 9px;font-size:12px;max-width:100%;overflow-wrap:anywhere}
+#chatView .chat-model-menu{background:#151b25;border-color:#526584}
+#chatView .chat-model-menu button[aria-selected=true]{background:#282640;border-color:#8f8aff}
+#chatView #chatComposerNote{margin:0;font-size:11px;overflow-wrap:anywhere}
+#chatView .chat-resize{display:block;position:relative;width:100%;height:12px;min-height:12px;border:0;padding:0;background:transparent;cursor:ns-resize;touch-action:none}
+#chatView .chat-resize:after{content:'';position:absolute;left:calc(50% - 15px);top:4px;width:30px;height:3px;border-radius:3px;background:#a7b7cb}
+#chatView .chat-resize:hover:after,#chatView .chat-resize:focus-visible:after{background:#8f8cff}
+#chatView .chat-input-wrap{position:relative;min-width:0}
+#chatView #chatInput{display:block;width:100%;height:140px;min-height:72px;max-height:min(42dvh,420px);resize:none;padding:12px 43px 36px 12px;background:#111824;border:1px solid #404d63;border-radius:10px;color:#f0f4fa;font-size:13px;line-height:1.55}
+#chatView #chatInput:focus{outline:2px solid #7675c9;outline-offset:1px}
+#chatView #chatSend{position:absolute;right:8px;bottom:8px;padding:5px 8px;border-radius:7px;background:#373565;border-color:#7675c9;min-height:29px;color:#f4f1ff;font-size:12px}
+#chatView #chatSend[data-recover=false]{font-size:0;width:30px;padding:0}
+#chatView #chatSend[data-recover=false]:after{content:'↵';font-size:19px;line-height:1.1}
+#chatView #chatSend:hover:not(:disabled){background:#514e89}
+#chatView #chatMic{font-size:13px;padding:4px 6px}
+@media(min-width:1250px){
+ body:has(#chatView:not([hidden])) .top{background:#121720;padding-left:16px}
+ body:has(#chatView:not([hidden])) .top-nav{position:fixed;left:0;top:73px;bottom:0;width:174px;padding:18px 12px;background:#121720;border-right:1px solid #283140;flex-direction:column;flex-wrap:nowrap;justify-content:flex-start;align-items:stretch;overflow:auto}
+ body:has(#chatView:not([hidden])) .top-nav button{white-space:normal;text-align:left;padding:10px;background:transparent;border-color:transparent;font-size:13px}
+ body:has(#chatView:not([hidden])) .top-nav button[aria-pressed=true]{background:#29273f;border-color:transparent;box-shadow:inset 3px 0 #8986ff;color:#d8d6ff}
+ body:has(#chatView:not([hidden])) .brand .logo{background:#817cf2;border-color:#9b98ff;color:#fff}
+ #chatView{margin-left:174px}
+ #chatView .chat-layout{grid-template-columns:248px minmax(0,1fr)}
+}
+@media(max-width:850px){#chatView .chat-main{padding:12px 10px}#chatView .msg{max-width:95%}}
+
 </style>
 </head>
 <body>
@@ -287,7 +346,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <div class="brand">
 <span class="logo" aria-hidden="true">WA</span>
 <div>
-<h1>Web Alarm Workspace</h1>
+<h1>Web Alarm Ultra</h1>
 <div class="live">Постановки · этапы · восстановление</div>
 </div>
 </div>
@@ -361,9 +420,10 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <p id="chatPreferencesStatus" role="status" aria-live="polite"></p></details>
 <div id="chatTurnControls" class="chat-request-status" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button><p id="chatTurnCheckResult" class="muted" role="status" aria-live="polite"></p></div>
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
-<label for="chatInput">Сообщение</label>
-<textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea>
-<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Выбрать модель для следующего сообщения">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
+<div class="row"><label for="chatInput">Сообщение</label><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Выбрать модель для следующего сообщения">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button></span></div>
+<p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p>
+<button type="button" id="chatComposerGrip" class="chat-resize" role="separator" aria-label="Высота поля сообщения" aria-orientation="horizontal" aria-valuemin="72" aria-valuemax="420" aria-valuenow="140" title="Потяните вверх или вниз; стрелки клавиатуры меняют высоту"></button>
+<div class="chat-input-wrap"><textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea><button type="button" id="chatSend" disabled data-recover="false" title="Отправить (Enter)">Отправить</button></div>
 </form>
 </div>
 </div>
@@ -2169,6 +2229,7 @@ function renderTurnComposer(){
   else if(chatTurn.available){text('chatComposerNote','TEST · локальный имитатор. Выбранная модель не вызывается. Enter — отправить, Shift+Enter — новая строка.');$('chatInput').placeholder='Сообщение TEST-имитатору';text('chatModel','TEST · локальный имитатор');text('chatModelPick','TEST · без LLM');text('chatSidebarNote','TEST: ответы создаёт локальный имитатор. История хранится общим ядром Ultra.')}
   else{text('chatComposerNote','Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.')}
   $('chatSend').textContent=turnPending()?'Повторить / восстановить':'Отправить';
+  $('chatSend').setAttribute('data-recover',String(Boolean(turnPending())));$('chatSend').title=turnPending()?'Повторить / восстановить':'Отправить (Enter)';
   if(chatTurn.testModelPreferences){
     const blocked=chatTurn.testModelBusy||(!chatTurn.testModelLoaded&&!pending?.model);
     $('chatInput').disabled=$('chatInput').disabled||blocked;
@@ -2438,6 +2499,24 @@ function chatMessage(m){
   if(m.model&&!failed)meta.append(element('span',m.model,'tag'));
   const outcome=CHAT_OUTCOME[m.outcome];if(outcome)meta.append(element('span',outcome[0],'tag '+outcome[1]));
   li.append(meta,m.too_large_for_page?element('p','Сообщение слишком большое для одной страницы ('+m.size_bytes+' байт) и не показано.','muted'):element('div',m.text,'msg-text'));
+  if(!m.too_large_for_page&&typeof m.text==='string'){
+    const footer=element('div',null,'msg-footer'), status=element('span','');
+    status.setAttribute('role','status');
+    const button=element('button','Копировать','msg-copy');button.type='button';button.title='Копировать сообщение';button.setAttribute('aria-label','Копировать сообщение');
+    button.onclick=async()=>{try{await navigator.clipboard.writeText(m.text);status.textContent='Скопировано'}catch(_){status.textContent='Не удалось скопировать. Выделите текст вручную.'}};
+    footer.append(button,status);li.append(footer);
+  }
+  if(m.role==='assistant'&&m.metrics){
+    const u=m.metrics.usage||{}, count=k=>Number.isSafeInteger(u[k])&&u[k]>=0?String(u[k]):'—';
+    const parts=[];
+    if(['prompt_tokens','completion_tokens','total_tokens','reasoning_tokens','precached_prompt_tokens'].some(k=>Number.isSafeInteger(u[k])&&u[k]>=0)){
+      parts.push('Токены: вход '+count('prompt_tokens')+' / выход '+count('completion_tokens')+' / всего '+count('total_tokens'));
+      if(Number.isSafeInteger(u.reasoning_tokens)&&u.reasoning_tokens>=0)parts.push('рассуждения (внутри выхода) '+count('reasoning_tokens'));
+      if(Number.isSafeInteger(u.precached_prompt_tokens)&&u.precached_prompt_tokens>=0)parts.push('кэш '+count('precached_prompt_tokens'));
+    }
+    if(Number.isFinite(m.metrics.elapsed_seconds)&&m.metrics.elapsed_seconds>=0)parts.unshift('Запрос '+m.metrics.elapsed_seconds.toFixed(2)+' с');
+    if(parts.length)li.append(element('div',(m.metrics.synthetic?'TEST · ':'')+parts.join(' · '),'msg-metrics'));
+  }
   return li
 }
 function validChatWorkspaces(d){return Boolean(d&&['ok','unavailable','too_large'].includes(d.state)&&Array.isArray(d.workspaces)&&d.workspaces.every(w=>w&&typeof w.wa_workspace_id==='string'&&typeof w.display_name==='string'&&typeof w.history==='string'))}
@@ -2832,6 +2911,27 @@ $('chatNameForm').onsubmit=e=>{e.preventDefault();return saveChatName()};
 $('chatNameCancel').onclick=()=>closeChatName();
 $('chatNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeChatName()}};
 $('chatComposer').onsubmit=e=>{e.preventDefault();return sendTurn()};
+
+function setupChatComposerResize(){
+  const grip=$('chatComposerGrip'), input=$('chatInput'), key='webAlarm.chatInputHeight.v1';
+  let height=140, drag=null;
+  const maximum=()=>Math.max(72,Math.min(420,Math.floor((window.innerHeight||900)*0.42)));
+  function apply(value,save=false){
+    height=Math.max(72,Math.min(maximum(),Math.round(value)));
+    input.style.height=height+'px';grip.setAttribute('aria-valuenow',String(height));grip.setAttribute('aria-valuemax',String(maximum()));
+    if(save)try{localStorage.setItem(key,String(height))}catch(_){}
+  }
+  try{const saved=localStorage.getItem(key);if(saved!==null&&Number.isFinite(Number(saved)))height=Number(saved)}catch(_){}
+  apply(height);
+  grip.onpointerdown=e=>{if(e.button!==0)return;e.preventDefault();drag={id:e.pointerId,y:e.clientY,height:input.getBoundingClientRect().height};grip.setPointerCapture(e.pointerId)};
+  grip.onpointermove=e=>{if(drag&&drag.id===e.pointerId)apply(drag.height+drag.y-e.clientY)};
+  const finish=e=>{if(drag&&drag.id===e.pointerId){drag=null;apply(height,true)}};
+  grip.onpointerup=finish;grip.onpointercancel=finish;grip.onlostpointercapture=finish;
+  grip.onkeydown=e=>{const delta=e.key==='ArrowUp'?16:e.key==='ArrowDown'?-16:0;if(delta||e.key==='Home'||e.key==='End'){e.preventDefault();apply(e.key==='Home'?72:e.key==='End'?maximum():height+delta,true)}};
+  window.addEventListener('resize',()=>apply(height));
+}
+
+setupChatComposerResize();
 $('chatSend').onclick=sendTurn;
 $('evmTopmost').onclick=toggleTopmost;
 $('evmExternalRefresh').onclick=()=>loadEvm();

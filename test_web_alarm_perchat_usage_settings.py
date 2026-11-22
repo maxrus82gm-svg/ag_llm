@@ -37,6 +37,27 @@ class PerChatTests(s5.Fixture):
         self.assertTrue(summary["synthetic"])
         self.assertEqual(self.usage(ws2, other)["attempts"], 0)
 
+    def test_per_message_metrics_are_from_exact_attempt_and_not_last_chat_total(self):
+        ws, chat = self.create_chat("metrics")
+        other_ws, other = self.create_chat("unrelated")
+        with patch.object(_FixtureTransport, "send", return_value=reply(dict(prompt_tokens=7, completion_tokens=5, total_tokens=12))):
+            first = self.service.submit_turn(ws, chat, self.body("first"))
+        with patch.object(_FixtureTransport, "send", return_value=reply(dict(prompt_tokens=2, completion_tokens=3, total_tokens=5))):
+            second = self.service.submit_turn(ws, chat, self.body("second"))
+        self.service = OrdinaryCoreChatService(self.registry, self.root)
+        page = self.service.messages(ws, chat, None, 50)
+        by_id = {m["message_id"]: m for m in page["messages"]}
+        self.assertEqual(by_id[first["assistant_message_id"]]["metrics"]["usage"]["total_tokens"], 12)
+        self.assertEqual(by_id[second["assistant_message_id"]]["metrics"]["usage"]["total_tokens"], 5)
+        self.assertGreaterEqual(by_id[first["assistant_message_id"]]["metrics"]["elapsed_seconds"], 0)
+        self.assertTrue(by_id[first["assistant_message_id"]]["metrics"]["synthetic"])
+        self.assertNotIn("metrics", by_id[first["user_message_id"]])
+        self.assertEqual(page["usage_summary"]["known"]["total_tokens"], 17)
+        self.assertNotIn("message_metrics", page["usage_summary"])
+        older = self.service.messages(ws, chat, second["user_message_id"], 50)
+        self.assertEqual(older["messages"][-1]["metrics"]["usage"]["total_tokens"], 12)
+        self.assertEqual(self.service.messages(other_ws, other, None, 50)["messages"], [])
+
     def test_missing_usage_stays_unknown_and_partial_sum_is_explicit(self):
         ws, chat = self.create_chat("partial")
         with patch.object(_FixtureTransport, "send", return_value=reply(dict(prompt_tokens=2, completion_tokens=3, total_tokens=5))):

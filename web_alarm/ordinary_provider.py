@@ -493,7 +493,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
             try:
                 # Usage is optional display data; missing historical Turn/ledger
                 # enrollment cannot make otherwise readable RAW disappear.
-                page['usage_summary'] = self.chat_usage(wa_workspace_id, chat_id)
+                page['usage_summary'] = self._project_message_usage(wa_workspace_id, chat_id, page)
             except (UltraChatError, OSError, ValueError, KeyError, TypeError):
                 page['usage_summary'] = {'available': False, 'synthetic': False}
         page['usage_summary']['synthetic'] = bool(self._factory._fixture is not None

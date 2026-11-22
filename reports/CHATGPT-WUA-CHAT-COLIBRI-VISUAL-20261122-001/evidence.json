@@ -1,0 +1,42 @@
+{
+  "baseline": "945d44097329bc681da534d5e6e5ae6f29289617",
+  "node": {
+    "chat": {
+      "pass": 78,
+      "fail": 0
+    },
+    "evm": {
+      "pass": 50,
+      "fail": 0
+    },
+    "operator": {
+      "pass": 77,
+      "fail": 0
+    }
+  },
+  "python_target": {
+    "pass": 22,
+    "fail": 0
+  },
+  "python_broad": {
+    "tests": 46,
+    "pass": 42,
+    "skip": 1,
+    "baseline_fail": 1,
+    "fixture_errors": 2,
+    "fixture_rechecks_pass": 2
+  },
+  "browser": {
+    "viewport": [
+      1584,
+      805
+    ],
+    "send_inside": true,
+    "nav_separate": true,
+    "input_height": 220,
+    "history_height": 314.5,
+    "scope": "offline fixture only"
+  },
+  "live": "NOT_RUN",
+  "independent": "NOT_RUN"
+}

@@ -631,7 +631,8 @@ test('E19 the chat composer: the model picker, a disabled voice place and a disa
   assert.equal(h.el('chatMic').getAttribute('data-extension'), 'voice-input');
   assert.equal(h.el('chatMic').onclick, undefined, 'the voice place has no behaviour yet');
   assert.match(source, /<button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu"/);
-  assert.match(source, /<button type="button" id="chatMic" disabled[^>]*>[^<]*<\/button><button type="button" id="chatSend" disabled>Отправить<\/button><\/span>/);
+  assert.match(source, /<button type="button" id="chatMic" disabled[^>]*>[^<]*<\/button><\/span><\/div>/);
+  assert.match(source, /<div class="chat-input-wrap"><textarea id="chatInput" disabled[^>]*><\/textarea><button type="button" id="chatSend" disabled[^>]*>\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c<\/button><\/div>/);
   assert.equal(h.calls.filter(c => c.method !== 'GET').length, 0);
 });
 

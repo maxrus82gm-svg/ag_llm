@@ -1626,3 +1626,20 @@ test('REAL starts in personal chats even when previous selection was a technical
   assert.equal(h.el('chatPersonalNew').hidden,false);
   assert.equal(h.el('chatSend').disabled,false);
 });
+
+test('Colibri composer resize and copy are local-only; message metrics reflect saved values', async () => {
+  const storage=new Map([['webAlarm.chatInputHeight.v1','240']]);
+  const h=harness({storage});await settle();
+  assert.equal(h.el('chatInput').style.height,'240px');
+  h.el('chatComposerGrip').onkeydown({key:'ArrowUp',preventDefault(){}});
+  assert.equal(h.el('chatInput').style.height,'256px');
+  assert.equal(storage.get('webAlarm.chatInputHeight.v1'),'256');
+  const item=h.run("chatMessage({message_id:'msg_visual',role:'assistant',outcome:'completed',text:'<literal>',metrics:{usage:{prompt_tokens:12,completion_tokens:3,total_tokens:15},elapsed_seconds:1.5,synthetic:false}})");
+  let copied;h.context.navigator.clipboard.writeText=async v=>{copied=v};
+  await item.children[2].children[0].onclick();
+  assert.equal(copied,'<literal>');
+  assert.equal(item.children[2].children[1].textContent,'Скопировано');
+  assert.match(item.children[3].textContent,/1\.50 с.*12.*3.*15/);
+  assert.equal(h.run("chatMessage({message_id:'old',role:'assistant',outcome:'legacy',text:'old'}).children.length"),3);
+  assert.equal(h.run("chatMessage({message_id:'large',role:'assistant',outcome:'legacy',too_large_for_page:true,size_bytes:100}).children.length"),2);
+});
