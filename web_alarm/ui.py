@@ -472,7 +472,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <button id="chatAnswerExtended" type="button">20 000 (расширенный)</button> <button id="chatPreferencesSave" type="button">Сохранить</button>
 <p class="muted">Предпочтения этого чата. Порог сжатия не равен окну модели. Автосжатие выключено. Применение к провайдеру не подтверждено; TEST использует прежние пределы, REAL закрыт до S3b.</p>
 <p id="chatPreferencesStatus" role="status" aria-live="polite"></p></details>
-<div id="chatTurnControls" class="chat-request-status" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button><p id="chatTurnCheckResult" class="muted" role="status" aria-live="polite"></p></div>
+<div id="chatTurnControls" class="chat-request-status" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><div id="chatColibriProgress" hidden><details open><summary>Рассуждения Colibri</summary><div id="chatColibriReasoning" class="msg-text"></div></details><p id="chatColibriPartialLabel" hidden>Незавершённый ответ (не сохранён как итоговый)</p><div id="chatColibriPartial" class="msg-text" hidden></div></div><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button><p id="chatTurnCheckResult" class="muted" role="status" aria-live="polite"></p></div>
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
 <div class="row"><label for="chatInput">Сообщение</label><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Выбрать модель для следующего сообщения">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button></span></div>
 <p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p>
@@ -1307,7 +1307,8 @@ function modelCard(c,data,section,inst){
   const permitted=c.enabled!==false;
   const providerState=c.provider_id==='gigachat'?(evm.liveBusy?(evm.liveAction==='start'?'Подключение выполняется':'Отключение выполняется'):
     evm.liveFailure?(evm.liveFailure==='disconnect'?'Ошибка отключения':'Ошибка подключения'):evm.live?.real_available?'GigaChat подключён':evm.live?.mode==='ORDINARY'?'GigaChat отключён':'Состояние неизвестно'):
-    'Подключение этого провайдера не подтверждено';
+    c.provider_id==='colibri'?(c.local_target?.status==='READY'?'Colibri · READY (OFFLINE)':
+      'Colibri · '+(c.local_target?.status||'недоступен')):'Подключение этого провайдера не подтверждено';
   const stateLine=element('p','Модель: '+(permitted?'включена':'отключена')+' · Провайдер: '+providerState+' · Работоспособность: '+apiText(c.api),'mcard-note');
   const sub=element('div',null,'mcard-sub');sub.append(element('strong','Назначенные роли'),element('span','Наведите на название для описания','mcard-note'));
   const states=new Map(c.roles.map(r=>[r.role,r.state]));
@@ -1324,7 +1325,12 @@ function modelCard(c,data,section,inst){
   const toggle=fk(editButton(enabled?'Отключить':'Включить',c),inst,'toggle');
   toggle.setAttribute('aria-pressed',String(enabled));toggle.onclick=()=>toggleModel(c.model_id,!enabled);
   const external=fk(editButton('↗ Внешнее окно',c),inst,'external');external.onclick=()=>openExternal(c.connection_id);
-  const actions=element('div',null,'mcard-actions');actions.append(settings,check,toggle,external);
+  const actions=element('div',null,'mcard-actions');
+  if(c.is_local&&c.provider_id==='colibri'){
+    // Profile/diagnostic execution is not authorised in MVP1 OFFLINE.
+    edit.disabled=true;strengths.onclick=null;strengths.removeAttribute('tabindex');
+    actions.append(toggle,external);
+  }else actions.append(settings,check,toggle,external);
   card.append(head,stateLine,sub,roles,label,strengths,actions);
   if(evm.drafts[c.model_id])card.append(element('p','Есть несохранённые изменения настроек.','mcard-note'));
   return card
@@ -1448,7 +1454,7 @@ function renderEvm(){
   for(const key of [...evm.expanded])if(!evm.ccards[key])evm.expanded.delete(key);
   if(evm.drag)mark(evm.ccards[evm.drag.section+'|'+evm.drag.id],'dragging',true);
   text('evmFavState',String(sectionIds('favorites').length));
-  const count=cols.api.connections.length;
+  const count=cols.api.connections.length+(cols.local_llm?.connections?.length||0);
   text('evmState',count?'Моделей в реестре: '+count:'Реестр пуст');
   if(evm.peek.id){if(entryOf(evm.peek.id)&&evm.ccards[evm.peek.section+'|'+evm.peek.id])fillPeek();else closePeek()}
   for(const id of evm.pinOrder)fillPin(id);  // the same windows, same places: only their content is new
@@ -2255,6 +2261,10 @@ function renderTurnComposer(){
         $('chatInput').placeholder='Сообщение GigaChat';
         text('chatComposerNote','GigaChat · ограниченный серверный допуск. Enter — отправить, Shift+Enter — новая строка.');
       }
+      if(selected?.is_local){
+        $('chatInput').placeholder='Сообщение локальной модели Colibri';
+        text('chatComposerNote','Colibri · изолированный OFFLINE Bridge. История хранится общим ядром.');
+      }
       if(selected?.availability==='UNAVAILABLE'){
         $('chatSend').disabled=true;
         text('chatComposerNote','Эта модель недоступна в подтверждённом каталоге аккаунта. Выберите другую модель.');
@@ -2290,11 +2300,52 @@ function renderTurnComposer(){
     $('chatSend').disabled=!enabled||chatTurn.busy||blocked||!(pending?.model||chatTurn.model);
   }
 }
+let colibriProgressTicket=0,colibriProgressTimer=null;
+function clearColibriProgressTimer(){
+  colibriProgressTicket++;
+  if(colibriProgressTimer!==null)clearTimeout(colibriProgressTimer);
+  colibriProgressTimer=null;
+}
+function renderColibriProgress(result){
+  const panel=$('chatColibriProgress');if(!panel)return;
+  const reasoning=result?.execution_mode==='COLIBRI_OFFLINE'&&typeof result.reasoning==='string'?result.reasoning:'';
+  const answer=result?.execution_mode==='COLIBRI_OFFLINE'&&result.state!=='SUCCEEDED'&&typeof result.partial_answer==='string'?result.partial_answer:'';
+  panel.hidden=!reasoning&&!answer;
+  text('chatColibriReasoning',reasoning);text('chatColibriPartial',answer);
+  $('chatColibriPartial').hidden=!answer;$('chatColibriPartialLabel').hidden=!answer;
+}
+function pollColibriProgress(base,scope,key){
+  clearColibriProgressTimer();
+  const ticket=colibriProgressTicket,epoch=chat.epoch;
+  const current=()=>ticket===colibriProgressTicket&&epoch===chat.epoch&&scope===turnScope()&&turnPending()?.key===key;
+  const next=async()=>{
+    if(!current())return;
+    try{
+      const result=await chatGet(base+'/by-key/'+encodeURIComponent(key));
+      if(!current())return;
+      if(result?.execution_mode==='COLIBRI_OFFLINE'&&result.idempotency_key===key){
+        if(['ACCEPTING','READY','ATTEMPTING'].includes(result.state)){
+          chatTurn.state=result.state;renderColibriProgress(result);renderTurnComposer();
+          text('chatTurnStatus','Colibri обрабатывает запрос…');
+        }else if(!chatTurn.busy){
+          showTurn(result);await loadChatHistory(false);return;
+        }
+      }
+    }catch(_){/* A read failure is not an instruction to repeat inference. */}
+    if(current())colibriProgressTimer=setTimeout(next,750);
+  };
+  colibriProgressTimer=setTimeout(next,400);
+}
 function showTurn(result){
   if(!result||result.mode!==(chatTurn.ordinary?'ORDINARY':modelChat()?'TEST_OFFLINE':'TEST')||typeof result.turn_id!=='string'||!['ACCEPTING','READY','ATTEMPTING','SUCCEEDED','FAILED','CANCELLED','UNKNOWN'].includes(result.state))throw Error('Некорректный Turn');
   chatTurn.revision++;
   chatTurn.state=result.state;
+  renderColibriProgress(result);
+  if(!['ACCEPTING','READY','ATTEMPTING'].includes(result.state))clearColibriProgressTimer();
+  else if(result.execution_mode==='COLIBRI_OFFLINE'&&!chatTurn.busy&&turnPending()?.key)
+    pollColibriProgress(turnBase(),turnScope(),turnPending().key);
   const labels={ACCEPTING:'Приём не завершён. Для продолжения нужен исходный текст.',READY:'Принято. Ожидает явного продолжения.',ATTEMPTING:'Выполняется: TEST-имитатор обрабатывает запрос…',SUCCEEDED:'TEST: ответ сохранён.',FAILED:'TEST: выполнение завершилось ошибкой.',CANCELLED:'Отменено до выполнения.',UNKNOWN:'Исход неизвестен. Повтор ключа проверит сохранённые факты; повторного исполнения нет.'};
+  if(result.execution_mode==='COLIBRI_OFFLINE')Object.assign(labels,{ATTEMPTING:'Colibri обрабатывает запрос…',SUCCEEDED:'Ответ Colibri сохранён (OFFLINE).',FAILED:'Запрос Colibri завершился ошибкой.'});
   if(result.execution_mode==='REAL')Object.assign(labels,{ATTEMPTING:'GigaChat обрабатывает запрос…',SUCCEEDED:'Ответ GigaChat сохранён.',FAILED:'Запрос GigaChat завершился ошибкой.'});
   const detail=modelChat()?' · '+result.references.model_ref+(result.usage?.total_tokens==null?'':' · usage '+result.usage.total_tokens):'';
   text('chatTurnStatus',labels[result.state]+detail+(typeof result.diagnostic_code==='string'?' · '+result.diagnostic_code:'')+
@@ -2365,7 +2416,11 @@ async function sendTurn(){
       (chatTurn.models.find(m=>m.model_id===chatTurn.model)?.availability!=='AVAILABLE'||
        (turnPending()?.model&&turnPending().model!==chatTurn.model)))return;
   const epoch=chat.epoch,scope=turnScope(),base=turnBase(),value=$('chatInput').value;
-  chatTurn.busy=true;renderTurnComposer();text('chatTurnStatus','Принимаем TEST-запрос…');
+  if(chatTurn.models.find(m=>m.model_id===chatTurn.model)?.is_local&&
+     chatTurn.models.find(m=>m.model_id===chatTurn.model)?.availability!=='AVAILABLE'&&!turnPending())return;
+  const localRequest=chatTurn.colibri&&String(turnPending()?.model||chatTurn.model||'').startsWith('tgt_');
+  if(localRequest)renderColibriProgress(null);
+  chatTurn.busy=true;renderTurnComposer();text('chatTurnStatus',localRequest?'Принимаем запрос Colibri…':'Принимаем TEST-запрос…');
   try{
     let pending=JSON.parse(localStorage.getItem(scope)||'null');
     if(!pending){
@@ -2383,15 +2438,21 @@ async function sendTurn(){
     }
     const request=modelChat()?{idempotency_key:pending.key,text:pending.text??value,model_ref:pending.model}:
       {idempotency_key:pending.key,text:value,model_ref:'local-test:v1',context_ref:'empty:v1',config_ref:'test-only:v1'};
+    if(localRequest)pollColibriProgress(base,scope,pending.key);
     const result=await chatPost(base,request);
     if(epoch===chat.epoch){showTurn(result);await loadChatHistory(false)}
   }catch(e){
     const invalid=modelChat()&&['invalid_turn_request','invalid_offline_request','request_too_large'].includes(e.code);
-    if(invalid)localStorage.removeItem(scope);
-    if(epoch===chat.epoch)text('chatTurnStatus',invalid?'TEST · исправьте текст или выбор модели.':
+    // A local admission rejection happens before creation of a Turn. Do not
+    // discard a saved key for ambiguous post-dispatch errors.
+    const preflight=localRequest&&['unsupported_capability','model_disabled','ordinary_model_disabled','local_provider_unavailable'].includes(e.code);
+    if(invalid||preflight)localStorage.removeItem(scope);
+    if(epoch===chat.epoch)text('chatTurnStatus',preflight?(e.code==='unsupported_capability'?
+      'Colibri MVP1 не поддерживает системные инструкции этого контекста. Текст запроса не отправлен.':
+      'Локальная модель недоступна или отключена. Текст запроса не отправлен.'):invalid?'TEST · исправьте текст или выбор модели.':
       e.code==='idempotency_conflict'?'Конфликт ключа: верните исходный текст. Перезаписи нет.':'Ответ не подтверждён. Ключ сохранён. Проверьте состояние запроса перед повтором.')
   }
-  finally{chatTurn.busy=false;renderTurnComposer()}
+  finally{if(localRequest&&epoch===chat.epoch)clearColibriProgressTimer();chatTurn.busy=false;renderTurnComposer()}
 }
 async function cancelTurn(){
   const pending=turnPending();if(!pending)return;const epoch=chat.epoch;
@@ -2407,6 +2468,7 @@ async function loadChatAccess(){
   const access=await api('/ui/ultra-chat/capability'),c=access?.ultra_chat;
   chatTurn.ordinary=access?.turn_test?.mode==='ORDINARY';
   chatTurn.compact=access?.turn_test?.compact_sidebar===true;
+  chatTurn.colibri=access?.turn_test?.colibri_offline===true;
   chatTurn.executionMode=access?.turn_test?.execution_mode;
   chatTurn.personalWorkspaceId=typeof access?.turn_test?.personal_workspace_id==='string'?access.turn_test.personal_workspace_id:null;
   chatTurn.liveWorkspaceId=typeof access?.turn_test?.live_workspace_id==='string'?access.turn_test.live_workspace_id:null;
@@ -2415,7 +2477,9 @@ async function loadChatAccess(){
   chatTurn.preferencesEnabled=modelChat()&&access?.turn_test?.chat_preferences===true;
   if(modelChat()){
     chatTurn.models=Array.isArray(access.turn_test.models)?access.turn_test.models:[];
-    if(!chatTurn.models.some(m=>m.model_id===chatTurn.model))chatTurn.model=chatTurn.models[0]?.model_id??null;
+    if(!chatTurn.models.some(m=>m.model_id===chatTurn.model)&&
+       !(chatTurn.ordinary&&chat.chat&&String(chatTurn.model||'').startsWith('tgt_')))
+      chatTurn.model=chatTurn.models[0]?.model_id??null;
     if(chatTurn.testModelPreferences){chatTurn.model=null;chatTurn.testModelLoaded=false;}
   }
   renderTurnComposer();
@@ -2774,6 +2838,7 @@ function chatNotices(list){
 }
 function clearChatHistory(title){
   chat.historyRevision++;
+  clearColibriProgressTimer();renderColibriProgress(null);
   chatTurn.checkRevision++;chatTurn.checking=0;chatTurn.checkCount=0;text('chatTurnCheckResult','');
   if(chatTurn.testModelPreferences){closePicker(false);chatTurn.testModelRevision=(chatTurn.testModelRevision||0)+1;chatTurn.testModelBusy=false;chatTurn.testModelLoaded=false;chatTurn.model=null;}
   if(modelChat()){
@@ -2899,8 +2964,12 @@ async function openPicker(){
   $('chatModelPick').setAttribute('aria-expanded','true');$('chatModelMenu').hidden=false;
   $('chatModelMenu').replaceChildren(element('p','Загружаем модели…','muted'));
   if(modelChat()){
+    if(chatTurn.colibri){
+      try{await loadChatAccess()}catch(_){}
+      if(!picker.open||epoch!==picker.epoch)return;
+    }
     const options=chatTurn.models.map(m=>{
-      const blocked=chatTurn.ordinary&&chatTurn.executionMode==='REAL'&&m.availability!=='AVAILABLE';
+      const blocked=chatTurn.ordinary&&(m.is_local||chatTurn.executionMode==='REAL')&&m.availability!=='AVAILABLE';
       const suffix=m.availability==='UNAVAILABLE'?' · недоступна':
         m.availability==='NOT_APPROVED'?' · ожидает проверки':
         m.availability==='UNVERIFIED'?' · доступ не проверен':'';

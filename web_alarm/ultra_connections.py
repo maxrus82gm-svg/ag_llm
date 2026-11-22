@@ -16,6 +16,8 @@ from __future__ import annotations
 
 import json
 import os
+import threading
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
@@ -66,16 +68,16 @@ def _registry():
 
 def connection_id_for(spec: Any) -> str:
     """Stable connection identity of a registry model: ``api:<provider>:<model_id>``."""
-    return f"{API_KIND}:{spec.provider}:{spec.model_id}"
+    return f"{'local' if spec.is_local else API_KIND}:{spec.provider}:{spec.model_id}"
 
 
-def _parse_connection_id(value: Any) -> tuple[str, str]:
+def _parse_connection_id(value: Any) -> tuple[str, str, str]:
     if not isinstance(value, str) or not value or len(value) > MAX_ID_LENGTH or not value.isascii():
         raise ConnectionRequestError("connection_id must be a short ASCII string")
     parts = value.split(":")
-    if len(parts) != 3 or parts[0] != API_KIND or not all(parts):
+    if len(parts) != 3 or parts[0] not in (API_KIND, "local") or not all(parts):
         raise ConnectionRequestError("connection_id must look like api:<provider>:<model_id>")
-    return parts[1], parts[2]
+    return parts[0], parts[1], parts[2]
 
 
 def _role(value: Any) -> str:
@@ -96,15 +98,68 @@ class UltraConnections:
         self.lock_path = root / "locks" / "ultra" / "connections.lock"
         self.lock_timeout = lock_timeout
         self.model_cards = None  # Bound by the existing Web Alarm API; no second settings store.
+        self._colibri_transport = None
+        self._catalog_lock = threading.RLock()
+        self._local_targets = ()
+        self._local_state = "NOT_CONNECTED"
+
+    @property
+    def has_colibri(self):
+        return self._colibri_transport is not None
+
+    def bind_offline_colibri(self, transport):
+        from .colibri_bridge_transport import OfflineColibriTransport
+        import tempfile
+        root=self.path.parent.parent.resolve()
+        if (type(transport) is not OfflineColibriTransport
+                or Path(tempfile.gettempdir()).resolve() not in root.parents
+                or self._colibri_transport is not None and self._colibri_transport is not transport):
+            raise ValueError("Only the same isolated server may bind Colibri")
+        self._colibri_transport=transport
+
+    def registry_snapshot(self, *, refresh=True):
+        """Read authenticated discovery once, fail closed without erasing known IDs.
+        This is a transient projection; EVM settings remain the only persisted switch.
+        """
+        registry=_registry()
+        if not self.has_colibri:
+            return registry, (), "NOT_CONNECTED"
+        from .colibri_bridge_transport import BridgeFault
+        with self._catalog_lock:
+            if refresh:
+                try:
+                    catalog=self._colibri_transport.catalog()
+                    targets=deepcopy(catalog["targets"])
+                    if len(targets)>500:
+                        raise BridgeFault("response_limit")
+                    self._local_targets=tuple(targets)
+                    self._local_state="AVAILABLE"
+                except BridgeFault:
+                    self._local_targets=tuple({**t,"status":"UNKNOWN","allowed_operations":[]}
+                                              for t in self._local_targets)
+                    self._local_state="UNAVAILABLE"
+            targets=deepcopy(self._local_targets)
+            return registry.ModelRegistryView(targets),targets,self._local_state
+
+    def local_target(self, model_id, *, refresh=True):
+        _reg,targets,_state=self.registry_snapshot(refresh=refresh)
+        return next((t for t in targets if t["target_id"]==model_id),None)
+
+    def enabled_local_targets(self):
+        registry,_,_=self.registry_snapshot()
+        return {s.model_id for s in registry.list_model_specs()
+                if s.is_local and s.enabled and self.model_cards is not None
+                and self.model_cards.is_enabled(s.model_id)}
+
 
     # --- shared registry -------------------------------------------------------------
 
-    def _spec(self, connection_id: Any):
+    def _spec(self, connection_id: Any, registry=None):
         """The registry model a connection_id names (unknown/disabled are refused)."""
-        provider, model_id = _parse_connection_id(connection_id)
-        registry = _registry()
+        kind,provider,model_id = _parse_connection_id(connection_id)
+        registry = registry if registry is not None else self.registry_snapshot()[0]
         spec = registry.MODEL_REGISTRY.get(model_id)
-        if spec is None or spec.provider != provider:
+        if spec is None or spec.provider != provider or spec.is_local != (kind=="local"):
             raise UnknownConnectionError(f"no model {model_id!r} of provider {provider!r} in the shared registry")
         try:
             return registry.get_model_spec(model_id)  # the registry's own rules (e.g. disabled)
@@ -118,7 +173,7 @@ class UltraConnections:
         enabled = bool(spec.enabled) and (self.model_cards is None or self.model_cards.is_enabled(spec.model_id))
         return {
             "connection_id": connection_id,
-            "kind": API_KIND,
+            "kind": "local" if spec.is_local else API_KIND,
             "provider": spec.provider,
             "model_id": spec.model_id,
             "display_name": spec.display_name,
@@ -155,7 +210,7 @@ class UltraConnections:
             return {"state": "CORRUPT", "roles": {}, "reason": f"saved choice is unreadable: {type(exc).__name__}"}
         return {"state": "SAVED" if clean else "NOT_SELECTED", "roles": clean}
 
-    def selection(self, role: str = "chat") -> dict[str, Any]:
+    def selection(self, role: str = "chat", *, registry=None) -> dict[str, Any]:
         """The saved choice of ``role`` resolved against the registry as it is now."""
         role = _role(role)
         saved = self._read()
@@ -171,7 +226,7 @@ class UltraConnections:
             return result
         result.update(connection_id=entry["connection_id"], selected_at=entry["selected_at"])
         try:
-            spec = self._spec(entry["connection_id"])
+            spec = self._spec(entry["connection_id"],registry)
         except (ConnectionRequestError, UnknownConnectionError, DisabledConnectionError) as exc:
             result.update(state="INVALID_REFERENCE", reason=str(exc))
             return result
@@ -182,23 +237,33 @@ class UltraConnections:
                       provider_model_id=spec.provider_model_id)
         return result
 
-    def catalog(self) -> dict[str, Any]:
-        """The three EVM columns; read-only (no directory, file or network access is created)."""
-        selection = self.selection("chat")
-        selected_id = selection["connection_id"] if selection["state"] == "SAVED" else None
+    def catalog(self, *, snapshot=None) -> dict[str, Any]:
+        """The three EVM columns. Only explicitly bound offline Colibri may do discovery reads."""
+        local={"state":"NOT_CONNECTED","connections":[]}
         try:
-            specs = _registry().list_model_specs()
-            api = {"state": "AVAILABLE", "connections": [self._view(spec, selected_id) for spec in specs]}
+            registry,targets,state=snapshot if snapshot is not None else self.registry_snapshot()
+            selection=self.selection("chat",registry=registry)
+            selected_id=selection["connection_id"] if selection["state"]=="SAVED" else None
+            specs=registry.list_model_specs()
+            api={"state":"AVAILABLE","connections":[self._view(s,selected_id) for s in specs if not s.is_local]}
+            by_id={t["target_id"]:t for t in targets}
+            local={"state":state,"connections":[{**self._view(s,selected_id),
+                "availability":by_id[s.model_id]["status"],
+                "instance_id":by_id[s.model_id]["instance_id"],
+                "manager_name":by_id[s.model_id]["manager_name"],
+                "slot_id":by_id[s.model_id]["slot_id"]}
+                for s in specs if s.is_local]}
         except RegistryUnavailableError as exc:
-            api = {"state": "REGISTRY_UNAVAILABLE", "connections": [], "reason": str(exc)}
+            selection=self.selection("chat")
+            api={"state":"REGISTRY_UNAVAILABLE","connections":[],"reason":str(exc)}
         return {
             "source": "model_registry",
             "verification_note": "registry entries are not proven API connections; no API check was made",
-            "network_calls": 0,
+            "network_calls": None if self.has_colibri else 0,
             "columns": {
                 "api": api,
                 "mcp_agents": {"state": "NOT_CONNECTED", "connections": []},
-                "local_llm": {"state": "NOT_CONNECTED", "connections": []},
+                "local_llm": local,
             },
             "selection": {"chat": selection},
         }
@@ -207,6 +272,8 @@ class UltraConnections:
         """Save ``connection_id`` as the web choice of ``role`` (refused unless selectable now)."""
         role = _role(role)
         spec = self._spec(connection_id)
+        if spec.is_local:
+            raise ConnectionRequestError("Local model selection belongs to an ordinary chat")
         if self.model_cards is not None and not self.model_cards.is_enabled(spec.model_id):
             raise DisabledConnectionError(f"model {spec.model_id!r} is disabled in EVM")
         lock = InterProcessLock(self.lock_path, timeout=self.lock_timeout)
@@ -231,7 +298,7 @@ class UltraConnections:
     def resolve_provider_model_id(self, role: str = "chat") -> str:
         """For the future Ultra Web Chat: the existing provider_model_id of the saved choice."""
         current = self.selection(role)
-        if current["state"] != "SAVED":
+        if current["state"] != "SAVED" or str(current["connection_id"]).startswith("local:"):
             raise UnknownConnectionError(f"no usable saved connection for role {role!r}: {current['state']}")
         return current["provider_model_id"]
 

@@ -1,0 +1,3 @@
+# TASK ID: CHATGPT-WUA-COLIBRI-MVP1-EVM-20261122-001
+
+OWNER GO 22.11.2026: continue after accepted #659. Common EVM / registry view and persisted per-chat selection for Colibri v1 stable targets, actual ordinary application HTTP route, shared disabled/READY admission, no second store or chat. Exact isolated Bridge #108 plus mocked cloud, exercise cloud/local/cloud, absence/reappearance, EVM toggles, F5/HTTP recovery, and GUI if practical. No silent system downgrade. No production/live/paid, no MVP2. Existing long-stream/security/gate findings retained. PLAN_READ 2026-11-22T23:00:47+05:00 SHA256 7daf9125d680916550c6e9ffa8e3b6a0c0c2a964520500e1085b68f2a470c29f; WUA MVP1 IN_PROGRESS, COLIBRI SUBMITTED. Base #659 7e208e68891da14903f21260be684cc8e5999530.

@@ -491,17 +491,21 @@ class ModelCards:
         revision = data.get("revision", 0) if loaded["state"] == "SAVED" else (0 if loaded["state"] == "EMPTY" else None)
         if loaded["state"] == "SAVED" and (isinstance(revision, bool) or not isinstance(revision, int) or revision < 0):
             loaded, data, revision = {"state": "CORRUPT", "reason": "unreadable"}, {}, None
+        builtins=dict(BUILTIN_PROVIDERS)
+        if self.connections.has_colibri:
+            builtins["colibri"]=Provider("colibri","Colibri","Локально",
+                "web_alarm.colibri_bridge_transport","Bearer Token · защищённый локальный Bridge")
         result = {"state": loaded["state"], "revision": revision, "ignored": 0,
-                  "providers": dict(BUILTIN_PROVIDERS), "profiles": {}, "models": {}, "invalid_enabled": set()}
+                  "providers": builtins, "profiles": {}, "models": {}, "invalid_enabled": set()}
         if data.get("models") is not None and not isinstance(data.get("models"), dict):
             result.update(state="CORRUPT", reason="invalid_models")
         if loaded["state"] == "CORRUPT":
             result["reason"] = loaded.get("reason", "unreadable")
-        for provider in BUILTIN_PROVIDERS.values():
+        for provider in builtins.values():
             result["profiles"][default_profile_id(provider.provider_id)] = self._default_profile(provider.provider_id)
         for key, entry in (data.get("providers") or {}).items() if isinstance(data.get("providers"), dict) else ():
             try:
-                if key in BUILTIN_PROVIDERS or not _ID.fullmatch(key) or not isinstance(entry, dict):
+                if key in builtins or not _ID.fullmatch(key) or not isinstance(entry, dict):
                     raise ValueError
                 # A manually added entry never names an adapter module: listing a provider is not support.
                 result["providers"][key] = Provider(key, _clean_title(entry.get("display_name")),
@@ -769,13 +773,16 @@ class ModelCards:
 
     # --- the read model -------------------------------------------------------------------------------
 
-    def _context(self) -> dict[str, Any]:
+    def _context(self, *, snapshot=None) -> dict[str, Any]:
         from .ultra_connections import _registry  # the one registry import of the EVM
 
-        registry = _registry()
-        return {"registry": registry, "settings": self._settings(), "checks": self._checks(),
-                "tk": read_tk_assignments(self.tk_state_path, registry),
-                "chat": self.connections.selection("chat")}
+        snapshot=self.connections.registry_snapshot() if snapshot is None else snapshot
+        registry,targets,_state=snapshot
+        return {"registry":registry,"snapshot":snapshot,
+                "targets":{t["target_id"]:t for t in targets},
+                "settings":self._settings(),"checks":self._checks(),
+                "tk":read_tk_assignments(self.tk_state_path,_registry()),
+                "chat":self.connections.selection("chat",registry=registry)}
 
     def _spec(self, registry: Any, model_id: Any) -> Any:
         if not isinstance(model_id, str) or not _ID.fullmatch(model_id):
@@ -803,7 +810,13 @@ class ModelCards:
             out = record["last_output"]
             last_output = {"kind": out.get("kind"), "at": out.get("at"),
                            "text": safe_text(out.get("text", ""), profile["diagnostic_limit_chars"])}
+        target=ctx.get("targets",{}).get(spec.model_id)
+        if target is not None:
+            # Never turn green from mere discovery or a synthetic Manager.
+            status={**status,"color":GRAY,"reason":"LOCAL_OFFLINE_UNVERIFIED" if spec.enabled else "REGISTRY_DISABLED"}
         return {
+            **({"local_target":{k:target[k] for k in ("target_id","instance_id","status","manager_name",
+                "slot_id","execution_mode","capabilities","limits")}} if target is not None else {}),
             "connection_id": connection_id, "model_id": spec.model_id, "display_name": spec.display_name,
             "provider_id": spec.provider, "provider_model_id": spec.provider_model_id,
             "registry_enabled": bool(spec.enabled),
@@ -827,7 +840,7 @@ class ModelCards:
                 "adapter_state": _adapter_state(provider), "auth": provider.auth,
                 "oauth_url": provider.oauth_url, "api_url": provider.api_url, **facts})
         return {
-            "network_calls": 0,
+            "network_calls": None if self.connections.has_colibri else 0,
             "settings": {"state": settings["state"], "revision": settings["revision"], "ignored": settings["ignored"],
                          **({"reason": settings["reason"]} if "reason" in settings else {})},
             "checks": {"state": ctx["checks"]["state"]},
@@ -844,7 +857,9 @@ class ModelCards:
             "live_check": {"authorized": bool(self.checker.authorized),
                            "reason": None if self.checker.authorized else self.checker.reason},
             "cards": [self._card(ctx, spec) for spec in ctx["registry"].list_model_specs()],
-            "view": self.view(),
+            "view": self.view({section:[c["connection_id"] for c in
+                self.connections.catalog(snapshot=ctx["snapshot"])["columns"][column]["connections"]]
+                for section,(column,_) in BOARD_COLUMNS.items()}) if self.connections.has_colibri else self.view(),
         }
 
     def card(self, model_id: Any) -> dict[str, Any]:
@@ -872,8 +887,8 @@ class ModelCards:
         if (type(body) is not dict or set(body) != {"base_revision", "enabled"}
                 or type(body["enabled"]) is not bool or type(body["base_revision"]) is not int):
             raise ModelCardRequestError("expected base_revision and boolean enabled")
-        from .ultra_connections import _registry
-        spec = self._spec(_registry(), model_id)
+        snapshot=self.connections.registry_snapshot()
+        spec = self._spec(snapshot[0],model_id)
         lock = self._locked()
         try:
             current = self._settings()
@@ -890,6 +905,11 @@ class ModelCards:
                                              "revision": current["revision"] + 1, "models": models})
         finally:
             lock.release()
+        if spec.is_local:
+            # A disappearing producer must not turn a committed switch into a
+            # misleading failed write. Read the same validated snapshot.
+            ctx=self._context(snapshot=snapshot)
+            return self._card(ctx,spec)
         return self.card(spec.model_id)
 
     # --- writes -------------------------------------------------------------------------------------------
@@ -900,9 +920,9 @@ class ModelCards:
         allowed = {"base_revision", "description", "params_billion", "profile_id", "profile"}
         if set(body) - allowed:
             raise ModelCardRequestError("unknown fields: " + ", ".join(sorted(set(body) - allowed)))
-        from .ultra_connections import _registry
-
-        spec = self._spec(_registry(), model_id)
+        spec = self._spec(self.connections.registry_snapshot()[0], model_id)
+        if spec.is_local:
+            raise ModelCardRequestError("Local execution profile is owned by Colibri")
         description = _clean_description(body.get("description", ""))
         params = _clean_params(body.get("params_billion"))
         profile_changes = body.get("profile") or {}
@@ -1083,6 +1103,8 @@ class ModelCards:
         ctx = self._context()
         spec = self._spec(ctx["registry"], model_id)
         card = self._card(ctx, spec)
+        if spec.is_local:
+            raise CheckRefusedError("Local LIVE check is not authorised")
         if not spec.enabled or not card["enabled"]:
             raise CheckRefusedError(f"model {spec.model_id!r} is disabled")
         if card["api"]["reason"] == "ADAPTER_MISSING":

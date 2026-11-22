@@ -60,6 +60,7 @@ class OrdinaryProviderFactory:
     def __init__(self):
         self._registry = self._root = self._fixture = None
         self._session = None
+        self._colibri_transport = None
 
     @classmethod
     def for_session(cls, registry, session):
@@ -72,7 +73,7 @@ class OrdinaryProviderFactory:
         return factory
 
     @classmethod
-    def offline_application(cls, registry, root, fixture):
+    def offline_application(cls, registry, root, fixture, *, colibri_transport=None):
         root = Path(root).absolute()
         if (cls is not OrdinaryProviderFactory or type(fixture) is not OfflineHTTPFixture
                 or root.resolve() != root or Path(tempfile.gettempdir()).resolve() not in root.parents
@@ -82,6 +83,11 @@ class OrdinaryProviderFactory:
         OrdinaryCoreChatService(registry, root, http_fixture=fixture)
         factory = cls()
         factory._registry, factory._root, factory._fixture = registry, root, fixture
+        if colibri_transport is not None:
+            from .colibri_bridge_transport import OfflineColibriTransport
+            if type(colibri_transport) is not OfflineColibriTransport:
+                raise ValueError("Explicit isolated Colibri transport required")
+        factory._colibri_transport=colibri_transport
         return factory
 
     def preflight(self):
@@ -155,6 +161,13 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 api.model_cards.checker = _OrdinaryTurnChecker(self)
         self._personal_lock = threading.Lock()
         self._factory = factory
+        self._colibri_transport=factory._colibri_transport
+        self._colibri_enabled=None
+        if self._colibri_transport is not None:
+            if api is None or factory._fixture is None:
+                raise ValueError("Colibri requires isolated application and shared EVM")
+            api.ultra_connections.bind_offline_colibri(self._colibri_transport)
+            self._colibri_enabled=api.ultra_connections.enabled_local_targets
         self._http_fixture = factory._fixture
         self._owners = {}
         self._owner_lock = threading.Lock()
@@ -198,17 +211,32 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
             except Exception:
                 pass
         admitted = {c.model_id for c in session.approval.contracts} if session is not None else set()
+        local_context=self._api.model_cards._context() if self._colibri_transport is not None else None
         models = [dict(model_id=m.model_id, display_name=m.display_name, provider_model_id=m.provider_model_id,
-            api=(self._api.model_cards.card(m.model_id)['api'] if self._api is not None else None),
+            api=(self._api.model_cards._card(local_context,m)['api'] if local_context is not None else
+                 self._api.model_cards.card(m.model_id)['api'] if self._api is not None else None),
             availability=(('UNAVAILABLE' if m.provider_model_id not in session._available else
                            'AVAILABLE' if m.model_id in admitted else 'NOT_APPROVED')
                          if session is not None else 'UNVERIFIED'))
             for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local
             and (self._api is None or self._api.model_cards.is_enabled(m.model_id))]
+        if self._colibri_transport is not None:
+            registry,targets,_state=local_context["snapshot"]
+            local={t["target_id"]:t for t in targets}
+            # Same EVM switch, no shadow enabled list.
+            models.extend(dict(model_id=s.model_id,display_name=s.display_name,
+                provider_model_id=s.provider_model_id,provider_id="colibri",is_local=True,
+                api=self._api.model_cards._card(local_context,s)["api"],
+                availability="AVAILABLE" if s.enabled else "UNAVAILABLE",
+                instance_id=local[s.model_id]["instance_id"],
+                local_status=local[s.model_id]["status"])
+                for s in registry.list_model_specs() if s.is_local
+                and self._api.model_cards.is_enabled(s.model_id))
         return {**contract, 'available': fixture or active, 'real_available': active and not session.synthetic if session else False,
                 'mode': 'ORDINARY', 'core_bridge': True, 'chat_preferences': True, 'compact_sidebar': True,
                 'execution_mode': ('PROTOCOL_TEST' if session.synthetic else 'REAL') if active else 'OFFLINE_APPLICATION' if fixture else 'HOLD',
                 'models': models,
+                **({'colibri_offline':True} if self._colibri_transport is not None else {}),
                 'personal_workspace_id': personal.workspace_id if personal else None,
                 'live_workspace_id': selected_root.workspace_id if selected_root else None}
 
@@ -372,8 +400,12 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
 
     def chat_model(self, wa_workspace_id, chat_id, update=...):
         allowed = {m.model_id for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local}
+        local_ids=set()
+        if self._colibri_transport is not None:
+            reg,_,_=self._api.ultra_connections.registry_snapshot()
+            local_ids={s.model_id for s in reg.list_model_specs() if s.is_local and s.enabled}
         if update is not ... and (type(update) is not dict or set(update) != {'model_ref'}
-                or type(update['model_ref']) is not str or update['model_ref'] not in allowed
+                or type(update['model_ref']) is not str or update['model_ref'] not in allowed|local_ids
                 or self._api is not None and not self._api.model_cards.is_enabled(update['model_ref'])):
             raise UltraChatError(400, "ordinary_model_not_allowed", "Select the admitted model")
         core = _core()
@@ -401,14 +433,18 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 fallback = (self._factory._session.approval.contracts[0].model_id
                             if self._factory._session is not None and not self._factory._session.synthetic else MODEL_ID)
                 selected = metadata.get("ordinary_chat_model", fallback) if update is ... else update['model_ref']
-                if selected not in allowed:
+                import re
+                saved_local=type(selected) is str and re.fullmatch(r"tgt_[a-f0-9]{64}",selected)
+                if selected not in allowed and not saved_local:
                     raise UltraChatError(409, "ordinary_model_invalid", "Saved model requires review")
                 if update is not ... and metadata.get('ordinary_chat_model') != selected:
                     core._replace_verified(writer.anchor, parts + ("metadata.json",),
                         core._json_bytes({**metadata, "ordinary_chat_model": selected}))
                 return {"model_ref": selected, "persisted": "ordinary_chat_model" in metadata or update is not ...,
                         "enabled": self._api is None or self._api.model_cards.is_enabled(selected),
-                        "enrolled": enrolled}
+                        "enrolled": enrolled,
+                        **({"availability":"AVAILABLE" if selected in local_ids else "UNAVAILABLE"}
+                           if saved_local else {})}
         except (core.StorageWriteError, core.ChatNotFoundError, OSError, ValueError):
             raise UltraChatError(503, "ordinary_model_unavailable", "Chat model could not be verified") from None
 
@@ -416,8 +452,26 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         if type(body) is not dict or set(body) != {"idempotency_key", "model_ref", "text"}:
             raise UltraChatError(400, "invalid_turn_request", "Expected model, text and retry key")
         registry_allowed = {m.model_id for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local}
-        if type(body.get('model_ref')) is not str or body['model_ref'] not in registry_allowed:
+        import re
+        ref=body.get("model_ref")
+        local=type(ref) is str and re.fullmatch(r"tgt_[a-f0-9]{64}",ref) is not None
+        if type(ref) is not str or (ref not in registry_allowed and not local):
             raise UltraChatError(400, "ordinary_model_not_allowed", "Select the admitted model")
+        if local and self._colibri_transport is None:
+            # Only a previously accepted local Turn may be replayed read-only.
+            from .turn_service import KEY, TurnService, identities
+            key=body.get("idempotency_key")
+            if type(key) is not str or not KEY.fullmatch(key):
+                raise UltraChatError(403,"local_provider_unavailable","Local provider is not enabled")
+            root,wid=self._writable_workspace(_core(),wa_workspace_id)
+            reader=TurnService(test_roots=[root])
+            try:
+                with reader._session(root,wid,chat_id):
+                    previous=reader._load(root,wid,chat_id,identities(wid,chat_id,key)["turn_id"])
+                    if previous["schema_version"]!=3:
+                        raise UltraChatError(403,"local_provider_unavailable","Local provider is not enabled")
+            except UltraChatError:
+                raise UltraChatError(403,"local_provider_unavailable","Local provider is not enabled") from None
         if self._api is not None and not self._api.model_cards.is_enabled(body['model_ref']):
             from .turn_service import KEY, TurnService, identities
             accepted = False
@@ -434,7 +488,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                         raise
             if not accepted:
                 raise UltraChatError(403, "ordinary_model_disabled", "Model is disabled in EVM")
-        if self._factory._fixture is None:
+        if self._factory._fixture is None and not local:
             try:
                 self._factory.require_real()
             except PreSendDenied:

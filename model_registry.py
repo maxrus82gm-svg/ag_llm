@@ -92,3 +92,32 @@ def get_model_spec(model_id: str) -> ModelSpec:
 
 def list_model_specs() -> tuple[ModelSpec, ...]:
     return tuple(MODEL_REGISTRY.values())
+
+
+class ModelRegistryView:
+    """Per-server immutable overlay of the shared registry and discovered local targets.
+
+    The existing static registry remains the source for legacy Tk/agent roles.
+    Dynamic targets are supplied by the authenticated server connection, never
+    enrolled globally and never persisted as a competing registry.
+    """
+    def __init__(self, targets=()):
+        models = dict(MODEL_REGISTRY)
+        for target in targets:
+            model_id = target["target_id"]
+            if model_id in models:
+                raise ValueError("Duplicate dynamic model identity")
+            ready = (target["status"] == "READY" and "chat" in target["allowed_operations"]
+                     and target["instance_id"] is not None)
+            models[model_id] = ModelSpec(model_id, target["display_name"], "colibri",
+                                         target["model_id"], bool(ready), True)
+        self.MODEL_REGISTRY = MappingProxyType(models)
+
+    def list_model_specs(self):
+        return tuple(self.MODEL_REGISTRY.values())
+
+    def get_model_spec(self, model_id):
+        spec = self.MODEL_REGISTRY[model_id]
+        if not spec.enabled:
+            raise RuntimeError("Dynamic model is not ready")
+        return spec
