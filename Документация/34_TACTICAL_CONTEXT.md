@@ -1,5 +1,9 @@
 # Оперативная память проекта — №34
 
+## CURRENT 22.11.2026 — OWNER TEST GUI PASS
+
+H-CHATGPT-000009 / #653 owner accepted compact sidebar and authorized STANDARD start. Local main=origin main=GPT #653 confirmed. Evidence reports/CHATGPT-WUA-COMPACT-SIDEBAR-20261122-001/owner_test_acceptance.md. Start_WebAlarm_Standard.cmd already points at accepted code; independent CI, actual STANDARD and LIVE not verified, D8 remains OPEN. No further code changes. Documentation-only acceptance commit next.
+
 ## CURRENT 22.11.2026 — компактный sidebar
 TASK CHATGPT-WUA-COMPACT-SIDEBAR-20261122-001 / H-CHATGPT-000009, #653; владелец согласовал минимальные строки чатов + рамки Workspace; прямое создание без диалогов, привязка папки отдельно, архив без физического удаления, автоназвание первого RAW до 4 слов/40 символов. AUTHOR 206 JS + 4 new HTTP/core + actual Chrome TEST + activation rerun PASS; D8 baseline FAIL, owner GUI/CI/LIVE NOT RUN. Связь каталога — metadata, не миграция истории/прав; отчёт reports/CHATGPT-WUA-COMPACT-SIDEBAR-20261122-001/report.md. После owner merge проверить обычный TEST. 🟢 ОБНОВИТЬ GITHUB — №653 при готовом опубликованном коммите; пользователь Fetch → Choose GPT → Merge → Push. Все прочие OPEN сохранены.
 
