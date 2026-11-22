@@ -1,0 +1,27 @@
+# P0: independent WUA compatibility review
+
+TASK ID: CHATGPT-WUA-COLIBRI-P0-20261122-001
+Integration ID: WUA-COLIBRI-BRIDGE-001/P0
+Date: 2026-11-22
+Verdict: CONTRACT COMPATIBLE / OFFLINE schema and fixture checks PASS; implementation and owner acceptance OPEN. WUA deliverable SUBMITTED.
+
+## Exact sources and plan
+- PLAN_READ 2026-11-22T15:47:48+05:00 SHA256 47ff62b054ec18cb7a42e6149e548bf5981de45e0cade13360fcbc04d9843b52; archive SHA256 1071b531a3985ecb08d474651f73cedaf5aeb73cec1108b19daf764848fb4102 (no archived stages).
+- Colibri canonical candidate v1.0.0 #107 2d9e7f6fb860fdd53747f4ba75350d15bab27877; Contracts/ClientBridge/v1/; upstream TASK CHATGPT-UL-WUA-BRIDGE-P0-20261122-001. https://github.com/maxrus82gm-svg/local_LLM/commit/2d9e7f6fb860fdd53747f4ba75350d15bab27877
+- WUA code snapshot #650 945d44097329bc681da534d5e6e5ae6f29289617; local main #649 2d63d11681ae8d9cf64e0d4a34c4cac06410393b. Sources: model_registry.py, ordinary_chat_service.py, web_alarm/ordinary_provider.py, ordinary_chat_bridge.py, turn_service.py; existing EVM/registry and Turn boundaries remain authoritative.
+
+## Independent reproduction and additional checks
+HOME Windows: extract all 10 exact contract blobs with git show into temporary directory, no checkout/index modification. Initial default Python failed import jsonschema, used existing WUA .venv (no installation). Author runner exit 0: PASS 68 fixture/schema/sequence checks; admission cases shape checks only. Additional 14 assertions passed: six shared schemas identical HTTP/SSE (Usage/Error/Telemetry/Limits/Capabilities/LaunchConfiguration); cloud history -> local same chat ChatRequest schema; distinct target IDs for identical models; BUSY not selectable; all authenticated scopes; partial usage known core/nullable optional; unavailable usage all null; system/tool denied fixtures; duplicate/stale 409 fixtures. These are contract checks, not proof of deployed admission or live runtime.
+
+## WUA mapping requirements (MVP1; not implemented)
+1. Existing chat ID/history/Workspace and Turn remain independent of selected model. Dynamic providers/target catalogue in common registry/EVM; only READY plus chat permission and enabled WUA target selectable. Stable target_id; refresh actual instance_id before a new turn, never substitute silently; bind attempt to target/instance/request. Provider-specific hardcoded GigaChat checks and response payload format must be generalized, retaining regression coverage.
+2. Prepared context snapshot and real wire envelope/admission/budget identity must cover actual Colibri request; same Turn/RAW/RUN/ledger; no parallel TurnService, no bypass of policy. No synthetic paid cost. Stable 32-hex request attempt ID, separate turn/conversation IDs, no auto retry on ambiguous status. Preserve failure/partial output; UNKNOWN until authoritative reconciliation. Cancel accepted != stop confirmed; no stopping model/Manager to cancel. No replay/steering/detached generation promised v1.
+3. SSE incremental UTF-8 events, validate meta identity/request/sequence/terminal; separate reasoning, answer, telemetry; no whole-answer buffering; heartbeats are not inference progress. EOF before done -> query status, incomplete content retained, no auto reissue. Preserve GigaChat behavior and test switch cloud->local->cloud in same chat.
+4. Usage raw status/source/prompt_basis plus nullable counters preserved. WUA current _check_usage expects complete/partial/missing/invalid and complete p+c=t; Colibri partial can have all core counters known (derived total), cached_prompt_tokens differs from precached_prompt_tokens. Explicit normalize only when basis known/compatible; unknown never zero; do not double count cache/reasoning. Do not map derived/partial to false provider-reported complete. Confirm arithmetic convention and partial status including all counters known with derived total before implementation; semantic validation needed beyond JSON Schema. No invented prices or ceiling. 
+5. P0 v1 system/developer/tool denied; plain user/assistant history accepted. Do not silently remove/downgrade system instructions; show incompatibility for unsupported context. MVP1 test a compatible chat without system role; richer capabilities deferred as agreed, not a reason to make separate chats.
+6. Authenticated backend only; scoped bearer, verified bridge identity, no browser secret or redirects; no new public listener. Actual runtime auth, isolation, jcs full conformance, cancel/race, persistence, performance and live GUI are MVP requirements.
+
+## NOT RUN / boundaries
+Standalone full OpenAPI validator absent; JSON Schema/ref/structure checks PASS, no full OpenAPI spec validation. GitHub-hosted Windows CI NOT RUN; HOME reproduction not substitute for formal independent CI. Runtime bridge not implemented in P0; live, real chat, launch/control NOT RUN. No GigaChat regression run because no code changes. Colibri table unchanged; no archive move or owner acceptance; P1/MVP1 not authorized by this review. No merge/push. Safe acceptance of WUA #650 still OPEN. Adjacent Git verification: use targeted diffs/hashes without weakening mandatory CI/gates. Continuous optimization without loss of function/quality.
+
+NEXT: Colibri review this verdict, clarify usage normalization semantics (nonblocking for text-only contract compatibility), owner accepts P0 and explicitly authorizes MVP1; then separate engineering TASK(s). 
