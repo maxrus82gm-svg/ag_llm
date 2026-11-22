@@ -1725,3 +1725,84 @@ test('Compact sidebar creates personal and empty Workspace directly, renders all
   assert.equal(h.el('chatWorkspaceList').children.length,0);
   assert.equal(h.el('chatPersonalList').children.length,2,'active personal list and editor dock');
 });
+
+test('Compact sections independently collapse and persist; inline rename Enter/Escape is scoped and never selects another chat',async()=>{
+  const p='ws_personal',w='ws_project',a='chat_personal',b='chat_project';
+  const personal={...ws(p,'Личные чаты'),personal:true,chats:[chatItem(a,'Личный')],hidden_chats:[]};
+  const project={...ws(w,'Проект'),folder:null,chats:[chatItem(b,'Проектный')],hidden_chats:[]};
+  const storage=new Map(),data=[personal,project],routes=offlineRoutes({
+    '/ui/ultra-chat/capability':()=>({...cap(),turn_test:{available:true,mode:'TEST_OFFLINE',compact_sidebar:true,
+      personal_workspace_id:p,models:[{model_id:'gigachat_2_pro',display_name:'TEST Pro'}]}}),
+    '/ultra/chat/sidebar':()=>({state:'ok',workspaces:data,personal_workspace_id:p})
+  });
+  for(const entry of data){
+    const id=entry.wa_workspace_id,c=entry.chats[0],base='/ultra/chat/workspaces/'+id;
+    routes[base+'/chats']=()=>({state:'ok',chats:entry.chats,excluded:{}});
+    routes[base+'/chats/'+c.chat_id+'/messages?limit=50']=()=>page([], {wa_workspace_id:id,chat_id:c.chat_id,chat:c});
+    routes[base+'/chats/'+c.chat_id+'/turns/latest']=()=>({turn:null,text:null});
+    routes[base+'/chats/'+c.chat_id+'/title']=opts=>{
+      const body=JSON.parse(opts.body);assert.equal(body.expected_title,c.title);c.title=body.title;return {wa_workspace_id:id,chat:c}
+    };
+    routes[base+'/title']=opts=>{
+      const body=JSON.parse(opts.body);assert.equal(body.expected_title,entry.display_name);entry.display_name=body.title;
+      return {wa_workspace_id:id,display_name:body.title}
+    };
+  }
+  const h=harness({offline:true,routes,storage});await settle();
+  const input=()=>h.context.document.getElementById('compactInlineName');
+  const key=(k)=>({key:k,preventDefault(){},stopPropagation(){}});
+  const posts=()=>h.chatCalls().filter(c=>c.method==='POST');
+  const active=h.run('chat.chat'),epoch=h.run('chat.epoch'),history=h.el('chatHistory').textContent;
+  const group=()=>h.el('chatWorkspaceList').children[0];
+  const projectRow=()=>group().children[2].children[0];
+  const before=h.calls.length;
+  h.el('chatPersonalToggle').onclick();
+  assert.equal(h.el('chatPersonalList').hidden,true);
+  assert.equal(h.el('chatWorkspaceList').hidden,false);
+  h.el('chatWorkspaceToggle').onclick();
+  assert.equal(h.el('chatWorkspaceList').hidden,true);
+  assert.equal(h.el('chatWorkspaceState').hidden,true);
+  assert.equal(h.el('chatWorkspaceToggle').getAttribute('aria-expanded'),'false');
+  assert.equal(h.run('chat.chat'),active);assert.equal(h.run('chat.epoch'),epoch);
+  assert.equal(h.el('chatHistory').textContent,history);
+  assert.equal(h.calls.length,before,'collapse never requests network');
+  const again=harness({offline:true,routes,storage});await settle();
+  assert.equal(again.el('chatPersonalList').hidden,true);assert.equal(again.el('chatWorkspaceList').hidden,true);
+  h.el('chatPersonalToggle').onclick();h.el('chatWorkspaceToggle').onclick();
+  assert.equal(h.el('chatPersonalNew').textContent,'+');assert.equal(h.el('chatRegisterWorkspace').textContent,'+');
+  // Rename an inactive Workspace without changing active chat.
+  await group().children[0].children[1].onclick();
+  assert.equal(input().value,'Проект');assert.equal(h.el('chatWorkspaceNameForm').hidden,true);
+  input().value='Новый проект';input().oninput();await input().onkeydown(key('Enter'));
+  assert.equal(project.display_name,'Новый проект');assert.equal(input(),null);assert.equal(h.run('chat.chat'),active);
+  // Nested inactive chat uses the same mechanism; Escape writes nothing.
+  await projectRow().children[1].onclick();
+  input().value='Не сохранять';input().oninput();input().onkeydown(key('Escape'));
+  assert.equal(project.chats[0].title,'Проектный');assert.equal(posts().length,1);
+  await projectRow().children[1].onclick();
+  input().value='Проект 42';input().oninput();await input().onkeydown(key('Enter'));
+  assert.equal(project.chats[0].title,'Проект 42');assert.equal(h.run('chat.chat'),active);
+  // Active personal title commits without changing message selection or showing old form.
+  await h.el('chatList').children[0].children[1].onclick();
+  assert.equal(input().value,'Личный');assert.equal(h.el('chatNameForm').hidden,true);
+  input().value='  ';input().oninput();await input().onkeydown(key('Enter'));
+  assert.equal(posts().length,2);assert.match(h.el('chatError').textContent,/Введите название/);
+  input().value='Личный 1';input().oninput();await input().onkeydown(key('Enter'));
+  assert.equal(h.el('chatTitle').textContent,'Личный 1');
+  assert.equal(h.run('chat.chat'),active);assert.equal(h.run('chat.epoch'),epoch);
+  assert.equal(posts().length,3);assert.equal(input(),null);
+  const endpoint='/ultra/chat/workspaces/'+w+'/chats/'+b+'/title';
+  const normal=h.routes.get(endpoint);
+  await projectRow().children[1].onclick();
+  input().value='Мой вариант';input().oninput();
+  project.chats[0].title='Другое окно';
+  h.routes.set(endpoint,()=>refused(409,'title_changed'));
+  await input().onkeydown(key('Enter'));
+  assert.equal(posts().length,4);assert.equal(project.chats[0].title,'Другое окно');
+  assert.equal(input().value,'Мой вариант');
+  assert.match(h.el('chatError').textContent,/Другое окно/);
+  h.routes.set(endpoint,normal);
+  await input().onkeydown(key('Enter'));
+  assert.equal(posts().length,5);assert.equal(project.chats[0].title,'Мой вариант');
+  assert.equal(input(),null);assert.equal(h.run('chat.chat'),active);assert.equal(h.run('chat.epoch'),epoch);
+});

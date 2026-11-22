@@ -1,0 +1,4 @@
+# TASK ID: CHATGPT-WUA-SIDEBAR-INLINE-20261122-001
+
+Direct owner request 22.11.2026 after #653/#654 owner TEST acceptance and initial STANDARD use. Owner confirmed archive works in STANDARD; identified legacy rename form. Approved inline name editing in the same row for all three kinds (personal Chat, nested Chat, Workspace); Enter saves, Escape cancels, no Save/Cancel buttons, constant geometry. Replace verbose Workspace create button with compact plus. Separate independently collapsible personal/Workspace sections in the existing single column, no extra column; keep selected history open. Owner explicitly requested immediate STANDARD applicability. Existing GPT→owner merge main workflow retained; no production restart or paid requests by assistant.
+PLAN_READ before task: SHA256 e69806f9e92420b4580c43890cb74708169bd65893dc6ec4726f32e5212ac034. Independent sidebar refinement; no shared plan edits.

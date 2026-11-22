@@ -297,6 +297,18 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 #chatView .chat-side .compact-heading{display:flex;align-items:center;justify-content:space-between;gap:5px}
 #chatView .chat-side .compact-heading .side-title{margin:0;min-width:0}
 #chatView .compact-heading button{flex:none;min-height:24px;padding:3px 6px}
+#chatView .compact-heading .side-title{flex:1}
+#chatView .compact-heading .compact-section-toggle{width:23px;height:24px;padding:0;border:1px solid transparent;background:transparent;color:#a7b7cb;font-size:15px}
+#chatView .compact-heading .compact-section-toggle:hover{background:#253248;border-color:#526584}
+#chatView .compact-heading #chatPersonalNew,#chatView .compact-heading #chatRegisterWorkspace{width:24px;height:24px;min-width:24px;min-height:24px;padding:0;border-radius:5px;font-size:16px;line-height:1}
+#chatView #chatPersonalList[hidden],#chatView #chatWorkspaceList[hidden],#chatView #chatWorkspaceState[hidden]{display:none!important}
+#chatView .compact-inline-name{min-width:0;flex:1;width:0;height:28px;box-sizing:border-box;margin:0;padding:5px 4px;border:1px solid #817cf2;border-radius:5px;background:#111824;color:#f0f4fa;font:inherit;font-size:12px;line-height:1.35;outline:none}
+#chatView .compact-workspace .chat-workspace-row .compact-inline-name{height:24px;font-size:10px;font-weight:700}
+#chatView .compact-inline-name:focus{border-color:#a5a2ff;outline:none}
+#chatView .compact-dialog .chat-pick{height:28px;box-sizing:border-box}
+#chatView .compact-workspace .chat-workspace-row .chat-pick{height:24px;box-sizing:border-box}
+
+
 #chatView .compact-workspace{width:100%;min-width:0;max-width:100%;box-sizing:border-box;padding:7px}
 #chatView .compact-workspace .chat-workspace-row,#chatView .compact-dialog{display:flex;gap:2px;min-width:0;align-items:center;padding:0}
 #chatView .compact-workspace .chat-workspace-row .chat-pick:before{display:none;content:none}
@@ -407,9 +419,9 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <div class="section-head"><div><p class="side-title">ULTRA CHAT</p><h2 id="chatHeading" tabindex="-1">Диалоги Ultra</h2></div><button type="button" id="chatRefresh" title="Перечитать Workspace, диалоги и модель">↻</button></div>
 <p id="chatAccess" class="live" role="status">Проверяем доступ к истории…</p>
 <div id="chatError" class="notice error" role="alert" hidden></div>
-<div class="chat-personal-heading"><span class="side-title">ЛИЧНЫЕ ЧАТЫ</span><button type="button" id="chatPersonalNew" hidden>+ Новый чат</button></div>
+<div class="chat-personal-heading"><span class="side-title">ЛИЧНЫЕ ЧАТЫ</span><button type="button" id="chatPersonalToggle" class="compact-section-toggle" aria-expanded="true" aria-controls="chatPersonalList" aria-label="Свернуть личные чаты" hidden>▾</button><button type="button" id="chatPersonalNew" hidden>+ Новый чат</button></div>
 <div id="chatPersonalList" class="chat-picks" aria-label="Личные диалоги"></div>
-<div class="chat-workspace-heading"><span class="side-title">WORKSPACE</span><button type="button" id="chatRegisterWorkspace" title="Выбрать существующую папку или создать новую в окне Windows">+ Создать Workspace</button></div>
+<div class="chat-workspace-heading"><span class="side-title">WORKSPACE</span><button type="button" id="chatWorkspaceToggle" class="compact-section-toggle" aria-expanded="true" aria-controls="chatWorkspaceList" aria-label="Свернуть Workspace" hidden>▾</button><button type="button" id="chatRegisterWorkspace" title="Выбрать существующую папку или создать новую в окне Windows">+ Создать Workspace</button></div>
 <div id="chatWorkspaceResult" class="notice info" role="status" hidden></div>
 <p id="chatWorkspaceState" class="muted" role="status"></p>
 <div id="chatWorkspaceList" class="chat-picks" aria-label="Workspace с вложенными диалогами"></div>
@@ -2462,6 +2474,89 @@ function compactIcon(label,title,action,enabled=true,kind=''){
   if(kind)b.className+=' compact-'+kind+(kind==='plus'?'':' compact-icon');
   return b
 }
+// Sidebar visibility is a browser preference, not chat selection or server state.
+const compactSectionKey='webAlarm.chatSidebarSections.v1';
+const compactSections=(()=>{try{const v=JSON.parse(localStorage.getItem(compactSectionKey)||'{}');return {personal:v?.personal!==false,workspace:v?.workspace!==false}}catch(_){return {personal:true,workspace:true}}})();
+let compactNameEdit=null;
+function syncCompactSections(){
+  for(const [section,id,list,label] of [['personal','chatPersonalToggle','chatPersonalList','личные чаты'],['workspace','chatWorkspaceToggle','chatWorkspaceList','Workspace']]){
+    const open=compactSections[section],b=$(id);
+    b.hidden=false;b.textContent=open?'▾':'▸';b.setAttribute('aria-expanded',String(open));b.setAttribute('aria-label',(open?'Свернуть ':'Развернуть ')+label);
+    b.title=(open?'Свернуть ':'Развернуть ')+label;$(list).hidden=!open;
+    b.onclick=()=>setCompactSection(section,!compactSections[section])
+  }
+  $('chatWorkspaceState').hidden=!compactSections.workspace
+}
+function setCompactSection(section,open){
+  compactSections[section]=open;
+  try{localStorage.setItem(compactSectionKey,JSON.stringify(compactSections))}catch(_){}
+  syncCompactSections()
+}
+function beginCompactName(ws,cid,title){
+  if(chatEdit.busy||chat.creatingWorkspace)return;
+  compactNameEdit={ws,cid,expected:title,draft:title};
+  notice('chatError','');renderCompactWorkspaces();
+  const input=$('compactInlineName');
+  if(input){input.focus();input.select?.()}
+}
+function compactNameControl(button,ws,cid){
+  const e=compactNameEdit;
+  if(!e||e.ws!==ws||e.cid!==cid)return button;
+  const input=element('input',null,'compact-inline-name');input.id='compactInlineName';input.type='text';
+  input.value=e.draft;input.maxLength=cid?200:120;input.disabled=chatEdit.busy;
+  input.setAttribute('aria-label',cid?'Название чата':'Название Workspace');
+  input.setAttribute('autocomplete','off');
+  input.title='Enter — сохранить, Escape — отменить';
+  input.oninput=()=>{if(compactNameEdit===e)e.draft=input.value};
+  input.onclick=z=>z?.stopPropagation?.();
+  input.onkeydown=z=>{
+    if(z.isComposing||z.keyCode===229)return;
+    if(z.key==='Escape'){
+      z.preventDefault();z.stopPropagation?.();
+      if(!chatEdit.busy&&compactNameEdit===e){compactNameEdit=null;notice('chatError','');renderCompactWorkspaces()}
+    }else if(z.key==='Enter'){
+      z.preventDefault();z.stopPropagation?.();e.draft=input.value;return saveCompactName(e)
+    }
+  };
+  return input
+}
+async function saveCompactName(e){
+  if(chatEdit.busy||chat.creatingWorkspace||compactNameEdit!==e)return;
+  const title=String(e.draft||'').trim(),limit=e.cid?200:120;
+  if(!title||title.length>limit||/[\r\n]/.test(title)){
+    notice('chatError','Введите название до '+limit+' символов.');return
+  }
+  chatEdit.busy=true;notice('chatError','');renderCompactWorkspaces();
+  let error='';
+  try{
+    const base='/ultra/chat/workspaces/'+encodeURIComponent(e.ws);
+    const r=await chatPost(base+(e.cid?'/chats/'+encodeURIComponent(e.cid):'')+'/title',{title,expected_title:e.expected});
+    if(r?.wa_workspace_id!==e.ws||(e.cid?(r.chat?.chat_id!==e.cid||r.chat?.title!==title):r.display_name!==title))throw Error('rename_unconfirmed');
+    const w=chat.workspaces.find(x=>x.wa_workspace_id===e.ws);
+    if(e.cid){
+      for(const list of [w?.chats,chat.workspace===e.ws?chat.chats:null]){
+        const c=list?.find(x=>x.chat_id===e.cid);if(c)c.title=title
+      }
+      if(chat.workspace===e.ws&&chat.chat===e.cid)text('chatTitle',title)
+    }else{
+      if(w)w.display_name=title;
+      if(chat.workspace===e.ws)text('chatWorkspaceName',title)
+    }
+    compactNameEdit=null;
+  }catch(x){
+    if(['title_changed','workspace_title_changed','chat_not_found'].includes(x.code)){
+      // A stale name is never silently overwritten. Re-read, then require another Enter.
+      await loadChatWorkspaces();
+      const w=chat.workspaces.find(x=>x.wa_workspace_id===e.ws);
+      const fresh=e.cid?(chat.workspace===e.ws?chat.chats:w?.chats)?.find(c=>c.chat_id===e.cid)?.title:w?.display_name;
+      if(typeof fresh==='string'){e.expected=fresh;error='Название изменилось в другом окне. Текущее: '+fresh+'. Проверьте ввод и нажмите Enter ещё раз.'}
+      else{compactNameEdit=null;error='Запись недоступна. Обновите список.'}
+    }else error='Не удалось подтвердить сохранение. Проверьте список перед повтором.';
+  }finally{
+    chatEdit.busy=false;renderCompactWorkspaces();if(error)notice('chatError',error);
+    if(compactNameEdit===e)$('compactInlineName')?.focus()
+  }
+}
 function compactDialogRow(w,c){
   const ws=w.wa_workspace_id,ok=c.status==='ok',row=element('div',null,'chat-dialog-row compact-dialog');
   const label=ok?c.title:'Диалог недоступен';
@@ -2470,22 +2565,24 @@ function compactDialogRow(w,c){
     if(chat.workspace===ws&&chat.chat!==c.chat_id)await selectChat(c.chat_id)
   });
   b.title=label;b.disabled=!ok;b.setAttribute('data-status',c.status);
-  row.append(b,compactIcon('✎','Переименовать чат «'+label+'»',async()=>{
-    if(chat.workspace!==ws)await selectChatWorkspace(ws);
-    if(chat.workspace===ws&&chat.chat!==c.chat_id)await selectChat(c.chat_id);
-    if(chat.workspace===ws&&chat.chat===c.chat_id)openChatName('rename')
-  },ok&&!chatEdit.busy,'edit'),compactIcon('×','Убрать чат «'+label+'» в архив',()=>archiveCompact(ws,c.chat_id),ok&&!chatEdit.busy,'trash'));
+  row.append(compactNameControl(b,ws,c.chat_id),compactIcon('✎','Переименовать чат «'+label+'»',()=>beginCompactName(ws,c.chat_id,label),ok&&!chatEdit.busy,'edit'),compactIcon('×','Убрать чат «'+label+'» в архив',()=>archiveCompact(ws,c.chat_id),ok&&!chatEdit.busy,'trash'));
   return row
 }
 function renderCompactWorkspaces(){
+  const previousInput=$('compactInlineName'),restoreFocus=previousInput&&document.activeElement===previousInput;
+  const caret=restoreFocus?[previousInput.selectionStart,previousInput.selectionEnd]:null;
   const nested=['chatWorkspaceNameForm','chatListState','chatList','chatNameForm'].map($);
   $('chatListDock').append(...nested);
   const [workspaceForm,listState,chatList,nameForm]=nested;
+  workspaceForm.hidden=true;nameForm.hidden=true;
   const personal=$('chatPersonalList');personal.className='chat-picks compact-personal-list';
   const plus=$('chatPersonalNew');plus.hidden=false;plus.disabled=chatEdit.busy||chat.creatingWorkspace;
   plus.textContent='+';plus.title='Новый личный чат';plus.setAttribute('aria-label','Новый личный чат');
   if(plus.parentNode)plus.parentNode.className='chat-personal-heading compact-heading';
-  $('chatRegisterWorkspace').title='Создать пустой Workspace';
+  const wsPlus=$('chatRegisterWorkspace');wsPlus.title='Создать пустой Workspace';wsPlus.textContent='+';
+  wsPlus.setAttribute('aria-label','Создать Workspace');wsPlus.disabled=chatEdit.busy||chat.creatingWorkspace;
+  if(wsPlus.parentNode)wsPlus.parentNode.className='chat-workspace-heading compact-heading';
+  syncCompactSections();
   text('chatSidebarNote','');
   const groups=[],personalRows=[];
   for(const w of chat.workspaces){
@@ -2499,7 +2596,7 @@ function renderCompactWorkspaces(){
     const g=element('div',null,'chat-workspace-group compact-workspace');g.dataset.active=String(active);g.dataset.workspaceId=ws;
     const head=element('div',null,'chat-workspace-row');
     const b=chatPick(w.display_name,'',active,()=>{if(!active)return selectChatWorkspace(ws)});b.title=w.display_name;
-    head.append(b,compactIcon('✎','Переименовать Workspace',()=>openWorkspaceName(ws),!chatEdit.busy,'edit'),
+    head.append(compactNameControl(b,ws,null),compactIcon('✎','Переименовать Workspace',()=>beginCompactName(ws,null,w.display_name),!chatEdit.busy,'edit'),
       compactIcon('×','Убрать Workspace в архив',()=>archiveCompact(ws),!chatEdit.busy,'trash'),
       compactIcon('+','Новый чат в Workspace',()=>createCompactChat(ws),!chatEdit.busy&&['ok','missing_history'].includes(w.history),'plus'));
     g.append(head);
@@ -2516,10 +2613,15 @@ function renderCompactWorkspaces(){
   }
   personal.replaceChildren(...personalRows);
   $('chatWorkspaceList').replaceChildren(...groups);
+  const currentInput=$('compactInlineName');
+  if(currentInput&&restoreFocus&&!currentInput.disabled){
+    currentInput.focus();if(caret?.[0]!=null)currentInput.setSelectionRange?.(...caret)
+  }
   syncChatActions()
 }
 async function createCompactChat(ws=null){
   if(chatEdit.busy||chat.creatingWorkspace)return;
+  compactNameEdit=null;setCompactSection(ws?'workspace':'personal',true);
   const id=newChatId();
   chatEdit.busy=true;renderCompactWorkspaces();
   try{
@@ -2535,6 +2637,7 @@ async function createCompactChat(ws=null){
 }
 async function createCompactWorkspace(){
   if(chat.creatingWorkspace||chatEdit.busy)return;
+  compactNameEdit=null;setCompactSection('workspace',true);
   chat.creatingWorkspace=true;$('chatRegisterWorkspace').disabled=true;
   try{
     const ws='ws_'+newChatId().slice(5);
@@ -2553,6 +2656,7 @@ async function archiveCompact(ws,cid=null){
     const body={workspace_id:ws};if(cid)body.chat_id=cid;
     const result=await chatPost('/ultra/chat/sidebar/archive',body);
     if(result?.archived!==true)throw Error('unconfirmed');
+    if(compactNameEdit?.ws===ws&&(!cid||compactNameEdit.cid===cid))compactNameEdit=null;
     if(chat.workspace===ws&&(!cid||chat.chat===cid)){
       if(!cid)chat.workspace=null;
       chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;chat.epoch++;clearChatHistory('Выберите диалог');
@@ -3070,8 +3174,11 @@ $('chatTestWorkspaceCancel').onclick=()=>{if(!chat.creatingWorkspace){$('chatTes
 $('viewBlueprint').onclick=()=>showView('blueprint');
 $('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces().then(()=>checkTurn())};
 $('chatOlder').onclick=()=>loadChatHistory(true);
-$('chatNew').onclick=()=>openChatName('create');
-$('chatRename').onclick=()=>openChatName('rename');
+$('chatNew').onclick=()=>chatTurn.compact?createCompactChat(chat.workspace):openChatName('create');
+$('chatRename').onclick=()=>{
+  if(!chatTurn.compact)return openChatName('rename');
+  const c=chat.chats.find(x=>x.chat_id===chat.chat&&x.status==='ok');if(c)beginCompactName(chat.workspace,c.chat_id,c.title)
+};
 $('chatWorkspaceNameForm').onsubmit=e=>{e.preventDefault();return saveWorkspaceName()};
 $('chatWorkspaceNameCancel').onclick=closeWorkspaceName;
 $('chatWorkspaceNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeWorkspaceName()}};

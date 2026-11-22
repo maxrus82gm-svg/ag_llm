@@ -1,0 +1,12 @@
+# CHATGPT-WUA-SIDEBAR-INLINE-20261122-001 — compact section disclosure and inline names
+
+Base #654 0cad3e2ad1b62bb16eb3149309175fe91b635fd4. Direct ChatGPT implementation, same source for STANDARD and TEST. No server/provider/storage behavior changed. Owner STANDARD feedback #653: archive worked; old form remains and needs replacement. No claim of full STANDARD/REAL acceptance.
+
+- Independent accessible disclosure arrows with aria-expanded; both lists can be open or closed. Initial both open, saved local browser preference survives F5; new item action reopens corresponding section. No request or chat change on toggle. Workspace plus now same 24px control as personal plus; no additional column.
+- Same-row editable title for personal and nested Chat, Workspace. Enter commits using existing scoped title CAS route; Escape cancels without POST. No Save/Cancel form in compact mode, old forms kept only for non-compact legacy modes. No selection change for inactive item rename. Empty title refused; existing manual length limits retained. No implicit save on blur. Draft remains on uncertain request; concurrent name conflict reloads and requires explicit second Enter. Controls disabled during write, IME composing Enter ignored.
+- All 207 JS chat/EVM/operator tests PASS. Includes previous #653 scenarios plus independent toggles, F5 localStorage, zero requests on collapse, all three title kinds, Escape, invalid name, no active selection change, CAS conflict/retry. Actual headless Chrome + isolated real loopback TEST PASS, personal row 28px before/during edit, Workspace header 24px, nested rows 28px, fixed width 223px, independent collapse/F5, full old CRUD/archive smoke, synthetic reply. Reproducible script and evidence/preview in this folder. No provider requests incurred. Python syntax and existing focused sidebar HTTP checks separate; server code unchanged.
+- Physical STANDARD GUI on this revision and hosted CI NOT RUN. Baseline D8 remains OPEN (not rerun); no claim of broad release. No changes to local-only shared plans or working data. Existing launch scripts unchanged.
+FINAL PLAN_READ 2026-11-22T19:05:43+05:00 SHA256 04d1fd28e3d385d550c1cc010af02d287fa1be2894373d15cc02d6ffcfcead65; no plan edit.
+NEXT owner merges #655 into main and restarts existing STANDARD normally. No separate TEST promotion needed. Check collapse and inline rename in STANDARD.
+
+Focused Python: syntax PASS; 4/4 compact sidebar actual HTTP/core tests PASS.
