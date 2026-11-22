@@ -1716,6 +1716,22 @@ test('Compact sidebar creates personal and empty Workspace directly, renders all
   assert.equal(h.run('chat.chat'),pendingId);
   assert.equal(h.el('chatNameForm').hidden,true);
   assert.equal(h.el('chatList').children.length,1);
+  const collapsedGroup=h.el('chatWorkspaceList').children[0];
+  const footer=collapsedGroup.children.at(-1),nested=collapsedGroup.children.at(-2);
+  const activeId=h.run('chat.chat'),activeEpoch=h.run('chat.epoch'),beforeCalls=h.calls.length;
+  footer.onclick();
+  assert.equal(footer.getAttribute('aria-expanded'),'false');
+  assert.equal(nested.hidden,true);assert.equal(h.run('chat.chat'),activeId);
+  assert.equal(h.run('chat.epoch'),activeEpoch);assert.equal(h.calls.length,beforeCalls);
+  assert.equal(h.el('chatPersonalList').hidden,false);
+  assert.equal(h.el('chatWorkspaceList').hidden,false);
+  // Creating in a collapsed Workspace reopens that card automatically.
+  await collapsedGroup.children[0].children[3].onclick();await settle();
+  assert.equal(h.el('chatWorkspaceList').children[0].children.at(-1).getAttribute('aria-expanded'),'true');
+  assert.equal(h.el('chatList').children.length,2);
+  // Keep the old scenario's single visible row for its subsequent archive checks.
+  await h.el('chatList').children[0].children[2].onclick();await settle();
+  assert.equal(h.el('chatList').children.length,1);
   assert.equal(h.el('chatList').children[0].children.length,3);
   assert.equal(h.el('chatPersonalList').children.length,1);
   await h.el('chatList').children[0].children[2].onclick();await settle();
@@ -1756,6 +1772,12 @@ test('Compact sections independently collapse and persist; inline rename Enter/E
   const group=()=>h.el('chatWorkspaceList').children[0];
   const projectRow=()=>group().children[2].children[0];
   const before=h.calls.length;
+  const card=group(),cardToggle=card.children.at(-1),cardRows=card.children.at(-2);
+  assert.equal(cardToggle.getAttribute('aria-expanded'),'true');
+  cardToggle.onclick();assert.equal(cardRows.hidden,true);
+  assert.equal(h.el('chatPersonalList').hidden,false);
+  assert.equal(h.calls.length,before);
+  assert.equal(h.run('chat.epoch'),epoch);
   h.el('chatPersonalToggle').onclick();
   assert.equal(h.el('chatPersonalList').hidden,true);
   assert.equal(h.el('chatWorkspaceList').hidden,false);
@@ -1768,7 +1790,11 @@ test('Compact sections independently collapse and persist; inline rename Enter/E
   assert.equal(h.calls.length,before,'collapse never requests network');
   const again=harness({offline:true,routes,storage});await settle();
   assert.equal(again.el('chatPersonalList').hidden,true);assert.equal(again.el('chatWorkspaceList').hidden,true);
+  assert.equal(again.el('chatWorkspaceList').children[0].children.at(-1).getAttribute('aria-expanded'),'false');
+  assert.equal(again.el('chatWorkspaceList').children[0].children.at(-2).hidden,true);
   h.el('chatPersonalToggle').onclick();h.el('chatWorkspaceToggle').onclick();
+  assert.equal(cardRows.hidden,true,'section disclosure does not expand its cards');
+  cardToggle.onclick();assert.equal(cardRows.hidden,false);
   assert.equal(h.el('chatPersonalNew').textContent,'+');assert.equal(h.el('chatRegisterWorkspace').textContent,'+');
   // Rename an inactive Workspace without changing active chat.
   await group().children[0].children[1].onclick();

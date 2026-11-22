@@ -1,5 +1,9 @@
 # Оперативная память проекта — №34
 
+## CURRENT 22.11.2026 — нижние раскрыватели
+H-CHATGPT-000011 / CHATGPT-WUA-BOTTOM-DISCLOSURE-20261122-001, #656. Owner STANDARD feedback #655: move arrows under headers and under each Workspace card; individual card hides only chat list, no per-chat toggle. Browser pref persists, active chat unchanged, no backend modifications. 207 JS + 4 HTTP/core + Chrome TEST PASS; card width 223px, height 153→88px. Owner STANDARD #656 / CI / LIVE OPEN; D8 baseline OPEN. Report reports/CHATGPT-WUA-BOTTOM-DISCLOSURE-20261122-001/report.md. 🟢 ОБНОВИТЬ GITHUB — №656 после публикации; перезапустить штатный STANDARD. Plan №34.1/34.1.1 unchanged.
+
+
 ## CURRENT 22.11.2026 — sidebar inline / disclosure
 H-CHATGPT-000010 / CHATGPT-WUA-SIDEBAR-INLINE-20261122-001, #655. Owner STANDARD archive feedback positive; requested same-line name input (Enter/Escape), independent collapsible personal and Workspace sections, compact plus. UI only, same STANDARD/TEST, 207 JS + 4 HTTP/core + actual Chrome TEST PASS; unchanged heights 28/24px and width 223px. STANDARD owner retest / CI / LIVE OPEN, D8 baseline OPEN. Report reports/CHATGPT-WUA-SIDEBAR-INLINE-20261122-001/report.md. 🟢 ОБНОВИТЬ GITHUB — №655 после публикации, затем перезапустить штатный STANDARD. №34.1/34.1.1 не изменены.
 

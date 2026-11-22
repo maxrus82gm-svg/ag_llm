@@ -294,12 +294,22 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 #chatView .chat-personal-heading button,#chatView #chatRegisterWorkspace{background:#817cf2;color:#fff;border-color:#9b98ff;font-size:12px;padding:6px 9px}
 #chatView .chat-icon-button{background:transparent;border-color:transparent;color:#a7b7cb}
 #chatView .chat-icon-button:hover{background:#253248;border-color:#526584}
-#chatView .chat-side .compact-heading{display:flex;align-items:center;justify-content:space-between;gap:5px}
+#chatView .chat-side .compact-heading{display:grid;grid-template-columns:minmax(0,1fr) 24px;grid-template-rows:24px 16px;align-items:center;column-gap:5px;row-gap:2px;margin-bottom:4px}
 #chatView .chat-side .compact-heading .side-title{margin:0;min-width:0}
 #chatView .compact-heading button{flex:none;min-height:24px;padding:3px 6px}
-#chatView .compact-heading .side-title{flex:1}
-#chatView .compact-heading .compact-section-toggle{width:23px;height:24px;padding:0;border:1px solid transparent;background:transparent;color:#a7b7cb;font-size:15px}
-#chatView .compact-heading .compact-section-toggle:hover{background:#253248;border-color:#526584}
+#chatView .compact-heading .side-title{grid-column:1;grid-row:1}
+#chatView .compact-heading #chatPersonalNew,#chatView .compact-heading #chatRegisterWorkspace{grid-column:2;grid-row:1}
+#chatView .compact-heading .compact-section-toggle{grid-column:1/-1;grid-row:2}
+#chatView .compact-heading .compact-section-toggle,#chatView .compact-workspace .compact-card-toggle{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;height:16px;min-height:16px;box-sizing:border-box;padding:0;border:0;border-radius:3px;background:transparent;color:#8398af;font-size:0;cursor:pointer;gap:5px}
+#chatView .compact-heading .compact-section-toggle::before,#chatView .compact-heading .compact-section-toggle::after,#chatView .compact-workspace .compact-card-toggle::before,#chatView .compact-workspace .compact-card-toggle::after{content:'';height:1px;flex:1;background:#303d50}
+#chatView .compact-disclosure-glyph{display:block;width:7px;height:7px;box-sizing:border-box;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+#chatView [aria-expanded=true]>.compact-disclosure-glyph{transform:translateY(2px) rotate(225deg)}
+#chatView .compact-heading .compact-section-toggle:hover,#chatView .compact-workspace .compact-card-toggle:hover{color:#c6c4ff;background:#202b3b}
+#chatView .compact-heading .compact-section-toggle:focus:not(:focus-visible),#chatView .compact-workspace .compact-card-toggle:focus:not(:focus-visible){outline:none}
+#chatView .compact-heading .compact-section-toggle:focus-visible,#chatView .compact-workspace .compact-card-toggle:focus-visible{outline:1px solid #8f8cff;outline-offset:1px}
+#chatView .compact-content[hidden]{display:none!important}
+#chatView .compact-workspace .compact-card-toggle{margin-top:3px}
+
 #chatView .compact-heading #chatPersonalNew,#chatView .compact-heading #chatRegisterWorkspace{width:24px;height:24px;min-width:24px;min-height:24px;padding:0;border-radius:5px;font-size:16px;line-height:1}
 #chatView #chatPersonalList[hidden],#chatView #chatWorkspaceList[hidden],#chatView #chatWorkspaceState[hidden]{display:none!important}
 #chatView .compact-inline-name{min-width:0;flex:1;width:0;height:28px;box-sizing:border-box;margin:0;padding:5px 4px;border:1px solid #817cf2;border-radius:5px;background:#111824;color:#f0f4fa;font:inherit;font-size:12px;line-height:1.35;outline:none}
@@ -419,9 +429,9 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <div class="section-head"><div><p class="side-title">ULTRA CHAT</p><h2 id="chatHeading" tabindex="-1">Диалоги Ultra</h2></div><button type="button" id="chatRefresh" title="Перечитать Workspace, диалоги и модель">↻</button></div>
 <p id="chatAccess" class="live" role="status">Проверяем доступ к истории…</p>
 <div id="chatError" class="notice error" role="alert" hidden></div>
-<div class="chat-personal-heading"><span class="side-title">ЛИЧНЫЕ ЧАТЫ</span><button type="button" id="chatPersonalToggle" class="compact-section-toggle" aria-expanded="true" aria-controls="chatPersonalList" aria-label="Свернуть личные чаты" hidden>▾</button><button type="button" id="chatPersonalNew" hidden>+ Новый чат</button></div>
+<div class="chat-personal-heading"><span class="side-title">ЛИЧНЫЕ ЧАТЫ</span><button type="button" id="chatPersonalNew" hidden>+ Новый чат</button><button type="button" id="chatPersonalToggle" class="compact-section-toggle" aria-expanded="true" aria-controls="chatPersonalList" aria-label="Свернуть личные чаты" hidden>▾</button></div>
 <div id="chatPersonalList" class="chat-picks" aria-label="Личные диалоги"></div>
-<div class="chat-workspace-heading"><span class="side-title">WORKSPACE</span><button type="button" id="chatWorkspaceToggle" class="compact-section-toggle" aria-expanded="true" aria-controls="chatWorkspaceList" aria-label="Свернуть Workspace" hidden>▾</button><button type="button" id="chatRegisterWorkspace" title="Выбрать существующую папку или создать новую в окне Windows">+ Создать Workspace</button></div>
+<div class="chat-workspace-heading"><span class="side-title">WORKSPACE</span><button type="button" id="chatRegisterWorkspace" title="Выбрать существующую папку или создать новую в окне Windows">+ Создать Workspace</button><button type="button" id="chatWorkspaceToggle" class="compact-section-toggle" aria-expanded="true" aria-controls="chatWorkspaceList" aria-label="Свернуть Workspace" hidden>▾</button></div>
 <div id="chatWorkspaceResult" class="notice info" role="status" hidden></div>
 <p id="chatWorkspaceState" class="muted" role="status"></p>
 <div id="chatWorkspaceList" class="chat-picks" aria-label="Workspace с вложенными диалогами"></div>
@@ -2476,20 +2486,39 @@ function compactIcon(label,title,action,enabled=true,kind=''){
 }
 // Sidebar visibility is a browser preference, not chat selection or server state.
 const compactSectionKey='webAlarm.chatSidebarSections.v1';
-const compactSections=(()=>{try{const v=JSON.parse(localStorage.getItem(compactSectionKey)||'{}');return {personal:v?.personal!==false,workspace:v?.workspace!==false}}catch(_){return {personal:true,workspace:true}}})();
+const compactSections=(()=>{try{const v=JSON.parse(localStorage.getItem(compactSectionKey)||'{}');return {personal:v?.personal!==false,workspace:v?.workspace!==false,collapsed:Array.isArray(v?.collapsed)?v.collapsed.filter(x=>typeof x==='string'&&x.length<=128).slice(0,500):[]}}catch(_){return {personal:true,workspace:true,collapsed:[]}}})();
+function persistCompactSections(){try{localStorage.setItem(compactSectionKey,JSON.stringify(compactSections))}catch(_){}}
+function paintCompactToggle(b,open,label){
+  b.hidden=false;b.replaceChildren(element('span',null,'compact-disclosure-glyph'));
+  b.children[0].setAttribute('aria-hidden','true');
+  b.setAttribute('aria-expanded',String(open));b.setAttribute('aria-label',(open?'Свернуть ':'Развернуть ')+label);
+  b.title=(open?'Свернуть ':'Развернуть ')+label
+}
+function compactCardOpen(ws){return !compactSections.collapsed.includes(ws)}
+function setCompactCard(ws,open){
+  if(open)compactSections.collapsed=compactSections.collapsed.filter(x=>x!==ws);
+  else if(compactCardOpen(ws))compactSections.collapsed=[...compactSections.collapsed,ws].slice(-500);
+  persistCompactSections()
+}
+function compactCardToggle(ws,label,list){
+  const b=element('button',null,'compact-card-toggle');b.type='button';
+  list.id='compactWorkspaceChats-'+ws;b.setAttribute('aria-controls',list.id);
+  function sync(){const open=compactCardOpen(ws);list.hidden=!open;paintCompactToggle(b,open,'чаты Workspace «'+label+'»')}
+  b.onclick=()=>{setCompactCard(ws,!compactCardOpen(ws));sync()};
+  sync();return b
+}
 let compactNameEdit=null;
 function syncCompactSections(){
   for(const [section,id,list,label] of [['personal','chatPersonalToggle','chatPersonalList','личные чаты'],['workspace','chatWorkspaceToggle','chatWorkspaceList','Workspace']]){
     const open=compactSections[section],b=$(id);
-    b.hidden=false;b.textContent=open?'▾':'▸';b.setAttribute('aria-expanded',String(open));b.setAttribute('aria-label',(open?'Свернуть ':'Развернуть ')+label);
-    b.title=(open?'Свернуть ':'Развернуть ')+label;$(list).hidden=!open;
+    paintCompactToggle(b,open,label);$(list).hidden=!open;
     b.onclick=()=>setCompactSection(section,!compactSections[section])
   }
   $('chatWorkspaceState').hidden=!compactSections.workspace
 }
 function setCompactSection(section,open){
   compactSections[section]=open;
-  try{localStorage.setItem(compactSectionKey,JSON.stringify(compactSections))}catch(_){}
+  persistCompactSections();
   syncCompactSections()
 }
 function beginCompactName(ws,cid,title){
@@ -2607,8 +2636,8 @@ function renderCompactWorkspaces(){
     const list=element('div',null,'compact-content');
     if(active){chatList.replaceChildren(...chats.map(c=>compactDialogRow(w,c)));list.append(chatList,nameForm)}
     else list.append(...chats.map(c=>compactDialogRow(w,c)));
-    if(chats.length||active&&!nameForm.hidden)g.append(list);
-    else if(active)g.append(list); // keep active editors connected; CSS removes the empty separator
+    // Keep even hidden nested rows mounted: collapse is purely presentation.
+    g.append(list,compactCardToggle(ws,w.display_name,list));
     groups.push(g)
   }
   personal.replaceChildren(...personalRows);
@@ -2622,6 +2651,7 @@ function renderCompactWorkspaces(){
 async function createCompactChat(ws=null){
   if(chatEdit.busy||chat.creatingWorkspace)return;
   compactNameEdit=null;setCompactSection(ws?'workspace':'personal',true);
+  if(ws)setCompactCard(ws,true);
   const id=newChatId();
   chatEdit.busy=true;renderCompactWorkspaces();
   try{
@@ -2656,6 +2686,7 @@ async function archiveCompact(ws,cid=null){
     const body={workspace_id:ws};if(cid)body.chat_id=cid;
     const result=await chatPost('/ultra/chat/sidebar/archive',body);
     if(result?.archived!==true)throw Error('unconfirmed');
+    if(!cid)setCompactCard(ws,true);
     if(compactNameEdit?.ws===ws&&(!cid||compactNameEdit.cid===cid))compactNameEdit=null;
     if(chat.workspace===ws&&(!cid||chat.chat===cid)){
       if(!cid)chat.workspace=null;

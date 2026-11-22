@@ -1,0 +1,9 @@
+# CHATGPT-WUA-BOTTOM-DISCLOSURE-20261122-001 — bottom disclosure
+Base #655 990a6b856e184bfc7a530a14e573d2398ec07f65; owner accepted prior inline implementation in principle, requested visual placement refinement and per-Workspace toggle. Not a full independent acceptance of #655.
+- Both section headings use two rows: title and plus on top, thin centered chevron bar below. Each Workspace has matching bar after its nested list. Up chevron collapses, down expands. No extra individual-chat buttons. Pointer focus outline removed only when not keyboard focus; accessible title, aria-expanded/controls and keyboard button retained.
+- Each card independently collapses only nested chats, not path/name/actions. DOM remains mounted, no network/selection/history change. Browser preference reuses existing disclosure key, bounded collapsed ID list, compatible with prior v1 prefs. New chat auto-expands target section/card; archiving removes card preference. Empty cards also have a footer. No service/provider/data changes.
+- 207 JS chat/EVM/operator tests PASS, expanded existing tests for individual card disclosure, zero network, selection stable, F5 persistence and auto-open on create. Real Chrome isolated offline fixture PASS: both bars beneath plus/title; card bar below list and centered; width 223 px unchanged, height 153 → 88 px with two nested chats, folder remains visible. F5 persisted. Prior inline rename & create/archive/synthetic-reply smoke still PASS. Evidence JSON, screenshot, reproducible Chrome script in this folder. No real provider calls.
+- Actual STANDARD after #656 and hosted CI NOT RUN; historical D8 open, not rerun. Working data, local-only shared plans and launchers unchanged. Owner merge GPT into main and restart STANDARD manually.
+FINAL PLAN_READ 2026-11-22T19:22:54+05:00 SHA256 04d1fd28e3d385d550c1cc010af02d287fa1be2894373d15cc02d6ffcfcead65; no edit.
+
+Focused Python: syntax PASS; 4/4 compact sidebar HTTP/core regression tests PASS.
