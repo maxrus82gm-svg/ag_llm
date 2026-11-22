@@ -1,0 +1,26 @@
+Additional standalone gates; not full acceptance. Original logs retained locally outside the repository; no real provider calls.
+
+test_rt002_s1_routes-base658.txt sha256=6ad83374be9b8f6b1e4b2583a6b59f7c76e7453b7567b8b97162e95eacdf0618
+FAIL: test_httpx_is_imported_only_by_known_modules (__main__.StaticRouteInventoryTests.test_httpx_is_imported_only_by_known_modules)
+FAIL: test_production_send_sites_match_inventory_with_multiplicity (__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity)
+Ran 69 tests in 41.072s
+FAILED (failures=2)
+
+test_rt002_s1_routes.txt sha256=682b7cf583a07e881d075c42b8c66eeeb5e8bb48542c53f243d2e3385a6797de
+ERROR: setUpClass (__main__.R026RawAccountingTests)
+ERROR: setUpClass (__main__.R031RawMatrixTests)
+FAIL: test_pinned_evidence_snapshot_is_complete_and_verified (__main__.EvidenceGateTests.test_pinned_evidence_snapshot_is_complete_and_verified)
+FAIL: test_httpx_is_imported_only_by_known_modules (__main__.StaticRouteInventoryTests.test_httpx_is_imported_only_by_known_modules)
+FAIL: test_production_send_sites_match_inventory_with_multiplicity (__main__.StaticRouteInventoryTests.test_production_send_sites_match_inventory_with_multiplicity)
+Ran 61 tests in 41.051s
+FAILED (failures=3, errors=2)
+
+test_rt002_s2_budget_policy-base658.txt sha256=ae2a880802b6f21631f3bc9bfaafe3655e6f94115a473807f0e0bd3ef9fd388f
+FAIL: test_no_production_module_imports_the_policy_yet (__main__.IsolationTests.test_no_production_module_imports_the_policy_yet)
+Ran 73 tests in 8.673s
+FAILED (failures=1)
+
+test_rt002_s2_budget_policy.txt sha256=094f456277eff4dd9652a2a87370e921cacc3549865d8800a15e8f28d1864ae4
+FAIL: test_no_production_module_imports_the_policy_yet (__main__.IsolationTests.test_no_production_module_imports_the_policy_yet)
+Ran 73 tests in 8.745s
+FAILED (failures=1)

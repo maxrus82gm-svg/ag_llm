@@ -108,7 +108,7 @@ class _TurnAdmission:
 
 class TurnService:
     def __init__(self, *, test_roots=(), offline_adapter=None, provider_session=None,
-                 provider_workspace=None):
+                 provider_workspace=None, colibri_adapter=None):
         self.test_roots = frozenset(Path(p).resolve() for p in test_roots)
         if offline_adapter is not None:
             from .ordinary_chat_test_adapter import OfflineTestAdapter
@@ -135,6 +135,14 @@ class TurnService:
                 raise ValueError('Offline adapter requires explicit temporary Workspace roots')
         if provider_workspace is not None and provider_session is None:
             raise ValueError('Provider Workspace cannot exist without provider session')
+        if colibri_adapter is not None:
+            from .colibri_turn import ColibriTurnAdapter
+            temp_root = Path(tempfile.gettempdir()).resolve()
+            if (type(colibri_adapter) is not ColibriTurnAdapter or provider_session is not None
+                    or provider_workspace is not None or not self.test_roots
+                    or any(temp_root not in p.parents for p in self.test_roots)):
+                raise ValueError('Colibri adapter requires an explicit disposable Workspace scope')
+        self._colibri_adapter = colibri_adapter
         self._provider_session = provider_session
         self._provider_workspace = provider_workspace
         self._offline_adapter = offline_adapter
@@ -184,6 +192,11 @@ class TurnService:
             if any(type(body[k]) is not str or not body[k].strip() or len(body[k]) > 256
                    for k in ('model_ref', 'context_ref')):
                 raise UltraChatError(400, 'invalid_turn_reference', 'Invalid offline reference')
+        elif body['config_ref'] == 'colibri-offline:v1':
+            from .colibri_turn import model_ref
+            if (not model_ref(body['model_ref']) or type(body['context_ref']) is not str
+                    or not body['context_ref'].startswith('stage5:') or len(body['context_ref']) > 256):
+                raise UltraChatError(400, 'invalid_turn_reference', 'Invalid local reference')
         elif any(body[k] != v for k, v in REFERENCES.items()):
             raise UltraChatError(409, 'invalid_turn_reference', 'Only the explicit TEST references are allowed')
         return copy.deepcopy(body)
@@ -200,7 +213,7 @@ class TurnService:
         if turn is None:
             raise UltraChatError(409, 'turn_acceptance_incomplete', 'Repeat the original request to finish acceptance')
         if (not isinstance(turn, dict) or type(turn.get('schema_version')) is not int
-                or turn['schema_version'] not in (1, 2)
+                or turn['schema_version'] not in (1, 2, 3)
                 or summary.get('workspace_id') != workspace_id or turn.get('workspace_id') != workspace_id
                 or turn.get('chat_id') != chat_id or not isinstance(turn.get('state'), str)
                 or turn['state'] not in STATES
@@ -212,8 +225,22 @@ class TurnService:
         if turn['schema_version'] == 1:
             if turn.get('references') != REFERENCES:
                 raise ValueError('Damaged TEST references')
-        else:
+        elif turn['schema_version'] == 2:
             self._verify_offline_binding(root, summary, turn)
+        else:
+            from .colibri_turn import CONFIG_REF, restore
+            refs = turn.get('references')
+            if (type(refs) is not dict or set(refs) != set(REFERENCES)
+                    or refs['config_ref'] != CONFIG_REF
+                    or refs['context_ref'] != 'stage5:' + chat_id
+                    or turn.get('binding_sha256') != self._binding(turn)):
+                raise ValueError('Damaged local Turn binding')
+            restore(turn['prepared'], turn)
+            entry = runs.get_run_index_entry(root, turn['run_id'])
+            if (not entry or any(summary.get(k) != turn[k] or entry.get(k) != turn[k]
+                                 for k in ('run_id','chat_id','task_block_id'))
+                    or summary.get('run_status') != self._run_status(turn['state'])):
+                raise ValueError('Damaged local RUN binding')
         return turn
 
     @staticmethod
@@ -260,6 +287,12 @@ class TurnService:
 
     @staticmethod
     def _producer(turn):
+        if turn['schema_version'] == 3:
+            binding = turn['prepared']['binding']
+            return {'kind':'offline_chat_fixture','provider':'colibri','run_id':turn['run_id'],
+                    'turn_id':turn['turn_id'],'model_id':binding['target_id'],
+                    'model_display_name':binding['model_id'],'request_ref':turn['prepared']['request_ref'],
+                    'binding_sha256':turn['binding_sha256']}
         if turn['schema_version'] == 2:
             real = turn.get('ordinary_admission', {}).get('provider_mode') == 'REAL'
             return {'kind': 'ordinary_chat_provider' if real else 'offline_chat_fixture', 'run_id': turn['run_id'], 'turn_id': turn['turn_id'],
@@ -275,7 +308,7 @@ class TurnService:
         if (not isinstance(value, dict) or value.get('workspace_id') != turn['workspace_id'] or value.get('chat_id') != turn['chat_id']
                 or value.get('message_id') != message_id or value.get('role') != ('user' if role == 'user' else 'assistant')
                 or value.get('producer') != TurnService._producer(turn) or value.get('task_block_id') != turn['task_block_id']
-                or (turn['schema_version'] == 2 and value.get('schema_version') != core.SCHEMA_VERSION)):
+                or (turn['schema_version'] in (2,3) and value.get('schema_version') != core.SCHEMA_VERSION)):
             raise ValueError('RAW identity mismatch')
         return value
 
@@ -297,6 +330,9 @@ class TurnService:
 
     @staticmethod
     def _started(turn):
+        if turn['schema_version'] == 3:
+            from .colibri_turn import start
+            return start(turn)
         payload = {'attempt_id': turn['attempt_id'], 'mode': 'TEST'}
         if turn['schema_version'] == 2:
             payload.update(mode='ORDINARY_REAL' if turn.get('ordinary_admission', {}).get('provider_mode') == 'REAL' else 'TEST_OFFLINE', request_ref=turn['prepared']['request_ref'],
@@ -395,6 +431,8 @@ class TurnService:
         state = turn['state']
         if records is None:
             records = self._records(root, turn)  # verify checksums/tails even in a terminal projection
+        if turn['schema_version'] == 3:
+            return self._colibri_view(root, turn, records)
         offline = turn['schema_version'] == 2
         terminal = self._offline_evidence(turn, records) if offline else None
         events = [r['event'] for r in records]
@@ -447,6 +485,66 @@ class TurnService:
                 view['response_model'] = terminal[1]['response_model']
         return view
 
+    def _colibri_evidence(self, turn, records):
+        from .colibri_turn import evidence
+        from .colibri_bridge_transport import BridgeFault
+        try:
+            return evidence(turn, records)
+        except (BridgeFault, KeyError, TypeError, UnicodeError):
+            raise ValueError('Invalid local evidence') from None
+
+    def _colibri_view(self, root, turn, records):
+        from .colibri_turn import restore
+        f, req = restore(turn['prepared'], turn)
+        ev = self._colibri_evidence(turn, records)
+        if turn['state'] != 'ACCEPTING':
+            user = self._raw(root, turn, 'user')
+            request = dict(idempotency_key=turn['idempotency_key'],text=user['original_text'],**turn['references'])
+            if _digest(request) != turn['request_sha256'] or req['messages'][-1]['content'] != user['original_text']:
+                raise ValueError('Local user RAW mismatch')
+        try:
+            assistant = self._raw(root, turn, 'assistant')
+        except core.StorageReadError as error:
+            if error.code != 'missing':
+                raise
+            assistant = None
+        terminal = ev['terminal']
+        if assistant is not None and (not terminal or terminal['state'] != 'SUCCEEDED'
+                                       or assistant['original_text'] != ev['answer']):
+            raise ValueError('Local assistant RAW lacks a verified success')
+        state = turn['state']
+        if state == 'SUCCEEDED' and assistant is None:
+            raise ValueError('Local success lacks assistant RAW')
+        if state == 'ATTEMPTING' and not self._is_active(root, turn):
+            state = 'UNKNOWN'
+        return {**{k:turn[k] for k in ('turn_id','run_id','attempt_id','user_message_id',
+                    'assistant_message_id','idempotency_key')},
+                'state':state,'cancel_requested':turn['cancel_requested'],
+                'references':dict(turn['references']),'mode':'TEST_OFFLINE','execution_mode':'COLIBRI_OFFLINE',
+                'provider':'colibri','request_ref':turn['prepared']['request_ref'],
+                'target_id':f.target_id,'instance_id':f.instance_id,
+                'answer':ev['answer'] if state == 'SUCCEEDED' else None,
+                'partial_answer':ev['answer'] if state != 'SUCCEEDED' else None,
+                'reasoning':ev['reasoning'],'usage':ev['usage'],'telemetry':ev['telemetry'],
+                'cancel_ack':ev['cancel_ack']['ack'] if ev['cancel_ack'] else None,
+                'remote_state':terminal['remote_state'] if terminal else None,
+                'diagnostic_code':terminal['error_code'] if terminal else None,
+                'ttft_ms':terminal['ttft_ms'] if terminal else None,
+                'elapsed_ms':terminal['elapsed_ms'] if terminal else None}
+
+    def _settle_colibri(self, root, turn):
+        records = self._records(root, turn)
+        view = self._colibri_view(root, turn, records)
+        ev = self._colibri_evidence(turn, records)
+        if turn['state'] == 'ATTEMPTING' and ev['terminal'] is not None:
+            state = ev['terminal']['state']
+            if state == 'SUCCEEDED':
+                self._commit(root, turn, 'assistant', ev['answer'])
+            turn['state'] = state
+            self._save(root, turn)
+            return self._view(root, self._load(root, turn['workspace_id'], turn['chat_id'], turn['turn_id']))
+        return view
+
     def _settle_offline(self, root, turn):
         records = self._records(root, turn)
         view = self._view(root, turn, records=records)
@@ -478,6 +576,7 @@ class TurnService:
         body = self._body(body)
         ids = identities(workspace_id, chat_id, body['idempotency_key'])
         offline = body['config_ref'] == OFFLINE_REF
+        local = body['config_ref'] == 'colibri-offline:v1'
         with self._session(root, workspace_id, chat_id):
             summary = runs.load_run_summary(root, ids['run_id'], chat_id)
             if summary is not None and not isinstance(summary, dict):
@@ -488,6 +587,10 @@ class TurnService:
                     snapshot = self._offline_adapter.freeze(body)
                 except ValueError:
                     raise UltraChatError(400, 'invalid_offline_request', 'Offline request could not be prepared') from None
+            if local and (summary is None or summary.get('turn') is None):
+                if self._colibri_adapter is None:
+                    raise UltraChatError(403,'local_provider_unavailable','Local provider is not enabled')
+                snapshot = self._colibri_adapter.freeze(body, ids, chat_id)
             if summary is None:
                 # A crash here has accepted no body/RAW yet; a retry can finish the empty reservation.
                 runs.create_run_summary(root, workspace_id, chat_id, ids['task_block_id'], ids['run_id'])
@@ -504,6 +607,9 @@ class TurnService:
                         prepared = self._offline_adapter.restore(snapshot, turn['references'], body['text'])
                         turn['ordinary_admission'] = self._offline_adapter.admission_snapshot(prepared)
                     turn['binding_sha256'] = self._binding(turn)
+                elif local:
+                    turn.update(schema_version=3, prepared=snapshot, references={k: body[k] for k in REFERENCES})
+                    turn['binding_sha256'] = self._binding(turn)
                 self._save(root,turn)
             turn = self._load(root,workspace_id,chat_id,ids['turn_id'])
             if turn['request_sha256'] != _digest(body):
@@ -511,11 +617,13 @@ class TurnService:
             # This explicit repeat may repair an interrupted append, never execute a started attempt again.
             runs.recover_run_records(root,turn['run_id'])
             if turn['state'] == 'ACCEPTING':
-                if offline:
+                if offline or local:
                     self._view(root, turn)
                 self._commit(root,turn,'user',body['text'])
                 turn['state']='READY'; self._save(root,turn)
             if turn['state'] == 'ATTEMPTING':
+                if local:
+                    return self._settle_colibri(root, turn)
                 if offline:
                     return self._settle_offline(root, turn)
                 if not turn['cancel_requested'] and self._result(root,turn):
@@ -537,13 +645,22 @@ class TurnService:
             if turn['state'] != 'READY': return self._view(root,turn)
             self._view(root,turn)  # validate the accepted RAW again immediately before reserving execution
             offline = turn['schema_version'] == 2
-            prepared = (self._offline_adapter.restore(turn['prepared'], turn['references'],
+            local = turn['schema_version'] == 3
+            if local:
+                from .colibri_turn import restore
+                if self._colibri_adapter is None:
+                    raise UltraChatError(403,'local_provider_unavailable','Local provider is not enabled')
+                prepared, _ = restore(turn['prepared'],turn)
+            else:
+                prepared = (self._offline_adapter.restore(turn['prepared'], turn['references'],
                        self._raw(root, turn, 'user')['original_text']) if offline else None)
             turn['state']='ATTEMPTING'; self._save(root,turn)
             start = self._started(turn)
             self._event(root,turn,'turn_started',start)
             with self._active_lock: self._active.add(active_key)
         try:
+            if local:
+                return self._execute_colibri(root, workspace_id, chat_id, turn_id, start, prepared)
             if offline:
                 return self._execute_offline(root, workspace_id, chat_id, turn_id, start, prepared)
             try:
@@ -725,8 +842,97 @@ class TurnService:
             self._event(root, turn, event, payload)
             return self._settle_offline(root, turn)
 
+    def _execute_colibri(self, root, workspace_id, chat_id, turn_id, start, prepared):
+        from .colibri_turn import MAX_RAW_JSON, restore
+        from .colibri_bridge_transport import canonical, BridgeFault
+
+        def guard():
+            with self._session(root, workspace_id, chat_id):
+                turn = self._load(root, workspace_id, chat_id, turn_id)
+                ev = self._colibri_evidence(turn,self._records(root,turn))
+                f,_ = restore(turn['prepared'],turn)
+                if (f != prepared or self._started(turn) != start or not self._is_active(root,turn)
+                        or turn['state'] != 'ATTEMPTING' or turn['cancel_requested'] or ev['dispatched']
+                        or f.target_id not in self._colibri_adapter.enabled_targets()):
+                    raise BridgeFault('local_dispatch_refused')
+                self._event(root,turn,'turn_bridge_dispatch',start)
+
+        def packet(event):
+            with self._session(root, workspace_id, chat_id):
+                turn=self._load(root,workspace_id,chat_id,turn_id)
+                if turn['state']!='ATTEMPTING' or not self._is_active(root,turn):
+                    raise ValueError('Local owner lost')
+                # Validate each proposed packet against the existing evidence before append.
+                payload={'packet':event}
+                self._colibri_evidence(turn,[*self._records(root,turn),{'event':'turn_bridge_packet','payload':payload}])
+                self._event(root,turn,'turn_bridge_packet',payload)
+
+        result=None
+        error_code=None
+        try:
+            result=self._colibri_adapter.execute(prepared,on_event=packet,before_dispatch=guard)
+        except BridgeFault as exc:
+            error_code=exc.code
+        except Exception:
+            error_code='local_execution_uncertain'
+        with self._session(root,workspace_id,chat_id):
+            turn=self._load(root,workspace_id,chat_id,turn_id)
+            ev=self._colibri_evidence(turn,self._records(root,turn))
+            if result is None:
+                state='UNKNOWN' if ev['dispatched'] else 'CANCELLED' if turn['cancel_requested'] else 'FAILED'
+                payload=dict(state=state,error_code=error_code,remote_state=None,ttft_ms=None,elapsed_ms=None)
+            else:
+                state='FAILED' if result.state=='REJECTED' else result.state
+                error_code=result.error_code
+                if state=='SUCCEEDED' and (not result.complete or result.answer!=ev['answer']
+                        or not result.answer.strip() or len(canonical(result.answer))>MAX_RAW_JSON):
+                    state,error_code='UNKNOWN','local_raw_bound_or_incomplete'
+                payload=dict(state=state,error_code=error_code,remote_state=result.remote_state,
+                             ttft_ms=result.ttft_ms,elapsed_ms=result.elapsed_ms)
+            self._colibri_evidence(turn,[*self._records(root,turn),{'event':'turn_bridge_terminal','payload':payload}])
+            self._event(root,turn,'turn_bridge_terminal',payload)
+            return self._settle_colibri(root,turn)
+
+    def _cancel_colibri(self, root, workspace_id, chat_id, turn_id):
+        from .colibri_turn import restore
+        from .colibri_bridge_transport import BridgeFault
+        with self._session(root,workspace_id,chat_id):
+            turn=self._load(root,workspace_id,chat_id,turn_id)
+            runs.recover_run_records(root,turn['run_id'])
+            view=self._settle_colibri(root,turn)
+            turn=self._load(root,workspace_id,chat_id,turn_id)
+            if turn['state'] in {'SUCCEEDED','FAILED','CANCELLED','UNKNOWN'} or turn['cancel_requested']:
+                return view
+            if turn['state']=='ACCEPTING':
+                raise UltraChatError(409,'turn_acceptance_incomplete','Complete acceptance before cancellation')
+            ev=self._colibri_evidence(turn,self._records(root,turn))
+            turn['cancel_requested']=True
+            if turn['state']=='READY':
+                turn['state']='CANCELLED'
+            self._save(root,turn)
+            self._event(root,turn,'turn_cancel_requested',self._started(turn))
+            if (not ev['dispatched'] or not self._is_active(root,turn) or self._colibri_adapter is None):
+                return self._view(root,turn)
+            f,_=restore(turn['prepared'],turn)
+        # Never hold the Workspace writer lock across a remote cancel.
+        # The generation may finish while cancel is in flight; ACK alone is not stop.
+        try:
+            ack=self._colibri_adapter.cancel(f)
+        except (BridgeFault,OSError,ValueError):
+            ack=None
+        with self._session(root,workspace_id,chat_id):
+            turn=self._load(root,workspace_id,chat_id,turn_id)
+            payload={'ack':ack}
+            self._colibri_evidence(turn,[*self._records(root,turn),{'event':'turn_bridge_cancel_ack','payload':payload}])
+            self._event(root,turn,'turn_bridge_cancel_ack',payload)
+            return self._view(root,turn)
+
     def cancel(self, root, workspace_id, chat_id, turn_id, body):
         if body != {}: raise UltraChatError(400,'invalid_turn_request','Cancellation body must be empty')
+        with self._session(root,workspace_id,chat_id):
+            is_local = self._load(root,workspace_id,chat_id,turn_id)['schema_version'] == 3
+        if is_local:
+            return self._cancel_colibri(root,workspace_id,chat_id,turn_id)
         with self._session(root,workspace_id,chat_id):
             turn=self._load(root,workspace_id,chat_id,turn_id)
             if turn['state'] in {'SUCCEEDED','FAILED','CANCELLED','UNKNOWN'}: return self._view(root,turn)

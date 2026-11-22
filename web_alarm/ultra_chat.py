@@ -459,7 +459,7 @@ class OfflineUltraChatService(UltraChatService):
         try:
             for item in tracked:
                 raw = core.read_ultra_json_bounded(root, ("chats", chat_id, "messages", item["message_id"] + ".json"),
-                                                  max_bytes=32768)
+                                                  max_bytes=1048576)
                 if item["role"] == "user" and raw.get("producer", {}).get("kind") != "offline_chat_fixture":
                     continue
                 run_id = raw["producer"]["run_id"]
@@ -559,6 +559,10 @@ class OfflineUltraChatService(UltraChatService):
             break
         return context
 
+    def _submission_turns(self, root, context, context_ref, response, body, previous):
+        from .turn_service import OFFLINE_REF
+        return self._fixture_turns(root, context, context_ref, response), OFFLINE_REF
+
     def submit_turn(self, wa_workspace_id, chat_id, body):
         from .turn_service import KEY, OFFLINE_REF, identities
         if (type(body) is not dict or set(body) != {"idempotency_key", "model_ref", "text"}
@@ -580,7 +584,7 @@ class OfflineUltraChatService(UltraChatService):
             if entry:
                 if entry[0] != key:
                     raise UltraChatError(409, "test_chat_busy", "Wait for the active TEST Turn")
-                _, turns, context_ref = entry
+                _, turns, context_ref, config_ref = entry
                 owns_entry = False
             else:
                 reader = self._fixture_turns(root)
@@ -597,15 +601,16 @@ class OfflineUltraChatService(UltraChatService):
                     # The reference names this Chat's projection. The actual
                     # snapshot is bound by the accepted Turn's request_ref.
                     context_ref = "stage5:" + chat_id
+                    previous = None
                 else:
                     context, context_ref = (), previous["references"]["context_ref"]
                 answer = "TEST · локальный имитатор\nОтвет на: " + body["text"][:256]
-                turns = self._fixture_turns(root, context, context_ref, answer)
-                self._owners[scope] = (key, turns, context_ref)
+                turns, config_ref = self._submission_turns(root, context, context_ref, answer, body, previous)
+                self._owners[scope] = (key, turns, context_ref, config_ref)
                 owns_entry = True
         try:
             return turns.submit(root, workspace_id, chat_id,
-                                {**body, "context_ref": context_ref, "config_ref": OFFLINE_REF})
+                                {**body, "context_ref": context_ref, "config_ref": config_ref})
         finally:
             if owns_entry:
                 with self._owner_lock:
@@ -647,7 +652,7 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
     Stage5. STANDARD remains disabled. The original Stage5 class is unchanged.
     """
 
-    def __init__(self, registry, root, *, http_fixture=None):
+    def __init__(self, registry, root, *, http_fixture=None, colibri_transport=None, colibri_enabled=None):
         # Internal synthetic fixture only. Existing launcher/profile has no flag
         # or route to select this; REAL stays unavailable in every capability.
         if http_fixture is not None:
@@ -655,7 +660,38 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
             if type(http_fixture) is not OfflineHTTPFixture:
                 raise ValueError('Expected exact offline HTTP fixture')
         self._http_fixture = http_fixture
+        if colibri_transport is not None:
+            from .colibri_bridge_transport import OfflineColibriTransport
+            if (type(self) is not OrdinaryCoreChatService
+                    or type(colibri_transport) is not OfflineColibriTransport
+                    or not callable(colibri_enabled)):
+                raise ValueError("Explicit isolated Colibri admission only")
+        elif colibri_enabled is not None:
+            raise ValueError("Colibri admission without transport")
+        self._colibri_transport=colibri_transport
+        self._colibri_enabled=colibri_enabled
         super().__init__(registry, root)
+
+    def _submission_turns(self, root, context, context_ref, response, body, previous):
+        # Do not touch the local provider module on legacy STANDARD/TEST paths.
+        transport=getattr(self,'_colibri_transport',None)
+        if transport is None and (previous is None or previous['schema_version']!=3):
+            return super()._submission_turns(root,context,context_ref,response,body,previous)
+        from .colibri_turn import ColibriTurnAdapter, CONFIG_REF, model_ref
+        from .turn_service import TurnService
+        # Existing accepted identity controls replay, even when the requested
+        # model body conflicts. New admission uses the explicit current target.
+        if previous is not None and previous['references']['model_ref']!=body['model_ref']:
+            raise UltraChatError(409,'idempotency_conflict','This key already belongs to different content')
+        local = previous['schema_version']==3 if previous is not None else model_ref(body['model_ref'])
+        if local and getattr(self,'_colibri_transport',None) is not None:
+            chat_id=context_ref.removeprefix('stage5:')
+            adapter=ColibriTurnAdapter(self._colibri_transport,
+                lambda:self._chat_context(root,chat_id),self._colibri_enabled)
+            return TurnService(test_roots=[root],colibri_adapter=adapter),CONFIG_REF
+        if previous is not None and local:
+            return TurnService(test_roots=[root]),CONFIG_REF
+        return super()._submission_turns(root,context,context_ref,response,body,previous)
 
     def _writable_workspace(self, core, wa_workspace_id, *, initialize=False):
         root, workspace_id = super()._writable_workspace(core, wa_workspace_id, initialize=initialize)
@@ -812,6 +848,7 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
         known, missing = dict.fromkeys(keys, 0), dict.fromkeys(keys, 0)
         cached_input = dict(known=0, missing=0, full_input_known=0, full_input_missing=0)
         last, seen = None, set()
+        incomplete_local_usage = False
         message_metrics = {}
         with turns._session(root, workspace_id, chat_id):
             index = run_store.load_workspace_run_index(root)
@@ -826,6 +863,9 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
                 view = turns._view(root, turn, records=records)
                 if not any(r["event"] == "turn_started" for r in records):
                     continue  # READY/cancel-before-start is not a provider attempt
+                if (view.get("provider") == "colibri"
+                        and not any(r["event"] == "turn_bridge_dispatch" for r in records)):
+                    continue  # local guard/cancel proved zero physical dispatch
                 if any(r["event"] == "turn_failed" and r["payload"].get("execution") == "not_started"
                        for r in records):
                     continue  # a trusted preflight refusal proves no execution
@@ -834,34 +874,52 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
                     raise ValueError("Duplicate attempt identity")
                 seen.add(attempt)
                 usage = view.get("usage") or {}
+                local = view.get("provider") == "colibri"
+                if local and usage.get("status") != "reported":
+                    incomplete_local_usage = True
                 if (message_ids is not None and view["state"] == "SUCCEEDED"
                         and view["assistant_message_id"] in message_ids):
                     metric = {"usage": {key: usage.get(key) for key in (*keys, "precached_prompt_tokens")},
                               "synthetic": view.get("execution_mode") != "REAL"}
+                    if local:
+                        metric["usage"]=dict(usage)
+                        metric["ttft_ms"]=view.get("ttft_ms")
+                        metric["elapsed_seconds"]=(view["elapsed_ms"]/1000 if view.get("elapsed_ms") is not None else None)
                     started = next((r.get("timestamp") for r in records if r["event"] == "turn_started"), None)
                     ended = next((r.get("timestamp") for r in records if r["event"] == "turn_result"), None)
                     if (type(started) in (int, float) and type(ended) in (int, float)
                             and 0 <= ended - started < float("inf")):
                         metric["elapsed_seconds"] = ended - started
                     message_metrics[view["assistant_message_id"]] = metric
-                cached = usage.get('precached_prompt_tokens')
+                cached = usage.get('cached_prompt_tokens' if local else 'precached_prompt_tokens')
                 if cached is None:
                     cached_input['missing'] += 1
                 else:
                     cached_input['known'] += cached
-                if cached is None or usage.get('prompt_tokens') is None:
-                    cached_input['full_input_missing'] += 1
+                prompt=usage.get('prompt_tokens')
+                basis=usage.get('prompt_basis') if local else 'excludes_cached'
+                if prompt is not None and basis=='includes_cached':
+                    cached_input['full_input_known'] += prompt
+                elif cached is not None and prompt is not None and basis=='excludes_cached':
+                    cached_input['full_input_known'] += prompt+cached
                 else:
-                    cached_input['full_input_known'] += usage['prompt_tokens']+cached
+                    cached_input['full_input_missing'] += 1
                 for key in keys:
                     value = usage.get(key)
+                    # Existing aggregate prompt counter excludes cached input.
+                    # Preserve the provider's original count and basis per Turn.
+                    if key=='prompt_tokens' and local:
+                        if basis=='includes_cached':
+                            value=prompt-cached if prompt is not None and cached is not None else None
+                        elif basis!='excludes_cached':
+                            value=None
                     if value is None:
                         missing[key] += 1
                     else:
                         known[key] += value
                 last = {"turn_id": run_id, "state": view["state"], "usage": usage}
         return {"available": True, "synthetic": True, "attempts": len(seen),
-                "known": known, "missing": missing, "complete": missing["total_tokens"] == 0,
+                "known": known, "missing": missing, "complete": missing["total_tokens"] == 0 and not incomplete_local_usage,
                 "last": last, 'cached_input': cached_input,
                 **({"message_metrics": message_metrics} if message_ids is not None else {})}
 

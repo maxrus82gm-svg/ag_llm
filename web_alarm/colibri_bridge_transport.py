@@ -443,7 +443,8 @@ class OfflineColibriTransport:
             raise BridgeFault("protocol_error")
         return value
 
-    def run(self, f, *, on_event: Callable[[dict], None] | None = None):
+    def run(self, f, *, on_event: Callable[[dict], None] | None = None,
+            before_dispatch: Callable[[], None] | None = None):
         """Consume one deliberate request. No replay or new inference on any error.
 
         Callbacks receive validated packets incrementally. A caller must persist
@@ -461,6 +462,10 @@ class OfflineColibriTransport:
         status_rank = -1
         start = progress = time.monotonic()
         answer, reasoning = [], []
+        # A caller may durably reserve the physical dispatch after health and
+        # immediately before POST. A refusal here has no wire side effect.
+        if before_dispatch is not None:
+            before_dispatch()
         try:
             with self._client(f.idle_timeout) as client, client.stream("POST",
                     d.origin + "/bridge/v1/chat/stream", headers=self._headers(d), content=f.wire) as response:
