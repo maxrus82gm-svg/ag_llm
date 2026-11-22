@@ -1,0 +1,4 @@
+# TASK ID: CHATGPT-WUA-COLIBRI-MVP1-REVIEW-20261122-001
+
+Integration WUA-COLIBRI-BRIDGE-001/MVP1. 22.11.2026. Owner forwarded Colibri Ultra 14 request: exact #107/#108 verification, #111 M1-00..12 review, WUA adapter and joint OFFLINE, then same-chat cloud/local/cloud. P0 compatible; Colibri row records earlier OWNER OFFLINE MVP1 GO, no LIVE. WUA formal P0 acceptance remains SUBMITTED in shared file (do not archive). Due exact current GigaChat-specific Turn/admission and EVM, split MVP1 engineering into transport baseline then provider-neutral common Turn/EVM integration and full joint acceptance, no second chat, no bypass, no production/server restart/paid calls. This task reviews producer and implements only bounded offline transport. Full M1-08 and MVP1 acceptance remain open.
+PLAN_READ before task: SHA256 04d1fd28e3d385d550c1cc010af02d287fa1be2894373d15cc02d6ffcfcead65. Archive read: no completed stages.

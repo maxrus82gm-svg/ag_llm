@@ -1,5 +1,9 @@
 # Оперативная память проекта — №34
 
+## CURRENT 22.11.2026 — Colibri MVP1 transport baseline
+H-CHATGPT-000012 / CHATGPT-WUA-COLIBRI-MVP1-REVIEW-20261122-001, #657. Colibri #107 canonical/#108 implementation/#111 matrix independently reviewed, 68+22 PASS exact; WUA TEMP-only transport 4 unit/7 joint with actual #108 handler and fake Manager, no dispatch retry, 4 HTTP/207 JS regression. Full MVP1 PARTIAL: same existing Turn/RAW/EVM/provider-specific admission/usage and incremental UI required; M1-08 cloud/local/cloud NOT RUN. No production/LIVE/paid, no MVP2. WUA row only IN_PROGRESS; no archive. Report reports/CHATGPT-WUA-COLIBRI-MVP1-REVIEW-20261122-001/report.md. 🟢 ОБНОВИТЬ GITHUB — №657; test-only module, STANDARD not enabled. Separate GigaChat send issue remains OPEN.
+
+
 ## CURRENT 22.11.2026 — нижние раскрыватели
 H-CHATGPT-000011 / CHATGPT-WUA-BOTTOM-DISCLOSURE-20261122-001, #656. Owner STANDARD feedback #655: move arrows under headers and under each Workspace card; individual card hides only chat list, no per-chat toggle. Browser pref persists, active chat unchanged, no backend modifications. 207 JS + 4 HTTP/core + Chrome TEST PASS; card width 223px, height 153→88px. Owner STANDARD #656 / CI / LIVE OPEN; D8 baseline OPEN. Report reports/CHATGPT-WUA-BOTTOM-DISCLOSURE-20261122-001/report.md. 🟢 ОБНОВИТЬ GITHUB — №656 после публикации; перезапустить штатный STANDARD. Plan №34.1/34.1.1 unchanged.
 

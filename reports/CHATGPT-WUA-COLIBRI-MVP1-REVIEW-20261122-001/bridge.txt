@@ -1,0 +1,27 @@
+test_busy_and_unknown_mapping_not_selectable (test_client_bridge.BridgeTests.test_busy_and_unknown_mapping_not_selectable) ... ok
+test_cancel_ack_not_stop_confirmation_completion_can_win (test_client_bridge.BridgeTests.test_cancel_ack_not_stop_confirmation_completion_can_win) ... ok
+test_cancel_before_dispatch_proven (test_client_bridge.BridgeTests.test_cancel_before_dispatch_proven) ... ok
+test_cancel_manager_error_conservatively_unknown (test_client_bridge.BridgeTests.test_cancel_manager_error_conservatively_unknown) ... ok
+test_catalog_identity_stable_on_restart_and_distinct_across_managers (test_client_bridge.BridgeTests.test_catalog_identity_stable_on_restart_and_distinct_across_managers) ... ok
+test_concurrent_duplicate_atomic_claim (test_client_bridge.BridgeTests.test_concurrent_duplicate_atomic_claim) ... ok
+test_confirmed_manager_admission_failure_is_not_success (test_client_bridge.BridgeTests.test_confirmed_manager_admission_failure_is_not_success) ... ok
+test_disconnect_after_authoritative_done_still_success (test_client_bridge.BridgeTests.test_disconnect_after_authoritative_done_still_success) ... ok
+test_disconnect_before_done_unknown_and_no_retry (test_client_bridge.BridgeTests.test_disconnect_before_done_unknown_and_no_retry) ... ok
+test_discovery_persistent_identity_and_no_secret (test_client_bridge.BridgeTests.test_discovery_persistent_identity_and_no_secret) ... ok
+test_duplicates_checked_before_stale_instance_and_tombstone (test_client_bridge.BridgeTests.test_duplicates_checked_before_stale_instance_and_tombstone) ... ok
+test_exact_schema_if_validator_available (test_client_bridge.BridgeTests.test_exact_schema_if_validator_available) ... ok
+test_http_same_handler_security_and_sse (test_client_bridge.BridgeTests.test_http_same_handler_security_and_sse) ... ok
+test_permission_scopes_and_token_rotation (test_client_bridge.BridgeTests.test_permission_scopes_and_token_rotation) ... ok
+test_preflight_effective_manager_bytes_and_unchanged_messages (test_client_bridge.BridgeTests.test_preflight_effective_manager_bytes_and_unchanged_messages) ... ok
+test_recovery_unresolved_is_unknown_and_other_principal_cannot_read (test_client_bridge.BridgeTests.test_recovery_unresolved_is_unknown_and_other_principal_cannot_read) ... ok
+test_same_slot_parallel_block_and_other_manager_independent (test_client_bridge.BridgeTests.test_same_slot_parallel_block_and_other_manager_independent) ... ok
+test_stateless_success_and_usage_and_no_full_history (test_client_bridge.BridgeTests.test_stateless_success_and_usage_and_no_full_history) ... ok
+test_unavailable_manager_and_unknown_target (test_client_bridge.BridgeTests.test_unavailable_manager_and_unknown_target) ... ok
+test_unknown_capability_and_system_role_denied_without_dispatch (test_client_bridge.BridgeTests.test_unknown_capability_and_system_role_denied_without_dispatch) ... ok
+test_unknown_transport_before_meta_blocks_retry (test_client_bridge.BridgeTests.test_unknown_transport_before_meta_blocks_retry) ... ok
+test_usage_zero_vs_unknown (test_client_bridge.BridgeTests.test_usage_zero_vs_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 1.714s
+
+OK
