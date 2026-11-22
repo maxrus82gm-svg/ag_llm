@@ -3,6 +3,10 @@
 ## CURRENT 22.11.2026 — Colibri MVP1 transport baseline
 H-CHATGPT-000012 / CHATGPT-WUA-COLIBRI-MVP1-REVIEW-20261122-001, #657. Colibri #107 canonical/#108 implementation/#111 matrix independently reviewed, 68+22 PASS exact; WUA TEMP-only transport 4 unit/7 joint with actual #108 handler and fake Manager, no dispatch retry, 4 HTTP/207 JS regression. Full MVP1 PARTIAL: same existing Turn/RAW/EVM/provider-specific admission/usage and incremental UI required; M1-08 cloud/local/cloud NOT RUN. No production/LIVE/paid, no MVP2. WUA row only IN_PROGRESS; no archive. Report reports/CHATGPT-WUA-COLIBRI-MVP1-REVIEW-20261122-001/report.md. 🟢 ОБНОВИТЬ GITHUB — №657; test-only module, STANDARD not enabled. Separate GigaChat send issue remains OPEN.
 
+**OWNER REQUIREMENT 22.11.2026 — непрерывность между чатами WEB.** После каждого значимого межпроектного результата актуализировать верхний CURRENT №34: что завершено (scope/TASK/commit/evidence), что ещё OPEN/NOT RUN, ограничения и конкретный NEXT. При входе в новый чат и до любой новой TASK сверять с единым локальным [[34.1_Общий план развития WUA и Colibri]] через LOCAL-PLAN-01; архив завершённых этапов №34.1.1 доступен по ссылке из плана. №34 — компактная оперативная память WEB, №34.1 — единственный актуальный совместный план; не дублировать таблицы или редактировать часть Colibri.
+
+**Точка продолжения:** Colibri Client Bridge API v1.0.0 (#107/#108) реализован, независимый OFFLINE 68+22 PASS; WUA #657 транспорт проверен изолированно. Полная приёмка MVP1 ещё OPEN: подключить локальный провайдер к существующим Turn/RAW, общему EVM и динамическому реестру (target_id/instance_id), admission, SSE/reasoning/cancel/usage; затем проверить M1-08 в одном чате облако → Colibri → облако с имитаторами и сохранением истории/ID. Проверенные адрес/порт рабочего подключения и LIVE не подтверждены; до отдельного OWNER GO не трогать production, реальные модели и платные API. Colibri изменений по проверенному объёму пока не требуется; MVP2 не начинать.
+
 
 ## CURRENT 22.11.2026 — нижние раскрыватели
 H-CHATGPT-000011 / CHATGPT-WUA-BOTTOM-DISCLOSURE-20261122-001, #656. Owner STANDARD feedback #655: move arrows under headers and under each Workspace card; individual card hides only chat list, no per-chat toggle. Browser pref persists, active chat unchanged, no backend modifications. 207 JS + 4 HTTP/core + Chrome TEST PASS; card width 223px, height 153→88px. Owner STANDARD #656 / CI / LIVE OPEN; D8 baseline OPEN. Report reports/CHATGPT-WUA-BOTTOM-DISCLOSURE-20261122-001/report.md. 🟢 ОБНОВИТЬ GITHUB — №656 после публикации; перезапустить штатный STANDARD. Plan №34.1/34.1.1 unchanged.
@@ -23,7 +27,7 @@ TASK CHATGPT-WUA-COMPACT-SIDEBAR-20261122-001 / H-CHATGPT-000009, #653; влад
 
 ## OWNER GO 22.11.2026 — межпроектная работа
 
-Единый локальный план: [[34.1_Общий план развития WUA и Colibri]]. Перед любой новой TASK обязательный LOCAL-PLAN-01 (№08/18), сейчас P0 организация/контракт, реализация только после совместимой спецификации. Архив связан только из №34.1. Старые OPEN не закрываются.
+Единый локальный план: [[34.1_Общий план развития WUA и Colibri]]. Перед любой новой TASK обязательный LOCAL-PLAN-01 (№08/18), на момент OWNER GO разрешены организация/P0 контракт; актуальная точка MVP1 указана в верхнем CURRENT и сверяется по №34.1. Архив связан только из №34.1. Старые OPEN не закрываются.
 
 **CURRENT / 17.11.2026 / WEB33–34 / FACTUAL DOCUMENTATION UPDATE.** Источник: `main@70870380fc2828087f785357eeb70c0ac343da9f` (№641). Полные исходные 74 051 символ прежней редакции сохранены без сокращения в `reports/CHATGPT-WUA-DOC-CONTINUITY-20261117-001/preservation/34_TACTICAL_CONTEXT_before.md`; также доступны в неизменяемой истории commit №641. Исторические заметки не пересматриваются задним числом. Этот краткий документ не является новым техническим PASS.
 
