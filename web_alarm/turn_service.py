@@ -515,11 +515,15 @@ class TurnService:
         state = turn['state']
         if state == 'SUCCEEDED' and assistant is None:
             raise ValueError('Local success lacks assistant RAW')
-        if state == 'ATTEMPTING' and not self._is_active(root, turn):
+        owner_unverified = state == 'ATTEMPTING' and not self._is_active(root, turn)
+        if owner_unverified:
+            # This process cannot prove another process has finished. Show
+            # UNKNOWN read-only; never re-dispatch or mutate another owner.
             state = 'UNKNOWN'
         return {**{k:turn[k] for k in ('turn_id','run_id','attempt_id','user_message_id',
                     'assistant_message_id','idempotency_key')},
                 'state':state,'cancel_requested':turn['cancel_requested'],
+                'owner_unverified':owner_unverified,
                 'references':dict(turn['references']),'mode':'TEST_OFFLINE','execution_mode':'COLIBRI_OFFLINE',
                 'provider':'colibri','request_ref':turn['prepared']['request_ref'],
                 'target_id':f.target_id,'instance_id':f.instance_id,

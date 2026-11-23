@@ -101,9 +101,18 @@ class ColibriTurnAdapter:
 
     def freeze(self, body, ids, chat_id):
         try:
+            messages=self.context_loader()
+            # The *exact*, unedited Workspace bootstrap text is a marker that
+            # no project context has been supplied. It is not a user directive.
+            # Do not strip/relabel any other system/tool content, even if it
+            # looks similar: producer v1 must refuse unsupported roles.
+            import context_storage as core
+            if (type(messages) is list and messages and
+                    messages[0] == {"role":"system","content":core.PROJECT_CONTEXT_TEMPLATE}):
+                messages=messages[1:]
             f=self.transport.prepare(request_id=ids["attempt_id"].removeprefix("attempt_")[:32],
                 target_id=body["model_ref"],
-                messages=[*self.context_loader(),{"role":"user","content":body["text"]}],
+                messages=[*messages,{"role":"user","content":body["text"]}],
                 conversation_id=chat_id,turn_id=ids["turn_id"],
                 enabled_targets=self.enabled_targets())
             b=asdict(f);b.pop("wire")

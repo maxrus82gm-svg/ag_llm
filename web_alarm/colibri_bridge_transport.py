@@ -114,6 +114,53 @@ class Contract:
         return copy.deepcopy(u)
 
 
+def _windows_private_acl(path):
+    """Fail closed on weak Windows DACLs for this explicit test-only Bridge.
+
+    Checking mode bits on NT is insufficient. The actual descriptor and token
+    must be owned by the current process identity, without read/write ACEs
+    granted to a general Windows group. An ACL cannot protect against a
+    malicious process already running as the *same* user; that is a separate
+    authority boundary and remains a LIVE preflight gate.
+    """
+    if os.name != "nt":
+        return
+    try:
+        import win32api
+        import win32con
+        import win32security
+        token = win32security.OpenProcessToken(win32api.GetCurrentProcess(), win32con.TOKEN_QUERY)
+        try:
+            actor = win32security.ConvertSidToStringSid(win32security.GetTokenInformation(token, win32security.TokenUser)[0])
+        finally:
+            token.Close()
+        desc = win32security.GetNamedSecurityInfo(
+            str(path), win32security.SE_FILE_OBJECT,
+            win32security.OWNER_SECURITY_INFORMATION | win32security.DACL_SECURITY_INFORMATION)
+        if win32security.ConvertSidToStringSid(desc.GetSecurityDescriptorOwner()) != actor:
+            raise BridgeFault("unsafe_discovery")
+        dacl = desc.GetSecurityDescriptorDacl()
+        if dacl is None:
+            raise BridgeFault("unsafe_discovery")
+        trusted = {actor, "S-1-5-18", "S-1-5-32-544", "S-1-3-4", "S-1-3-0"}
+        if dacl.GetAceCount() > 128:
+            raise BridgeFault("unsafe_discovery")
+        for index in range(dacl.GetAceCount()):
+            ace = dacl.GetAce(index)
+            kind, sid = ace[0][0], win32security.ConvertSidToStringSid(ace[2])
+            # Do not silently accept unparsed conditional/object/unknown ACEs.
+            if kind not in (win32security.ACCESS_ALLOWED_ACE_TYPE,
+                            win32security.ACCESS_DENIED_ACE_TYPE):
+                raise BridgeFault("unsafe_discovery")
+            if kind == win32security.ACCESS_ALLOWED_ACE_TYPE and sid not in trusted:
+                raise BridgeFault("unsafe_discovery")
+    except BridgeFault:
+        raise
+    except Exception:
+        # Missing pywin32 / AccessDenied / inaccessible DACL all refuse.
+        raise BridgeFault("unsafe_discovery") from None
+
+
 def _private_temp_file(profile, name, limit):
     p = profile / name
     try:
@@ -124,8 +171,16 @@ def _private_temp_file(profile, name, limit):
             raise BridgeFault("unsafe_discovery")
         if os.name != "nt" and (st.st_uid != os.getuid() or st.st_mode & 0o077):
             raise BridgeFault("unsafe_discovery")
+        if os.name == "nt":
+            _windows_private_acl(profile)
+            _windows_private_acl(p)
         with p.open("rb") as file:
             data = file.read(limit + 1)
+        if os.name == "nt":
+            # A best-effort recheck around the read, never an OS-atomic ACL
+            # lease. Open-file handle checks require a separate LIVE security gate.
+            _windows_private_acl(profile)
+            _windows_private_acl(p)
         if len(data) > limit:
             raise BridgeFault("unsafe_discovery")
         return data

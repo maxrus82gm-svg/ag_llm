@@ -119,6 +119,9 @@ class JointEVM(ApplicationTests):
 
     def test_availability_identity_and_system_refusal(self):
         ws,cid,server,cap,read,write,base,root,wid=self.application()
+        # A default generated PROJECT CONTEXT is now explicitly classified as
+        # an unfilled marker. The negative fixture must be a real user directive.
+        core.save_project_context(root,"# Project rule\nThis system instruction must be retained.\n")
         local=self.local
         select=lambda:self.http(server,"POST",base+"/model",{"model_ref":local},write)
         self.assertEqual(select()[0],200)

@@ -1,0 +1,78 @@
+{
+  "task": "CHATGPT-WUA-COLIBRI-MVP1-PREFLIGHT-20261123-001",
+  "base": "8dfa5fd9c283dee300f1981a263d05a4fca0366e",
+  "exact_producer": "Colibri #108 (35 pinned Git blobs)",
+  "no_live": true,
+  "final": {
+    "security": "3/3",
+    "turn": "13/13",
+    "evm": "2/2",
+    "stream": "4/4",
+    "python": "70/70",
+    "js": "207/207",
+    "chrome": "PASS"
+  },
+  "logs": [
+    {
+      "name": "chrome_two_managers",
+      "sha256": "573b29239eac10fdc840447e53a550a24504164caeabe60e3d6b5f100cce5356",
+      "bytes": 593,
+      "status": "PASS"
+    },
+    {
+      "name": "focused_js",
+      "sha256": "ee2a56a16f1be6561b1f61bc3a7f1f61deed68c526034aa6c607df69495a3b1f",
+      "bytes": 49831,
+      "status": "PASS"
+    },
+    {
+      "name": "focused_python",
+      "sha256": "ee61dfda50f337c20e35b2f4bf4c47c9c5b2e08d333a51df7c19ff89a4220698",
+      "bytes": 1898,
+      "status": "FIRST_FAIL_RETAINED"
+    },
+    {
+      "name": "focused_python_retry",
+      "sha256": "8316444b0942dd574b97d6e5130d76892d22aa352db446a1d000c9b777eacaa9",
+      "bytes": 170,
+      "status": "PASS"
+    },
+    {
+      "name": "legacy_evm",
+      "sha256": "4c72b5df8a15eef009bf93cf51ca2060e574f099ba19f89a7bb7c1c152b2638f",
+      "bytes": 3462,
+      "status": "FIRST_FAIL_RETAINED"
+    },
+    {
+      "name": "legacy_evm_updated",
+      "sha256": "f1304e1ce93252319d6bf09ee65e929b95f1c0b1236d795b89af1f06f11e1796",
+      "bytes": 365,
+      "status": "PASS"
+    },
+    {
+      "name": "legacy_unified",
+      "sha256": "a010eeaa51af8711fd310e8b9fff12d177b91c6b6cc8fe2f2340223e48a254ee",
+      "bytes": 1787,
+      "status": "PASS"
+    },
+    {
+      "name": "preflight",
+      "sha256": "3abd7512e53f1b210fad5b43e4c046904c56515bb3274495409550acb70d7a65",
+      "bytes": 2033,
+      "status": "FIRST_FAIL_RETAINED"
+    },
+    {
+      "name": "preflight_final",
+      "sha256": "cfba25beff85b1b5506234790314ddecc1a07fc0b32d5006eb3725e5b8c9ed01",
+      "bytes": 603,
+      "status": "PASS"
+    },
+    {
+      "name": "stream_ready",
+      "sha256": "9710a2d6868adfe516d56eb190f3f3a3f3c598e611ef4882aa1ca4c8f58e31a7",
+      "bytes": 1174,
+      "status": "PASS"
+    }
+  ],
+  "local_originals": "M:\\GitHub\\WUA-662-gate-evidence-20261123"
+}
