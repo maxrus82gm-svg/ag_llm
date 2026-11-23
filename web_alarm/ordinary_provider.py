@@ -229,6 +229,8 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 api=self._api.model_cards._card(local_context,s)["api"],
                 availability="AVAILABLE" if s.enabled else "UNAVAILABLE",
                 instance_id=local[s.model_id]["instance_id"],
+                manager_name=local[s.model_id]["manager_name"],
+                slot_id=local[s.model_id]["slot_id"],
                 local_status=local[s.model_id]["status"])
                 for s in registry.list_model_specs() if s.is_local
                 and self._api.model_cards.is_enabled(s.model_id))

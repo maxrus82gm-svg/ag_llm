@@ -24,6 +24,29 @@ FIELDS = set(FrozenBridgeRequest.__dataclass_fields__) - {"wire"}
 STATES = {"SUCCEEDED", "FAILED", "CANCELLED", "UNKNOWN"}
 ERROR_CODE = re.compile(r"[a-z0-9_]{1,80}")
 
+# Bounded journal records group original, sequenced SSE packets. Legacy single
+# packet records remain readable. This is an I/O grouping, not SSE compression
+# or a new provider protocol. The original packets are retained verbatim.
+MAX_BATCH_PACKETS = 12
+MAX_BATCH_BYTES = 64 * 1024
+
+
+def expand_packets(records):
+    for record in records:
+        if record["event"] != "turn_bridge_batch":
+            yield record
+            continue
+        payload=record["payload"]
+        if (type(payload) is not dict or set(payload)!={"packets"}
+                or type(payload["packets"]) is not list
+                or not 1<=len(payload["packets"])<=MAX_BATCH_PACKETS
+                or len(canonical(payload))>MAX_BATCH_BYTES
+                or any(type(item) is not dict for item in payload["packets"])):
+            raise ValueError("Invalid local packet batch")
+        for item in payload["packets"]:
+            yield {"event":"turn_bridge_packet","payload":{"packet":item}}
+
+
 
 @lru_cache(maxsize=1)
 def schema():
@@ -109,7 +132,7 @@ def evidence(turn,records):
     started=dispatched=cancelled=False
     ack=None;terminal=None;done=None;error=None;usage=None;telemetry=None
     answers=[];reasoning=[];seq=0;rank=-1
-    for rec in records:
+    for rec in expand_packets(records):
         kind,p=rec["event"],rec["payload"]
         if type(p) is not dict:
             raise ValueError("Invalid local event")

@@ -1,0 +1,12 @@
+EXACT PRODUCER BLOBS 35
+REAL_TEST_LAUNCHER_FIXTURE_READY
+Error: timeout model choice
+    at wait (M:\GitHub\ag_llm_UI_TEST_651\reports\CHATGPT-WUA-COLIBRI-MVP1-EVM-20261122-001\chrome_smoke.cjs:11:8)
+    at async choose (M:\GitHub\ag_llm_UI_TEST_651\reports\CHATGPT-WUA-COLIBRI-MVP1-EVM-20261122-001\chrome_smoke.cjs:52:5)
+    at async M:\GitHub\ag_llm_UI_TEST_651\reports\CHATGPT-WUA-COLIBRI-MVP1-EVM-20261122-001\chrome_smoke.cjs:64:3
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm_UI_TEST_651\reports\CHATGPT-WUA-COLIBRI-MVP1-EVM-20261122-001\reproduce_chrome.py", line 24, in <module>
+    subprocess.run(["node",str(Path(__file__).with_name("chrome_smoke.cjs")),str(d)],cwd=root,check=True,timeout=240,env={**__import__("os").environ,"WUA_TEST_PYTHON":sys.executable})
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['node', 'M:\\GitHub\\ag_llm_UI_TEST_651\\reports\\CHATGPT-WUA-COLIBRI-MVP1-EVM-20261122-001\\chrome_smoke.cjs', 'C:\\Users\\REX\\AppData\\Local\\Temp\\wua-colibri-review-ni2dzrti']' returned non-zero exit status 1.

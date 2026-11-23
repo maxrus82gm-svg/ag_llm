@@ -857,15 +857,57 @@ class TurnService:
                     raise BridgeFault('local_dispatch_refused')
                 self._event(root,turn,'turn_bridge_dispatch',start)
 
-        def packet(event):
+        from .colibri_turn import MAX_BATCH_PACKETS, MAX_BATCH_BYTES
+        queued=[]
+        queued_bytes=0
+        first_text=False
+        flushed_at=time.monotonic()
+
+        def durable(event, *, batch):
             with self._session(root, workspace_id, chat_id):
                 turn=self._load(root,workspace_id,chat_id,turn_id)
                 if turn['state']!='ATTEMPTING' or not self._is_active(root,turn):
                     raise ValueError('Local owner lost')
-                # Validate each proposed packet against the existing evidence before append.
-                payload={'packet':event}
-                self._colibri_evidence(turn,[*self._records(root,turn),{'event':'turn_bridge_packet','payload':payload}])
-                self._event(root,turn,'turn_bridge_packet',payload)
+                name='turn_bridge_batch' if batch else 'turn_bridge_packet'
+                payload={'packets':list(event)} if batch else {'packet':event}
+                # Validate the complete durable journal and every proposed
+                # original SSE identity/sequence BEFORE publishing the batch.
+                self._colibri_evidence(turn,[*self._records(root,turn),
+                                            {'event':name,'payload':payload}])
+                self._event(root,turn,name,payload)
+
+        def flush():
+            nonlocal queued_bytes,flushed_at
+            if queued:
+                durable(queued,batch=True)
+                queued.clear()
+                queued_bytes=0
+            flushed_at=time.monotonic()
+
+        def packet(event):
+            nonlocal queued_bytes,first_text
+            # The transport has already schema/identity-validated each event.
+            # Large single packets use the original format and retain the
+            # existing Run Store bound, rather than being silently truncated.
+            encoded=len(canonical(event))
+            if encoded+16>MAX_BATCH_BYTES:
+                flush()
+                durable(event,batch=False)
+                return
+            if (queued and (len(queued)>=MAX_BATCH_PACKETS or queued_bytes+encoded+64>MAX_BATCH_BYTES)):
+                flush()
+            queued.append(event)
+            queued_bytes+=encoded
+            first_fragment=event['type'] in {'reasoning','delta'} and not first_text
+            if event['type'] in {'reasoning','delta'}:
+                first_text=True
+            # Persist metadata and first visible text immediately. Subsequent
+            # fast fragments are coalesced; a slow stream flushes periodically
+            # on the next received packet. Completion and failure always flush.
+            if (event['type'] in {'meta','done','error'} or first_fragment
+                    or len(queued)>=MAX_BATCH_PACKETS
+                    or time.monotonic()-flushed_at>=.25):
+                flush()
 
         result=None
         error_code=None
@@ -875,6 +917,10 @@ class TurnService:
             error_code=exc.code
         except Exception:
             error_code='local_execution_uncertain'
+        # Never declare a terminal outcome while received, validated SSE
+        # packets are waiting only in RAM. A failed flush leaves an ambiguous
+        # Turn, not a forged complete answer or a second upstream request.
+        flush()
         with self._session(root,workspace_id,chat_id):
             turn=self._load(root,workspace_id,chat_id,turn_id)
             ev=self._colibri_evidence(turn,self._records(root,turn))

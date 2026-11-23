@@ -1,0 +1,13 @@
+EXACT PRODUCER BLOBS 35
+LONG_STREAM_OBSERVATION={"8": {"seconds": 2.894, "journal_records": 6, "original_sse_packets": 14, "batch_records": 3}, "24": {"seconds": 3.4, "journal_records": 8, "original_sse_packets": 30, "batch_records": 5}, "48": {"seconds": 3.773, "journal_records": 10, "original_sse_packets": 54, "batch_records": 7}}
+test_two_managers_catalog_identity_and_independent_admission (__main__.Readiness.test_two_managers_catalog_identity_and_independent_admission)
+M1-02 subset: one Client Bridge, two fake Managers, *serial* requests. ... ok
+test_bounded_stream_journal_performance_and_durable_replay (__main__.Readiness.test_bounded_stream_journal_performance_and_durable_replay)
+Observation only: report physical journal cost, no artificial pass latency threshold. ... ok
+test_packet_batch_integrity_and_legacy_readback (__main__.Readiness.test_packet_batch_integrity_and_legacy_readback) ... ok
+test_truncated_stream_flushes_buffered_partial_without_reexecution (__main__.Readiness.test_truncated_stream_flushes_buffered_partial_without_reexecution) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 38.306s
+
+OK

@@ -1,0 +1,18 @@
+{
+  "run": "#660 pre-batching exact producer #108 on isolated WUA #660",
+  "benchmark_kind": "wall time on disposable Windows filesystem; not model throughput",
+  "fragments": {
+    "8": {
+      "seconds": 4.807,
+      "journal_records": 17
+    },
+    "24": {
+      "seconds": 7.405,
+      "journal_records": 33
+    },
+    "48": {
+      "seconds": 11.562,
+      "journal_records": 57
+    }
+  }
+}

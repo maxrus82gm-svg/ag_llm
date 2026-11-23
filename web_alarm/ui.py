@@ -1303,7 +1303,10 @@ function modelCard(c,data,section,inst){
   const head=element('div',null,'mcard-head');
   const params=element('span',paramsText(c.params_billion),'params');params.setAttribute('title',c.params_billion==null?'Количество параметров не указано':'Количество параметров, указано пользователем');
   const provider=data.providers.find(p=>p.provider_id===c.provider_id);
-  head.append(element('h4',c.display_name,'mcard-name'),apiDot(c.api),params,element('span',provider?provider.display_name:c.provider_id,'mcard-side'));
+  const source=c.is_local&&c.local_target?
+    'Colibri · '+c.local_target.manager_name+' / '+c.local_target.slot_id:
+    provider?provider.display_name:c.provider_id;
+  head.append(element('h4',c.display_name,'mcard-name'),apiDot(c.api),params,element('span',source,'mcard-side'));
   const permitted=c.enabled!==false;
   const providerState=c.provider_id==='gigachat'?(evm.liveBusy?(evm.liveAction==='start'?'Подключение выполняется':'Отключение выполняется'):
     evm.liveFailure?(evm.liveFailure==='disconnect'?'Ошибка отключения':'Ошибка подключения'):evm.live?.real_available?'GigaChat подключён':evm.live?.mode==='ORDINARY'?'GigaChat отключён':'Состояние неизвестно'):
@@ -1369,7 +1372,14 @@ function sectionIds(section){
   const saved=(evm.cards?.view?.sections?.[section]||[]).filter(id=>natural.includes(id));  // the server order, checked against the catalog
   return saved.concat(natural.filter(id=>!saved.includes(id)))
 }
-function nameOf(id){const e=entryOf(id);return e?.card?.display_name||e?.base.display_name||id}
+function nameOf(id){
+  const e=entryOf(id);
+  if(e?.card?.is_local&&e.card.local_target){
+    const t=e.card.local_target;
+    return e.card.display_name+' · '+t.manager_name+' / '+t.slot_id;
+  }
+  return e?.card?.display_name||e?.base.display_name||id
+}
 function rectOf(el){return el&&typeof el.getBoundingClientRect==='function'?el.getBoundingClientRect():null}
 function compactCard(id,section){
   const e=entryOf(id);if(!e)return null;
@@ -2173,6 +2183,11 @@ const stage5Offline=document.body?.getAttribute?.('data-stage5-offline')==='true
 const chat={epoch:0,historyRevision:0,started:false,token:null,workspaces:[],workspace:null,expanded:null,chats:[],chat:null,messages:[],page:null,olderBusy:false,creatingWorkspace:false,renamingWorkspace:false};
 const chatTurn={available:false,busy:false,state:null,models:[],model:null,revision:0,checkRevision:0,checking:0,checkCount:0,dismissed:new Map()};
 const modelChat=()=>stage5Offline||chatTurn.ordinary===true;
+function chatModelLabel(m){
+  if(!m)return 'Выбрать модель';
+  return m.is_local&&typeof m.manager_name==='string'&&typeof m.slot_id==='string'?
+    m.display_name+' · '+m.manager_name+' / '+m.slot_id:m.display_name;
+}
 function turnScope(){return chat.workspace&&chat.chat?(chatTurn.ordinary?'webAlarm.ordinaryTurn.':'webAlarm.testTurn.')+chat.workspace+'.'+chat.chat:null}
 function turnPending(){try{return JSON.parse(localStorage.getItem(turnScope())||'null')}catch(_){return null}}
 function testChatSelection(){try{return JSON.parse(localStorage.getItem(chatTurn.ordinary?'webAlarm.ordinaryChatSelection':'webAlarm.testChatSelection')||'null')}catch(_){return null}}
@@ -2244,11 +2259,11 @@ function renderTurnComposer(){
     $('chatInput').placeholder='Сообщение TEST-имитатору';
     $('chatTurnNew').disabled=chatTurn.busy;
     text('chatComposerNote',pending?'TEST · повтор использует сохранённый ключ и модель исходного запроса.':'TEST · локальный имитатор. Enter — отправить, Shift+Enter — новая строка.');
-    text('chatModel',selected?'TEST · '+selected.display_name:'TEST · выберите модель');
-    text('chatModelPick',(selected?.display_name||'Выбрать модель')+' ▾');
+    text('chatModel',selected?'TEST · '+chatModelLabel(selected):'TEST · выберите модель');
+    text('chatModelPick',chatModelLabel(selected)+' ▾');
     text('chatSidebarNote','TEST · история хранится общим ядром Ultra.');
     if(chatTurn.ordinary){
-      text('chatModel',selected?'Модель: '+selected.display_name:'Выберите модель');
+      text('chatModel',selected?'Модель: '+chatModelLabel(selected):'Выберите модель');
       $('chatInput').placeholder=chatTurn.available?'Сообщение TEST-имитатору':'Отправка GigaChat пока закрыта';
       text('chatComposerNote',chatTurn.available?'TEST · проверка штатного чата без обращения к GigaChat.':'GigaChat не подключён в этом процессе. Подключите провайдера через EVM; если подключение отклонено, проверьте указанную там причину. История и настройки доступны.');
       text('chatSidebarNote','История хранится общим ядром Ultra.');
@@ -2973,8 +2988,9 @@ async function openPicker(){
       const suffix=m.availability==='UNAVAILABLE'?' · недоступна':
         m.availability==='NOT_APPROVED'?' · ожидает проверки':
         m.availability==='UNVERIFIED'?' · доступ не проверен':'';
-      const button=element('button',m.display_name+suffix);
+      const button=element('button',chatModelLabel(m)+suffix);
       button.type='button';button.setAttribute('role','option');
+      button.setAttribute('data-model-id',m.model_id);
       button.setAttribute('aria-selected',String(m.model_id===chatTurn.model));
       button.disabled=blocked;button.setAttribute('aria-disabled',String(blocked));
       button.onclick=async()=>{

@@ -1,0 +1,27 @@
+EXACT PRODUCER BLOBS 35
+LONG_STREAM_OBSERVATION={"8": {"seconds": 3.069, "journal_records": 6, "original_sse_packets": 14, "batch_records": 3}, "24": {"seconds": 3.369, "journal_records": 8, "original_sse_packets": 30, "batch_records": 5}, "48": {"seconds": 3.883, "journal_records": 10, "original_sse_packets": 54, "batch_records": 7}}
+test_two_managers_catalog_identity_and_independent_admission (__main__.Readiness.test_two_managers_catalog_identity_and_independent_admission)
+M1-02 subset: one Client Bridge, two fake Managers, *serial* requests. ... ok
+test_bounded_stream_journal_performance_and_durable_replay (__main__.Readiness.test_bounded_stream_journal_performance_and_durable_replay)
+Observation only: report physical journal cost, no artificial pass latency threshold. ... ok
+test_packet_batch_integrity_and_legacy_readback (__main__.Readiness.test_packet_batch_integrity_and_legacy_readback) ... ok
+test_truncated_stream_flushes_buffered_partial_without_reexecution (__main__.Readiness.test_truncated_stream_flushes_buffered_partial_without_reexecution) ... FAIL
+
+======================================================================
+FAIL: test_truncated_stream_flushes_buffered_partial_without_reexecution (__main__.Readiness.test_truncated_stream_flushes_buffered_partial_without_reexecution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm_UI_TEST_651\reports\CHATGPT-WUA-COLIBRI-MVP1-READINESS-20261123-001\readiness.py", line 208, in test_truncated_stream_flushes_buffered_partial_without_reexecution
+    self.assertEqual(sum(r["event"]=="turn_bridge_packet" for r in expand_packets(records)),17)
+AssertionError: 16 != 17
+
+----------------------------------------------------------------------
+Ran 4 tests in 39.051s
+
+FAILED (failures=1)
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm_UI_TEST_651\reports\CHATGPT-WUA-COLIBRI-MVP1-READINESS-20261123-001\reproduce.py", line 24, in <module>
+    subprocess.run(py+[str(Path(__file__).with_name("readiness.py")),"--producer-source",str(d)],cwd=root,check=True,timeout=240)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe', '-B', '-X', 'utf8', 'M:\\GitHub\\ag_llm_UI_TEST_651\\reports\\CHATGPT-WUA-COLIBRI-MVP1-READINESS-20261123-001\\readiness.py', '--producer-source', 'C:\\Users\\REX\\AppData\\Local\\Temp\\wua-colibri-review-45x5b1sh']' returned non-zero exit status 1.
