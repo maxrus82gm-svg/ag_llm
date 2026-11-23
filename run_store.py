@@ -463,7 +463,8 @@ def run_component_path(workspace_root: str | Path, run_id: str,
     if entry is None:
         raise KeyError(run_id)
     allowed = {"summary.json", "task.json", "executor_base.json", "executor.jsonl",
-               "planner.jsonl", "server.jsonl", "dredd.jsonl", "records.idx.jsonl"}
+               "planner.jsonl", "server.jsonl", "dredd.jsonl", "records.idx.jsonl",
+               "colibri-owner.lock"}
     if component not in allowed:
         raise ValueError("Unknown Run Store component")
     return _checked_path(run_storage_dir(workspace_root, entry.get("chat_id"), run_id) / component)

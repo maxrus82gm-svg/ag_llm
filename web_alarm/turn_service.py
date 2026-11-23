@@ -643,6 +643,26 @@ class TurnService:
         return ANSWER
 
     def _execute(self, root, workspace_id, chat_id, turn_id):
+        # Claim an OS-held owner lease BEFORE the durable ATTEMPTING transition.
+        # The lease spans external HTTP/streaming and terminal persistence; a
+        # crashed process loses its lock, not its immutable request identity.
+        with self._session(root,workspace_id,chat_id):
+            turn=self._load(root,workspace_id,chat_id,turn_id)
+            local=turn['schema_version']==3
+        if local:
+            from .colibri_owner_lease import claim,OwnerLeaseBusy,OwnerLeaseUnavailable
+            try:
+                with claim(root,turn_id):
+                    return self._execute_bound(root,workspace_id,chat_id,turn_id)
+            except OwnerLeaseBusy:
+                with self._session(root,workspace_id,chat_id):
+                    return self._view(root,self._load(root,workspace_id,chat_id,turn_id))
+            except OwnerLeaseUnavailable:
+                raise UltraChatError(503,'local_owner_lock_unavailable',
+                                     'Local owner lock could not be verified') from None
+        return self._execute_bound(root,workspace_id,chat_id,turn_id)
+
+    def _execute_bound(self, root, workspace_id, chat_id, turn_id):
         active_key = (str(Path(root).resolve()),turn_id)
         with self._session(root,workspace_id,chat_id):
             turn = self._load(root,workspace_id,chat_id,turn_id)
@@ -942,6 +962,54 @@ class TurnService:
             self._colibri_evidence(turn,[*self._records(root,turn),{'event':'turn_bridge_terminal','payload':payload}])
             self._event(root,turn,'turn_bridge_terminal',payload)
             return self._settle_colibri(root,turn)
+
+    def reconcile_orphaned_colibri(self, root, workspace_id, chat_id, turn_id):
+        """Explicit OFFLINE administrative recovery; no upstream network call.
+
+        Only the absence of a held OS lease permits recovery. Durable producer
+        packets stay partial UNKNOWN unless a matching WUA terminal was
+        previously confirmed. No unknown physical attempt is repeated.
+        """
+        from .colibri_owner_lease import claim,OwnerLeaseBusy,OwnerLeaseUnavailable
+        with self._session(root,workspace_id,chat_id):
+            prior=self._load(root,workspace_id,chat_id,turn_id)
+            if prior['schema_version']!=3:
+                raise UltraChatError(409,'local_recovery_not_applicable',
+                                     'Only Colibri Turns support this recovery')
+            # Legacy #662 owner processes never held a lease. An upgrade must
+            # not mistake their still-running network attempt for an orphan.
+            if (prior['state']=='ATTEMPTING' and
+                    not runs.run_component_path(root,turn_id,'colibri-owner.lock').is_file()):
+                raise UltraChatError(409,'local_owner_lease_unrecorded',
+                                     'Old Turn has no verifiable OS owner lease; manual review required')
+        try:
+            with claim(root,turn_id):
+                with self._session(root,workspace_id,chat_id):
+                    turn=self._load(root,workspace_id,chat_id,turn_id)
+                    if turn['state']!='ATTEMPTING':
+                        return self._view(root,turn)
+                    runs.recover_run_records(root,turn['run_id'])
+                    records=self._records(root,turn)
+                    ev=self._colibri_evidence(turn,records)
+                    if ev['terminal'] is not None:
+                        return self._settle_colibri(root,turn)
+                    if not ev['started']:
+                        # Crash between state transition and start append:
+                        # there is no durable execution proof to reconcile.
+                        raise UltraChatError(409,'local_recovery_incomplete',
+                                             'Start evidence is incomplete; manual inspection required')
+                    payload=dict(state='UNKNOWN',error_code='owner_process_lost',
+                                 remote_state=None,ttft_ms=None,elapsed_ms=None)
+                    self._colibri_evidence(turn,[*records,
+                        {'event':'turn_bridge_terminal','payload':payload}])
+                    self._event(root,turn,'turn_bridge_terminal',payload)
+                    return self._settle_colibri(root,turn)
+        except OwnerLeaseBusy:
+            raise UltraChatError(409,'local_owner_still_running',
+                                 'The original execution owner still holds the lease') from None
+        except OwnerLeaseUnavailable:
+            raise UltraChatError(503,'local_owner_lock_unavailable',
+                                 'Could not prove the original owner has stopped') from None
 
     def _cancel_colibri(self, root, workspace_id, chat_id, turn_id):
         from .colibri_turn import restore

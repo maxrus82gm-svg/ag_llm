@@ -1,0 +1,144 @@
+{
+  "run_type": "offline_full_regression",
+  "results": [
+    {
+      "name": "hard_crash_recovery",
+      "rc": 0,
+      "elapsed_s": 15.7,
+      "sha256": "7298c13a20cf35987a056623668564948c1707fafcfd2ac5ac490b6a291b7b10",
+      "bytes": 576,
+      "summary": "Ran 3 tests in 12.804s | OK"
+    },
+    {
+      "name": "windows_acl_preflight",
+      "rc": 0,
+      "elapsed_s": 17.94,
+      "sha256": "56f362015588ad8aa30663bef47cf0d87f3736c38e6d0322f5eb34378e3a50ea",
+      "bytes": 603,
+      "summary": "Ran 3 tests in 14.989s | OK"
+    },
+    {
+      "name": "unified_turn",
+      "rc": 0,
+      "elapsed_s": 43.24,
+      "sha256": "821dc5498947e7dcde1e76619586a3396a74e39792d0d8620636ca8e3a4fe9ae",
+      "bytes": 1787,
+      "summary": "Ran 13 tests in 40.375s | OK"
+    },
+    {
+      "name": "two_manager_sse",
+      "rc": 0,
+      "elapsed_s": 39.78,
+      "sha256": "e5efd13f5550de472977d4065fb5248c47d1aa08e3ae2e28bc347c951c4923b4",
+      "bytes": 1175,
+      "summary": "LONG_STREAM_OBSERVATION={\"8\": {\"seconds\": 2.889, \"journal_records\": 6, \"original_sse_packets\": 14, \"batch_records\": 3}, \"24\": {\"seconds\": 3.171, \"journal_records\": 8, \"original_sse_packets\": 30, \"batch_records\": 5}, \"48\": {\"seconds\": 3.593, \"journal_records\": 10, \"original_sse_packets\": 54, \"batch_records\": 7}} | Ran 4 tests in 36.837s | OK"
+    },
+    {
+      "name": "evm_http",
+      "rc": 0,
+      "elapsed_s": 21.43,
+      "sha256": "d8be1e01ba6eeab4c63669e84f82b737a13c23cdb15b0b3996d8082963a07ef5",
+      "bytes": 365,
+      "summary": "Ran 2 tests in 18.559s | OK"
+    },
+    {
+      "name": "python_compat",
+      "rc": 0,
+      "elapsed_s": 52.04,
+      "sha256": "ed431b0f3ddc417cc644665b4fa56b485de8e44e70885cd050a91daa94607f16",
+      "bytes": 170,
+      "summary": "Ran 70 tests in 51.556s | OK"
+    },
+    {
+      "name": "js_compat",
+      "rc": 0,
+      "elapsed_s": 1.85,
+      "sha256": "e78f1eec58c05f5668d426d6128a8179da746c65039eda6b45ef9fe08004c009",
+      "bytes": 49824,
+      "summary": "# pass 207 | # fail 0"
+    },
+    {
+      "name": "chrome_two_manager",
+      "rc": 0,
+      "elapsed_s": 26.94,
+      "sha256": "ee7c86bc7380875e9f9fd6ee4129c2e35c0426d4ff5b797286aebee230790e68",
+      "bytes": 593,
+      "summary": "LOCAL_CHOICES_IDENTITY_PASS [{\"id\":\"tgt_421b3a68cb6053d51b32b1a00da9b975327193beac3d50c9d0040e4feb6fa287\",\"name\":\"KAT\",\"manager\":\"Manager 2\",\"slot\":\"slot1\"},{\"id\":\"tgt_cd09e9751f3713d6f3cf2fea935b3725af103b7116a1eb944420d2901e4f708b\",\"name\":\"KAT\",\"manager\":\"Manager 1\",\"slot\":\"slot1\"}] | CHROME_JOINT_PASS {\"mode\":\"OFFLINE_APPLICATION\",\"history\":[\"Cloud first\",\"H35 synthetic answer\",\"Local second\",\"Ответ\",\"Cloud third\",\"H35 synthetic answer\"],\"sameChat\":true,\"colibriProgress\":true,\"evmDisable\":true,\"localF5\":true,\"cloudF5\":true}"
+    }
+  ],
+  "failed": [],
+  "post_release_error_guard": {
+    "name": "hard_crash_after_guard",
+    "status": "3/3 PASS",
+    "scope": "true hard kill of child and legacy lease compatibility"
+  },
+  "raw_logs_location": "local vault WUA-663-gate-evidence-20261123 outside Git; filenames in log_manifest",
+  "log_manifest": [
+    {
+      "name": "chrome_two_manager",
+      "sha256": "ee7c86bc7380875e9f9fd6ee4129c2e35c0426d4ff5b797286aebee230790e68",
+      "bytes": 593,
+      "status": "PASS"
+    },
+    {
+      "name": "evm_http",
+      "sha256": "d8be1e01ba6eeab4c63669e84f82b737a13c23cdb15b0b3996d8082963a07ef5",
+      "bytes": 365,
+      "status": "PASS"
+    },
+    {
+      "name": "hard_crash_after_guard",
+      "sha256": "59771d4380b267576486ee194af9c2cb13ed35e6aecf65aefa09ec839a54e157",
+      "bytes": 576,
+      "status": "PASS"
+    },
+    {
+      "name": "hard_crash_recovery",
+      "sha256": "7298c13a20cf35987a056623668564948c1707fafcfd2ac5ac490b6a291b7b10",
+      "bytes": 576,
+      "status": "PASS"
+    },
+    {
+      "name": "hard_crash_recovery_final",
+      "sha256": "b61025745ce18c402ac7b5c75f5584dac3ad3b36b45d72a3ceecd8481c313aa4",
+      "bytes": 576,
+      "status": "PASS"
+    },
+    {
+      "name": "js_compat",
+      "sha256": "e78f1eec58c05f5668d426d6128a8179da746c65039eda6b45ef9fe08004c009",
+      "bytes": 49824,
+      "status": "PASS"
+    },
+    {
+      "name": "python_compat",
+      "sha256": "ed431b0f3ddc417cc644665b4fa56b485de8e44e70885cd050a91daa94607f16",
+      "bytes": 170,
+      "status": "PASS"
+    },
+    {
+      "name": "two_manager_sse",
+      "sha256": "e5efd13f5550de472977d4065fb5248c47d1aa08e3ae2e28bc347c951c4923b4",
+      "bytes": 1175,
+      "status": "PASS"
+    },
+    {
+      "name": "unified_turn",
+      "sha256": "821dc5498947e7dcde1e76619586a3396a74e39792d0d8620636ca8e3a4fe9ae",
+      "bytes": 1787,
+      "status": "PASS"
+    },
+    {
+      "name": "unified_turn_final",
+      "sha256": "e0649540babf1266c7657354a2d16fa30eef9e0c224deb260b43d24278ce8d3c",
+      "bytes": 1787,
+      "status": "PASS"
+    },
+    {
+      "name": "windows_acl_preflight",
+      "sha256": "56f362015588ad8aa30663bef47cf0d87f3736c38e6d0322f5eb34378e3a50ea",
+      "bytes": 603,
+      "status": "PASS"
+    }
+  ]
+}
