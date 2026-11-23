@@ -1,0 +1,160 @@
+{
+  "integration_id": "WUA-COLIBRI-BRIDGE-001",
+  "wua_base": "e2410c3f2273f7bda27c47818e57568de640fc45",
+  "wua_current_head": "e2410c3f2273f7bda27c47818e57568de640fc45",
+  "colibri_contract": "2d9e7f6fb860fdd53747f4ba75350d15bab27877",
+  "colibri_producer": "883d91d4ad2e47fc260bfd7b1e61d230f8fb99ea",
+  "colibri_matrix": "a2796c3a4f452bb7043502c7ef1c4086e0672d6c",
+  "colibri_matrix_blob": "d955e5d0fedec67d2e14582b0548308cbf7068dd",
+  "verified_contract_blobs": 10,
+  "independent_refresh": {
+    "contract_shape": 68,
+    "bridge_tests": 22,
+    "joint_transport_tests": 7,
+    "raw_log_sha256": "122b338452928ec80fb0fb44ff4d79442b0fc8870f20fee613df42e4f2e5e0fc"
+  },
+  "last_WUA_664_successful_suites": [
+    "append_hard_kill",
+    "previous_owner_crash",
+    "windows_security",
+    "unified_turn",
+    "two_manager_sse",
+    "ordinary_evm",
+    "run_store_v2_pytest",
+    "turn_service_compat",
+    "python_compat",
+    "js_compat",
+    "chrome_two_manager"
+  ],
+  "archived_WUA_raw_logs_sha256_verified": 12,
+  "statuses": {
+    "OFFLINE_PASS_SCOPED": 8,
+    "PARTIAL": 3,
+    "NOT_RUN": 2
+  },
+  "overall": "PARTIAL_OFFLINE_NOT_ACCEPTED",
+  "real_manager": "NOT_ACCESSED",
+  "real_cloud": "NOT_ACCESSED",
+  "hosted_ci_WUA": "NOT_RUN",
+  "historical_S1_S2_D8": "OPEN",
+  "owner_joint_acceptance": "NOT_RUN",
+  "matrix": [
+    {
+      "id": "M1-00",
+      "status": "OFFLINE_PASS_SCOPED",
+      "colibri_criterion": "Зафиксировать SHA контракта/обеих реализаций, отсутствие дрейфа схем и контракта. #108 exact-SHA CI SUCCESS; 68 fixture/schema/sequence + 22 isolated bridge tests PASS повторно на HOME.",
+      "colibri_source_status": "Colibri source recheck PASS; WUA pin/review OPEN",
+      "wua_evidence": "Exact #107 contract and #108 producer immutable; WUA pinned consumer and independent 68/22/7 tests",
+      "source": "#107+#108 68/22/7 fresh",
+      "remaining": "WUA release pipeline and exact hosted CI absent; current installed Colibri build not inspected"
+    },
+    {
+      "id": "M1-01",
+      "status": "OFFLINE_PASS_SCOPED",
+      "colibri_criterion": "OFFLINE: protected descriptor/token, loopback authenticated health, wrong/missing credential, wrong bridge_id/protocol, stale descriptor, unsafe origin/redirect; отказ без отправки запроса, секрет не в браузере/логах/URL.",
+      "colibri_source_status": "Colibri synthetic coverage partial PASS; adapter and end-to-end OFFLINE NOT RUN",
+      "wua_evidence": "Authenticated loopback/negative descriptor/identity/ACL cases on disposable Windows profile",
+      "source": "#664 WUA windows_security",
+      "remaining": "Actual HOME descriptor, ACL, launch identity and occupied port uninspected; OS handle and same-user race"
+    },
+    {
+      "id": "M1-02",
+      "status": "OFFLINE_PASS_SCOPED",
+      "colibri_criterion": "Catalogue READY/chat only, стабильный target_id, новый instance_id после restart (synthetic), stale instance rejected; BUSY/STOPPED/unknown/degraded Manager не становятся доступной моделью; EVM disabled target rejected at admission.",
+      "colibri_source_status": "Colibri fake Manager cases PASS; WUA EVM/registry and joint OFFLINE NOT RUN",
+      "wua_evidence": "Two simulated Managers, stable target_id, instance changes, READY/BUSY, independent EVM toggles",
+      "source": "#664 WUA two_manager_sse",
+      "remaining": "Actual two-Manager concurrent LIVE operation belongs later MVP2, not claimed"
+    },
+    {
+      "id": "M1-03",
+      "status": "OFFLINE_PASS_SCOPED",
+      "colibri_criterion": "Реальный WUA backend → isolated Client Bridge → fake Manager, all five operations: health/models/chat stream/cancel/requests status. Exact ordered messages, unchanged history, no automatic V4/system injection, no lab chat or direct engine path. Unadvertised capabilities/system/tool rejected explicitly, no downgrade.",
+      "colibri_source_status": "Bridge tests PASS; joint OFFLINE NOT RUN",
+      "wua_evidence": "Exact #108 producer all five operations through WUA transport and fake Manager; no system/tool downgrades",
+      "source": "#107+#108 68/22/7 fresh",
+      "remaining": "Real Client/Manager launch, health, status and HTTP credential context not inspected"
+    },
+    {
+      "id": "M1-04",
+      "status": "OFFLINE_PASS_SCOPED",
+      "colibri_criterion": "SSE UTF-8/event/name/id/sequence, meta identity, reasoning and delta separate, exactly one terminal; fragmented/multiline SSE and malformed/order/identity violations explicitly handled by WUA. First fragment displayed before completion, timing measured at own layer; no fabricated throughput.",
+      "colibri_source_status": "Bridge wire/schema synthetic PASS; WUA decoder/UI joint OFFLINE NOT RUN",
+      "wua_evidence": "Strict ordered SSE/reasoning/answer, durable batches, Chrome incremental rendering before terminal",
+      "source": "#664 WUA two_manager_sse",
+      "remaining": "WUA browser currently polls Run Store (not native browser SSE); long idle, 48+ fragments and real engine NOT RUN"
+    },
+    {
+      "id": "M1-05",
+      "status": "PARTIAL",
+      "colibri_criterion": "Usage: exact input/output counters if reported, derived total marked partial, unknown cached/reasoning/basis null, zero preserved, no double count and no synthetic cost. WUA statistics preserve raw status/source.",
+      "colibri_source_status": "Colibri synthetic PASS; WUA mapping NOT RUN",
+      "wua_evidence": "WUA raw usage/status/source/basis and unknown counters tracked, without fabricated cost",
+      "source": "#664 WUA unified_turn",
+      "remaining": "Real engine counters/cache basis and all partial-usage combinations not verified in LIVE"
+    },
+    {
+      "id": "M1-06",
+      "status": "OFFLINE_PASS_SCOPED",
+      "colibri_criterion": "Duplicate request_id same/different digest rejected without second upstream dispatch, atomic concurrent claim, stale identity and unknown pre-meta failure; request status and tombstone/journal survive restart in isolated profile. No automatic retry or invisible alternate target.",
+      "colibri_source_status": "Colibri synthetic PASS; WUA retry/Turn/partial history NOT RUN",
+      "wua_evidence": "Duplicate admission, no rerun, same Turn/RAW, OS owner lease, crashed Run append and explicit recovery",
+      "source": "#664 WUA previous_owner_crash",
+      "remaining": "Remote inference may continue after WUA process death; real status/tombstones and installed profiles untested"
+    },
+    {
+      "id": "M1-07",
+      "status": "OFFLINE_PASS_SCOPED",
+      "colibri_criterion": "Cancel before dispatch proven; active cancellation ack not terminal proof, completion can win, UNKNOWN on ambiguous cancel/disconnect. Preserve partial WUA answer with explicit incomplete status; no fake success, no replay or rerun.",
+      "colibri_source_status": "Colibri synthetic PASS; joint OFFLINE NOT RUN",
+      "wua_evidence": "Pre-dispatch cancel, ACK not terminal proof, race, UNKNOWN partial never assistant RAW/replayed",
+      "source": "#664 WUA unified_turn",
+      "remaining": "Real worker cancellation and actual engine stop NOT RUN, remote status during crash unresolved"
+    },
+    {
+      "id": "M1-08",
+      "status": "OFFLINE_PASS_SCOPED",
+      "colibri_criterion": "One ordinary WUA chat: mocked cloud → local fake Manager → mocked cloud. Preserve exact conversation_id/history and user/assistant messages, selected model and independent chat identity; one Turn path. EVM offline/available state without deleting chats.",
+      "colibri_source_status": "WUA/joint OFFLINE NOT RUN; no paid API",
+      "wua_evidence": "Actual isolated Chrome normal one-chat mock-cloud to fake-Colibri to mock-cloud, six messages and F5",
+      "source": "#664 WUA chrome_two_manager",
+      "remaining": "Real cloud paid API and actual locally running Colibri are NOT RUN; custom user system instructions unsupported"
+    },
+    {
+      "id": "M1-09",
+      "status": "PARTIAL",
+      "colibri_criterion": "Regression: previous Client GUI/ordinary chat and cloud provider route unchanged; Bridge disabled by default, no extra process/listener/mandatory local chat; source tests + exact CI; packaging separately declared.",
+      "colibri_source_status": "#108 author CI green; joint regression/packaging NOT RUN",
+      "wua_evidence": "WUA focused tests, 51 pytest Run Store, TurnService 19, 207 JS and Chrome PASS; Bridge still opt-in",
+      "source": "#664 WUA python_compat",
+      "remaining": "WUA full hosted Windows CI/packaging and historical S1/S2/D8 failures NOT CLOSED"
+    },
+    {
+      "id": "M1-10",
+      "status": "NOT_RUN",
+      "colibri_criterion": "After joint OFFLINE PASS and separate OWNER LIVE GO: read-only preflight exact SHA/config/ACL/ports, existing running services/instance identities and active/queued requests. Use separately approved isolated test profile/port/principal or another explicitly approved setup, no production profile copy, no touching occupied slot. Confirm READY idle chosen target, scoped chat access, local minimal text + streaming/usage/history and optional owner-authorized cancel; preserve unrelated processes; cleanup and postcheck.",
+      "colibri_source_status": "LIVE NOT RUN, separate OWNER GO required",
+      "wua_evidence": "Separate bounded OWNER LIVE read-only health/ACL/ports identity preflight proposed, not executed",
+      "source": "NONE, NOT_RUN",
+      "remaining": "Owner GO required; no real Manager request, production profile change or model start/stop"
+    },
+    {
+      "id": "M1-11",
+      "status": "NOT_RUN",
+      "colibri_criterion": "Optional real cloud→local→cloud only after explicit cloud API/expense permission, selected accepted cloud provider; GigaChat send issue separately diagnosed. If cloud unavailable, retain mocked-cloud OFFLINE evidence and mark real cloud chain NOT RUN, not PASS.",
+      "colibri_source_status": "NOT RUN",
+      "wua_evidence": "Optional real paid/cloud-local-cloud flow not attempted",
+      "source": "NONE, NOT_RUN",
+      "remaining": "Separate provider/cost authorization and GigaChat live issue; mock cloud is NOT real cloud"
+    },
+    {
+      "id": "M1-12",
+      "status": "PARTIAL",
+      "colibri_criterion": "Both coordinators record exact SHA, test scope, pass/fail/skip, unsupported/unknown, no leaked credentials, sanitized correlation IDs, postcheck. User GUI acceptance separate; only then update accepted stages through shared helper, WUA archives if both ACCEPTED.",
+      "colibri_source_status": "OPEN; no MVP2 before MVP1 acceptance",
+      "wua_evidence": "WUA evidence and shared plan row plus Colibri #111 proposal; full provenance/scopes recorded",
+      "source": "#664 WUA append_hard_kill",
+      "remaining": "Joint coordinators and owner have not ACCEPTED full MVP1; no archive, no M1-10/11"
+    }
+  ]
+}
