@@ -1,0 +1,5 @@
+# CHATGPT-WUA-CI-MCP-SDK-20261124-001 / WUA #668 — install real MCP SDK on hosted Windows CI
+
+Scope covered by original OWNER GO for closing #666 CI gates. #667 39302559e9e663ed825080b7bd0598a9730c8fc4 fixed Windows checkout long paths; its real GitHub Actions run 45252633682 successfully checked out, prepared Python and installed httpx/jsonschema, but S1 static failed 4 test imports (ModuleNotFoundError: mcp) and S2/D8/HTTP/JS were skipped. LOCAL WUA .venv has Python package mcp==2.2.0 exposing from mcp.server.mcpserver import MCPServer. Use real pinned SDK, no mocks or weakening checks.
+
+Modify only .github/workflows/gpt-wua-666-safety-gates.yml test dependencies and explicit SDK import check. Register H-CHATGPT-000022, journal/docs, WUA plan row under LOCAL-PLAN-01. GitHub Actions must rerun and report actual verdict. No Colibri source/Manager, no production, no paid API, no live GO. PLAN_READ 2026-11-24T00:51:33+05:00 SHA256 6c37705dc893909ee8acb190f3c580885320958961984a467e30042ecf24998a, archive SHA256 1071b531a3985ecb08d474651f73cedaf5aeb73cec1108b19daf764848fb4102.

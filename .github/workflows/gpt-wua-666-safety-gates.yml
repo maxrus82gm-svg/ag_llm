@@ -47,7 +47,12 @@ jobs:
       - name: Test-only Python dependencies
         shell: pwsh
         run: |
-          python -m pip install --disable-pip-version-check httpx==0.28.1 jsonschema==4.23.0
+          python -m pip install --disable-pip-version-check httpx==0.28.1 jsonschema==4.23.0 mcp==2.2.0
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify exact MCP Python SDK used by WUA
+        shell: pwsh
+        run: |
+          python -B -X utf8 -c "from mcp.server.mcpserver import MCPServer; print('MCP_SERVER_IMPORT_PASS')"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: S1 STATIC source census - NOT the private-RAW full S1 gate
         shell: pwsh
