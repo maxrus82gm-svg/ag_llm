@@ -1591,7 +1591,9 @@ OFFLINE_GUARD_SHA256 = "ad4f79ab756d627e6f2886b6ff53b2b6679f297f83734d9c2c574ba2
 POLICY_MODULE = "ultra_budget_policy"
 POLICY_ENTRYPOINTS = frozenset({"server", "ultra_ui", "web_alarm.__main__", "web_alarm.cli",
                                 "web_alarm.server", "web_alarm.launcher"})
-ISOLATION_EXTERNAL_ROOTS = frozenset({"httpx", "mcp"})  # current dependencies; local shadows still win
+ISOLATION_EXTERNAL_ROOTS = frozenset({"httpx", "mcp", "jsonschema", "win32api", "win32con", "win32security"})
+# #666 exact, reviewed Bridge schemas and Windows ACL imports; all unlisted roots still fail.
+# Local shadows take precedence over external roots.
 _LOADERS = frozenset({"builtins.__import__", "importlib.import_module"})
 _EXECUTORS = frozenset({"builtins.exec", "builtins.eval"})
 _SPEC_FINDERS = frozenset({"importlib.util.find_spec"})

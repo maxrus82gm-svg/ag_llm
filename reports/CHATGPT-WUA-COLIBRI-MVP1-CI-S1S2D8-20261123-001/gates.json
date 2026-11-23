@@ -1,0 +1,54 @@
+{
+  "task": "CHATGPT-WUA-COLIBRI-MVP1-CI-S1S2D8-20261123-001",
+  "source_base": "d1d44f07d10da8bf6a9f84904bd62454842a2fa0",
+  "candidate": "c13027b72082a3d0368dbbfbe10fc486fab78f5d",
+  "evidence": [
+    {
+      "gate": "S1_69_FINAL",
+      "sha256": "e8ffd4f9f205cff804a17da30b3a5bc0621a19df50582214efc0b22a0233c4d8",
+      "size": 91162
+    },
+    {
+      "gate": "S2_AFTER_RUNNER_MOVE",
+      "sha256": "e040baeb1b46731d34de51574d2ccf9fd2f84e63970691e240e8952620c50533",
+      "size": 810
+    },
+    {
+      "gate": "S1_HOSTED_RUNNER",
+      "sha256": "1567c88fab584c3a083f58b94f519e66d05ea6f68b0b0e92a919b27f18e30206",
+      "size": 3056
+    },
+    {
+      "gate": "NEW_NEGATIVES_AFTER_MOVE",
+      "sha256": "be4ce8242224c4801e278c4a3f9f2f0b9a6aa2ef6dc74a52ea8b07c502479f1d",
+      "size": 712
+    },
+    {
+      "gate": "D8_CANDIDATE3",
+      "sha256": "ee2fdeabf2332d73f3a8412684af5580adb813fe26632c9bdb319b8dba61b207",
+      "size": 296
+    },
+    {
+      "gate": "HTTP_88_RETRY",
+      "sha256": "51b60772ef6ecafad676d1cc65c02a6263f80f9e29f9472191a917f6aae4bd13",
+      "size": 188
+    },
+    {
+      "gate": "JS_207",
+      "sha256": "5ee3af6a6d6677ebb6e04f4cdcb65c4302c598ba48aacc09aef1718fe895ad15",
+      "size": 49831
+    },
+    {
+      "gate": "FLAKY_CASE_RETRY",
+      "sha256": "bf9057c90fe2f01ecdebb91cb536cd07487b8b9852d03e136ae3854058bc3071",
+      "size": 260
+    },
+    {
+      "gate": "HTTP_D8_REGRESSIONS",
+      "sha256": "58b77e336705ce7c70ef8e9c23a0508a91f3d087d63083dc2aac5c3823fc15c7",
+      "size": 1916
+    }
+  ],
+  "vault": "WUA-666-gate-evidence-20261123 outside Git",
+  "hosted_ci_at_authoring": "NOT_RUN"
+}

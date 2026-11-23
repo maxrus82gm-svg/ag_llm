@@ -1,0 +1,69 @@
+# #666 scope: S1 static ONLY on hosted CI; historic full S1 requires private RAW.
+# Strict OFFLINE: no REAL provider, HOME Colibri Manager or paid cloud.
+name: WUA 666 S1 static + S2 full + D8 offline
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - '.github/workflows/gpt-wua-666-safety-gates.yml'
+      - 'rt002_multimodel_reconciliation.json'
+      - 'test_rt002_s1_routes.py'
+      - 'test_rt002_s2_budget_policy.py'
+      - 'test_wua_666_gates.py'
+      - 'reports/CHATGPT-WUA-COLIBRI-MVP1-CI-S1S2D8-20261123-001/ci_s1_source.py'
+      - 'web_alarm/ultra_chat.py'
+      - 'web_alarm/test_model_selector.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wua666-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  windows-offline:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test-only Python dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check httpx==0.28.1 jsonschema==4.23.0
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: S1 STATIC source census - NOT the private-RAW full S1 gate
+        shell: pwsh
+        run: |
+          python -B -X utf8 reports/CHATGPT-WUA-COLIBRI-MVP1-CI-S1S2D8-20261123-001/ci_s1_source.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: S2 FULL 73-case guarded offline gate
+        shell: pwsh
+        run: |
+          python -B -X utf8 test_rt002_s2_budget_policy.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: D8 read-only transport isolation
+        shell: pwsh
+        run: |
+          python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat.DataTests.test_d8_adapter_imports_no_transport_and_core_errors_never_reach_the_browser
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: S1 S2 negative controls
+        shell: pwsh
+        run: |
+          python -B -X utf8 -m unittest -v test_wua_666_gates
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Ultra Chat HTTP and ordinary application regression
+        shell: pwsh
+        run: |
+          python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat test_web_alarm_ordinary_application
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Browser UI JavaScript regression
+        shell: pwsh
+        run: |
+          node --test test_web_alarm_ultra_chat_ui.js test_web_alarm_evm_ui.js test_web_alarm_operator_ui.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

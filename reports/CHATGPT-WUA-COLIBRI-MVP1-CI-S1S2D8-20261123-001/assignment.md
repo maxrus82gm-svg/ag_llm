@@ -1,0 +1,5 @@
+# CHATGPT-WUA-COLIBRI-MVP1-CI-S1S2D8-20261123-001 / WUA #666 — S1 S2 D8 and CI
+
+Owner GO 2026-11-24 after accepted #665 d1d44f07d10da8bf6a9f84904bd62454842a2fa0. LOCAL-PLAN-01 read 2026-11-24T00:42:36+05:00 SHA256 f37d7cc328bf1a5b3fde045a613b2882d076035a1978f93f0c493ec3bce3249b, shared archive SHA256 1071b531a3985ecb08d474651f73cedaf5aeb73cec1108b19daf764848fb4102. WUA MVP1 IN_PROGRESS; Colibri MVP1 SUBMITTED; MVP2 PLANNED.
+
+Fix the historic S1 69, S2 73, D8 isolation without dropping anti-regression negatives; isolate TEST-only catalog access from Ultra Chat history; update only audited exact AST/reference gates. Add scoped offline Windows GitHub Actions for S1 static, S2 full, D8, negative/HTTP/JS. Validate FULL S1 locally with original private RAW, never claim it passed hosted CI. Record initial Windows local WinError10053 and repeats. No real Manager/cloud/paid/production access. Full task history H-CHATGPT-000020, #05 #06 #34 and WUA-only #34.1 update after one GPT commit; Colibri row/archive untouched.

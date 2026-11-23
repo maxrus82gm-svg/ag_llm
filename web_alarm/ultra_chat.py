@@ -773,9 +773,8 @@ class OrdinaryCoreChatService(OfflineUltraChatService):
         # through inheritance or enroll existing data while reading a preference.
         if type(self) is not OrdinaryCoreChatService:
             raise UltraChatError(403, "test_model_unavailable", "TEST model selection is unavailable")
-        from model_registry import MODEL_REGISTRY
-        allowed = [m.model_id for m in MODEL_REGISTRY.values()
-                   if m.enabled and m.provider == "gigachat" and not m.is_local]
+        from .test_model_selector import allowed_test_model_ids
+        allowed = allowed_test_model_ids()
         if not allowed:
             raise UltraChatError(503, "test_models_unavailable", "TEST model catalog is unavailable")
         if update is not ... and (type(update) is not dict or set(update) != {"model_ref"}

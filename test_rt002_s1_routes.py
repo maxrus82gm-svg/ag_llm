@@ -1520,7 +1520,8 @@ class StaticRouteInventoryTests(unittest.TestCase):
                     importers.add(module.name)
         self.assertEqual(importers - NON_PRODUCTION_MODULES, {
             "server.py", "planner_runtime.py", "verifier_runtime.py", "compressor_runtime.py",
-            "gigachat_transport.py", "ordinary_gigachat_transport.py", "gigachat_admission.py", 'gigachat_runtime.py'})
+            "gigachat_transport.py", "ordinary_gigachat_transport.py", "gigachat_admission.py", 'gigachat_runtime.py',
+            "colibri_bridge_transport.py"})
 
     def test_every_endpoint_constant_read_is_an_inventoried_send_url(self):
         """Second, receiver-independent net: an LLM/OAuth endpoint read anywhere else is unexplained."""

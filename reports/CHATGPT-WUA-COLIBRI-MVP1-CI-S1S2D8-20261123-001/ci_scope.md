@@ -1,0 +1,3 @@
+# #666 CI scope / no false PASS
+
+Full S1=69 with private RAW passed on isolated Windows, NOT in hosted GitHub. Hosted S1 source-only=16 with nonzero guard. S2 full=73, D8=1, negatives=5, Python=88 and JS=207 passed locally. GitHub Actions actual run after publish must be inspected before claiming hosted CI success. No real Colibri/Manager, paid API, STANDARD or inference is involved. If CI errors on Windows path length or tests are not discovered, the status remains BLOCKED until corrected. Original local logs including WinError 10053 and repeat SHA in gates.json outside Git; source-only static approval does not replace full historic S1.
