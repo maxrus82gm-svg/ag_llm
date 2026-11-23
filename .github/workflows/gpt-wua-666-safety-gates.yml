@@ -26,9 +26,21 @@ jobs:
     env:
       PYTHONDONTWRITEBYTECODE: '1'
     steps:
+      - name: Enable Git long-path support before checkout
+        shell: pwsh
+        run: |
+          git config --global core.longpaths true
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          # Root files are included by cone mode. Exclude nested historical
+          # mirror/report snapshots with Windows MAX_PATH-breaking names.
+          sparse-checkout: |
+            web_alarm
+            tools
+            reports/CHATGPT-WUA-COLIBRI-MVP1-CI-S1S2D8-20261123-001
+          sparse-checkout-cone-mode: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
