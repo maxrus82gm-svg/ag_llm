@@ -1,0 +1,5 @@
+# CHATGPT-WUA-CI-S2-GUARD-20261124-001 / #669 — S2 full policy integrity fixture in hosted checkout
+
+Original owner GO to validate and fix WUA #666 GitHub CI. Latest #668 d8729209e33cf16b2173ba63fed4af310e02567b passed Windows checkout, Python/mcp 2.2.0 import and hosted S1 static 16/16 in run 45253351121; hosted S2 full 73 had one ERROR (not a policy FAIL), FileNotFoundError for pinned existing reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/sitecustomize.py, excluded by sparse checkout. Never weaken S2 checksum or stub the guard.
+
+Add exactly that existing guard folder to GitHub Actions sparse checkout. No production/Colibri source edits, test code changes, actual Manager connection, cloud or paid API. Run hosted job and retain status. Task history H-CHATGPT-000023 and #05/#06/#34 plus WUA-only local #34.1 CAS. PLAN_READ 2026-11-24T00:54:55+05:00 SHA256 3467559d652f36c965e9a583ae83014346a1e5c5e8109a1344536e7140bf7c6a, archive SHA256 1071b531a3985ecb08d474651f73cedaf5aeb73cec1108b19daf764848fb4102.

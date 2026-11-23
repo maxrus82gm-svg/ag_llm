@@ -1,0 +1,7 @@
+# WUA #669 — include real pinned S2 integrity guard in hosted Windows checkout
+
+**CI PENDING after change, not yet PASS.** GitHub run 45253351121 after #668 passed checkout, exact mcp 2.2.0 import and hosted S1 16 static tests. S2 73 tests executed but one produced FileNotFoundError at test_no_production_module_imports_the_policy_yet while reading the original, SHA-pinned guard source from reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard/sitecustomize.py. No S2 security failure is established; subsequent D8/negative/HTTP/JS were SKIPPED. Full S2 73/73 local remained PASS.
+
+The source guard exists in Git at blob df0bdeb362b3e232c67865fb5714a1c1b7b8e668. Include only the original guard folder in sparse-cone checkout, preserving its true SHA verification. Do not broaden to archived nested mirrors (Windows long-path failure), fabricate a guard file or skip checksum. This task makes no changes outside WUA GitHub Actions and documentation. Follow-up hosted run must be verified independently and be reported if failed. Source-only S1 on hosted is 16; private pinned RAW full S1 69 passed locally only. Source WUA #666 S2 full 73, D8 1, negatives 5, Python 88 and JS 207 passed locally; no HOME real Manager, STANDARD, paid inference or production. MVP1 PARTIAL, LIVE NOT RUN.
+
+TASK CHATGPT-WUA-CI-S2-GUARD-20261124-001; H-CHATGPT-000023. PLAN_READ 2026-11-24T00:54:55+05:00 SHA256 3467559d652f36c965e9a583ae83014346a1e5c5e8109a1344536e7140bf7c6a, archive SHA256 1071b531a3985ecb08d474651f73cedaf5aeb73cec1108b19daf764848fb4102.

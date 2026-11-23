@@ -1,5 +1,9 @@
 # Оперативная память проекта — №34
 
+## CURRENT 24.11.2026 — WUA #669 S2 SHA-pinned guard file in CI sparse checkout
+H-CHATGPT-000023 / CHATGPT-WUA-CI-S2-GUARD-20261124-001. #666 local S1 full 69, S2 full 73, D8 1, negatives 5, Python 88, JS 207 PASS; hosted scope S1 static only. #667 fixed Windows long path checkout; #668 installed exact mcp==2.2.0, hosted run 45253351121 then S1 static 16 PASS but S2 73 one ERROR: protected guard sitecustomize.py path excluded from sparse checkout, D8/negatives/HTTP/JS skipped. #669 adds exact reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard directory so original S2 SHA check can run; no weakening, no source model edits. Hosted CI remains PENDING until new observed run. H-CHATGPT-000023, docs #05/#06, report reports/CHATGPT-WUA-CI-S2-GUARD-20261124-001/report.md; WUA-only #34.1 update after publish, Colibri row/archive unchanged. No real HOME/Manager/STANDARD/paid/LIVE; MVP1 PARTIAL, owner GO needed for future real health.
+
+
 ## CURRENT 24.11.2026 — WUA #668 hosted CI SDK mcp 2.2.0 requirement
 H-CHATGPT-000022 / CHATGPT-WUA-CI-MCP-SDK-20261124-001. #666 local S1 FULL 69/69, S2 FULL 73/73, D8, 5 security negatives, 88 Python, 207 JS PASS with pinned RAW. #667 solved Github Actions checkout long paths via core.longpaths and sparse source checkout, but hosted run 45252633682 failed S1 4 errors because clean Python had no mcp, S2/D8/HTTP/JS were skipped. HOME WUA installed mcp==2.2.0 and mcp.server.mcpserver.MCPServer import PASS. #668 adds exact true SDK to CI-only pip install plus explicit import gate. Status hosted Actions NOT YET VERIFIED until next run. No changes to source WUA/Colibri, no real Manager/production/paid, no LIVE. H-CHATGPT-000022, report reports/CHATGPT-WUA-CI-MCP-SDK-20261124-001/report.md, #05/#06 updated, shared WUA-only #34.1 after publish; COLIBRI and archive unchanged. MVP1 PARTIAL, real HOME and any inference require separate OWNER GO. No STANDARD restart.
 
