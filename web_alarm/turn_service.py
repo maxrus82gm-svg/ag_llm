@@ -963,7 +963,68 @@ class TurnService:
             self._event(root,turn,'turn_bridge_terminal',payload)
             return self._settle_colibri(root,turn)
 
-    def reconcile_orphaned_colibri(self, root, workspace_id, chat_id, turn_id):
+    def inspect_orphaned_colibri(self, root, workspace_id, chat_id, turn_id):
+        """Read-only operator preview, intentionally not an HTTP or UI route.
+
+        The OS lease establishes only local owner absence. Every return code
+        is a *decision suggestion* requiring a separate explicit operator
+        reconciliation call, never authority to restart Colibri inference.
+        """
+        from .colibri_owner_lease import claim, OwnerLeaseBusy, OwnerLeaseUnavailable
+        with self._session(root, workspace_id, chat_id):
+            turn = self._load(root, workspace_id, chat_id, turn_id)
+            if turn['schema_version'] != 3:
+                raise UltraChatError(409, 'local_recovery_not_applicable',
+                                     'Only local Colibri Turns have this decision preview')
+            if turn['state'] != 'ATTEMPTING':
+                self._view(root, turn)
+                return {'decision': 'ALREADY_TERMINAL', 'turn_id': turn_id,
+                        'state': turn['state'], 'requires_explicit_action': False,
+                        'remote_stop_proven': False}
+            if not runs.run_component_path(root, turn_id, 'colibri-owner.lock').is_file():
+                return {'decision': 'MANUAL_HOLD', 'turn_id': turn_id,
+                        'reason': 'legacy_lease_absent', 'requires_explicit_action': True,
+                        'remote_stop_proven': False}
+        try:
+            with claim(root, turn_id):
+                with self._session(root, workspace_id, chat_id):
+                    turn = self._load(root, workspace_id, chat_id, turn_id)
+                    if turn['state'] != 'ATTEMPTING':
+                        self._view(root, turn)
+                        return {'decision': 'ALREADY_TERMINAL', 'turn_id': turn_id,
+                                'state': turn['state'], 'requires_explicit_action': False,
+                                'remote_stop_proven': False}
+                    try:
+                        inspection = runs.recover_run_records(
+                            root, turn['run_id'], dry_run=True)
+                        if inspection['pending']:
+                            return {'decision': 'PENDING_APPEND_REVIEW', 'turn_id': turn_id,
+                                    'journal_action': ('KEEP_COMMITTED' if inspection['committed']
+                                                       else 'ROLLBACK_UNINDEXED'),
+                                    'uncommitted_bytes': dict(inspection['removed_bytes']),
+                                    'requires_explicit_action': True, 'remote_stop_proven': False}
+                        records = self._records(root, turn)
+                        ev = self._colibri_evidence(turn, records)
+                        decision = ('RECONCILE_DURABLE_TERMINAL' if ev['terminal'] is not None
+                                    else 'SEAL_UNKNOWN' if ev['started']
+                                    else 'MANUAL_HOLD')
+                        return {'decision': decision, 'turn_id': turn_id,
+                                'reason': 'start_not_durable' if decision=='MANUAL_HOLD' else None,
+                                'requires_explicit_action': True, 'remote_stop_proven': False}
+                    except (OSError, ValueError, runs.RunStoreRecoveryRequired):
+                        return {'decision': 'MANUAL_HOLD', 'turn_id': turn_id,
+                                'reason': 'unverified_run_store',
+                                'requires_explicit_action': True, 'remote_stop_proven': False}
+        except OwnerLeaseBusy:
+            return {'decision': 'WAIT_ORIGINAL_OWNER', 'turn_id': turn_id,
+                    'requires_explicit_action': False, 'remote_stop_proven': False}
+        except OwnerLeaseUnavailable:
+            return {'decision': 'MANUAL_HOLD', 'turn_id': turn_id,
+                    'reason': 'owner_lease_unverifiable',
+                    'requires_explicit_action': True, 'remote_stop_proven': False}
+
+    def reconcile_orphaned_colibri(self, root, workspace_id, chat_id, turn_id,
+                                  *, approve_pending_repair=False):
         """Explicit OFFLINE administrative recovery; no upstream network call.
 
         Only the absence of a held OS lease permits recovery. Durable producer
@@ -988,8 +1049,19 @@ class TurnService:
                     turn=self._load(root,workspace_id,chat_id,turn_id)
                     if turn['state']!='ATTEMPTING':
                         return self._view(root,turn)
-                    runs.recover_run_records(root,turn['run_id'])
-                    records=self._records(root,turn)
+                    # An interrupted append might contain valid yet unindexed
+                    # producer bytes. Changing that journal requires a second,
+                    # explicit operator approval after read-only preview.
+                    try:
+                        snapshot=runs.recover_run_records(root,turn['run_id'],dry_run=True)
+                        if snapshot['pending'] and approve_pending_repair is not True:
+                            raise UltraChatError(409,'local_append_repair_approval_required',
+                                                 'Review the pending append and explicitly approve storage repair')
+                        runs.recover_run_records(root,turn['run_id'])
+                        records=self._records(root,turn)
+                    except (OSError,ValueError,runs.RunStoreRecoveryRequired):
+                        raise UltraChatError(409,'local_recovery_manual_hold',
+                                             'Run Store evidence cannot be repaired automatically') from None
                     ev=self._colibri_evidence(turn,records)
                     if ev['terminal'] is not None:
                         return self._settle_colibri(root,turn)

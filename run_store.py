@@ -541,18 +541,22 @@ def _scan_run(workspace_root: str | Path, run_id: str, *, records=None):
     return records, decoded, ends, tails
 
 
-def recover_run_records(workspace_root: str | Path, run_id: str) -> dict:
+def recover_run_records(workspace_root: str | Path, run_id: str, *, dry_run: bool = False) -> dict:
     """Recover one interrupted append, using its durable intent; never replay an event.
 
-    The intent pins the exact previous index prefix and the planned record. Unexplained corruption or
-    orphan bytes without an intent are refused. A complete record before a lost reply remains committed.
+    With dry_run=True, validate and classify the same journal/append intent
+    but NEVER clear the intent or truncate an index/stream. Used by the
+    internal operator preview, not as evidence that remote inference stopped.
+    The intent pins the exact previous index prefix and the planned record.
+    Unexplained corruption or orphan bytes without an intent are refused.
+    A complete record before a lost reply remains committed.
     """
     with _index_lock(workspace_root):
         pending = _pending_path(workspace_root, run_id)
         if not os.path.lexists(pending):
             if _scan_run(workspace_root, run_id)[3]:
                 raise RunStoreRecoveryRequired("Orphan stream without append intent; manual inspection required")
-            return {"removed_bytes": {}, "committed": False}
+            return {"removed_bytes": {}, "committed": False, "pending": False} if dry_run else {"removed_bytes": {}, "committed": False}
         intent = _read_json(pending)
         if (not isinstance(intent, dict) or intent.get("schema_version") != 1
                 or intent.get("run_id") != run_id or type(intent.get("index_size")) is not int
@@ -579,6 +583,8 @@ def recover_run_records(workspace_root: str | Path, run_id: str) -> dict:
             _records, _decoded, _ends, tails = _scan_run(workspace_root, run_id)
             if tails:
                 raise ValueError("Unexpected stream tail after committed append")
+            if dry_run:
+                return {"removed_bytes": {}, "committed": True, "pending": True}
             _clear_pending(pending)
             return {"removed_bytes": {}, "committed": True}
         if suffix and not planned.startswith(suffix):
@@ -593,6 +599,8 @@ def recover_run_records(workspace_root: str | Path, run_id: str) -> dict:
             tail = _read_bytes(run_component_path(workspace_root, run_id, name))[ends[name]:]
             if hashlib.sha256(tail).hexdigest() != item.get("sha256"):
                 raise ValueError("Unconfirmed Run Store record checksum mismatch")
+        if dry_run:
+            return {"removed_bytes": tails, "committed": False, "pending": True}
         if suffix:
             _truncate(index_path, intent["index_size"])
         if tails:

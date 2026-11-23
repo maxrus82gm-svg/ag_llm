@@ -1,0 +1,153 @@
+{
+  "results": [
+    {
+      "name": "append_hard_kill",
+      "code": 0,
+      "seconds": 31.62,
+      "sha256": "8b1dc0f4d3593989128e83c0eaff1ef9f9bc4c93c3d29d2219c84e758a381aa8",
+      "summary": "Ran 6 tests in 28.799s | OK"
+    },
+    {
+      "name": "previous_owner_crash",
+      "code": 0,
+      "seconds": 15.75,
+      "sha256": "86e102e654b3244bc009ca1b7cd5e67a440703a22799ec016a7d7468be7a999f",
+      "summary": "Ran 3 tests in 12.971s | OK"
+    },
+    {
+      "name": "windows_security",
+      "code": 0,
+      "seconds": 17.39,
+      "sha256": "283c71bd2ac9fc63fd6432f695b7d6d750156a6b7b1d9cff5a6a924abeb331b9",
+      "summary": "Ran 3 tests in 14.523s | OK"
+    },
+    {
+      "name": "unified_turn",
+      "code": 0,
+      "seconds": 41.14,
+      "sha256": "3deacb2d8c5e442a2230094655883af1513ab74ec9770625fc3166e7cf11ab31",
+      "summary": "Ran 13 tests in 38.374s | OK"
+    },
+    {
+      "name": "two_manager_sse",
+      "code": 0,
+      "seconds": 40.08,
+      "sha256": "a60989e6a8e6291ec4b4f60c30594d8f182fd99e9d5bdb72978749e996032549",
+      "summary": "LONG_STREAM_OBSERVATION={\"8\": {\"seconds\": 2.885, \"journal_records\": 6, \"original_sse_packets\": 14, \"batch_records\": 3}, \"24\": {\"seconds\": 3.301, \"journal_records\": 8, \"original_sse_packets\": 30, \"batch_records\": 5}, \"48\": {\"seconds\": 3.714, \"journal_records\": 10, \"original_sse_packets\": 54, \"batch_records\": 7}} | Ran 4 tests in 37.243s | OK"
+    },
+    {
+      "name": "ordinary_evm",
+      "code": 0,
+      "seconds": 21.8,
+      "sha256": "33f45d8786f1ff0836ef5c68bb0acd97fd5fcdb28909f32bae1b080ffeafeb46",
+      "summary": "Ran 2 tests in 18.812s | OK"
+    },
+    {
+      "name": "run_store_v2",
+      "code": 5,
+      "seconds": 1.09,
+      "sha256": "e70fec2825d9bf206d27463a792768195039599cb39bcca66339f47283f84cce",
+      "summary": "Ran 0 tests in 0.000s"
+    },
+    {
+      "name": "turn_service_compat",
+      "code": 0,
+      "seconds": 15.78,
+      "sha256": "77d6a79bad101685420c604d2501ac0c25f8b227efdc7059d22d2f580f5d5695",
+      "summary": "Ran 19 tests in 15.517s | OK"
+    },
+    {
+      "name": "python_compat",
+      "code": 0,
+      "seconds": 52.32,
+      "sha256": "037afb5f496507f9ef067a695550db1664c657cafbf0ab68ee1e8f31445a4045",
+      "summary": "Ran 70 tests in 51.824s | OK"
+    },
+    {
+      "name": "js_compat",
+      "code": 0,
+      "seconds": 1.78,
+      "sha256": "ed3b7dcd4298654c9b5226e4ef3126e3dbcb9ac969d94942846598824050a74e",
+      "summary": "# pass 207 | # fail 0"
+    },
+    {
+      "name": "chrome_two_manager",
+      "code": 0,
+      "seconds": 26.05,
+      "sha256": "3d91ed0361a8a7330806582073e3b3754e7042f7b07eb93eb524e4b3ca30c1a2",
+      "summary": "CHROME_JOINT_PASS {\"mode\":\"OFFLINE_APPLICATION\",\"history\":[\"Cloud first\",\"H35 synthetic answer\",\"Local second\",\"Ответ\",\"Cloud third\",\"H35 synthetic answer\"],\"sameChat\":true,\"colibriProgress\":true,\"evmDisable\":true,\"localF5\":true,\"cloudF5\":true}"
+    },
+    {
+      "name": "run_store_v2_pytest",
+      "code": 0,
+      "seconds": 34.29,
+      "sha256": "78186112a29aad81c4e07ee6a30f89424d573566b47563d40a1895305762a09a",
+      "summary": "...................................................                      [100%]\n51 passed in 33.31s\n"
+    }
+  ],
+  "failed": [],
+  "log_manifest": [
+    {
+      "name": "append_hard_kill.txt",
+      "sha256": "8b1dc0f4d3593989128e83c0eaff1ef9f9bc4c93c3d29d2219c84e758a381aa8",
+      "bytes": 1025
+    },
+    {
+      "name": "chrome_two_manager.txt",
+      "sha256": "3d91ed0361a8a7330806582073e3b3754e7042f7b07eb93eb524e4b3ca30c1a2",
+      "bytes": 593
+    },
+    {
+      "name": "js_compat.txt",
+      "sha256": "ed3b7dcd4298654c9b5226e4ef3126e3dbcb9ac969d94942846598824050a74e",
+      "bytes": 49840
+    },
+    {
+      "name": "ordinary_evm.txt",
+      "sha256": "33f45d8786f1ff0836ef5c68bb0acd97fd5fcdb28909f32bae1b080ffeafeb46",
+      "bytes": 365
+    },
+    {
+      "name": "previous_owner_crash.txt",
+      "sha256": "86e102e654b3244bc009ca1b7cd5e67a440703a22799ec016a7d7468be7a999f",
+      "bytes": 576
+    },
+    {
+      "name": "python_compat.txt",
+      "sha256": "037afb5f496507f9ef067a695550db1664c657cafbf0ab68ee1e8f31445a4045",
+      "bytes": 170
+    },
+    {
+      "name": "run_store_v2.txt",
+      "sha256": "e70fec2825d9bf206d27463a792768195039599cb39bcca66339f47283f84cce",
+      "bytes": 108
+    },
+    {
+      "name": "run_store_v2_pytest.txt",
+      "sha256": "78186112a29aad81c4e07ee6a30f89424d573566b47563d40a1895305762a09a",
+      "bytes": 100
+    },
+    {
+      "name": "turn_service_compat.txt",
+      "sha256": "77d6a79bad101685420c604d2501ac0c25f8b227efdc7059d22d2f580f5d5695",
+      "bytes": 119
+    },
+    {
+      "name": "two_manager_sse.txt",
+      "sha256": "a60989e6a8e6291ec4b4f60c30594d8f182fd99e9d5bdb72978749e996032549",
+      "bytes": 1175
+    },
+    {
+      "name": "unified_turn.txt",
+      "sha256": "3deacb2d8c5e442a2230094655883af1513ab74ec9770625fc3166e7cf11ab31",
+      "bytes": 1787
+    },
+    {
+      "name": "windows_security.txt",
+      "sha256": "283c71bd2ac9fc63fd6432f695b7d6d750156a6b7b1d9cff5a6a924abeb331b9",
+      "bytes": 603
+    }
+  ],
+  "logs_local_only": "WUA-664-gate-evidence-20261123 outside Git",
+  "note": "Initial negative subtest re-used one fake Manager counter; split into two independent tests. The unittest runner discovered zero pytest-style Run Store tests; the correct pytest rerun passed 51/51. No production source defect."
+}
