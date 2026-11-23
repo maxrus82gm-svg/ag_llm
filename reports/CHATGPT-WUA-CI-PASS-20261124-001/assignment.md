@@ -1,0 +1,5 @@
+# CHATGPT-WUA-CI-PASS-20261124-001 — WUA #670 record independently verified CI acceptance
+
+Owner request: complete #666 S1/S2/D8 and CI without touching Colibri. After CI fixes #667/#668/#669, verify exact GitHub Windows Actions run and document confirmed status in permanent #05/#06/#34 and WUA-only local plan №34.1, while leaving Colibri and archive untouched. Task H-CHATGPT-000024, docs-only one atomic commit in GPT, owner merges.
+
+GitHub run 45253916385 on exact commit e2b3a3d1f54f3b15ccb71e116e29e2568eab9158: completed SUCCESS, job 137970549821 windows-offline SUCCESS; 16 static S1, full S2 73, D8 1, five negatives, ordinary Python/HTTP 36 and JS 207. Full historic S1 69 private RAW passed LOCAL only, never hosted. Other unrelated WUA workflows, full packaging and actual LIVE remain separate, MVP1 PARTIAL. PLAN_READ 2026-11-24T00:59:37+05:00 SHA256 489072fcbc570bfd1dbe26e1ea2cdd6a7206b074964f5ae83cde39940b182a4b; archive SHA256 1071b531a3985ecb08d474651f73cedaf5aeb73cec1108b19daf764848fb4102.

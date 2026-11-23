@@ -1,0 +1,10 @@
+# WUA #670 — independent GitHub Actions CI PASS readback
+
+**SCOPED WINDOWS HOSTED CI SUCCESS; overall Colibri MVP1 remains PARTIAL.**
+Exact run https://github.com/maxrus82gm-svg/ag_llm/actions/runs/45253916385 on WUA #669 commit e2b3a3d1f54f3b15ccb71e116e29e2568eab9158: run COMPLETED/SUCCESS, job windows-offline 137970549821 COMPLETED/SUCCESS. All steps explicitly SUCCESS (checkout with Git long path and sparse source, Python setup and mcp==2.2.0 import, S1 static 16, S2 full 73, D8 1, five negative guards, 36 HTTP Python tests, 207 JavaScript UI tests). No skipped hosted steps in this job. This is not merely a local S1/S2 result.
+
+The original #666 hosted job 45251979977 failed at Windows checkout (Filename too long); #667 45252633682 fixed checkout but lacked MCP Python SDK; #668 45253351121 fixed SDK and passed S1 but S2 lacked a pinned guard fixture; #669 includes the unchanged SHA-pinned original guard folder and run 45253916385 succeeded. All steps were verified through GitHub Actions job summaries and logs, never guessed. No workaround disabled security tests. Links and machine-readable verified counts are in ci_evidence.json.
+
+**Strict scope:** full historic S1 69 with private RAW passed on authorised isolated Windows locally, not on GitHub, which ran 16 static S1 cases. The green #669 workflow is a focused Windows source/HTTP/UI gate, not a claim that all older Web Alarm workflows or packaging CI are green. Other WUA workflows with historic nested report checkout may remain separate failures. M1-09 is still PARTIAL until all required CI/packaging gates are accepted, as is M1-12 joint owner acceptance. Real Colibri HOME Manager/ACL/identity, actual engine usage/status/cancel and M1-10/11 LIVE were NOT RUN; MVP2 not started. No real model, paid API, STANDARD or production touched.
+
+Task CHATGPT-WUA-CI-PASS-20261124-001, history H-CHATGPT-000024. PLAN_READ 2026-11-24T00:59:37+05:00 SHA256 489072fcbc570bfd1dbe26e1ea2cdd6a7206b074964f5ae83cde39940b182a4b; archive SHA256 1071b531a3985ecb08d474651f73cedaf5aeb73cec1108b19daf764848fb4102. This docs-only readback is intended for next chat; do not replace source or local plan.

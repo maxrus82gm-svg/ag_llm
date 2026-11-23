@@ -1,0 +1,62 @@
+{
+  "task": "CHATGPT-WUA-CI-PASS-20261124-001",
+  "commit": "e2b3a3d1f54f3b15ccb71e116e29e2568eab9158",
+  "run_id": 45253916385,
+  "job_id": 137970549821,
+  "github_url": "https://github.com/maxrus82gm-svg/ag_llm/actions/runs/45253916385",
+  "head_branch": "GPT",
+  "run_status": "completed",
+  "run_conclusion": "success",
+  "job_conclusion": "success",
+  "gates": [
+    {
+      "name": "checkout",
+      "status": "success"
+    },
+    {
+      "name": "MCP SDK import",
+      "status": "success"
+    },
+    {
+      "name": "S1 STATIC",
+      "status": "success",
+      "tests": 16,
+      "full_historical_RAW": false
+    },
+    {
+      "name": "S2 FULL",
+      "status": "success",
+      "tests": 73
+    },
+    {
+      "name": "D8",
+      "status": "success",
+      "tests": 1
+    },
+    {
+      "name": "safety negatives",
+      "status": "success",
+      "tests": 5
+    },
+    {
+      "name": "ordinary HTTP Python",
+      "status": "success",
+      "tests": 36
+    },
+    {
+      "name": "JavaScript UI",
+      "status": "success",
+      "tests": 207
+    }
+  ],
+  "local_only": {
+    "S1_FULL_PRIVATE_RAW": 69,
+    "S2_FULL": 73,
+    "Python_OTHER": 88
+  },
+  "caveats": [
+    "historical full S1 69 private RAW did not run in hosted CI",
+    "old unrelated Web Alarm workflows and broad packaging CI not all green",
+    "real HOME Colibri, M1-10 and M1-11 not tested, MVP1 not accepted"
+  ]
+}
