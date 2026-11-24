@@ -1,0 +1,5 @@
+# CHATGPT-WUA-WORKSPACE-ISOLATION-20261124-001 — OWNER GO: WORKSPACE-ISOLATION-01
+
+Date: 2026-11-24. Source: Colibri Ultra 17 -> WEB 35, owner-authorised local workspace cleanup and mandatory documentation. WUA scope only. Inspect the 14 named objects in M:\GitHub; identify dependencies, move needed evidence/backups under ag_llm without losing anything, verify SHA256 and preserve historical locators. Treat UI_TEST_651 as a possible Git worktree with runtime dependencies, not a disposable copy. Verify safe offline operation before and after any move. Protect local destinations with ignore rules; retain old launcher bytes and history.
+
+Establish WORKSPACE-ISOLATION-01 in existing mandatory documentation: project-local test/backup/scratch/evidence roots, pre-publication tracked/staged checks, final workspace check, only explicitly owner-authorised exceptions. Respect LOCAL-PLAN-01 and GitHub First. No changes to live STANDARD/Manager/LLM, no unrelated repositories, no GitHub owner merge, no deletion of useful material. One atomic numbered WUA GitHub commit for the documentary closeout; no runtime rollout.
