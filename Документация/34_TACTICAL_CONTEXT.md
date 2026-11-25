@@ -1,5 +1,8 @@
 # Оперативная память проекта — №34
 
+**WEB36 — #681 CI status.** EVT-WUA-CI-USAGE-HOLD-20261126 / CHATGPT-WUA-CI-USAGE-HOLD-20261126-001 / #681. Exact prior main runs 45696370171/45696370122 and #679 runs 45701251506/45701251882 fail same empty-HOLD usage_summary.available oracle; #679 S1 STATIC16, S2 FULL73, D8, negatives5 PASS, H46/JS SKIPPED. Smoke 45696370101/45701251352 same pre-existing Windows longpath checkout failure. Repair source candidate: no-attempt usage unavailable independent of RAW length; unchanged guard semantics, exact Python3.12 AST pin, stronger assertions, hosted checkout prep. Retest PENDING; M1-10 HOLD; report reports/CHATGPT-WUA-CI-USAGE-HOLD-20261126-001/report.md. PLAN_READ b215ef9882542d5e38590965b8635b8c8039320eaf87f7626f9c7137c97831ee.
+
+
 **WEB36 — актуальное дополнение**
 
 WEB36 #679 / CHATGPT-WUA-CLIENT-EVM-BINDING-20261126-001 / H-CHATGPT-000027. SOURCE CANDIDATE, integrated CI and GUI NOT RUN at submission. Protected metadata, explicit connect/refresh/disconnect, same registry, no token persistence or execution. Restore binding without I/O; refresh after restart, identity mismatch requires rebind. PLAN_READ b215ef9882542d5e38590965b8635b8c8039320eaf87f7626f9c7137c97831ee; no shared stage change, H46 independent/M1-10 OPEN/HOLD. Report reports/CHATGPT-WUA-CLIENT-EVM-BINDING-20261126-001/report.md.

@@ -12,6 +12,8 @@ on:
       - 'test_wua_666_gates.py'
       - 'reports/CHATGPT-WUA-COLIBRI-MVP1-CI-S1S2D8-20261123-001/ci_s1_source.py'
       - 'web_alarm/ultra_chat.py'
+      - 'web_alarm/ordinary_provider.py'
+      - 'test_web_alarm_ordinary_application.py'
       - 'web_alarm/test_model_selector.py'
       - 'web_alarm/colibri_binding.py'
       - 'web_alarm/colibri_bridge_transport.py'
@@ -48,6 +50,7 @@ jobs:
             tools
             reports/CHATGPT-WUA-COLIBRI-MVP1-CI-S1S2D8-20261123-001
             reports/CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001/guard
+            reports/CODEX-WUA-CHAT-S5-OFFLINE-FULL-CHAT-001
           sparse-checkout-cone-mode: true
       - uses: actions/setup-python@v5
         with:

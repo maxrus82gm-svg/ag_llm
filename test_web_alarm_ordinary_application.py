@@ -240,8 +240,13 @@ class ApplicationTests(s5.Fixture):
         self.assertEqual(before,after); self.assertEqual(self.fixture.token_calls,0)
         self.assertFalse(cap['available']); self.assertEqual(cap['real_factory'],'BLOCKED')
         self.assertIsNone(cap['context_tokens']);self.assertIsNone(cap['output_tokens'])
-        self.assertEqual(self.http(server,'GET',base+'/messages',headers=read)[0],200)
-        self.assertFalse(self.http(server,'GET',base+'/messages',headers=read)[1]['usage_summary']['available'])
+        status, page = self.http(server,'GET',base+'/messages',headers=read)
+        self.assertEqual(status,200)
+        self.assertEqual(page['messages'], [])
+        self.assertFalse(page['usage_summary']['available'])
+        self.assertEqual(page['usage_summary']['attempts'], 0)
+        self.assertFalse(page['usage_summary']['synthetic'])
+        self.assertEqual(self.fixture.requests, [])
 
     def test_model_settings_and_workspace_isolation(self):
         ws,cid,server,_,read,write,base,root,wid=self.application()
@@ -274,6 +279,9 @@ class ApplicationTests(s5.Fixture):
         self.assertEqual(self.fixture.token_calls,1);self.assertEqual(len(self.fixture.requests),1)
         self.assertEqual(BudgetLedger(root,wid).recover().attempts[-1],before)
         usage=self.http(second,'GET',base+'/messages',headers=r2)[1]['usage_summary']
+        self.assertTrue(usage['available'])
+        self.assertEqual(usage['attempts'], 1)
+        self.assertFalse(usage['complete'])
         self.assertEqual(usage['missing']['total_tokens'],1)
 
     def test_http_auth_rate_server_and_bad_json_are_not_retried(self):

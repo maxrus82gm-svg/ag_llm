@@ -663,7 +663,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 page['usage_summary'] = {'available': False, 'synthetic': False}
         page['usage_summary']['synthetic'] = bool(self._factory._fixture is not None
             or self._factory._session and self._factory._session.synthetic)
-        if page['usage_summary'].get('attempts') == 0 and page.get('total_messages', 0):
+        if page['usage_summary'].get('attempts') == 0:
             page['usage_summary']['available'] = False
         return page
 

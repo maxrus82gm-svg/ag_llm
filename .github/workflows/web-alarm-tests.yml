@@ -43,6 +43,11 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
+      - name: Enable Git long-path support before checkout
+        shell: pwsh
+        run: |
+          git config --global core.longpaths true
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Checkout project
         uses: actions/checkout@v4
 
@@ -69,6 +74,11 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
+      - name: Enable Git long-path support before checkout
+        shell: pwsh
+        run: |
+          git config --global core.longpaths true
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Checkout project
         uses: actions/checkout@v4
 
@@ -169,6 +179,11 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 25
     steps:
+      - name: Enable Git long-path support before checkout
+        shell: pwsh
+        run: |
+          git config --global core.longpaths true
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Checkout project
         uses: actions/checkout@v4
       - name: Set up Python 3.12
@@ -201,6 +216,11 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 25
     steps:
+      - name: Enable Git long-path support before checkout
+        shell: pwsh
+        run: |
+          git config --global core.longpaths true
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Checkout project
         uses: actions/checkout@v4
       - name: Set up Python 3.12
@@ -233,6 +253,11 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 25
     steps:
+      - name: Enable Git long-path support before checkout
+        shell: pwsh
+        run: |
+          git config --global core.longpaths true
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Checkout project
         uses: actions/checkout@v4
       - name: Set up Python 3.12
