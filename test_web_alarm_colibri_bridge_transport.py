@@ -285,3 +285,97 @@ class ReadOnlyCatalogTests(unittest.TestCase):
         self.assertEqual({m["model_id"] for m in column["connections"]}, {t["target_id"] for t in self.targets})
         self.assertTrue(all(m["availability"] == "UNKNOWN" and not m["selectable"] for m in column["connections"]))
         self.assertEqual(api.ultra_connections.enabled_local_targets(), set())
+
+
+    def test_managed_binding_restart_stale_reconnect_and_disconnect(self):
+        from web_alarm.ultra_connections import UltraConnections
+        root = self.root / "studio"
+        connections = UltraConnections(root)
+        manager = connections.managed_client()
+        self.assertIsNone(manager.status()["binding"])
+        body = {"profile": str(self.profile), "bridge_id": self.bridge_id}
+        self.assertEqual(manager.act("connect", body)["state"], "AVAILABLE")
+        self.assertEqual(len(self.calls), 2)
+        self.assertEqual(len(connections.catalog()["columns"]["local_llm"]["connections"]), 2)
+        self.assertEqual(connections.enabled_local_targets(), set())
+        self.assertEqual(len(self.calls), 2)
+        saved = json.loads(manager.store.path.read_text(encoding="utf-8"))
+        self.assertEqual(set(saved["binding"]), {"profile", "bridge_id", "origin", "launch_identity"})
+        self.assertNotIn("X" * 64, manager.store.path.read_text(encoding="utf-8"))
+        fresh = UltraConnections(root)
+        restored = fresh.managed_client()
+        self.assertEqual(restored.status()["reason"], "refresh_required")
+        self.assertEqual(len(self.calls), 2)
+        self.assertEqual(restored.act("refresh", {})["state"], "AVAILABLE")
+        self.assertEqual(len(self.calls), 4)
+        self.write_discovery(launch_identity="c" * 32)
+        self.assertEqual(restored.act("refresh", {})["reason"], "identity_mismatch")
+        self.assertEqual(len(self.calls), 4)
+        local = fresh.catalog()["columns"]["local_llm"]
+        self.assertEqual(len(local["connections"]), 2)
+        self.assertTrue(all(m["availability"] == "UNKNOWN" and not m["selectable"] for m in local["connections"]))
+        self.assertEqual(restored.act("connect", body)["state"], "AVAILABLE")
+        self.assertEqual(len(self.calls), 6)
+        self.assertEqual(restored.act("disconnect", {})["state"], "NOT_CONNECTED")
+        self.assertIsNone(UltraConnections(root).managed_client().status()["binding"])
+        self.assertEqual(len(self.calls), 6)
+
+    def test_failed_rebind_and_corrupt_store_never_overwrite(self):
+        from web_alarm.colibri_binding import BindingError
+        from web_alarm.ultra_connections import UltraConnections
+        manager = UltraConnections(self.root / "studio").managed_client()
+        body = {"profile": str(self.profile), "bridge_id": self.bridge_id}
+        manager.act("connect", body)
+        before = manager.store.path.read_bytes()
+        self.offline = True
+        with self.assertRaises(BridgeFault):
+            manager.act("connect", body)
+        self.assertEqual(manager.store.path.read_bytes(), before)
+        manager.store.path.write_bytes(b'{"schema":1,"binding":null,"token":"bad"}')
+        calls = list(self.calls)
+        self.assertEqual(manager.status()["reason"], "binding_corrupt")
+        with self.assertRaises(BindingError):
+            manager.act("disconnect", {})
+        self.assertEqual(self.calls, calls)
+        self.assertIn(b'"token":"bad"', manager.store.path.read_bytes())
+
+    def test_managed_http_requires_registered_standard_origin_and_write_token(self):
+        from types import SimpleNamespace
+        from web_alarm.server import WebAlarmApi, create_server
+        api = WebAlarmApi(self.root / "registry")
+        server = create_server(api, host="127.0.0.1", port=0)
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        self.addCleanup(worker.join, 5)
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        def request(method, path, body=None, headers=None):
+            conn = HTTPConnection("127.0.0.1", server.server_port, timeout=5)
+            try:
+                conn.request(method, path, body=json.dumps(body) if body is not None else None,
+                             headers={"Content-Type": "application/json", **(headers or {})})
+                response = conn.getresponse()
+                return response.status, json.loads(response.read())
+            finally:
+                conn.close()
+        cap = server.web_alarm_ultra_chat_write_access.capability()
+        headers = {cap["header"]: cap["token"], "Origin": f"http://127.0.0.1:{server.server_port}"}
+        body = {"profile": str(self.profile), "bridge_id": self.bridge_id}
+        self.assertEqual(request("GET", "/ui/colibri")[1], {"available": False})
+        self.assertEqual(request("POST", "/ui/colibri/connect", body, headers)[0], 403)
+        server.web_alarm_launch = SimpleNamespace(standard=False)
+        server.web_alarm_instance = {"profile": "test"}
+        self.assertEqual(request("POST", "/ui/colibri/connect", body, headers)[0], 403)
+        server.web_alarm_launch = SimpleNamespace(standard=True)
+        server.web_alarm_instance = {"profile": "standard"}
+        self.assertEqual(request("POST", "/ui/colibri/connect", body, {"Origin": headers["Origin"]})[0], 403)
+        self.assertEqual(request("POST", "/ui/colibri/connect", body, {**headers, "Origin": "http://foreign.invalid"})[0], 403)
+        self.assertEqual(request("POST", "/ui/colibri/connect", {**body, "token": "bad"}, headers)[0], 409)
+        self.assertEqual(self.calls, [])
+        self.assertEqual(request("POST", "/ui/colibri/connect", body, headers)[0], 200)
+        self.assertEqual(len(self.calls), 2)
+        self.assertEqual(request("GET", "/ui/colibri")[1]["state"], "AVAILABLE")
+        self.assertEqual(len(request("GET", "/ultra/connections")[1]["columns"]["local_llm"]["connections"]), 2)
+        self.assertEqual(len(self.calls), 2)
+        self.assertEqual(request("POST", "/ui/colibri/disconnect", {}, headers)[0], 200)
+        self.assertEqual(len(self.calls), 2)

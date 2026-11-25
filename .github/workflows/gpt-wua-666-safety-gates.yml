@@ -13,6 +13,13 @@ on:
       - 'reports/CHATGPT-WUA-COLIBRI-MVP1-CI-S1S2D8-20261123-001/ci_s1_source.py'
       - 'web_alarm/ultra_chat.py'
       - 'web_alarm/test_model_selector.py'
+      - 'web_alarm/colibri_binding.py'
+      - 'web_alarm/colibri_bridge_transport.py'
+      - 'web_alarm/ultra_connections.py'
+      - 'web_alarm/server.py'
+      - 'web_alarm/ui.py'
+      - 'test_web_alarm_colibri_bridge_transport.py'
+      - 'test_web_alarm_evm_ui.js'
   workflow_dispatch:
 permissions:
   contents: read
@@ -48,7 +55,7 @@ jobs:
       - name: Test-only Python dependencies
         shell: pwsh
         run: |
-          python -m pip install --disable-pip-version-check httpx==0.28.1 jsonschema==4.23.0 mcp==2.2.0
+          python -m pip install --disable-pip-version-check httpx==0.28.1 jsonschema==4.23.0 mcp==2.2.0 pywin32
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify exact MCP Python SDK used by WUA
         shell: pwsh
@@ -79,6 +86,11 @@ jobs:
         shell: pwsh
         run: |
           python -B -X utf8 -m unittest -v test_web_alarm_ultra_chat test_web_alarm_ordinary_application
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: H46 and managed Client binding OFFLINE
+        shell: pwsh
+        run: |
+          python -B -X utf8 -m unittest -v test_web_alarm_colibri_bridge_transport test_web_alarm_launcher
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Browser UI JavaScript regression
         shell: pwsh

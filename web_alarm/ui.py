@@ -696,7 +696,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <section class="evm-col" aria-labelledby="evmFavTitle" id="evmFavCol"><div class="section-head"><h3 id="evmFavTitle">★ Избранное</h3><span id="evmFavState" class="tag">0</span></div><div id="evmFavList" class="evm-list" aria-label="Избранное"></div><p id="evmFavEmpty" class="muted">Перетащите модель сюда или отметьте её звёздочкой ☆. Здесь хранится ссылка: модель остаётся в своей колонке.</p></section>
 <section class="evm-col" aria-labelledby="evmApiTitle" id="evmApiCol"><div class="section-head"><h3 id="evmApiTitle">API</h3><span id="evmApiState" class="tag">—</span></div><div id="evmApiList" class="evm-list" aria-label="Модели API"></div><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
 <section class="evm-col" aria-labelledby="evmMcpTitle" id="evmMcpCol"><div class="section-head"><h3 id="evmMcpTitle">MCP / Агенты</h3><span id="evmMcpState" class="tag">—</span></div><div id="evmMcpList" class="evm-list" aria-label="Подключения MCP и агентов"></div><p id="evmMcpEmpty" class="muted">Подключений пока нет: источник MCP и агентов не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
-<section class="evm-col" aria-labelledby="evmLocalTitle" id="evmLocalCol"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><p id="evmLocalCatalogStatus" class="muted" role="status" hidden></p><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<section class="evm-col" aria-labelledby="evmLocalTitle" id="evmLocalCol"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><div id="evmClientBinding" class="panel" hidden><p class="side-title">Клиент Нейрополис</p><p id="evmClientState" role="status" class="muted">Не подключён</p><label for="evmClientProfile">Защищённый профиль Client</label><div class="path-row"><input id="evmClientProfile" type="text" maxlength="2048" autocomplete="off" placeholder="Абсолютный путь"><button id="evmClientBrowse" type="button">Обзор…</button></div><label for="evmClientId">Bridge ID (32 символа)</label><input id="evmClientId" type="text" maxlength="32" autocomplete="off" spellcheck="false"><div class="row"><button id="evmClientConnect" type="button" disabled>Подключить</button><button id="evmClientRefresh" type="button" disabled>Обновить каталог</button><button id="evmClientDisconnect" type="button" disabled>Отключить</button></div><p id="evmClientError" role="status" class="muted"></p><p class="muted">Только каталог; управление моделями и генерация недоступны.</p></div><p id="evmLocalCatalogStatus" class="muted" role="status" hidden></p><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p></section>
 </div>
 <div id="evmPins" class="evm-pins" role="group" aria-label="Закреплённые окна моделей"></div>
 <div id="evmExternal" hidden><div class="evm-external-head"><strong id="evmExternalTitle">Карточка модели</strong><div class="row"><button type="button" id="evmTopmost">Поверх всех окон: ВЫКЛ</button><button type="button" id="evmExternalRefresh">↻ Обновить</button><button type="button" id="evmExternalClose">Закрыть окно ×</button></div></div><p id="evmExternalMove" class="evm-external-move">Перенос на другой монитор: перетаскивайте окно за системный заголовок браузера, а не за карточку. В Windows также работает Win + Shift + ←/→.</p><div id="evmExternalCard" class="evm-external-card"></div></div>
@@ -1530,6 +1530,54 @@ async function saveIndication(reset=false){
     }else text('evmIndicationStatus','Сохранение порогов не подтверждено. '+e.message);
   }finally{indicationBusy=false;renderIndication()}
 }
+let clientBinding=null,clientBindingKey=null,clientBusy=false;
+const CLIENT_ERRORS={refresh_required:'Привязка сохранена. Обновите каталог.',identity_mismatch:'Изменилась идентичность Bridge. Подключите Клиент заново явно.',binding_corrupt:'Файл привязки повреждён. Требуется ручная диагностика.',binding_changed:'Привязка изменена другим экземпляром. Перезапустите Студию.',binding_unavailable:'Хранилище привязки недоступно.',unsafe_profile:'Нужен защищённый абсолютный локальный профиль.',unsafe_discovery:'Защита discovery не подтверждена.',discovery_unavailable:'Файлы профиля недоступны.',transport_error:'Клиент недоступен.',unauthorized:'Bridge отклонил реквизиты.',forbidden:'Bridge не разрешил чтение каталога.'};
+function renderClientBinding(){
+  const c=clientBinding,available=c?.available===true&&!stage5Offline;
+  $('evmClientBinding').hidden=!available;
+  if(!available)return;
+  const b=c.binding,key=JSON.stringify(b||null);
+  if(key!==clientBindingKey){
+    $('evmClientProfile').value=b?.profile||'';$('evmClientId').value=b?.bridge_id||'';clientBindingKey=key;
+  }
+  text('evmClientState',clientBusy?'Выполняется операция…':c.state==='AVAILABLE'?'Каталог подключён'+(c.last_success_at?' · '+c.last_success_at:''):
+    c.reason?(CLIENT_ERRORS[c.reason]||'Каталог недоступен ('+c.reason+')'):'Клиент не подключён');
+  $('evmClientConnect').disabled=clientBusy||c.state==='ERROR';
+  $('evmClientRefresh').disabled=clientBusy||!b||c.state==='ERROR';
+  $('evmClientDisconnect').disabled=clientBusy||!b||c.state==='ERROR';
+  $('evmClientBrowse').disabled=clientBusy||c.state==='ERROR';
+  $('evmClientProfile').disabled=clientBusy;$('evmClientId').disabled=clientBusy;
+}
+async function clientAction(action){
+  if(clientBusy||!clientBinding?.available||clientBinding.state==='ERROR')return;
+  const body=action==='connect'?{profile:$('evmClientProfile').value.trim(),bridge_id:$('evmClientId').value.trim()}:{};
+  if(action==='connect'&&(!body.profile||!/^[0-9a-f]{32}$/.test(body.bridge_id))){
+    text('evmClientError','Укажите абсолютный путь и подтверждённый Bridge ID.');return;
+  }
+  if(action==='connect'&&!window.confirm('Подключить этот профиль Client в режиме только чтения каталога?'))return;
+  if(action!=='connect'&&!clientBinding.binding)return;
+  clientBusy=true;text('evmClientError','');renderClientBinding();
+  let error='';
+  try{
+    if(!chatEdit.token)await loadChatWriteAccess();
+    const c=await api('/ui/colibri/'+action,{method:'POST',headers:{[CHAT_WRITE_HEADER]:chatEdit.token},body,timeoutMs:35000});
+    if(c?.available!==true)throw Error('Не подтверждено состояние Client');
+    clientBinding=c;clientBindingKey=null;
+  }catch(e){error=CLIENT_ERRORS[e.code]||e.message||'Состояние не подтверждено. Обновите EVM перед повтором.'}
+  finally{clientBusy=false;await loadEvm();text('evmClientError',error);renderClientBinding();evmChannel?.postMessage({kind:'model_state'});}
+}
+async function browseClientProfile(){
+  if(clientBusy||!clientBinding?.available||clientBinding.state==='ERROR')return;
+  clientBusy=true;renderClientBinding();text('evmClientError','');
+  try{
+    const cap=(await api('/ui/capabilities'))?.folder_picker;
+    if(!cap?.available||typeof cap.token!=='string')throw Error('Обзор недоступен. Введите путь вручную.');
+    const result=await api('/ui/pick-workspace-folder',{method:'POST',headers:{'X-WebAlarm-Folder-Token':cap.token},body:{},timeoutMs:125000});
+    if(result.status==='SELECTED'&&typeof result.workspace_root==='string')$('evmClientProfile').value=result.workspace_root;
+    else if(result.status!=='CANCELLED')throw Error('Папка не подтверждена.');
+  }catch(e){text('evmClientError',e.message)}
+  finally{clientBusy=false;renderClientBinding()}
+}
 function renderEvm(){
   const data=evm.data;if(!data)return;
   const cols=data.columns,s=data.selection.chat,cards=evm.cards;
@@ -1543,6 +1591,7 @@ function renderEvm(){
   $('evmLiveStop').disabled=!ready||!(live.real_available||['RESTORE_REQUIRED','BLOCKED'].includes(live.provider_state))||evm.liveBusy;
   $('evmApiState').replaceChildren(evmTag(cols.api.state));
   $('evmMcpState').replaceChildren(evmTag(cols.mcp_agents.state));
+  renderClientBinding();
   const local=cols.local_llm;
   const catalogOnly=local.mode==='READ_ONLY', catalogAvailable=local.state==='AVAILABLE';
   $('evmLocalState').replaceChildren(evmTag(catalogOnly?
@@ -2047,6 +2096,9 @@ async function saveOrder(section,order,done){
 }
 async function loadEvm(){
   const epoch=++evm.epoch;$('evmRefresh').disabled=true;notice('evmError','');text('evmState','Загружаем реестр…');
+  const client=await api('/ui/colibri').catch(()=>null);
+  if(epoch!==evm.epoch)return;
+  clientBinding=client?.available===true?client:null;
   const [catalog,cards,capability]=await Promise.allSettled([api('/ultra/connections'),api('/ultra/model-cards'),api('/ui/ultra-chat/capability')]);
   if(epoch!==evm.epoch)return;
   try{
@@ -2262,6 +2314,10 @@ $('evmIndicationForm').onsubmit=e=>{e.preventDefault();return saveIndication()};
 $('evmIndicationReset').onclick=()=>saveIndication(true);
 $('evmLiveStart').onclick=()=>evmLiveControl(true);
 $('evmLiveStop').onclick=()=>evmLiveControl(false);
+$('evmClientConnect').onclick=()=>clientAction('connect');
+$('evmClientRefresh').onclick=()=>clientAction('refresh');
+$('evmClientDisconnect').onclick=()=>clientAction('disconnect');
+$('evmClientBrowse').onclick=browseClientProfile;
 for(const id of ['evmSettingsWindow','evmCheckWindow'])$(id).onclick=e=>{if(e?.target===$(id))closeWindow()};
 function escapeKey(e){
   if(e?.key!=='Escape')return;

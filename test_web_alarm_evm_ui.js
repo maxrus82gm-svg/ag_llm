@@ -1618,3 +1618,29 @@ test('open chat picker refreshes indicators and keeps selection independent of a
   await h.run('loadChatAccess()');
   assert.equal(options().length,0);
 });
+
+test('managed Client binding uses explicit authenticated actions; F5 reads metadata only', async () => {
+  const h=harness(); await settle();
+  let state={available:true,binding:null,state:'NOT_CONNECTED',reason:null,last_success_at:null};
+  h.routes.set('/ui/colibri',()=>state);
+  await h.openEvm([],cards([]));
+  assert.equal(h.el('evmClientBinding').hidden,false);
+  assert.equal(h.el('evmClientRefresh').disabled,true);
+  h.el('evmClientProfile').value='/synthetic/protected';
+  h.el('evmClientId').value='a'.repeat(32);
+  h.routes.set('/ui/colibri/connect',opts=>{
+    assert.equal(opts.headers['X-WebAlarm-Ultra-Chat-Write-Token'],'synthetic-local-write-token-00000000000000000000');
+    assert.deepEqual(JSON.parse(opts.body),{profile:'/synthetic/protected',bridge_id:'a'.repeat(32)});
+    state={...state,binding:{profile:'/synthetic/protected',bridge_id:'a'.repeat(32),origin:'http://127.0.0.1:12345',launch_identity:'b'.repeat(32)},state:'AVAILABLE'};
+    return state;
+  });
+  await h.run("clientAction('connect')");
+  assert.equal(h.el('evmClientRefresh').disabled,false);
+  assert.equal(h.posts('/ui/colibri/connect').length,1);
+  await h.run('loadEvm()');
+  assert.equal(h.posts('/ui/colibri/connect').length,1);
+  h.routes.set('/ui/colibri/disconnect',()=>{state={...state,binding:null,state:'NOT_CONNECTED'};return state;});
+  await h.run("clientAction('disconnect')");
+  assert.equal(h.el('evmClientRefresh').disabled,true);
+  assert.equal(h.posts('/ui/colibri/disconnect').length,1);
+});

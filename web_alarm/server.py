@@ -1392,6 +1392,59 @@ class _JsonHandler(BaseHTTPRequestHandler):
         threading.Thread(target=self.server.shutdown, name='web-alarm-shutdown', daemon=True).start()
         self._send_json(202, {'state': 'STOPPING', 'scope': 'THIS_INSTANCE'})
 
+    def _colibri_request(self, path: str) -> None:
+        """Managed Client binding is a registered local STANDARD capability only."""
+        from .colibri_binding import BindingError
+        from .colibri_bridge_transport import BridgeFault
+        self._require_local_ui_origin("colibri_forbidden", "Client binding")
+        if urlsplit(self.path).query:
+            raise ApiError(400, "invalid_colibri_request", "Query parameters are not supported")
+        status_read = path == "/ui/colibri" and self.command == "GET"
+        action = path.removeprefix("/ui/colibri/")
+        if not status_read and (self.command != "POST" or action not in {"connect", "refresh", "disconnect"}):
+            raise ApiError(405, "method_not_allowed", "Explicit Client action required")
+        server = self.server
+        launch = getattr(server, "web_alarm_launch", None)
+        instance = getattr(server, "web_alarm_instance", None)
+        connections = self.api.ultra_connections
+        access = server.web_alarm_ultra_chat_write_access
+        allowed = (getattr(launch, "standard", False) is True and
+                   type(instance) is dict and instance.get("profile") == "standard" and
+                   not getattr(server, "web_alarm_offline_chat", None) and
+                   access.capability()["available"] and
+                   (connections._managed_colibri is not None or
+                    (connections.colibri_mode == "NOT_CONNECTED" and not connections.has_colibri)))
+        if not allowed:
+            if status_read:
+                self._send_json(200, {"available": False})
+                return
+            raise ApiError(403, "colibri_forbidden", "Managed Client binding requires normal STANDARD")
+        if not status_read:
+            if len(self.headers.get_all("Origin", [])) != 1:
+                raise ApiError(403, "colibri_forbidden", "An exact browser origin is required")
+            try:
+                access.require(self.headers)
+            except UltraChatError as exc:
+                raise ApiError(exc.status, exc.code, exc.message) from None
+            lengths = self.headers.get_all("Content-Length", [])
+            if (len(lengths) != 1 or not lengths[0].isdigit() or len(lengths[0]) > 4 or
+                    not 0 < int(lengths[0]) <= 8192 or self.headers.get("Transfer-Encoding") is not None):
+                raise ApiError(400, "invalid_colibri_request", "Expected bounded JSON")
+            if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
+                raise ApiError(415, "unsupported_media_type", "Expected JSON")
+            from .colibri_bridge_transport import strict_json
+            try:
+                body = strict_json(self.rfile.read(int(lengths[0])))
+            except BridgeFault:
+                raise ApiError(400, "invalid_colibri_request", "Invalid JSON") from None
+        try:
+            controller = connections.managed_client()
+            result = controller.status() if status_read else controller.act(action, body)
+        except (BindingError, BridgeFault) as exc:
+            code = exc.code if isinstance(exc, BridgeFault) else str(exc)
+            raise ApiError(409, code, "Client binding action refused") from None
+        self._send_json(200, result)
+
     def _instances_request(self, path: str) -> None:
         self._require_local_ui_origin('instances_forbidden', 'Instance diagnostics')
         if urlsplit(self.path).query:
@@ -1449,6 +1502,9 @@ class _JsonHandler(BaseHTTPRequestHandler):
                 return
             if path == '/ui/shutdown':
                 self._shutdown_request()
+                return
+            if path == '/ui/colibri' or path.startswith('/ui/colibri/'):
+                self._colibri_request(path)
                 return
             offline = getattr(self.server, "web_alarm_offline_chat", None)
             if offline and not (path in {'/', '/ui', '/ui/shutdown', ULTRA_CHAT_CAPABILITY_PATH, ULTRA_CHAT_WRITE_CAPABILITY_PATH}

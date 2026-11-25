@@ -1,5 +1,10 @@
 # Оперативная память проекта — №34
 
+**WEB36 — актуальное дополнение**
+
+WEB36 #679 / CHATGPT-WUA-CLIENT-EVM-BINDING-20261126-001 / H-CHATGPT-000027. SOURCE CANDIDATE, integrated CI and GUI NOT RUN at submission. Protected metadata, explicit connect/refresh/disconnect, same registry, no token persistence or execution. Restore binding without I/O; refresh after restart, identity mismatch requires rebind. PLAN_READ b215ef9882542d5e38590965b8635b8c8039320eaf87f7626f9c7137c97831ee; no shared stage change, H46 independent/M1-10 OPEN/HOLD. Report reports/CHATGPT-WUA-CLIENT-EVM-BINDING-20261126-001/report.md.
+
+
 **Срез 26.11.2026 / WEB35.** Основание: опубликованный WUA main `2c0632a514ffbdecaf4cc628e5ba4f58acef48ea` (merge H46 и документации №676), H46 рабочий source `1457ba433b4b24a61c4cc374b77587af5e2ef12b`; H45 source `eb2c0a8967694712c8db0f1467331f52b224fe79`, прежний main `861c7df4f48704eb9874a0bdaa0f30f6547ce21d`. История сохранена в immutable Git; текущий статус отделён от прежних заголовков. Не новый технический PASS или release.
 
 ### Цель и ближайший приоритет

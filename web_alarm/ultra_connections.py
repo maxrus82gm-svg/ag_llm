@@ -102,6 +102,18 @@ class UltraConnections:
         self.colibri_mode = "NOT_CONNECTED"
         self._catalog_lock = threading.RLock()
         self._local_catalog = ((), "NOT_CONNECTED", None)
+        self._managed_colibri = None
+
+    def managed_client(self):
+        """Only the registered STANDARD HTTP route enables this controller."""
+        from .colibri_binding import ManagedClient
+        with self._catalog_lock:
+            if self._managed_colibri is None:
+                if self.has_colibri or self.colibri_mode != "NOT_CONNECTED":
+                    raise ValueError("Existing diagnostic or OFFLINE binding")
+                self._managed_colibri = ManagedClient(self)
+                self.colibri_mode = "READ_ONLY"
+            return self._managed_colibri
 
     @property
     def has_colibri(self):
@@ -111,7 +123,7 @@ class UltraConnections:
         from .colibri_bridge_transport import OfflineColibriTransport
         import tempfile
         root=self.path.parent.parent.resolve()
-        if (type(transport) is not OfflineColibriTransport
+        if (self._managed_colibri is not None or type(transport) is not OfflineColibriTransport
                 or Path(tempfile.gettempdir()).resolve() not in root.parents
                 or self._colibri_transport is not None and self._colibri_transport is not transport):
             raise ValueError("Only the same isolated server may bind Colibri")
@@ -120,29 +132,26 @@ class UltraConnections:
 
     def bind_readonly_colibri(self, transport):
         from .colibri_bridge_transport import ReadOnlyColibriTransport
-        if (type(transport) is not ReadOnlyColibriTransport
+        if (self._managed_colibri is not None or type(transport) is not ReadOnlyColibriTransport
                 or self._colibri_transport is not None and self._colibri_transport is not transport):
             raise ValueError("Only the explicitly configured read-only Bridge may be bound")
         self._colibri_transport = transport
         self.colibri_mode = "READ_ONLY"
 
     def registry_snapshot(self, *, refresh=True):
-        """Read authenticated discovery once, fail closed without erasing known IDs.
-        This is a transient projection; EVM settings remain the only persisted switch.
-        """
-        registry=_registry()
-        if not self.has_colibri:
-            return registry, (), "NOT_CONNECTED"
+        """Single registry; managed READ_ONLY refresh is explicitly controlled."""
+        registry = _registry()
         from .colibri_bridge_transport import BridgeFault
-        if refresh:
-            with self._catalog_lock:
+        with self._catalog_lock:
+            if not self.has_colibri:
+                return registry, (), "NOT_CONNECTED"
+            if refresh and self._managed_colibri is None:
                 try:
-                    catalog=self._colibri_transport.catalog()
-                    targets=deepcopy(catalog["targets"])
-                    if len(targets)>500:
+                    catalog = self._colibri_transport.catalog()
+                    targets = deepcopy(catalog["targets"])
+                    if len(targets) > 500:
                         raise BridgeFault("response_limit")
                     if self.colibri_mode == "READ_ONLY":
-                        # The shared registry uses allowed_operations for execution eligibility.
                         for target in targets:
                             target["allowed_operations"] = []
                     self._local_catalog = (tuple(targets), "AVAILABLE", None)
@@ -150,9 +159,9 @@ class UltraConnections:
                     previous = self._local_catalog[0]
                     targets = tuple({**t, "status": "UNKNOWN", "allowed_operations": []} for t in previous)
                     self._local_catalog = (targets, "UNAVAILABLE", exc.code)
-        targets, state, _ = self._local_catalog
-        targets = deepcopy(targets)
-        return registry.ModelRegistryView(targets), targets, state
+            targets, state, _ = self._local_catalog
+            targets = deepcopy(targets)
+            return registry.ModelRegistryView(targets), targets, state
 
     def local_target(self, model_id, *, refresh=True):
         _reg,targets,_state=self.registry_snapshot(refresh=refresh)

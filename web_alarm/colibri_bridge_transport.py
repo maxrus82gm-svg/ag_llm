@@ -424,16 +424,23 @@ class ReadOnlyColibriTransport(_ColibriCatalog):
     _JSON_TIMEOUT = 3
     _CONNECT_TIMEOUT = 2.0
 
-    def __init__(self, profile, *, expected_bridge_id):
+    def __init__(self, profile, *, expected_bridge_id, expected_launch=None):
         p = Path(profile)
         if not p.is_absolute() or p.drive.startswith("\\\\") or ".." in p.parts:
             raise BridgeFault("unsafe_profile")
         if type(expected_bridge_id) is not str or not HEX32.fullmatch(expected_bridge_id):
             raise BridgeFault("identity_mismatch")
         self.profile, self.expected = p, expected_bridge_id
+        self._expected_launch = expected_launch
         self._descriptor = None
         self._discovery_lock = threading.Lock()
         self.contract = None
+
+    def confirmed_launch(self):
+        with self._discovery_lock:
+            if self._descriptor is None:
+                raise BridgeFault("identity_mismatch")
+            return self._descriptor.origin, self._descriptor.launch_identity
 
     def _fresh(self):
         with self._discovery_lock:
@@ -452,6 +459,9 @@ class ReadOnlyColibriTransport(_ColibriCatalog):
             except (OSError, ValueError):
                 raise BridgeFault("discovery_unavailable") from None
             descriptor = _discover(self.profile, self.expected)
+            if (self._expected_launch is not None and
+                    (descriptor.origin, descriptor.launch_identity) != self._expected_launch):
+                raise BridgeFault("identity_mismatch")
             if self._descriptor is None:
                 self.contract = Contract()
                 self._descriptor = descriptor
