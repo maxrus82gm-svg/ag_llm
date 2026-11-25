@@ -248,7 +248,7 @@ test('E2 the board: four columns, compact cards in server order, honest empty co
   assert.equal(h.el('evmMcpEmpty').hidden, false); assert.equal(h.el('evmLocalEmpty').hidden, false);
   assert.match(h.el('evmMcpState').textContent, /Ещё не подключено/); assert.match(h.el('evmLocalState').textContent, /Ещё не подключено/);
   assert.match(h.el('evmSelection').textContent, /ещё не выбрана/);
-  assert.equal(h.el('evmSummary').textContent, '✓ 1 · ! 0 · × 2 · ○ 0');
+  assert.equal(h.el('evmSummary').textContent, '✓ 1 · △ 0 · ! 0 · ◷ 0 · × 2 · ○ 0 · ? 0');
   assert.equal(h.el('evmState').textContent, 'Моделей в реестре: 3');
   assert.equal(h.el('showWorkspaces').hidden, true, 'operator-only mobile toggles stay hidden in EVM');
   assert.deepEqual(h.evmCalls().filter(c => c.method === 'GET' && !c.url.includes('selection')).map(c => c.url).sort(), ['/ultra/connections', '/ultra/model-cards']);
@@ -483,10 +483,10 @@ test('E13 settings from the card in place: server facts, never the key value, th
   h.el('evmSetDescription').value = 'Новое описание'; h.el('evmSetDescription').oninput();
   h.el('evmSetParams').value = '70,5'; h.el('evmSetParams').oninput();
   h.el('evmTabMore').onclick();
-  h.el('evmSetFreshness').value = '45'; h.el('evmSetFreshness').oninput();
+  h.el('evmSetDiagLimit').value = '450'; h.el('evmSetDiagLimit').oninput();
   h.el('evmSetSave').onclick(); await settle();
   assert.deepEqual(posted, {base_revision: 4, description: 'Новое описание', params_billion: 70.5, profile_id: 'prov-default',
-    profile: {timeout_seconds: 30, diagnostic_limit_chars: 1000, freshness_days: 45}});
+    profile: {timeout_seconds: 30, diagnostic_limit_chars: 450}});
   assert.match(h.el('evmNotice').textContent, /Настройки сохранены: Alpha/);
   assert.ok(!JSON.stringify(h.calls).includes('PROV_KEY='), 'no key value travels');
 });
@@ -1513,4 +1513,70 @@ test('E48 check dialog connects through existing EVM route and duplicate click s
   assert.equal(h.confirms.length, 2, 'connect and paid check each require their own confirmation');
   release({outcome: 'CONFIRMED', text: 'Готово'}); await pending; await settle();
   assert.equal(h.el('evmCheckOutput').textContent, 'Готово');
+});
+
+test('global thresholds validate, save and reset with revision; all card surfaces read the same indicator', async () => {
+  const thresholdPath = '/ultra/model-cards/indication';
+  const defaults = {yellow: 20, orange: 27, red: 30};
+  const state = cards([mcard('alpha', 'Alpha', {api: api('red', 'STALE', {indicator: 'RED_CLOCK', age_days: 30})})],
+    {indication: {state: 'DEFAULT', thresholds: {...defaults}}});
+  const alpha = 'api:prov:alpha';
+  state.view.sections.favorites = [alpha];
+  const h = harness(); await settle();
+  h.routes.set(thresholdPath, opts => {
+    const {base_revision, thresholds, reset} = JSON.parse(opts.body);
+    assert.equal(base_revision, state.settings.revision++);
+    state.indication = {state: 'SAVED', thresholds: reset ? {...defaults} : thresholds};
+    state.cards[0].api = reset ? api('red', 'STALE', {indicator: 'RED_CLOCK', age_days: 30}) :
+      api('yellow', 'AGE_YELLOW', {indicator: 'YELLOW', age_days: 30});
+    return {indication: {...state.indication, revision: state.settings.revision}};
+  });
+  await h.openEvm([conn('alpha', 'Alpha')], state);
+  await h.quick(h.cards()[0]);
+  assert.equal(h.dot(h.cards()[0]).textContent, '◷');
+  assert.equal(h.dot(h.list('evmFavList')[0]).textContent, '◷');
+  assert.equal(h.dot(h.pinCard(h.pin(alpha))).textContent, '◷');
+  assert.match(h.el('evmSummary').textContent, /◷ 1 · × 0/);
+  const fields = ['Yellow','Orange','Red'].map(key => h.el('evmThreshold' + key));
+  assert.deepEqual(fields.map(field => Number(field.value)), [20,27,30]);
+  function edit(values){for(const [i,value] of values.entries()){fields[i].value=String(value);fields[i].oninput()}}
+  edit([4,4,31]);
+  await h.el('evmIndicationForm').onsubmit(ev());
+  assert.equal(h.posts(thresholdPath).length, 0);
+  edit([20,31,35]);
+  await h.el('evmIndicationForm').onsubmit(ev());
+  assert.equal(h.dot(h.pinCard(h.pin(alpha))).textContent, '△');
+  const fresh = harness(); await settle();
+  await fresh.openEvm([conn('alpha', 'Alpha')], state);
+  assert.equal(Number(fresh.el('evmThresholdOrange').value), 31);
+  assert.equal(fresh.dot(fresh.cards()[0]).getAttribute('data-indicator'), 'YELLOW');
+  const external = harness({search: '?evm_window=api%3Aprov%3Aalpha', hash: '#evm'}); await settle();
+  await external.openEvm([conn('alpha', 'Alpha')], state);
+  assert.equal(external.dot(external.el('evmExternalCard')).getAttribute('data-indicator'), 'YELLOW');
+  await h.el('evmIndicationReset').onclick();
+  assert.equal(h.dot(h.cards()[0]).getAttribute('data-indicator'), 'RED_CLOCK');
+  await external.run('loadEvm()');
+  assert.equal(external.dot(external.el('evmExternalCard')).textContent, '◷');
+  assert.deepEqual(h.posts(thresholdPath).map(x=>x.base_revision), [4,5]);
+});
+
+test('open chat picker refreshes indicators and keeps selection independent of age', async () => {
+  let models = [{model_id:'alpha',display_name:'Alpha',availability:'AVAILABLE',
+    api:api('red','STALE',{indicator:'RED_CLOCK',age_days:30})}];
+  const h = harness(); await settle();
+  h.routes.set('/ui/ultra-chat/capability', () => ({
+    ultra_chat:{available:true,header:'X-WebAlarm-Ultra-Chat-Token',token:'synthetic-local-read-token-000000000000000000'},
+    turn_test:{mode:'ORDINARY',execution_mode:'REAL',available:true,models}
+  }));
+  await h.run('loadChatAccess()');
+  await h.run('openPicker()');
+  const options = () => h.list('chatModelMenu');
+  assert.equal(h.dot(options()[0]).textContent,'◷');
+  assert.equal(options()[0].disabled,false);
+  models[0].api=api('green','CONFIRMED',{indicator:'GREEN'});
+  await h.run('loadChatAccess()');
+  assert.equal(h.dot(options()[0]).textContent,'✓');
+  models=[];
+  await h.run('loadChatAccess()');
+  assert.equal(options().length,0);
 });

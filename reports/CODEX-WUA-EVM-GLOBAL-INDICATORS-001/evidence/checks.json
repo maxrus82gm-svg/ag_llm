@@ -1,0 +1,60 @@
+{
+  "checks": [
+    {
+      "id": "python-first",
+      "result": "53 passed, 103 subtests passed in 49.01s",
+      "exit": 0,
+      "raw_sha256": "f6712c2cd65ac9710f970eca01bb236df771091a6eb1c426798b26393e2eb61c"
+    },
+    {
+      "id": "python-regression",
+      "result": "68 passed, 1 skipped, 1 deselected, 91 subtests passed in 68.51s (0:01:08)",
+      "exit": 0,
+      "raw_sha256": "21b8433177d1b915713b94eb31dd96820c4aac277141aeed91574a898bf695be"
+    },
+    {
+      "id": "s1",
+      "counts": {
+        "run": 69,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "violations": 0,
+      "raw_sha256": "86f5b0d1de7344de9d3f6286ac8f517cb08dcf61c74ccd29ddc6949f7e6dde1e"
+    },
+    {
+      "id": "s2",
+      "counts": {
+        "run": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "violations": 0,
+      "raw_sha256": "944c05511fb5c5140302bc7a2e7d6451ad86ff32f6050820b97e6ab7d13ef177"
+    },
+    {
+      "id": "js-final",
+      "pass": 209,
+      "fail": 0,
+      "exit": 0,
+      "raw_sha256": "482bdff45d02374b9e96dcf371cdf6a0d154456401eceec371f2788700465a84"
+    }
+  ],
+  "real_provider_calls": 0
+}

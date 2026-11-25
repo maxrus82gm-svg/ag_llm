@@ -427,6 +427,12 @@ class WebAlarmApi:
                 if method != "POST":
                     raise ApiError(405, "method_not_allowed", "the window layout is saved with POST")
                 return 200, {"view": self.model_cards.save_layout(_require_object(body))}
+            if parts == ["ultra", "model-cards", "indication"]:
+                if method != "POST":
+                    raise ApiError(405, "method_not_allowed", "indication settings require POST")
+                if query:
+                    raise ApiError(400, "invalid_model_card_request", "Query parameters are not supported")
+                return 200, {"indication": self.model_cards.save_indication(_require_object(body))}
             if len(parts) == 4 and parts[:2] == ["ultra", "model-cards"] and parts[3] == "enabled":
                 if method != "POST":
                     raise ApiError(405, "method_not_allowed", "enabled requires POST")
@@ -1466,7 +1472,7 @@ class _JsonHandler(BaseHTTPRequestHandler):
                 self._require_local_ui_origin('model_cards_forbidden', 'EVM model cards')
                 if self.command != 'GET' and len(self.headers.get_all('Origin', [])) != 1:
                     raise ApiError(403, 'model_cards_forbidden', 'A same-origin request is required')
-                if self.command == 'POST' and (path.endswith('/check') or path.endswith('/enabled')):
+                if self.command == 'POST' and path.endswith(('/check', '/enabled', '/indication')):
                     try:
                         self.server.web_alarm_ultra_chat_write_access.require(self.headers)
                     except UltraChatError as exc:

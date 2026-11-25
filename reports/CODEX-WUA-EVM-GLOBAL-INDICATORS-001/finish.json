@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "04c131ffec721b953fab4a185e8aaded3d4dee562bdec518e9d4193f493a245b",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 296,
+    "b11b": 302,
+    "b11e": 903
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-EVM-GLOBAL-INDICATORS-001",
+    "problems": [],
+    "title": "EVM — единая система индикации моделей",
+    "lines": 247
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+    "copy_sha256": "f7c9e7737292071f46b2373b134d1944b6f834646a97286bbacd3c6cb281c1cf",
+    "history_id": "H-CODEX-000044",
+    "history_record": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-EVM-GLOBAL-INDICATORS-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "04c131ffec721b953fab4a185e8aaded3d4dee562bdec518e9d4193f493a245b",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+    "copy_sha256": "f7c9e7737292071f46b2373b134d1944b6f834646a97286bbacd3c6cb281c1cf",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/handoff_task.md",
+    "archive_sha256": "c08a9372a08ea30dc662db328d5e1c674ebccc849b2d6b62ee6c821cb3f2c13f"
+   },
+   "history_id": "H-CODEX-000045",
+   "new_card_sha256": "d56f4a7837ef3f8781b577c528232915adf90aa7248132ddef53b43fbd25f585",
+   "copy_sha256_lf": "d095caea3ad8b95aed0e481c1bd191d5681675b020cd09867bcd9c4efeb24baf",
+   "copy_lines": 247,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-EVM-GLOBAL-INDICATORS-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-EVM-GLOBAL-INDICATORS-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "04c131ffec721b953fab4a185e8aaded3d4dee562bdec518e9d4193f493a245b",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+    "copy_sha256": "f7c9e7737292071f46b2373b134d1944b6f834646a97286bbacd3c6cb281c1cf",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/handoff_task.md",
+    "archive_sha256": "c08a9372a08ea30dc662db328d5e1c674ebccc849b2d6b62ee6c821cb3f2c13f"
+   },
+   "history_id": "H-CODEX-000045",
+   "new_card_sha256": "d56f4a7837ef3f8781b577c528232915adf90aa7248132ddef53b43fbd25f585",
+   "copy_sha256_lf": "d095caea3ad8b95aed0e481c1bd191d5681675b020cd09867bcd9c4efeb24baf",
+   "copy_lines": 247,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-EVM-GLOBAL-INDICATORS-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-EVM-GLOBAL-INDICATORS-001",
+    "history_id": "H-CODEX-000045",
+    "record": "reports/CODEX-WUA-EVM-GLOBAL-INDICATORS-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "d8880af08d0d2bcfef92a05baf887ecfd662ffa30f8c192b92c73c5c855caf28",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "d56f4a7837ef3f8781b577c528232915adf90aa7248132ddef53b43fbd25f585",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 306
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-GLOBAL-INDICATORS-001",
+    "copy_sha256": "d095caea3ad8b95aed0e481c1bd191d5681675b020cd09867bcd9c4efeb24baf",
+    "history_id": "H-CODEX-000045",
+    "history_record": "reports/CODEX-WUA-EVM-GLOBAL-INDICATORS-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-EVM-GLOBAL-INDICATORS-001",
+ "history": {
+  "id": "CODEX-WUA-EVM-GLOBAL-INDICATORS-001",
+  "history_id": "H-CODEX-000045",
+  "record": "reports/CODEX-WUA-EVM-GLOBAL-INDICATORS-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

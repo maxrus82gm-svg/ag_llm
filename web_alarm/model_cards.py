@@ -55,12 +55,11 @@ MAX_DESCRIPTION = 500
 MAX_PARAMS_BILLION = 100_000
 MAX_TITLE = 80
 MAX_ERROR_TEXT = 300
-DEFAULT_FRESHNESS_DAYS = 30
 DEFAULT_TIMEOUT_SECONDS = 30  # the timeout gigachat_transport uses for its own requests
 DEFAULT_DIAGNOSTIC_LIMIT = 1000
-LIMITS = {"freshness_days": (1, 365), "timeout_seconds": (5, 120), "diagnostic_limit_chars": (200, 4000)}
-PROFILE_DEFAULTS = {"freshness_days": DEFAULT_FRESHNESS_DAYS, "timeout_seconds": DEFAULT_TIMEOUT_SECONDS,
-                    "diagnostic_limit_chars": DEFAULT_DIAGNOSTIC_LIMIT}
+LIMITS = {"timeout_seconds": (5, 120), "diagnostic_limit_chars": (200, 4000)}
+PROFILE_DEFAULTS = {"timeout_seconds": DEFAULT_TIMEOUT_SECONDS, "diagnostic_limit_chars": DEFAULT_DIAGNOSTIC_LIMIT}
+DEFAULT_THRESHOLDS = {"yellow": 20, "orange": 27, "red": 30}
 FUTURE_TOLERANCE = timedelta(minutes=5)
 TEST_MESSAGE = "Привет. Подтверди получение тестового сообщения."
 _ID = re.compile(r"[a-z0-9][a-z0-9_-]{0,79}")
@@ -68,7 +67,8 @@ _SECRETISH = re.compile(r"(?i)\b(basic|bearer)\s+[A-Za-z0-9._~+/=-]{6,}")
 _CONTROL = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 # API status colours shared by the card and the diagnostic window.
-GREEN, ORANGE, RED, GRAY = "green", "orange", "red", "gray"
+INDICATOR_COLORS = {"GREEN": "green", "YELLOW": "yellow", "ORANGE": "orange",
+                    "RED_CLOCK": "red", "RED_CROSS": "red", "GRAY": "gray", "UNKNOWN": "unknown"}
 
 
 class ModelCardsError(RuntimeError):
@@ -485,6 +485,14 @@ class ModelCards:
 
     # --- settings ---------------------------------------------------------------------------------------
 
+    @staticmethod
+    def _thresholds(value: Any) -> dict[str, int]:
+        if (type(value) is not dict or value.keys() != DEFAULT_THRESHOLDS.keys()
+                or any(type(n) is not int for n in value.values())
+                or not 0 < value["yellow"] < value["orange"] < value["red"] <= (1 << 53) - 1):
+            raise ModelCardRequestError("expected integer days: 0 < yellow < orange < red")
+        return dict(value)
+
     def _settings(self) -> dict[str, Any]:
         loaded = self._load(self.settings_path, SETTINGS_SCHEMA)
         data = loaded["data"]
@@ -497,6 +505,12 @@ class ModelCards:
                 "web_alarm.colibri_bridge_transport","Bearer Token · защищённый локальный Bridge")
         result = {"state": loaded["state"], "revision": revision, "ignored": 0,
                   "providers": builtins, "profiles": {}, "models": {}, "invalid_enabled": set()}
+        try:
+            result["indication"] = {"state": "SAVED" if "indication" in data else "DEFAULT",
+                                    "thresholds": self._thresholds(data.get("indication", DEFAULT_THRESHOLDS))}
+        except ModelCardRequestError:
+            # A damaged display preference does not disable model execution.
+            result["indication"] = {"state": "INVALID", "thresholds": dict(DEFAULT_THRESHOLDS)}
         if data.get("models") is not None and not isinstance(data.get("models"), dict):
             result.update(state="CORRUPT", reason="invalid_models")
         if loaded["state"] == "CORRUPT":
@@ -595,14 +609,14 @@ class ModelCards:
 
     # --- API status -------------------------------------------------------------------------------------
 
-    def api_status(self, record: Mapping[str, Any] | None, *, settings_version: str, freshness_days: int,
+    def api_status(self, record: Mapping[str, Any] | None, *, settings_version: str, thresholds: dict[str, int],
                    checks_state: str, registry_enabled: bool, adapter_state: str) -> dict[str, Any]:
         now = self.now()
         record = record or {}
         success_at = _parse_time(record.get("last_success_at"))
         failure_at = _parse_time(record.get("last_failure_at"))
         result: dict[str, Any] = {
-            "freshness_days": freshness_days, "settings_version": settings_version,
+            "settings_version": settings_version,
             "last_success_at": record.get("last_success_at") if success_at else None,
             "last_success_source": record.get("last_success_source") if success_at else None,
             "last_generation_at": record.get("last_generation_at") or
@@ -614,40 +628,46 @@ class ModelCards:
             "age_days": None,
         }
 
-        def verdict(color: str, reason: str) -> dict[str, Any]:
-            result.update(color=color, reason=reason)
+        def verdict(indicator: str, reason: str) -> dict[str, Any]:
+            result.update(indicator=indicator, color=INDICATOR_COLORS[indicator], reason=reason)
             return result
 
         if not registry_enabled:
-            return verdict(GRAY, "REGISTRY_DISABLED")
+            return verdict("GRAY", "REGISTRY_DISABLED")
         if adapter_state != "AVAILABLE":
-            return verdict(GRAY, "ADAPTER_MISSING")
+            return verdict("UNKNOWN", "ADAPTER_MISSING")
         if checks_state == "CORRUPT":
-            return verdict(GRAY, "STATE_CORRUPT")
+            return verdict("UNKNOWN", "STATE_CORRUPT")
         if ((record.get("last_success_at") is not None and success_at is None)
                 or (record.get("last_failure_at") is not None and failure_at is None)):
-            return verdict(GRAY, "TIMESTAMP_INVALID")
+            return verdict("UNKNOWN", "TIMESTAMP_INVALID")
         unknown_at = _parse_time(record.get("last_unknown_at"))
         if record.get("last_unknown_at") is not None and unknown_at is None:
-            return verdict(GRAY, "TIMESTAMP_INVALID")
+            return verdict("UNKNOWN", "TIMESTAMP_INVALID")
         if unknown_at is not None and (success_at is None or unknown_at > success_at or
                 (unknown_at == success_at and record.get("last_event") == "unknown")) and (
                 failure_at is None or unknown_at > failure_at or
                 (unknown_at == failure_at and record.get("last_event") == "unknown")):
-            return verdict(GRAY, "LAST_OUTCOME_UNKNOWN")
+            return verdict("UNKNOWN", "LAST_OUTCOME_UNKNOWN")
         if (failure_at is not None and record.get("failure_settings_version") == settings_version
                 and (success_at is None or failure_at > success_at or
                      (failure_at == success_at and record.get("last_event") == "failure"))):
-            return verdict(RED, "LAST_CHECK_FAILED")
+            return verdict("RED_CROSS", "LAST_CHECK_FAILED")
         if success_at is None:
-            return verdict(GRAY, "SETTINGS_CHANGED" if failure_at else "NEVER_CONFIRMED")
+            return verdict("UNKNOWN", "SETTINGS_CHANGED" if failure_at else "NEVER_CONFIRMED")
         if record.get("settings_version") != settings_version:
-            return verdict(GRAY, "SETTINGS_CHANGED")
+            return verdict("UNKNOWN", "SETTINGS_CHANGED")
         if success_at > now + FUTURE_TOLERANCE:
-            return verdict(GRAY, "TIMESTAMP_INVALID")
+            return verdict("UNKNOWN", "TIMESTAMP_INVALID")
         age = max(now - success_at, timedelta(0))
         result["age_days"] = age.days
-        return verdict(GREEN, "CONFIRMED") if age <= timedelta(days=freshness_days) else verdict(ORANGE, "STALE")
+        if age.days >= thresholds["red"]:
+            return verdict("RED_CLOCK", "STALE")
+        if age.days >= thresholds["orange"]:
+            return verdict("ORANGE", "AGE_ORANGE")
+        if age.days >= thresholds["yellow"]:
+            return verdict("YELLOW", "AGE_YELLOW")
+        return verdict("GREEN", "CONFIRMED")
 
     def _checks(self) -> dict[str, Any]:
         loaded = self._load(self.checks_path, CHECKS_SCHEMA)
@@ -805,20 +825,20 @@ class ModelCards:
         profile = self._profile_for(settings, spec)
         facts = self._connection_facts(provider)
         runtime = ctx.get("gigachat_runtime") if spec.provider == "gigachat" else None
-        revision = getattr(runtime[2], "_permission_revision", None) if runtime is not None else None
+        revision = runtime[3] if runtime is not None else None
         version = self._settings_version(spec, provider, profile, facts, revision)
         connection_id = connection_id_for(spec)
         record = ctx["checks"]["checks"].get(connection_id)
         entry = settings["models"].get(spec.model_id, {})
         params = entry.get("params_billion")
-        status = self.api_status(record, settings_version=version, freshness_days=profile["freshness_days"],
+        status = self.api_status(record, settings_version=version, thresholds=settings["indication"]["thresholds"],
                                  checks_state=ctx["checks"]["state"], registry_enabled=bool(spec.enabled),
                                  adapter_state=_adapter_state(provider) if provider else "MISSING")
         enabled = (settings["state"] != "CORRUPT" and spec.model_id not in settings["invalid_enabled"]
                    and bool(entry.get("enabled", True)))
         availability = None
         if runtime is not None:
-            state, reason, session = runtime
+            state, reason, session, _ = runtime
             availability = state if state != "INACTIVE" else "UNVERIFIED"
             if state == "ACTIVE":
                 if spec.provider_model_id not in session._available:
@@ -827,30 +847,24 @@ class ModelCards:
                     availability = "NOT_APPROVED"
                 else:
                     availability = "AVAILABLE"
-            status = {**status, "runtime_reason": reason, "availability": availability}
-            if status["reason"] == "STATE_CORRUPT" or settings["state"] == "CORRUPT":
-                status.update(color=RED, reason="STATE_CORRUPT")
-            elif not spec.enabled or not enabled:
-                status.update(color=GRAY, reason="MODEL_DISABLED")
-            elif state == "BLOCKED":
-                status.update(color=RED, reason="PROVIDER_BLOCKED")
-            elif availability in ("UNAVAILABLE", "NOT_APPROVED"):
-                status.update(color=RED, reason="MODEL_" + availability)
-            elif status["color"] != RED and state != "ACTIVE":
-                status.update(color=ORANGE, reason="PROVIDER_" + state)
-            elif status["color"] == GRAY:
-                status.update(color=ORANGE)
-        elif not enabled:
-            status.update(color=GRAY, reason="MODEL_DISABLED")
+            status.update(runtime_reason=reason, availability=availability)
         last_output = None
         if isinstance(record, dict) and isinstance(record.get("last_output"), dict):
             out = record["last_output"]
             last_output = {"kind": out.get("kind"), "at": out.get("at"),
                            "text": safe_text(out.get("text", ""), profile["diagnostic_limit_chars"])}
         target=ctx.get("targets",{}).get(spec.model_id)
-        if target is not None:
-            # Never turn green from mere discovery or a synthetic Manager.
-            status={**status,"color":GRAY,"reason":"LOCAL_OFFLINE_UNVERIFIED" if spec.enabled else "REGISTRY_DISABLED"}
+        indicator, reason = status["indicator"], status["reason"]
+        if settings["state"] == "CORRUPT" or spec.model_id in settings["invalid_enabled"]:
+            indicator, reason = "UNKNOWN", "STATE_CORRUPT"
+        elif not enabled:
+            indicator, reason = "GRAY", "MODEL_DISABLED"
+        elif spec.enabled and target is not None:
+            # Discovery of a synthetic Manager does not confirm a model response.
+            indicator, reason = "UNKNOWN", "LOCAL_OFFLINE_UNVERIFIED"
+        elif spec.enabled and availability == "UNAVAILABLE":
+            indicator, reason = "RED_CROSS", "MODEL_UNAVAILABLE"
+        status.update(indicator=indicator, color=INDICATOR_COLORS[indicator], reason=reason)
         return {
             **({"local_target":{k:target[k] for k in ("target_id","instance_id","status","manager_name",
                 "slot_id","execution_mode","capabilities","limits")}} if target is not None else {}),
@@ -880,6 +894,7 @@ class ModelCards:
             "network_calls": None if self.connections.has_colibri else 0,
             "settings": {"state": settings["state"], "revision": settings["revision"], "ignored": settings["ignored"],
                          **({"reason": settings["reason"]} if "reason" in settings else {})},
+            "indication": settings["indication"],
             "checks": {"state": ctx["checks"]["state"]},
             "roles_source": {"state": tk["state"], "fallbacks": tk["fallbacks"],
                              "chat_state": ctx["chat"].get("state"),
@@ -951,6 +966,35 @@ class ModelCards:
 
     # --- writes -------------------------------------------------------------------------------------------
 
+    def save_indication(self, body: Mapping[str, Any]) -> dict[str, Any]:
+        if type(body.get("base_revision")) is not int:
+            raise ModelCardRequestError("expected base_revision for EVM indication settings")
+        if body.keys() == {"base_revision", "reset"} and body["reset"] is True:
+            thresholds = dict(DEFAULT_THRESHOLDS)
+        elif body.keys() == {"base_revision", "thresholds"}:
+            thresholds = self._thresholds(body["thresholds"])
+        else:
+            raise ModelCardRequestError("expected thresholds or reset")
+        lock = self._locked()
+        try:
+            current = self._settings()
+            if current["state"] == "CORRUPT":
+                raise ModelCardsStoreError("EVM settings require review")
+            if body["base_revision"] != current["revision"]:
+                raise SettingsConflictError("settings changed since they were read; reload and repeat")
+            raw = self._load(self.settings_path, SETTINGS_SCHEMA)["data"]
+            profiles = raw.get("profiles")
+            if isinstance(profiles, dict):
+                for entry in profiles.values():
+                    if isinstance(entry, dict):
+                        entry.pop("freshness_days", None)
+            revision = current["revision"] + 1
+            self._write(self.settings_path, {**raw, "schema": SETTINGS_SCHEMA, "version": SCHEMA_VERSION,
+                                             "revision": revision, "indication": thresholds})
+        finally:
+            lock.release()
+        return {"state": "SAVED", "thresholds": thresholds, "revision": revision}
+
     def save_settings(self, model_id: Any, body: Mapping[str, Any]) -> dict[str, Any]:
         """Card data of one model and the profile serving it, in one atomic write; refused when the
         settings changed since ``base_revision`` (another window saved first)."""
@@ -991,7 +1035,7 @@ class ModelCards:
             profiles[profile_id] = {"provider": profile["provider_id"], "title": profile["title"],
                                     "credential_revision": profile["credential_revision"],
                                     **{name: profile[name] for name in LIMITS}}
-            self._write(self.settings_path, {"schema": SETTINGS_SCHEMA, "version": SCHEMA_VERSION,
+            self._write(self.settings_path, {**raw, "schema": SETTINGS_SCHEMA, "version": SCHEMA_VERSION,
                                              "revision": (current["revision"] or 0) + 1, "models": models,
                                              "profiles": profiles, "providers": providers})
         finally:

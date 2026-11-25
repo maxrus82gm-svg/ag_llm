@@ -202,7 +202,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         fixture = self._factory._fixture is not None
         personal = personal_chat_registration(self.registry)
         local_context = self._api.model_cards._context() if self._api is not None else None
-        state, reason, session = (local_context.get('gigachat_runtime') if local_context is not None else None) or self._connection_state()
+        state, reason, session, _ = (local_context.get('gigachat_runtime') if local_context is not None else None) or self._connection_state()
         active = state == 'ACTIVE'
         selected_root = self.registry.find_by_root(session.root) if active and not session.synthetic else None
         models = []
@@ -288,24 +288,25 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         session = self._factory._session
         if session is not None:
             if getattr(session, '_close_error', False):
-                return ('BLOCKED', 'provider_session_close_unverified', None)
+                return ('BLOCKED', 'provider_session_close_unverified', None, None)
             try:
                 session.check()
                 if session._available:
-                    return ('ACTIVE', None, session)
+                    return ('ACTIVE', None, session, getattr(session, '_permission_revision', None))
             except PreSendDenied as exc:
                 if str(exc) != 'provider_session_inactive':
-                    return ('BLOCKED', str(exc), None)
+                    return ('BLOCKED', str(exc), None, None)
             except Exception:
-                return ('BLOCKED', 'provider_session_state_unverifiable', None)
+                return ('BLOCKED', 'provider_session_state_unverifiable', None, None)
         if self._api is not None and self._factory._fixture is None:
             try:
                 _, root, wid = self._consent_workspace()
-                if root is not None and read_standard_consent(root, wid, standard_approval()) is not None:
-                    return ('RESTORE_REQUIRED', self._connection_failure, None)
+                consent = read_standard_consent(root, wid, standard_approval()) if root is not None else None
+                if consent is not None:
+                    return ('RESTORE_REQUIRED', self._connection_failure, None, consent['salt'])
             except PreSendDenied as exc:
-                return ('BLOCKED', str(exc), None)
-        return ('INACTIVE', None, None)
+                return ('BLOCKED', str(exc), None, None)
+        return ('INACTIVE', None, None, None)
 
     def _open_standard_session(self, *, explicit=False):
         import asyncio
@@ -593,7 +594,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
             return replay
         if self._api is not None and not self._api.model_cards.is_enabled(body['model_ref']):
             raise UltraChatError(403, 'ordinary_model_disabled', 'Model is disabled in EVM')
-        connection, reason, _ = self._connection_state()
+        connection, reason, _, _ = self._connection_state()
         if connection in ('INACTIVE', 'BLOCKED'):
             raise UltraChatError(403, 'ordinary_real_hold', 'GigaChat: ' + (reason or 'user_permission_required'))
         selected = self.chat_model(wa_workspace_id, chat_id)
@@ -722,12 +723,12 @@ class _OrdinaryTurnChecker:
 
     @property
     def authorized(self):
-        state, _, session = self.service._connection_state()
+        state, _, session, _ = self.service._connection_state()
         return state == 'RESTORE_REQUIRED' or (state == 'ACTIVE' and not session.synthetic)
 
     @property
     def reason(self):
-        state, reason, _ = self.service._connection_state()
+        state, reason, _, _ = self.service._connection_state()
         if state == 'BLOCKED':
             return 'GigaChat: ' + reason
         return "Провайдер не подключён. Подключите GigaChat в EVM." if state == 'INACTIVE' else ""

@@ -102,6 +102,11 @@ def test_restart_expiry_and_oauth_refresh_do_not_repeat_inference(studio, monkey
     assert trace == []
     allow(first)
     assert trace == [oauth.OAUTH_URL, MODELS_URL]
+    for model in first.capability()["models"]:
+        assert api.model_cards.record_chat_success(model["model_id"], model["api"]["settings_version"])
+    confirmed = {m["model_id"]: (m["api"]["settings_version"], m["api"]["last_success_at"])
+                 for m in first.capability()["models"]}
+    assert len(confirmed) == 6
     old = first._factory._session
     old.close()
 
@@ -109,6 +114,11 @@ def test_restart_expiry_and_oauth_refresh_do_not_repeat_inference(studio, monkey
     assert next_app.capability()["provider_state"] == "RESTORE_REQUIRED"
     assert next_app.capability()["available"]
     assert trace.count(MODELS_URL) == 1
+    for model in next_app.capability()["models"]:
+        status = model["api"]
+        assert status["indicator"] == "GREEN"
+        assert (status["settings_version"], status["last_success_at"]) == confirmed[model["model_id"]]
+        assert api.model_cards.card(model["model_id"])["api"] == status
     request = message()
     assert next_app.submit_turn(ws, cid, request)["state"] == "SUCCEEDED"
     assert trace.count(oauth.CHAT_URL) == 1
@@ -117,6 +127,7 @@ def test_restart_expiry_and_oauth_refresh_do_not_repeat_inference(studio, monkey
     old.approval = replace(old.approval, expires_at=time.time() - 1)
     monkeypatch.setattr(oauth, "_access_token_valid_until", time.time() - 1)
     assert next_app.capability()["provider_state"] == "RESTORE_REQUIRED"
+    assert {m["api"]["indicator"] for m in next_app.capability()["models"]} == {"GREEN"}
     assert next_app.submit_turn(ws, cid, request)["state"] == "SUCCEEDED"
     assert trace.count(oauth.CHAT_URL) == 1
     assert next_app.submit_turn(ws, cid, message("Second"))["state"] == "SUCCEEDED"
@@ -162,10 +173,13 @@ def test_key_change_and_revoke_while_stopped(studio, monkeypatch):
     api, app = boot()
     ws, _, _, cid = personal(api)
     allow(app)
+    card = api.model_cards.card("gigachat_2_pro")
+    assert api.model_cards.record_chat_success(card["model_id"], card["settings_version"])
     app._factory._session.close()
     api, app = boot()
     monkeypatch.setenv("GIGACHAT_CREDENTIALS", "NEW-SYNTHETIC")
     assert app.capability()["provider_reason"] == "consent_credentials_changed"
+    assert api.model_cards.card(card["model_id"])["api"]["indicator"] == "UNKNOWN"
     with pytest.raises(UltraChatError, match="consent_credentials_changed"):
         app.submit_turn(ws, cid, message())
     assert trace == [oauth.OAUTH_URL, MODELS_URL]
@@ -173,6 +187,7 @@ def test_key_change_and_revoke_while_stopped(studio, monkeypatch):
     monkeypatch.setenv("GIGACHAT_CREDENTIALS", "SYNTHETIC")
     api, app = boot()
     assert app.capability()["provider_state"] == "INACTIVE"
+    assert api.model_cards.card(card["model_id"])["api"]["indicator"] == "UNKNOWN"
     with pytest.raises(UltraChatError, match="user_permission_required"):
         app.submit_turn(ws, cid, message())
     assert trace == [oauth.OAUTH_URL, MODELS_URL]
@@ -223,29 +238,34 @@ def test_first_workspace_turn_preserves_selection_usage_and_activity(studio):
     assert trace.count(oauth.CHAT_URL) == 2
 
 
-def test_cards_use_runtime_and_freshness_without_blocking_orange_send(studio):
+def test_stale_confirmation_does_not_block_send_and_other_models_keep_their_dates(studio):
     boot, trace, _ = studio
     api, app = boot()
-    personal(api)
+    ws, _, _, cid = personal(api)
     model = "gigachat_2_pro"
     cards = api.model_cards
     now = datetime(2026, 11, 25, tzinfo=timezone.utc)
     cards.now = lambda: now
     allow(app)
     card = cards.card(model)
-    assert card["api"]["color"] == "orange"
+    assert card["api"]["indicator"] == "UNKNOWN"
     cards.record_chat_success(model, card["settings_version"], turn_id="turn_" + uuid4().hex)
+    other = cards.card("gigachat_2")["api"]
+    assert other["last_success_at"] is None
     state = cards.card(model)["api"]
     assert state["color"] == "green"
     now += timedelta(days=30, seconds=1)
     state = cards.card(model)["api"]
-    assert (state["color"], state["reason"]) == ("orange", "STALE")
+    assert (state["indicator"], state["reason"]) == ("RED_CLOCK", "STALE")
     assert app.capability()["available"]
+    assert app.submit_turn(ws, cid, message())["state"] == "SUCCEEDED"
+    assert trace.count(oauth.CHAT_URL) == 1
+    assert cards.card("gigachat_2")["api"]["last_success_at"] is None
     cards.record_chat_failure(model, card["settings_version"], code="provider_http_401",
                               turn_id="turn_" + uuid4().hex)
-    assert cards.card(model)["api"]["color"] == "red"
+    assert cards.card(model)["api"]["indicator"] == "RED_CROSS"
     revision = cards.catalog()["settings"]["revision"]
     cards.set_enabled(model, {"base_revision": revision, "enabled": False})
     assert cards.card(model)["api"]["color"] == "gray"
     assert model not in {m["model_id"] for m in app.capability()["models"]}
-    assert oauth.CHAT_URL not in trace
+    assert trace.count(oauth.CHAT_URL) == 1

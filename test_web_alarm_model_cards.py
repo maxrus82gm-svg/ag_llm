@@ -1,7 +1,7 @@
 """EVM model cards (CLAUDE-WUA-EVM-MODEL-CARD-UI-001): card data, real role assignments, one server API status.
 
 Oracles are independent of the code under test: a hand-written role table for a Tk ``ui_state.json`` fixture,
-``ui_state.load_ui_state`` itself for the Tk reading rules, explicit clock values for the 30-day boundary, the raw
+``ui_state.load_ui_state`` itself for the Tk reading rules, explicit clock values for the age thresholds, the raw
 bytes of the stores under a disposable root, raw HTTP bodies and ``sys.modules``. No network and no credentials:
 a sentinel secret in the environment must never appear in any answer, store or page.
 """
@@ -148,7 +148,7 @@ class CatalogAndRoles(Fixture):
         self.assertTrue(all(r["hint"] for r in data["role_definitions"]))
         self.assertEqual(data["live_check"]["authorized"], False)
         for card in data["cards"]:
-            self.assertEqual((card["api"]["color"], card["api"]["reason"]), ("gray", "NEVER_CONFIRMED"))
+            self.assertEqual((card["api"]["color"], card["api"]["reason"]), ("unknown", "NEVER_CONFIRMED"))
             self.assertEqual((card["description"], card["params_billion"], card["params_source"]), ("", None, "unknown"))
 
     def test_m02_role_marks_are_the_real_assignments_and_nothing_else(self):
@@ -242,31 +242,39 @@ class CatalogAndRoles(Fixture):
 
 
 class ApiStatus(Fixture):
-    def test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere(self):
+    def test_threshold_edges_restart_and_the_same_status_everywhere(self):
         api = self.make(FakeChecker(OK))
         self.assertEqual(self.check(api=api)["outcome"], "CONFIRMED")
-        for delta, color in ((timedelta(0), "green"), (timedelta(days=30), "green"), (timedelta(days=30, seconds=1), "orange"),
-                             (timedelta(days=400), "orange"), (timedelta(minutes=-4), "green"), (timedelta(minutes=-10), "gray")):
-            with self.subTest(delta=str(delta)):
+        cases = [(timedelta(days=d, seconds=seconds), indicator)
+                 for d, seconds, indicator in ((20, -1, "GREEN"), (20, 0, "YELLOW"),
+                                                (27, -1, "YELLOW"), (27, 0, "ORANGE"),
+                                                (30, -1, "ORANGE"), (30, 0, "RED_CLOCK"),
+                                                (400, 0, "RED_CLOCK"))]
+        cases += [(timedelta(minutes=-4), "GREEN"), (timedelta(minutes=-10), "UNKNOWN")]
+        for delta, indicator in cases:
+            with self.subTest(delta=delta):
                 self.clock.value = T0 + delta
-                restarted = self.make()  # a new server over the same storage
+                restarted = self.make()
                 card = self.card(api=restarted)
-                self.assertEqual(card["api"]["color"], color)
+                self.assertEqual(card["api"]["indicator"], indicator)
                 self.assertEqual(card["api"]["last_success_at"], T0.isoformat())
-                self.assertEqual(self.check(api=restarted)["card"]["api"], card["api"], "check answer and card disagree")
+                self.assertEqual(self.check(api=restarted)["card"]["api"], card["api"])
         self.assertEqual(self.card()["api"]["reason"], "TIMESTAMP_INVALID")
 
     def test_m08_timeout_changes_execution_version_but_display_limits_do_not(self):
         api = self.make(FakeChecker(OK, OK))
         self.check(api=api)
         self.save(description="Сильная", params_billion=390, profile={"timeout_seconds": 90, "diagnostic_limit_chars": 300})
-        self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("gray", "SETTINGS_CHANGED"))
+        self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("unknown", "SETTINGS_CHANGED"))
         self.check(api=api)
         self.clock.value = T0 + timedelta(days=11)
         self.assertEqual(self.card()["api"]["color"], "green")
-        self.save(profile={"freshness_days": 10})
-        self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("orange", "STALE"))
-        self.save(profile={"freshness_days": 30})
+        revision = api.dispatch("GET", "/ultra/model-cards")[1]["settings"]["revision"]
+        api.dispatch("POST", "/ultra/model-cards/indication",
+                     {"base_revision": revision, "thresholds": {"yellow": 8, "orange": 9, "red": 10}})
+        self.assertEqual(self.card()["api"]["indicator"], "RED_CLOCK")
+        api.dispatch("POST", "/ultra/model-cards/indication",
+                     {"base_revision": revision + 1, "reset": True})
         changes = {
             "credential_removed": lambda: self.env.pop("GIGACHAT_CREDENTIALS"),
             "scope_changed": lambda: self.env.__setitem__("GIGACHAT_SCOPE", "GIGACHAT_API_B2B"),
@@ -275,7 +283,7 @@ class ApiStatus(Fixture):
             with self.subTest(change=name):
                 saved = dict(self.env)
                 change()
-                self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("gray", "SETTINGS_CHANGED"))
+                self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("unknown", "SETTINGS_CHANGED"))
                 self.env.clear(); self.env.update(saved)
                 self.assertEqual(self.card()["api"]["color"], "green")
         moved = dict(model_registry.MODEL_REGISTRY)
@@ -403,7 +411,7 @@ class ApiStatus(Fixture):
         self.assertEqual(self.card()['api']['reason'], 'LAST_CHECK_FAILED')
         self.assertTrue(cards.record_chat_success('gigachat_2', changed['settings_version'], turn_id='turn-three'))
         self.assertEqual(self.card()['api']['color'], 'green')
-        self.save(profile={'freshness_days': 1, 'diagnostic_limit_chars': 400})
+        self.save(profile={'diagnostic_limit_chars': 400})
         self.assertEqual(cards.execution_snapshot('gigachat_2')['settings_version'], changed['settings_version'])
         self.save(profile={'timeout_seconds': 68})
         self.assertEqual(self.card()['api']['reason'], 'SETTINGS_CHANGED')
@@ -468,6 +476,42 @@ class ApiStatus(Fixture):
 
 
 class Settings(Fixture):
+    def test_global_indication_migrates_profiles_without_rewriting_checks(self):
+        path = self.api.model_cards.settings_path
+        self.save(profile={"timeout_seconds": 57, "diagnostic_limit_chars": 345})
+        raw = json.loads(path.read_bytes())
+        raw["profiles"]["gigachat-default"]["freshness_days"] = 12
+        path.write_text(json.dumps(raw), encoding="utf-8")
+        self.check(api=self.make(FakeChecker(OK)))
+        checks_path = self.api.model_cards.checks_path
+        checks = checks_path.read_bytes()
+        before = path.read_bytes()
+        payload = self.make().dispatch("GET", "/ultra/model-cards")[1]
+        self.assertEqual(payload["indication"], {"state": "DEFAULT",
+                         "thresholds": {"yellow": 20, "orange": 27, "red": 30}})
+        self.assertEqual(path.read_bytes(), before)
+        route = "/ultra/model-cards/indication"
+        revision = payload["settings"]["revision"]
+        for invalid in ({"yellow": 0, "orange": 7, "red": 9}, {"yellow": 7, "orange": 7, "red": 9},
+                        {"yellow": 7, "orange": 9, "red": 8}, {"yellow": True, "orange": 7, "red": 9},
+                        {"yellow": 1.5, "orange": 7, "red": 9}, {"yellow": 1, "orange": 2}):
+            with self.subTest(invalid=invalid):
+                self.assertEqual(self.refused("POST", route, {"base_revision": revision, "thresholds": invalid}).status, 400)
+                self.assertEqual(path.read_bytes(), before)
+        thresholds = {"yellow": 2, "orange": 3, "red": 4}
+        self.assertEqual(self.api.dispatch("POST", route, {"base_revision": revision, "thresholds": thresholds})[0], 200)
+        self.assertEqual(self.refused("POST", route, {"base_revision": revision, "reset": True}).status, 409)
+        self.save(description="Independent card setting")
+        resumed = self.make().dispatch("GET", "/ultra/model-cards")[1]
+        self.assertEqual(resumed["indication"]["thresholds"], thresholds)
+        profile = next(x for x in resumed["profiles"] if x["profile_id"] == "gigachat-default")
+        self.assertEqual((profile["timeout_seconds"], profile["diagnostic_limit_chars"]), (57, 345))
+        self.assertNotIn("freshness_days", json.loads(path.read_bytes())["profiles"]["gigachat-default"])
+        self.assertEqual(checks_path.read_bytes(), checks)
+        self.assertEqual(self.api.dispatch("POST", route,
+                         {"base_revision": resumed["settings"]["revision"], "reset": True})[1]["indication"]["thresholds"],
+                         {"yellow": 20, "orange": 27, "red": 30})
+
     def test_m13_card_data_is_validated_persisted_and_kept_apart_from_status_and_secrets(self):
         text = "Строка 1\r\nСтрока 2 — " + "я" * 400
         card = self.save(description=text[:500], params_billion=390)
@@ -850,6 +894,20 @@ class Http(Fixture):
         finally:
             conn.close()
 
+    def test_indication_write_requires_local_origin_and_write_capability(self):
+        self.serve()
+        route = "/ultra/model-cards/indication"
+        body = b'{"base_revision":0,"thresholds":{"yellow":3,"orange":6,"red":8}}'
+        origin = {"Origin": "http://" + self.host}
+        access = json.loads(self.request("GET", "/ui/ultra-chat/write-capability")[1])["ultra_chat_write"]
+        token = {access["header"]: access["token"]}
+        for headers in (origin, token, {**token, "Origin": "http://external.invalid"}):
+            self.assertEqual(self.request("POST", route, headers, body)[0], 403)
+            self.assertFalse(self.api.model_cards.settings_path.exists())
+        self.assertEqual(self.request("POST", route, {**origin, **token}, body)[0], 200)
+        payload = json.loads(self.request("GET", "/ultra/model-cards")[1])
+        self.assertEqual(payload["indication"]["thresholds"], {"yellow": 3, "orange": 6, "red": 8})
+
     def test_m16_http_only_for_the_local_page_and_no_secret_anywhere(self):
         self.serve()
         origin = {"Origin": "http://" + self.host}
@@ -984,12 +1042,12 @@ class PerModelControls(Fixture):
         self.assertFalse(self.api.model_cards.is_enabled("gigachat_2"))
         self.assertFalse(self.card()["enabled"])
 
-    def test_unknown_is_gray_and_deduplicated_after_restart(self):
+    def test_unknown_is_distinct_and_deduplicated_after_restart(self):
         c = self.card()
         self.api.model_cards.record_chat_success(c["model_id"], c["settings_version"], turn_id="A")
         self.clock.value += timedelta(seconds=1)
         self.api.model_cards.record_chat_unknown(c["model_id"], c["settings_version"], turn_id="B")
-        self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("gray", "LAST_OUTCOME_UNKNOWN"))
+        self.assertEqual((self.card()["api"]["color"], self.card()["api"]["reason"]), ("unknown", "LAST_OUTCOME_UNKNOWN"))
         saved = (self.storage / "ultra" / "api_checks.json").read_bytes()
         self.assertFalse(self.make().model_cards.record_chat_success(c["model_id"], c["settings_version"], turn_id="A"))
         self.assertEqual((self.storage / "ultra" / "api_checks.json").read_bytes(), saved)

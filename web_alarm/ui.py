@@ -153,6 +153,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .evm-list{display:grid;gap:8px;grid-template-columns:minmax(0,1fr);align-content:start;min-height:12px}
 .evm-add{border:1px dashed #526579;border-radius:10px;padding:10px;color:var(--muted);text-align:center;font-size:13px}
 .evm-info{padding:14px 18px}.evm-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 22px}.evm-info-grid p{margin:4px 0 0}
+.evm-indication{margin-top:10px}.evm-thresholds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.evm-thresholds label{margin-top:6px}.evm-thresholds input{padding:5px 6px}.evm-indication .row{margin-top:6px;gap:6px}.evm-indication button{padding:5px 8px;font-size:12px}
 .ccard{display:flex;flex-direction:column;min-width:0;border:1px solid #3d5a74;border-radius:10px;background:#16212d;transition:border-color .12s ease-out,background .12s ease-out}
 .ccard:hover,.ccard.expanded{border-color:#6aa9dc;background:#1a2a39}.ccard.expanded{box-shadow:inset 3px 0 #6aa9dc}
 .chead{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:2px;padding:2px 4px 2px 6px;cursor:pointer;user-select:none;-webkit-user-select:none}
@@ -215,6 +216,8 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 .mcard-side{margin-left:auto;font-size:12px;color:var(--muted)}
 .api-dot{display:inline-grid;place-items:center;width:28px;height:28px;flex:none;border-radius:50%;border:2px solid;font:800 15px system-ui,Segoe UI,sans-serif;line-height:1}
 .api-dot.green{color:#7be3a6;border-color:#3f9e6f;background:#173a2a}
+.api-dot.yellow{color:#ffe47d;border-color:#b99a45;background:#3b3219}
+.api-dot.unknown{color:#a9cbea;border-color:#58748c;background:#203143}
 .api-dot.orange{color:#ffc06b;border-color:#c8873a;background:#3d2c16}
 .api-dot.red{color:#ff8f98;border-color:#a9505b;background:#3c1e25}
 .api-dot.gray{color:#aab8c6;border-color:#6b7d8d;background:#263340}
@@ -679,8 +682,14 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <div id="evmNotice" class="notice success" role="status" hidden></div></div>
 <div class="card spaced evm-info"><div class="evm-info-grid">
 <div><p class="side-title">Модель Чата Нейрополис</p><p id="evmSelection">—</p><p class="muted">Выбирается в Чате Нейрополис, у поля ввода сообщения.</p></div>
-<div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ доступность подтверждена · ! не подтверждена или проверка устарела · × ошибка · ○ отключена</p></div>
-<div><p class="side-title">GigaChat · все модели</p><p id="evmLiveState">Состояние подключения не проверено</p><div class="row"><button type="button" id="evmLiveStart" disabled>Подключить GigaChat</button><button type="button" id="evmLiveStop" disabled>Отключить GigaChat</button></div><p class="muted">Используются те же подключение и история, что в Чате Нейрополис. Подключение может обратиться к API; отправка сообщения выполняется отдельно.</p></div>
+<div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ подтверждена · △ жёлтый порог · ! оранжевый порог · ◷ устарела · × ошибка · ○ отключена · ? нет подтверждения</p></div>
+<div><p class="side-title">GigaChat · все модели</p><p id="evmLiveState">Состояние подключения не проверено</p><div class="row"><button type="button" id="evmLiveStart" disabled>Подключить GigaChat</button><button type="button" id="evmLiveStop" disabled>Отключить GigaChat</button></div><p class="muted">Используются те же подключение и история, что в Чате Нейрополис. Подключение может обратиться к API; отправка сообщения выполняется отдельно.</p>
+<form id="evmIndicationForm" class="evm-indication" aria-labelledby="evmIndicationHeading">
+<p id="evmIndicationHeading" class="side-title">Настройки индикации EVM</p>
+<div class="evm-thresholds"><label>Жёлтый, дн.<input id="evmThresholdYellow" type="number" min="1" step="1" required></label><label>Оранжевый, дн.<input id="evmThresholdOrange" type="number" min="1" step="1" required></label><label>Красный, дн.<input id="evmThresholdRed" type="number" min="1" step="1" required></label></div>
+<div class="row"><button id="evmIndicationSave" type="submit" disabled>Сохранить</button><button id="evmIndicationReset" type="button" disabled>По умолчанию</button></div>
+<p id="evmIndicationStatus" role="status" class="muted"></p>
+</form></div>
 <div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Нажмите на карточку — она раскроется. Ctrl + наведение — просмотр; Ctrl + клик или ⧉ закрепляют панель внутри страницы. ↗ открывает отдельное окно Windows. Карточки можно перетаскивать и добавлять в избранное.</p></div>
 </div></div>
 <div class="evm-columns evm-board">
@@ -710,7 +719,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <div class="wide"><label for="evmSetDescription">Сильные стороны модели</label><textarea id="evmSetDescription" maxlength="500" aria-describedby="evmSetDescCount"></textarea><p id="evmSetDescCount" class="muted">0 / 500</p></div></div>
 </div>
 <div id="evmPaneMore" role="tabpanel" aria-labelledby="evmTabMore" hidden>
-<div class="form-grid"><div><label for="evmSetTimeout">Таймаут запроса, секунд</label><input id="evmSetTimeout" type="number" min="5" max="120" step="1"></div><div><label for="evmSetDiagLimit">Предел текста диагностики, символов</label><input id="evmSetDiagLimit" type="number" min="200" max="4000" step="1"></div><div><label for="evmSetFreshness">Срок актуальности проверки, дней</label><input id="evmSetFreshness" type="number" min="1" max="365" step="1"></div></div>
+<div class="form-grid"><div><label for="evmSetTimeout">Таймаут запроса, секунд</label><input id="evmSetTimeout" type="number" min="5" max="120" step="1"></div><div><label for="evmSetDiagLimit">Предел текста диагностики, символов</label><input id="evmSetDiagLimit" type="number" min="200" max="4000" step="1"></div></div>
 <p class="muted">Параметры относятся к профилю подключения и действуют для всех его моделей. Изменение таймаута требует нового подтверждения API; срок актуальности меняет только границу между ✓ и !.</p>
 </div>
 <p id="evmSetDraft" class="muted" hidden>Есть несохранённые изменения. Они сохраняются, пока открыта страница, даже если закрыть окно.</p>
@@ -1263,21 +1272,27 @@ function validCards(d){
   return !!d&&Array.isArray(d.cards)&&Array.isArray(d.role_definitions)&&Array.isArray(d.providers)&&Array.isArray(d.profiles)&&!!d.settings&&!!d.limits&&!!d.live_check&&
     d.role_definitions.every(r=>r&&['role','label','hint'].every(k=>typeof r[k]==='string'))&&
     d.cards.every(c=>c&&['connection_id','model_id','display_name','provider_id','provider_model_id','profile_id','settings_version','description'].every(k=>typeof c[k]==='string')&&
-      (c.enabled===undefined||typeof c.enabled==='boolean')&&Array.isArray(c.roles)&&!!c.api&&['green','orange','red','gray'].includes(c.api.color))
+      (c.enabled===undefined||typeof c.enabled==='boolean')&&Array.isArray(c.roles)&&!!c.api&&Boolean(apiIndicator(c.api)))
 }
-const API_TEXT={CONFIRMED:'Ответ модели подтверждён',STALE:'Подтверждение устарело',NEVER_CONFIRMED:'Успешной проверки ещё не было',LAST_OUTCOME_UNKNOWN:'Исход последнего обращения неизвестен',SETTINGS_CHANGED:'Настройки подключения изменились — нужна новая проверка',
+const API_TEXT={AGE_YELLOW:'Достигнут жёлтый порог',AGE_ORANGE:'Достигнут оранжевый порог',LOCAL_OFFLINE_UNVERIFIED:'Ответ локальной модели не подтверждён',CONFIRMED:'Ответ модели подтверждён',STALE:'Подтверждение устарело',NEVER_CONFIRMED:'Успешной проверки ещё не было',LAST_OUTCOME_UNKNOWN:'Исход последнего обращения неизвестен',SETTINGS_CHANGED:'Настройки подключения изменились — нужна новая проверка',
   MODEL_DISABLED:'Модель отключена',PROVIDER_INACTIVE:'Разрешение на API отсутствует',PROVIDER_RESTORE_REQUIRED:'Подключение будет восстановлено при отправке',
   PROVIDER_BLOCKED:'Подключение заблокировано',MODEL_UNAVAILABLE:'Модели нет в каталоге аккаунта',MODEL_NOT_APPROVED:'Модель вне допуска текущей сессии',
   LAST_CHECK_FAILED:'Последняя проверка завершилась отказом',STATE_CORRUPT:'Сведения о проверках повреждены',TIMESTAMP_INVALID:'Дата проверки некорректна',ADAPTER_MISSING:'Для провайдера нет адаптера',REGISTRY_DISABLED:'Модель отключена в реестре'};
-const API_MARK={green:'✓',orange:'!',red:'×',gray:'○'};
-function apiText(a){
-  const base=(API_TEXT[a.reason]||String(a.reason||'Статус неизвестен'))+(a.runtime_reason?' · '+providerReason(a.runtime_reason):'');
-  return a.age_days==null?base:base+': '+a.age_days+' дн. назад, срок актуальности '+a.freshness_days+' дн.'
+const API_MARK={GREEN:['green','✓'],YELLOW:['yellow','△'],ORANGE:['orange','!'],RED_CLOCK:['red','◷'],
+  RED_CROSS:['red','×'],GRAY:['gray','○'],UNKNOWN:['unknown','?']};
+function apiIndicator(a){
+  if(Object.hasOwn(API_MARK,a.indicator))return a.indicator;
+  return {green:'GREEN',yellow:'YELLOW',orange:'ORANGE',red:'RED_CROSS',gray:'GRAY',unknown:'UNKNOWN'}[a.color]
 }
-function apiDot(a){  // one component and one server status for the card header and the diagnostic window
-  const color=API_MARK[a.color]?a.color:'gray';
-  const d=element('span',API_MARK[color],'api-dot '+color);
-  d.setAttribute('role','img');d.setAttribute('aria-label','Статус API: '+apiText(a));d.setAttribute('title',apiText(a));d.setAttribute('data-api',color+':'+a.reason);
+function apiText(a){
+  const base=API_TEXT[a.reason]||String(a.reason||'Статус неизвестен');
+  return a.age_days==null?base:base+' · '+a.age_days+' дн. назад'
+}
+function apiDot(a){
+  const indicator=apiIndicator(a)||'UNKNOWN',[color,mark]=API_MARK[indicator];
+  const d=element('span',mark,'api-dot '+color);
+  d.setAttribute('role','img');d.setAttribute('aria-label','Статус API: '+apiText(a));d.setAttribute('title',apiText(a));
+  d.setAttribute('data-api',color+':'+a.reason);d.setAttribute('data-indicator',indicator);
   return d
 }
 const ROLE_MARK={assigned:['✓','yes','назначена'],assigned_off:['✓','off','назначена, но роль выключена'],assigned_pending:['✓','off','назначена, но роль пока не работает'],not_assigned:['×','no','не назначена'],not_in_runtime:['–','na','такой роли в runtime пока нет'],unknown:['?','unknown','источник назначений недоступен']};
@@ -1370,8 +1385,9 @@ function rolesSourceText(cards){
 }
 function summaryText(cards){
   if(!cards)return 'нет данных';
-  const n={green:0,orange:0,red:0,gray:0};for(const c of cards.cards)n[c.api.color]++;
-  return '✓ '+n.green+' · ! '+n.orange+' · × '+n.red+' · ○ '+n.gray
+  const n=Object.fromEntries(Object.keys(API_MARK).map(k=>[k,0]));
+  for(const c of cards.cards)n[apiIndicator(c.api)||'UNKNOWN']++;
+  return Object.entries(API_MARK).map(([k,[,mark]])=>mark+' '+n[k]).join(' · ')
 }
 // One source per entry for every column: the catalog entry plus its card data, if the server has it.
 function entryOf(id){
@@ -1470,6 +1486,45 @@ function providerStatus(live){
   if(live?.provider_state==='BLOCKED')return 'GigaChat недоступен · '+reason;
   return 'GigaChat отключён · история доступна'
 }
+const THRESHOLD_FIELDS={yellow:'evmThresholdYellow',orange:'evmThresholdOrange',red:'evmThresholdRed'};
+let indicationDraftRevision=null,indicationBusy=false;
+function renderIndication(){
+  const settings=evm.cards?.indication, revision=evm.cards?.settings?.revision;
+  const enabled=!indicationBusy&&!!settings&&Number.isSafeInteger(revision)&&evm.cards.settings.state!=='CORRUPT';
+  for(const [key,id] of Object.entries(THRESHOLD_FIELDS)){
+    $(id).disabled=!enabled;
+    if(indicationDraftRevision===null)$(id).value=settings?.thresholds?.[key]??'';
+  }
+  $('evmIndicationSave').disabled=!enabled;$('evmIndicationReset').disabled=!enabled;
+}
+async function saveIndication(reset=false){
+  if($('evmIndicationSave').disabled)return;
+  const revision=evm.cards.settings.revision;
+  const body={base_revision:reset?revision:indicationDraftRevision??revision};
+  if(reset)body.reset=true;
+  else{
+    const days=Object.values(THRESHOLD_FIELDS).map(id=>Number($(id).value));
+    if(days.some(day=>!Number.isSafeInteger(day))||!(0<days[0]&&days[0]<days[1]&&days[1]<days[2])){
+      text('evmIndicationStatus','Введите целые дни по возрастанию: жёлтый, оранжевый, красный.');return
+    }
+    body.thresholds=Object.fromEntries(Object.keys(THRESHOLD_FIELDS).map((key,i)=>[key,days[i]]));
+  }
+  indicationBusy=true;renderIndication();
+  try{
+    const r=await chatPost('/ultra/model-cards/indication',body);
+    if(r?.indication?.revision!==body.base_revision+1)throw Error('Сохранение не подтверждено');
+    indicationDraftRevision=null;
+    await loadEvm();
+    evmChannel?.postMessage({kind:'model_state'});
+    if(chat.started)await loadChatAccess().catch(()=>{});
+    text('evmIndicationStatus',reset?'Восстановлены пороги 20, 27 и 30 дней.':'Пороги сохранены.');
+  }catch(e){
+    if(e.code==='settings_revision_conflict'){
+      indicationDraftRevision=null;await loadEvm();
+      text('evmIndicationStatus','Настройки изменились в другом окне. Показаны сохранённые значения.');
+    }else text('evmIndicationStatus','Сохранение порогов не подтверждено. '+e.message);
+  }finally{indicationBusy=false;renderIndication()}
+}
 function renderEvm(){
   const data=evm.data;if(!data)return;
   const cols=data.columns,s=data.selection.chat,cards=evm.cards;
@@ -1478,6 +1533,7 @@ function renderEvm(){
     (evm.liveAction==='start'?'Подключение выполняется':'Отключение выполняется'):evm.liveFailure?
     (evm.liveFailure==='disconnect'?'Ошибка отключения':'Ошибка подключения')+' · проверьте состояние перед повтором':live.real_available?
     'GigaChat подключён · реальные отправки разрешены':providerStatus(live));
+  renderIndication();
   $('evmLiveStart').disabled=!ready||live.real_available||evm.liveBusy;
   $('evmLiveStop').disabled=!ready||!(live.real_available||['RESTORE_REQUIRED','BLOCKED'].includes(live.provider_state))||evm.liveBusy;
   $('evmApiState').replaceChildren(evmTag(cols.api.state));
@@ -2020,7 +2076,7 @@ async function evmLiveControl(start){
 // Settings and diagnostics windows. Only one is shown at a time; closing or switching keeps the draft of every
 // model and the last diagnostic answer, so opening one window never destroys the state of the other.
 const EVM_TABS={conn:['evmTabConn','evmPaneConn'],model:['evmTabModel','evmPaneModel'],more:['evmTabMore','evmPaneMore']};
-const PROFILE_FIELDS=[['timeout_seconds','evmSetTimeout'],['diagnostic_limit_chars','evmSetDiagLimit'],['freshness_days','evmSetFreshness']];
+const PROFILE_FIELDS=[['timeout_seconds','evmSetTimeout'],['diagnostic_limit_chars','evmSetDiagLimit']];
 function selectTab(name){
   evm.tab=EVM_TABS[name]?name:'conn';
   for(const [key,[tab,pane]] of Object.entries(EVM_TABS)){$(tab).setAttribute('aria-selected',String(key===evm.tab));$(tab).setAttribute('tabindex',key===evm.tab?'0':'-1');$(pane).hidden=key!==evm.tab}
@@ -2170,13 +2226,19 @@ $('evmPeek').onpointerdown=ev=>previewPress(ev);  // a press inside the preview 
 $('evmView').onscroll=()=>{if(evm.peek.id)positionPeek()};
 for(const [key,[tab]] of Object.entries(EVM_TABS))$(tab).onclick=()=>selectTab(key);
 $('evmSetProfile').onchange=editDraft;
-for(const id of ['evmSetParams','evmSetDescription','evmSetTimeout','evmSetDiagLimit','evmSetFreshness'])$(id).oninput=editDraft;
+for(const id of ['evmSetParams','evmSetDescription','evmSetTimeout','evmSetDiagLimit'])$(id).oninput=editDraft;
 $('evmSetReset').onclick=()=>{const w=evm.window;if(w?.kind!=='settings')return;delete evm.drafts[w.id];evm.setError='';fillSettings()};
 $('evmSetSave').onclick=()=>saveSettings();
 $('evmSetClose').onclick=()=>closeWindow();
 $('evmCheckClose').onclick=()=>closeWindow();
 $('evmCheckConnect').onclick=()=>evmLiveControl(true);
 $('evmCheckSend').onclick=()=>sendCheck();
+for(const id of Object.values(THRESHOLD_FIELDS))$(id).oninput=()=>{
+  indicationDraftRevision??=evm.cards?.settings?.revision??null;
+  text('evmIndicationStatus','');
+};
+$('evmIndicationForm').onsubmit=e=>{e.preventDefault();return saveIndication()};
+$('evmIndicationReset').onclick=()=>saveIndication(true);
 $('evmLiveStart').onclick=()=>evmLiveControl(true);
 $('evmLiveStop').onclick=()=>evmLiveControl(false);
 for(const id of ['evmSettingsWindow','evmCheckWindow'])$(id).onclick=e=>{if(e?.target===$(id))closeWindow()};
@@ -2540,6 +2602,15 @@ async function loadChatAccess(){
        !(chatTurn.ordinary&&chat.chat&&chatTurn.model))
       chatTurn.model=chatTurn.models[0]?.model_id??null;
     if(chatTurn.testModelPreferences){chatTurn.model=null;chatTurn.testModelLoaded=false;}
+  }
+  if(picker.open&&chatTurn.ordinary){
+    const options=Array.from($('chatModelMenu').children);
+    if(!options.length||options[0].getAttribute('data-model-id')){
+      if(options.length!==chatTurn.models.length||
+          options.some((option,i)=>option.getAttribute('data-model-id')!==chatTurn.models[i].model_id)){
+        renderModelOptions(options.includes(document.activeElement));
+      }else options.forEach((option,i)=>renderModelOption(option,chatTurn.models[i]));
+    }
   }
   renderTurnComposer();
   if(!c||typeof c.available!=='boolean'||c.header!==CHAT_TOKEN_HEADER)throw Error('Некорректный ответ сервера о доступе к истории');
@@ -3021,6 +3092,48 @@ async function loadChatModel(){
 // (/ultra/connections/selection, no chat token), no message, Turn or history write. The model list is read only
 // when the user opens the picker, so the chat screen still reads nothing else at load.
 const picker={open:false,busy:false,epoch:0};
+function renderModelOption(button,model){
+  const suffix=model.availability==='UNAVAILABLE'?' · недоступна':
+    model.availability==='NOT_APPROVED'?' · ожидает проверки':
+    model.availability==='UNVERIFIED'?' · доступ не проверен':'';
+  button.textContent=chatModelLabel(model)+suffix;
+  if(model.api)button.append(apiDot(model.api));
+  button.disabled=chatTurn.ordinary&&(model.is_local||chatTurn.executionMode==='REAL')&&model.availability!=='AVAILABLE';
+  button.setAttribute('aria-disabled',String(button.disabled));
+}
+function renderModelOptions(focus=true){
+  const options=chatTurn.models.map(m=>{
+    const button=element('button');
+    renderModelOption(button,m);
+    button.type='button';button.setAttribute('role','option');
+    button.setAttribute('data-model-id',m.model_id);
+    button.setAttribute('aria-selected',String(m.model_id===chatTurn.model));
+    button.onclick=async()=>{
+      if(button.disabled||picker.busy)return;
+      if(chatTurn.testModelPreferences)return chooseTestChatModel(m.model_id);
+      const scope=turnScope(),epoch=chat.epoch,revision=chatTurn.ordinary?++ordinaryModelRevision:0;
+      picker.busy=true;
+      try{
+        if(chatTurn.ordinary){
+          const saved=await chatPost(turnBase().replace(/\/turns$/,'/model'),{model_ref:m.model_id});
+          if(saved?.model_ref!==m.model_id||saved?.persisted!==true||saved?.enrolled===false)
+            throw Error('model_not_confirmed');
+        }
+        if(epoch===chat.epoch&&scope===turnScope()&&(!chatTurn.ordinary||revision===ordinaryModelRevision)){
+          chatTurn.model=m.model_id;notice('chatModelError','');closePicker(true);renderTurnComposer();
+        }
+      }catch(e){if(epoch===chat.epoch&&revision===ordinaryModelRevision)
+        notice('chatModelError',e?.code==='ordinary_workspace_not_enrolled'?
+          'Журнал учёта Workspace недоступен или требует восстановления. Выбор модели не сохранён.':
+          e?.code==='provider_workspace_scope'?
+          'Workspace не зарегистрирован для этого подключения GigaChat. Выбор модели не сохранён.':
+          'Выбор модели не сохранён. Повторите выбор.');}
+      finally{picker.busy=false;renderTurnComposer()}
+    };return button
+  });
+  $('chatModelMenu').replaceChildren(...options);
+  if(focus)(options.find(b=>b.getAttribute('aria-selected')==='true'&&!b.disabled)||options.find(b=>!b.disabled))?.focus();
+}
 async function openPicker(){
   if(picker.busy)return;
   if(picker.open){closePicker(true);return}
@@ -3032,41 +3145,7 @@ async function openPicker(){
       try{await loadChatAccess()}catch(_){}
       if(!picker.open||epoch!==picker.epoch)return;
     }
-    const options=chatTurn.models.map(m=>{
-      const blocked=chatTurn.ordinary&&(m.is_local||chatTurn.executionMode==='REAL')&&m.availability!=='AVAILABLE';
-      const suffix=m.availability==='UNAVAILABLE'?' · недоступна':
-        m.availability==='NOT_APPROVED'?' · ожидает проверки':
-        m.availability==='UNVERIFIED'?' · доступ не проверен':'';
-      const button=element('button',chatModelLabel(m)+suffix);
-      button.type='button';button.setAttribute('role','option');
-      button.setAttribute('data-model-id',m.model_id);
-      button.setAttribute('aria-selected',String(m.model_id===chatTurn.model));
-      button.disabled=blocked;button.setAttribute('aria-disabled',String(blocked));
-      button.onclick=async()=>{
-        if(blocked||picker.busy)return;
-        if(chatTurn.testModelPreferences)return chooseTestChatModel(m.model_id);
-        const scope=turnScope(),epoch=chat.epoch,revision=chatTurn.ordinary?++ordinaryModelRevision:0;
-        picker.busy=true;
-        try{
-          if(chatTurn.ordinary){
-            const saved=await chatPost(turnBase().replace(/\/turns$/,'/model'),{model_ref:m.model_id});
-            if(saved?.model_ref!==m.model_id||saved?.persisted!==true||saved?.enrolled===false)
-              throw Error('model_not_confirmed');
-          }
-          if(epoch===chat.epoch&&scope===turnScope()&&(!chatTurn.ordinary||revision===ordinaryModelRevision)){
-            chatTurn.model=m.model_id;notice('chatModelError','');closePicker(true);renderTurnComposer();
-          }
-        }catch(e){if(epoch===chat.epoch&&revision===ordinaryModelRevision)
-          notice('chatModelError',e?.code==='ordinary_workspace_not_enrolled'?
-            'Журнал учёта Workspace недоступен или требует восстановления. Выбор модели не сохранён.':
-            e?.code==='provider_workspace_scope'?
-            'Workspace не зарегистрирован для этого подключения GigaChat. Выбор модели не сохранён.':
-            'Выбор модели не сохранён. Повторите выбор.');}
-        finally{picker.busy=false;renderTurnComposer()}
-      };return button
-    });
-    $('chatModelMenu').replaceChildren(...options);
-    (options.find(b=>b.getAttribute('aria-selected')==='true'&&!b.disabled)||options.find(b=>!b.disabled))?.focus();
+    renderModelOptions();
     return
   }
   try{
