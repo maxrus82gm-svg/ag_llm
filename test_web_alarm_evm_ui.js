@@ -303,7 +303,7 @@ test('EVM control stays closed in TEST and an uncertain connect is never retried
   await h.el('evmLiveStart').onclick(); await settle();
   assert.equal(h.posts('/ultra/chat/live/start').length, 1);
   assert.equal(h.el('evmLiveStop').disabled, true);
-  assert.match(h.el('evmError').textContent, /Проверьте его перед повтором/);
+  assert.match(h.el('evmError').textContent, /Проверьте состояние перед повтором/);
 });
 
 test('E3 the chat-model picker next to the composer: reads the list only when opened, saves only the preference', async () => {
@@ -363,7 +363,7 @@ test('E5 malformed or failed catalog answers show an error and no invented model
 });
 
 test('E6 saved-choice states are told honestly in the EVM summary', async () => {
-  const states = [[{state: 'CORRUPT'}, /повреждён.*в Ultra Chat/], [{state: 'INVALID_REFERENCE', connection_id: 'api:prov:gone'}, /недоступна в реестре \(api:prov:gone\)/],
+  const states = [[{state: 'CORRUPT'}, /повреждён.*в Чате Нейрополис/], [{state: 'INVALID_REFERENCE', connection_id: 'api:prov:gone'}, /недоступна в реестре \(api:prov:gone\)/],
     [{state: 'NOT_SELECTED'}, /ещё не выбрана/], [{state: 'REGISTRY_UNAVAILABLE', connection_id: 'api:prov:alpha'}, /реестр моделей недоступен/],
     [{state: 'SAVED', connection_id: 'api:prov:alpha', display_name: 'Alpha', model_id: 'alpha', provider_model_id: 'P-alpha'}, /Выбрана: Alpha · alpha → P-alpha/]];
   for (const [selection, expected] of states) {
@@ -1476,7 +1476,7 @@ test('E47 model permission, provider session and API proof stay separate after s
   const h = harness(); await settle();
   h.routes.set('/ui/ultra-chat/capability', () => ({turn_test: {mode: 'ORDINARY', execution_mode: active ? 'REAL' : 'HOLD', real_available: active}}));
   await h.openEvm([conn('alpha', 'Alpha')], state); await h.click(h.cards()[0]);
-  assert.match(h.inline(h.cards()[0]).textContent, /Модель: включена · Провайдер: GigaChat отключён · Работоспособность: Успешной проверки ещё не было/);
+  assert.match(h.inline(h.cards()[0]).textContent, /Модель: включена · Провайдер: GigaChat отключён · история доступна · Работоспособность: Успешной проверки ещё не было/);
   active = true; await h.run('loadEvm()'); await settle();
   assert.match(h.inline(h.cards()[0]).textContent, /Модель: включена · Провайдер: GigaChat подключён · Работоспособность: Успешной проверки ещё не было/);
   h.run("evm.liveBusy=true;evm.liveAction='start';renderEvm()");

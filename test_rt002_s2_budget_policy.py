@@ -1585,7 +1585,7 @@ OFFLINE_ADMISSION_GATES = {'web_alarm.ordinary_provider': '2471366340563da38afa7
 # This author reconciliation does not grant independent release or LIVE GO.
 OFFLINE_ADMISSION_GATES.update(s1._MVP_RECON.get('policy_gates', {}))
 OFFLINE_GUARD_BOOTSTRAPS = {
-    "web_alarm.ordinary_test_fixture": "30fcea6895cdc7a410465566a4cf389ec59f2fee362ea93cc3744fa8288aab03",
+    "web_alarm.ordinary_test_fixture": "1713c014cb87affb17411ee7df97e1ede6ec7c7fbaa83389d7a11d2a585dc76a",
 }
 OFFLINE_GUARD_SHA256 = "ad4f79ab756d627e6f2886b6ff53b2b6679f297f83734d9c2c574ba2dc117fc8"
 POLICY_MODULE = "ultra_budget_policy"

@@ -605,7 +605,7 @@ test('U8 the composer is visibly read-only and nothing is ever posted', async ()
   assert.equal(h.el('chatInput').disabled, true);
   assert.equal(h.el('chatSend').disabled, true);
   // Stage 2 (CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001): the composer still sends nothing; the note now names create/rename.
-  assert.match(source, /<p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе\. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги\.<\/p>/);
+  assert.match(source, /<p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе\. Сейчас Чат Нейрополис читает сохранённую историю, создаёт и переименовывает диалоги\.<\/p>/);
   assert.equal(h.el('chatInput').getAttribute('aria-describedby'), 'chatComposerNote');
   let prevented = false;
   h.el('chatComposer').onsubmit({preventDefault: () => {prevented = true;}});
@@ -1340,8 +1340,8 @@ test('STANDARD Ordinary sends selected model without local-test refs through nor
 });
 test('STANDARD HOLD keeps per-chat model/preferences but sends nothing',async()=>{
   const h=harness({routes:ordinaryRoutes(false)});await settle();
-  assert.equal(h.el('chatInput').disabled,true);assert.equal(h.el('chatSend').disabled,true);
-  assert.match(h.el('chatComposerNote').textContent,/GigaChat не подключён в этом процессе/);
+  assert.equal(h.el('chatInput').disabled,false);assert.equal(h.el('chatSend').disabled,true);
+  assert.match(h.el('chatComposerNote').textContent,/GigaChat отключён/);
   assert.equal(h.el('chatPreferences').hidden,false);assert.match(h.el('chatUsage').textContent,/UNKNOWN/);
   h.el('chatInput').value='forged enabled';await h.el('chatSend').onclick();
   assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
@@ -1540,8 +1540,7 @@ test('REAL shared provider permits registered Workspace with own confirmed model
   h.run("chat.epoch++;chat.workspace='ws_b';chat.chat='chat_b';chatTurn.model=null;renderTurnComposer()");
   assert.equal(h.el('chatSend').disabled,true,'model must reload for new Workspace');
   await h.run('loadChatModel()');
-  assert.equal(h.el('chatSend').disabled,true,'unenrolled Workspace must select a model first');
-  assert.match(h.el('chatModelError').textContent,/журнал новых GigaChat/);
+  assert.equal(h.el('chatSend').disabled,false,'first explicit send can enroll a clean Workspace');
   await h.el('chatModelPick').onclick();
   await h.el('chatModelMenu').children[0].onclick();
   assert.equal(enrolled,true);

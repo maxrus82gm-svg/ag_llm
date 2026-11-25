@@ -1,13 +1,14 @@
 """No-network checks for the EVM to existing Ordinary Turn handoff."""
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from types import SimpleNamespace
+from threading import Lock
+from types import MethodType, SimpleNamespace
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
 from ordinary_chat_service import PreSendDenied
 from web_alarm.model_cards import CheckRequest, CheckRefusedError
-from web_alarm.ordinary_provider import _OrdinaryTurnChecker
+from web_alarm.ordinary_provider import OrdinaryApplicationChatService, _OrdinaryTurnChecker
 
 
 class EvmTurnHandoff(TestCase):
@@ -18,9 +19,11 @@ class EvmTurnHandoff(TestCase):
         self.session = SimpleNamespace(synthetic=False, check=Mock(), _available={'GigaChat-2'},
             approval=SimpleNamespace(contracts=(SimpleNamespace(model_id='gigachat_2'),)), root=self.root)
         self.factory = SimpleNamespace(_session=self.session, require_real=Mock())
-        self.service = SimpleNamespace(_factory=self.factory, registry=object(),
+        self.service = SimpleNamespace(_factory=self.factory, registry=object(), _api=None, _personal_lock=Lock(),
             create_chat=Mock(), chat_model=Mock(), submit_turn=Mock(return_value={
                 'execution_mode': 'REAL', 'state': 'SUCCEEDED', 'answer': 'Готово'}))
+        self.service._connection_state = MethodType(OrdinaryApplicationChatService._connection_state, self.service)
+        self.service._open_standard_session = MethodType(OrdinaryApplicationChatService._open_standard_session, self.service)
         self.request = CheckRequest('api:gigachat:gigachat_2', 'gigachat_2', 'gigachat',
             'GigaChat-2', 'https://api.giga.chat/v1/chat/completions', 30, 'Тест.')
         self.checker = _OrdinaryTurnChecker(self.service)
@@ -35,6 +38,7 @@ class EvmTurnHandoff(TestCase):
         self.service.chat_model.assert_called_once()
         self.service.submit_turn.assert_called_once()
         self.assertEqual(self.service.submit_turn.call_args.args[2]['text'], 'Тест.')
+        self.assertTrue(self.service.submit_turn.call_args.kwargs['diagnostic'])
         self.factory.require_real.assert_called_once()
 
     def test_no_live_authority_or_foreign_workspace_denies_before_turn(self):
@@ -50,7 +54,7 @@ class EvmTurnHandoff(TestCase):
         self.service.submit_turn.assert_not_called()
         self.session.check = Mock(side_effect=PreSendDenied('closed'))
         self.assertFalse(self.checker.authorized)
-        self.assertEqual(self.checker.reason, 'Провайдер не подключён. Подключите GigaChat в EVM.')
+        self.assertEqual(self.checker.reason, 'GigaChat: closed')
 
     def test_unknown_turn_is_reported_uncertain_without_retry(self):
         self.service.submit_turn.return_value = {'execution_mode': 'REAL', 'state': 'UNKNOWN',

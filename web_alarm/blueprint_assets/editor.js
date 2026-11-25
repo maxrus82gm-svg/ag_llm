@@ -454,7 +454,7 @@
       while ($('bpMessages').children.length > 12) $('bpMessages').firstElementChild.remove();
       $('bpMessages').scrollTop = $('bpMessages').scrollHeight;
       state.previewNodes = new Set(response.trace.map(row => row.node_id)); renderNodes(); showValidation(response.validation);
-      notice('Предпросмотр завершён. Запросов к моделям: 0. В историю Ultra Chat ничего не записано.');
+      notice('Предпросмотр завершён. Запросов к моделям: 0. В историю Чата Нейрополис ничего не записано.');
     } catch (error) {
       if (epoch === state.epoch) { if (error.details?.validation) showValidation(error.details.validation); report(error); }
     }

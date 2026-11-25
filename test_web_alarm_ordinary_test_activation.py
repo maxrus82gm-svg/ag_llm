@@ -15,7 +15,6 @@ from uuid import uuid4
 from web_alarm import launcher
 
 ROOT = Path(__file__).resolve().parent
-PACKAGE = ROOT / "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001"
 
 
 class ActivationTests(unittest.TestCase):
@@ -47,6 +46,13 @@ class ActivationTests(unittest.TestCase):
         before = {n: hashlib.sha256((ROOT / n).read_bytes()).hexdigest() for n in protected}
         env = {k: os.environ[k] for k in os.environ if not k.upper().startswith("GIGACHAT_")}
         env["PYTHONDONTWRITEBYTECODE"] = "1"
+        # Exercise the launcher without opening a tab in the user's browser profile.
+        browser_hook = tempfile.TemporaryDirectory(prefix="activation_browser_")
+        self.addCleanup(browser_hook.cleanup)
+        (Path(browser_hook.name) / "sitecustomize.py").write_text(
+            "import webbrowser\nwebbrowser.open = lambda *args, **kwargs: False\n", encoding="utf-8"
+        )
+        env["PYTHONPATH"] = browser_hook.name
         # An environment marker alone must never skip installing the guard.
         env["ORDINARY_GUARD_LOG"] = "caller-marker-is-not-proof-of-a-guard"
         command = [env.get("COMSPEC", "cmd.exe"), "/d", "/c", str(ROOT / "Start_WebAlarm_Test.cmd")]
@@ -76,6 +82,7 @@ class ActivationTests(unittest.TestCase):
             self.assertEqual(root.parent, Path(tempfile.gettempdir()).resolve())
             self.assertTrue(root.name.startswith("ordinary_core_TEST_"))
             self.assertTrue(ready["browser_requested"])
+            self.assertFalse(ready["browser_opened"])
             self.assertFalse(ready["real_available"])
             origin = ready["url"].rstrip("/")
             port = int(origin.rsplit(":", 1)[1])
@@ -137,14 +144,7 @@ class ActivationTests(unittest.TestCase):
             code = process.wait(timeout=20)
             reader.join(5)
             process.stdout.close()
-            (PACKAGE / "evidence/cmd.stdout.txt").write_text("".join(output), encoding="utf-8")
         self.assertEqual(code, 0, "".join(output))
         self.assertIn("ORDINARY_TEST_CLEANED", "".join(output))
         self.assertFalse(Path(ready["root"]).exists())
         self.assertEqual(before, {n: hashlib.sha256((ROOT / n).read_bytes()).hexdigest() for n in protected})
-        (PACKAGE / "evidence/cmd_result.json").write_text(json.dumps({
-            "command": command, "exit_code": code, "core_bridge": True,
-            "browser_requested": ready["browser_requested"], "browser_opened": ready["browser_opened"],
-            "two_chats": True, "complete_context": True, "replay_no_duplicates": True,
-            "http_reopen": True, "real_denied": True, "temp_removed": True,
-            "protected_launch_files_unchanged": True, "visual_browser_F5": "NOT RUN"}, indent=2), encoding="utf-8")

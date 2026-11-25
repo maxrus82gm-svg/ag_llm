@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "0c7086c64abd6a3469136d8ba7c1ada3ec1d8fd17d10f353ea105748bb154492",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 647,
+    "b11b": 653,
+    "b11e": 908
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+    "problems": [],
+    "title": "Комплексная модернизация Студии Нейрополис: подключения, восстановление сессий, EVM, UX и продуктовый нейминг",
+    "lines": 598
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+    "copy_sha256": "d5221c7d19e74008a9f5771c44ae7faf6b4ceda3ae4e334d13dc5f2eb90cc803",
+    "history_id": "H-CODEX-000043",
+    "history_record": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "0c7086c64abd6a3469136d8ba7c1ada3ec1d8fd17d10f353ea105748bb154492",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+    "copy_sha256": "d5221c7d19e74008a9f5771c44ae7faf6b4ceda3ae4e334d13dc5f2eb90cc803",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/handoff_task.md",
+    "archive_sha256": "1d637883ea5fc6d7d3b82d28670761768efb0959058c0761c72c87dd30760d2c"
+   },
+   "history_id": "H-CODEX-000044",
+   "new_card_sha256": "2fb4e12ddb02a264fec1d748f804ecbf6c4f4fb55e8705d6ac15505a699195ba",
+   "copy_sha256_lf": "f7c9e7737292071f46b2373b134d1944b6f834646a97286bbacd3c6cb281c1cf",
+   "copy_lines": 598,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "0c7086c64abd6a3469136d8ba7c1ada3ec1d8fd17d10f353ea105748bb154492",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001",
+    "copy_sha256": "d5221c7d19e74008a9f5771c44ae7faf6b4ceda3ae4e334d13dc5f2eb90cc803",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-STANDARD-GRACEFUL-EXIT-SESSION-RECOVERY-001/handoff_task.md",
+    "archive_sha256": "1d637883ea5fc6d7d3b82d28670761768efb0959058c0761c72c87dd30760d2c"
+   },
+   "history_id": "H-CODEX-000044",
+   "new_card_sha256": "2fb4e12ddb02a264fec1d748f804ecbf6c4f4fb55e8705d6ac15505a699195ba",
+   "copy_sha256_lf": "f7c9e7737292071f46b2373b134d1944b6f834646a97286bbacd3c6cb281c1cf",
+   "copy_lines": 598,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+    "history_id": "H-CODEX-000044",
+    "record": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "c08a9372a08ea30dc662db328d5e1c674ebccc849b2d6b62ee6c821cb3f2c13f",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "2fb4e12ddb02a264fec1d748f804ecbf6c4f4fb55e8705d6ac15505a699195ba",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 657
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+    "copy_sha256": "f7c9e7737292071f46b2373b134d1944b6f834646a97286bbacd3c6cb281c1cf",
+    "history_id": "H-CODEX-000044",
+    "history_record": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+ "history": {
+  "id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+  "history_id": "H-CODEX-000044",
+  "record": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

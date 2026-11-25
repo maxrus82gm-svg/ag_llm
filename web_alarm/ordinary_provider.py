@@ -160,6 +160,11 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
             if type(api.model_cards.checker) is LiveCheckNotAuthorized:
                 api.model_cards.checker = _OrdinaryTurnChecker(self)
         self._personal_lock = threading.Lock()
+        self._connection_failure = None
+        if api is not None and factory._fixture is None:
+            api.model_cards.gigachat_runtime = self._connection_state
+            if factory._session is not None:
+                factory._session._model_enabled = api.model_cards.is_enabled
         self._factory = factory
         self._colibri_transport=factory._colibri_transport
         self._colibri_enabled=None
@@ -192,34 +197,29 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         return root, wid
 
     def capability(self):
+        from .standard_live import personal_chat_registration
         contract = self._factory.preflight()
         fixture = self._factory._fixture is not None
-        session = self._factory._session
-        active = False
-        if session is not None:
-            try:
-                session.check()
-                active = bool(session._available)
-            except PreSendDenied:
-                pass
-        from .standard_live import personal_chat_registration
         personal = personal_chat_registration(self.registry)
-        selected_root = None
-        if active and session is not None and not session.synthetic:
-            try:
-                selected_root = self.registry.find_by_root(session.root)
-            except Exception:
-                pass
-        admitted = {c.model_id for c in session.approval.contracts} if session is not None else set()
-        local_context=self._api.model_cards._context() if self._colibri_transport is not None else None
-        models = [dict(model_id=m.model_id, display_name=m.display_name, provider_model_id=m.provider_model_id,
-            api=(self._api.model_cards._card(local_context,m)['api'] if local_context is not None else
-                 self._api.model_cards.card(m.model_id)['api'] if self._api is not None else None),
-            availability=(('UNAVAILABLE' if m.provider_model_id not in session._available else
-                           'AVAILABLE' if m.model_id in admitted else 'NOT_APPROVED')
-                         if session is not None else 'UNVERIFIED'))
-            for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local
-            and (self._api is None or self._api.model_cards.is_enabled(m.model_id))]
+        local_context = self._api.model_cards._context() if self._api is not None else None
+        state, reason, session = (local_context.get('gigachat_runtime') if local_context is not None else None) or self._connection_state()
+        active = state == 'ACTIVE'
+        selected_root = self.registry.find_by_root(session.root) if active and not session.synthetic else None
+        models = []
+        for m in list_model_specs():
+            if not m.enabled or m.provider != 'gigachat' or m.is_local:
+                continue
+            card = self._api.model_cards._card(local_context, m) if local_context is not None else None
+            if card is not None and not card['enabled']:
+                continue
+            availability = ('UNAVAILABLE' if m.provider_model_id not in session._available else
+                            'AVAILABLE' if any(c.model_id == m.model_id for c in session.approval.contracts)
+                            else 'NOT_APPROVED') if active else state if state != 'INACTIVE' else 'UNVERIFIED'
+            if card is not None:
+                availability = card['api'].get('availability', availability)
+            models.append(dict(model_id=m.model_id, display_name=m.display_name,
+                               provider_model_id=m.provider_model_id, availability=availability,
+                               api=card['api'] if card is not None else None))
         if self._colibri_transport is not None:
             registry,targets,_state=local_context["snapshot"]
             local={t["target_id"]:t for t in targets}
@@ -234,7 +234,8 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 local_status=local[s.model_id]["status"])
                 for s in registry.list_model_specs() if s.is_local
                 and self._api.model_cards.is_enabled(s.model_id))
-        return {**contract, 'available': fixture or active, 'real_available': active and not session.synthetic if session else False,
+        return {**contract, 'available': fixture or active or state == 'RESTORE_REQUIRED',
+                'provider_state': state, 'provider_reason': reason, 'real_available': active and not session.synthetic if session else False,
                 'mode': 'ORDINARY', 'core_bridge': True, 'chat_preferences': True, 'compact_sidebar': True,
                 'execution_mode': ('PROTOCOL_TEST' if session.synthetic else 'REAL') if active else 'OFFLINE_APPLICATION' if fixture else 'HOLD',
                 'models': models,
@@ -270,109 +271,164 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         return (200 if existed else 201), {'wa_workspace_id': record.workspace_id, 'created': not existed}
 
 
-    def start_live(self, body):
-        """Explicit local-user action opens a finite six-model session.
+    def _consent_workspace(self):
+        from .live_bootstrap import _verified_workspace
+        from .standard_live import personal_chat_registration
+        record = personal_chat_registration(self.registry)
+        if record is None:
+            return None, None, None
+        try:
+            root, wid = _verified_workspace(self._api, record.workspace_id)
+        except Exception:
+            raise PreSendDenied('personal_storage_unavailable') from None
+        return record, root, wid
 
-        The existing profile/environment owns credentials and OAuth. Never accept
-        a grant, model cap, endpoint, root or credentials from browser JSON.
-        """
+    def _connection_state(self):
+        from .standard_live import read_standard_consent, standard_approval
+        session = self._factory._session
+        if session is not None:
+            if getattr(session, '_close_error', False):
+                return ('BLOCKED', 'provider_session_close_unverified', None)
+            try:
+                session.check()
+                if session._available:
+                    return ('ACTIVE', None, session)
+            except PreSendDenied as exc:
+                if str(exc) != 'provider_session_inactive':
+                    return ('BLOCKED', str(exc), None)
+            except Exception:
+                return ('BLOCKED', 'provider_session_state_unverifiable', None)
+        if self._api is not None and self._factory._fixture is None:
+            try:
+                _, root, wid = self._consent_workspace()
+                if root is not None and read_standard_consent(root, wid, standard_approval()) is not None:
+                    return ('RESTORE_REQUIRED', self._connection_failure, None)
+            except PreSendDenied as exc:
+                return ('BLOCKED', str(exc), None)
+        return ('INACTIVE', None, None)
+
+    def _open_standard_session(self, *, explicit=False):
+        import asyncio
+        from gigachat_runtime import ProviderSession
+        from .standard_live import read_standard_consent, save_standard_consent, standard_approval, standard_credentials
+
+        current = self._factory._session
+        if current is not None:
+            try:
+                current.check()
+            except PreSendDenied as exc:
+                renewable = {'provider_session_inactive'}
+                if explicit:
+                    renewable |= {'consent_policy_changed', 'consent_credentials_changed',
+                                  'credentials_or_scope_invalid', 'consent_revoked_or_replaced'}
+                if str(exc) not in renewable:
+                    raise
+                current.close()
+                self._factory._session = None
+            else:
+                if explicit:
+                    raise PreSendDenied('live_already_active')
+                return current
+
+        _, root, wid = self._consent_workspace()
+        if root is None:
+            raise PreSendDenied('personal_chat_required')
+        approval = standard_approval()
+        credential = standard_credentials()
+        consent = None if explicit else read_standard_consent(root, wid, approval)
+        if not explicit and consent is None:
+            raise PreSendDenied('user_permission_required')
+        session = ProviderSession(root, wid, approval)
+
+        try:
+            if explicit:
+                consent = save_standard_consent(root, wid, approval, credential=credential)
+
+            def check_consent():
+                if read_standard_consent(root, wid, approval) != consent:
+                    raise PreSendDenied('consent_revoked_or_replaced')
+
+            session._check_user_permission = check_consent
+            session._permission_revision = consent['salt']
+            session._model_enabled = self._api.model_cards.is_enabled
+            # Read again under the account lease before any provider I/O.
+            check_consent()
+            available = asyncio.run(session.discover_models())
+            approved = {get_model_spec(c.model_id).provider_model_id for c in approval.contracts}
+            if not available.intersection(approved):
+                raise PreSendDenied('no_gigachat_models_in_catalog')
+        except Exception as exc:
+            try:
+                session.close()
+            except Exception:
+                self._factory._session = session
+                raise PreSendDenied('live_session_unresolved') from None
+            self._connection_failure = str(exc) if isinstance(exc, PreSendDenied) else 'provider_control_request_failed'
+            raise PreSendDenied(self._connection_failure) from None
+        self._factory._registry = self.registry
+        self._factory._session = session
+        self._connection_failure = None
+        return session
+
+    def start_live(self, body):
+        """Explicit owner approval on the established same-origin write route."""
         if type(body) is not dict or body != {'confirmation': 'GIGACHAT 6'}:
-            raise UltraChatError(400, 'live_confirmation_required', 'Confirm the six-model bounded session')
+            raise UltraChatError(400, 'live_confirmation_required', 'Confirm persistent GigaChat permission')
         if self._api is None or self._factory._fixture is not None:
             raise UltraChatError(403, 'live_unavailable', 'Only normal local STANDARD can start GigaChat')
         if not any(self._api.model_cards.is_enabled(m.model_id) for m in list_model_specs()
                    if m.enabled and m.provider == 'gigachat' and not m.is_local):
             raise UltraChatError(409, 'no_enabled_models', 'Enable a GigaChat model in EVM first')
-        import os
-        import secrets
-        import time
-        import asyncio
-        from .live_bootstrap import _verified_workspace
-        from .standard_live import personal_chat_registration, OBSERVED_MODEL
-        from gigachat_runtime import LiveApproval, ModelContract, ProviderSession
-        if (not os.environ.get('GIGACHAT_CREDENTIALS')
-                or os.environ.get('GIGACHAT_SCOPE', 'GIGACHAT_API_PERS') != 'GIGACHAT_API_PERS'):
+        from .standard_live import standard_credentials
+        try:
+            standard_credentials()
+        except PreSendDenied:
             raise UltraChatError(409, 'live_credentials_missing',
-                                 'Configure the existing GIGACHAT_CREDENTIALS and PERS profile, then restart STANDARD')
+                                 'Configure the existing GIGACHAT_CREDENTIALS and PERS profile, then restart STANDARD') from None
         with self._personal_lock:
-            current = self._factory._session
-            if current is not None:
-                try:
-                    current.check()
-                except PreSendDenied:
-                    try:
-                        current.close()
-                    except PreSendDenied:
-                        raise UltraChatError(409, 'live_session_unresolved', 'Previous provider session requires review') from None
-                    self._factory._session = None
-                else:
-                    raise UltraChatError(409, 'live_already_active', 'Stop the active GigaChat session first')
-            record = personal_chat_registration(self.registry)
-            if record is None:
-                raise UltraChatError(409, 'personal_chat_required', 'Create Личные чаты first')
             try:
-                root, wid = _verified_workspace(self._api, record.workspace_id)
-            except Exception:
-                raise UltraChatError(409, 'personal_storage_unavailable', 'Personal storage needs review') from None
-            contracts = tuple(
-                    ModelContract(m.model_id, 128000 if m.model_id.startswith('gigachat_2') or m.model_id == 'gigachat_ultra' else 32768, 20000,
-                    (OBSERVED_MODEL,) if m.model_id == 'gigachat_2' else (),
-                    'Operator output preference ceiling 20000; 2-series and 3-Ultra context 128000 from official docs, '
-                    'other 3-series context admission ceiling 32768, provider context/output maximum UNKNOWN; '
-                    'exact GigaChat-2 previously observed; other versions pinned on first bounded response',
-                    version_mode='EXACT' if m.model_id == 'gigachat_2' else 'DISCOVER_FAMILY')
-                for m in list_model_specs()
-                if m.enabled and m.provider == 'gigachat' and not m.is_local
-            )
-            if len(contracts) != 6:
-                raise UltraChatError(409, 'live_registry_changed', 'Six-model registry requires review')
-            approval = LiveApproval(
-                grant_id='InAppGigaChat' + secrets.token_hex(16),
-                user_go='in-app authenticated same-origin GIGACHAT 6 consent; 2026-11-16',
-                independent_review='Bounded offline verification required before owner merge; general release HOLD',
-                account_id='existing-windows-gigachat-pers-account', scope='GIGACHAT_API_PERS',
-                expires_at=time.time() + 86400, contracts=contracts,
-                max_oauth=None, max_catalog=1, max_inference=None,
-                max_liability_tokens=None, max_request_bytes=4096, max_answer_tokens=20000,
-                user_turn_mode=True)
-            try:
-                session = ProviderSession(root, wid, approval)
+                session = self._open_standard_session(explicit=True)
             except PreSendDenied as exc:
-                raise UltraChatError(409, 'live_session_denied',
-                                     'Provider session requires review: ' + str(exc)) from None
-            try:
-                available = asyncio.run(session.discover_models())
-                if not any(m.provider_model_id in available for m in list_model_specs()):
-                    raise PreSendDenied('no_gigachat_models_in_catalog')
+                raise UltraChatError(409, str(exc), 'GigaChat: ' + str(exc)) from None
             except Exception:
-                try:
-                    session.close()
-                except Exception:
-                    raise UltraChatError(503, 'live_session_unresolved',
-                                         'Provider control call uncertain; review before retry') from None
-                raise UltraChatError(503, 'live_catalog_unavailable',
-                                     'Provider catalog could not be verified; no chat Turn was sent') from None
-            self._factory._registry = self.registry
-            self._factory._session = session
-            return 200, {'state': 'ACTIVE', 'limits': {'sends': 'PER_USER_TURN', 'output_tokens': 20000,
-                                                       'request_bytes': 4096, 'hours': 24},
+                raise UltraChatError(503, 'live_storage_unavailable', 'Provider state requires storage review') from None
+            return 200, {'state': 'ACTIVE', 'limits': {'sends': 'PER_USER_TURN',
+                         'output_tokens': session.approval.max_answer_tokens,
+                         'request_bytes': session.approval.max_request_bytes},
                          'models': self.capability()['models']}
 
     def stop_live(self, body):
-        """An explicit stop closes the durable grant without clearing any history."""
+        """Revoke consent even when the runtime has already stopped."""
         if type(body) is not dict or body:
             raise UltraChatError(400, 'invalid_ultra_chat_request', 'Expected empty stop request')
         if self._api is None or self._factory._fixture is not None:
             raise UltraChatError(403, 'live_unavailable', 'Only normal local STANDARD can stop GigaChat')
+        from gigachat_runtime import account_owner_lock
+        from .standard_live import save_standard_consent, standard_approval
         with self._personal_lock:
             session = self._factory._session
-            if session is None:
-                return 200, {'state': 'INACTIVE'}
             try:
-                session.close()
-            except PreSendDenied:
-                raise UltraChatError(409, 'live_session_busy', 'A provider request is still active') from None
+                _, root, wid = self._consent_workspace()
+
+                def revoke():
+                    if root is not None:
+                        save_standard_consent(root, wid)
+
+                if session is not None:
+                    session.close(before_release=revoke)
+                elif root is not None:
+                    owner = account_owner_lock(standard_approval().account_id)
+                    owner.acquire()
+                    try:
+                        revoke()
+                    finally:
+                        owner.release()
+            except PreSendDenied as exc:
+                raise UltraChatError(409, 'live_session_busy', 'GigaChat: ' + str(exc)) from None
+            except Exception:
+                raise UltraChatError(503, 'live_storage_unavailable', 'Provider state requires storage review') from None
             self._factory._session = None
+            self._connection_failure = None
             return 200, {'state': 'INACTIVE'}
 
     def create_workspace(self, body):
@@ -399,6 +455,12 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
             ws, cid = self._settings_route(path, raw_query)
             return lambda body: (200, self.chat_model(ws, cid, body))
         return super().write_route(path, raw_query)
+
+    def _default_model(self):
+        session = self._factory._session
+        if session is not None and not session.synthetic and len(session.approval.contracts) == 1:
+            return session.approval.contracts[0].model_id
+        return MODEL_ID
 
     def chat_model(self, wa_workspace_id, chat_id, update=...):
         allowed = {m.model_id for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local}
@@ -428,12 +490,8 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                         else:
                             ledger.initialize()
                     except LedgerDenied:
-                        if update is not ...:
-                            raise UltraChatError(409, 'ordinary_workspace_not_enrolled',
-                                'Workspace audit needs review before enabling GigaChat') from None
                         enrolled = False
-                fallback = (self._factory._session.approval.contracts[0].model_id
-                            if self._factory._session is not None and not self._factory._session.synthetic else MODEL_ID)
+                fallback = self._default_model()
                 selected = metadata.get("ordinary_chat_model", fallback) if update is ... else update['model_ref']
                 import re
                 saved_local=type(selected) is str and re.fullmatch(r"tgt_[a-f0-9]{64}",selected)
@@ -450,7 +508,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
         except (core.StorageWriteError, core.ChatNotFoundError, OSError, ValueError):
             raise UltraChatError(503, "ordinary_model_unavailable", "Chat model could not be verified") from None
 
-    def submit_turn(self, wa_workspace_id, chat_id, body):
+    def submit_turn(self, wa_workspace_id, chat_id, body, *, diagnostic=False):
         if type(body) is not dict or set(body) != {"idempotency_key", "model_ref", "text"}:
             raise UltraChatError(400, "invalid_turn_request", "Expected model, text and retry key")
         registry_allowed = {m.model_id for m in list_model_specs() if m.enabled and m.provider == 'gigachat' and not m.is_local}
@@ -474,7 +532,10 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                         raise UltraChatError(403,"local_provider_unavailable","Local provider is not enabled")
             except UltraChatError:
                 raise UltraChatError(403,"local_provider_unavailable","Local provider is not enabled") from None
-        if self._api is not None and not self._api.model_cards.is_enabled(body['model_ref']):
+        replay = None
+        if self._factory._fixture is None and not local:
+            replay = self._prepare_standard_turn(wa_workspace_id, chat_id, body)
+        elif self._api is not None and not self._api.model_cards.is_enabled(body['model_ref']):
             from .turn_service import KEY, TurnService, identities
             accepted = False
             key = body.get('idempotency_key')
@@ -490,30 +551,26 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                         raise
             if not accepted:
                 raise UltraChatError(403, "ordinary_model_disabled", "Model is disabled in EVM")
-        if self._factory._fixture is None and not local:
-            try:
-                self._factory.require_real()
-            except PreSendDenied:
-                raise UltraChatError(403, "ordinary_real_hold", "GigaChat sending awaits provider and safety acceptance") from None
         # Preserve the existing Turn/error contract: the immutable admitted wire
         # is refused by session.validate_wire before physical POST for an absent
         # catalog model; UI availability alone must not change stored outcomes.
         root, _ = self._writable_workspace(_core(), wa_workspace_id)
         self._factory.fixture_for(self.registry, root)
-        result = super().submit_turn(wa_workspace_id, chat_id, body)
+        result = replay if replay is not None else super().submit_turn(wa_workspace_id, chat_id, body)
         if (self._api is not None and result.get('execution_mode') == 'REAL'
                 and type(result.get('evm_profile')) is dict):
             try:
                 if result.get('state') == 'SUCCEEDED':
                     synced = self._api.model_cards.record_chat_success(body['model_ref'],
-                        result['evm_profile']['settings_version'], turn_id=result['turn_id'])
+                        result['evm_profile']['settings_version'], turn_id=result['turn_id'], diagnostic=diagnostic)
                 elif result.get('state') == 'UNKNOWN':
                     synced = self._api.model_cards.record_chat_unknown(body['model_ref'],
-                        result['evm_profile']['settings_version'], turn_id=result['turn_id'])
+                        result['evm_profile']['settings_version'], turn_id=result['turn_id'], diagnostic=diagnostic)
                 elif result.get('state') == 'FAILED':
                     synced = self._api.model_cards.record_chat_failure(body['model_ref'],
                         result['evm_profile']['settings_version'],
-                        code=result.get('diagnostic_code') or result['state'].lower(), turn_id=result['turn_id'])
+                        code=result.get('diagnostic_code') or result['state'].lower(), turn_id=result['turn_id'],
+                        diagnostic=diagnostic)
                 else:
                     synced = False
                 result = {**result, 'evm_status_sync': 'UPDATED' if synced else 'NO_CHANGE'}
@@ -522,6 +579,41 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 # the secondary EVM indicator store needs repair.
                 result = {**result, 'evm_status_sync': 'UNAVAILABLE'}
         return self._application_view(result)
+
+    def _prepare_standard_turn(self, wa_workspace_id, chat_id, body):
+        from .turn_service import TurnService
+        from ultra_budget_ledger import BudgetLedger, LedgerDenied
+
+        root, wid = self._writable_workspace(_core(), wa_workspace_id)
+        reader = TurnService(test_roots=[root])
+        session = self._factory._session
+        provider_mode = 'PROTOCOL_TEST' if session is not None and session.synthetic else 'REAL'
+        replay = reader.recover_existing_ordinary(root, wid, chat_id, body, provider_mode=provider_mode)
+        if replay is not None:
+            return replay
+        if self._api is not None and not self._api.model_cards.is_enabled(body['model_ref']):
+            raise UltraChatError(403, 'ordinary_model_disabled', 'Model is disabled in EVM')
+        connection, reason, _ = self._connection_state()
+        if connection in ('INACTIVE', 'BLOCKED'):
+            raise UltraChatError(403, 'ordinary_real_hold', 'GigaChat: ' + (reason or 'user_permission_required'))
+        selected = self.chat_model(wa_workspace_id, chat_id)
+        if selected['model_ref'] != body['model_ref']:
+            raise UltraChatError(409, 'ordinary_model_selection_changed', 'Chat model changed; reload the saved selection')
+        try:
+            BudgetLedger(root, wid).initialize()
+        except LedgerDenied:
+            raise UltraChatError(409, 'ordinary_workspace_not_enrolled',
+                                 'Workspace audit needs review before sending') from None
+        with self._personal_lock:
+            try:
+                self._open_standard_session()
+                self._factory.require_real()
+            except PreSendDenied as exc:
+                self._connection_failure = str(exc)
+                raise UltraChatError(403, 'ordinary_real_hold', 'GigaChat: ' + str(exc)) from None
+            except Exception:
+                raise UltraChatError(503, 'live_storage_unavailable', 'Provider state requires storage review') from None
+        return None
 
     def _application_view(self, result):
         # Durable TEST_OFFLINE provenance is retained; only the browser envelope
@@ -537,6 +629,21 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
     def latest_turn(self, wa_workspace_id, chat_id):
         result = super().latest_turn(wa_workspace_id, chat_id)
         return {**result, "turn": self._application_view(result["turn"]) if result["turn"] else None}
+
+    def chats(self, wa_workspace_id):
+        listing = super().chats(wa_workspace_id)
+        core = _core()
+        root = self._registration(wa_workspace_id).workspace_root
+        for item in listing['chats']:
+            if item['status'] != 'ok':
+                continue
+            try:
+                history = core.read_chat_history_bounded(root, item['chat_id'])
+            except core.StorageReadError:
+                continue
+            item['last_activity_at'] = max((m['created_at'] for m in history['messages']),
+                                           default=None)
+        return listing
 
     def messages(self, wa_workspace_id, chat_id, before, limit):
         if self._factory._fixture is not None:
@@ -555,7 +662,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 page['usage_summary'] = {'available': False, 'synthetic': False}
         page['usage_summary']['synthetic'] = bool(self._factory._fixture is not None
             or self._factory._session and self._factory._session.synthetic)
-        if not self._factory._fixture and not self._factory._session and not page['usage_summary'].get('attempts'):
+        if page['usage_summary'].get('attempts') == 0 and page.get('total_messages', 0):
             page['usage_summary']['available'] = False
         return page
 
@@ -579,7 +686,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 return super()._fixture_turns(root, context, context_ref, response_text)
             return TurnService(test_roots=[root])  # Read-only recovery; no sender.
         chat_id = context_ref.removeprefix('stage5:') if context_ref.startswith('stage5:') else None
-        model_id = session.approval.contracts[0].model_id if not session.synthetic else MODEL_ID
+        model_id = self._default_model()
         answer = session.approval.max_answer_tokens
         if chat_id:
             identity = _core().read_workspace_identity_bounded(root)
@@ -588,7 +695,7 @@ class OrdinaryApplicationChatService(OrdinaryCoreChatService):
                 raise UltraChatError(409, 'workspace_unavailable', 'Workspace identity needs review')
             with _core()._existing_workspace_writer(root, workspace_id) as writer:
                 _, metadata = _core()._require_chat_for_write(writer, chat_id)
-                model_id = metadata.get('ordinary_chat_model', session.approval.contracts[0].model_id if not session.synthetic else MODEL_ID)
+                model_id = metadata.get('ordinary_chat_model', model_id)
                 answer = metadata.get('ordinary_chat_settings', {}).get('answer_tokens', answer)
         if not chat_id:
             return TurnService(test_roots=[root])
@@ -615,25 +722,28 @@ class _OrdinaryTurnChecker:
 
     @property
     def authorized(self):
-        session = self.service._factory._session
-        if session is None or session.synthetic:
-            return False
-        try:
-            session.check()
-            return bool(session._available)
-        except PreSendDenied:
-            return False
+        state, _, session = self.service._connection_state()
+        return state == 'RESTORE_REQUIRED' or (state == 'ACTIVE' and not session.synthetic)
 
     @property
     def reason(self):
-        return "Провайдер не подключён. Подключите GigaChat в EVM." if not self.authorized else ""
+        state, reason, _ = self.service._connection_state()
+        if state == 'BLOCKED':
+            return 'GigaChat: ' + reason
+        return "Провайдер не подключён. Подключите GigaChat в EVM." if state == 'INACTIVE' else ""
 
     def check(self, request):
         from uuid import uuid4
         from .model_cards import CheckRefusedError, CheckResult
         from .standard_live import personal_chat_registration
-        session = self.service._factory._session
-        if (not self.authorized or session is None or request.provider_id != 'gigachat'
+        if not self.authorized or request.provider_id != 'gigachat':
+            raise CheckRefusedError('A verified provider permission is required')
+        try:
+            with self.service._personal_lock:
+                session = self.service._open_standard_session()
+        except PreSendDenied as exc:
+            raise CheckRefusedError('GigaChat: ' + str(exc)) from None
+        if (session.synthetic
                 or request.model_id not in {c.model_id for c in session.approval.contracts}
                 or request.provider_model_id not in session._available):
             raise CheckRefusedError('A verified active provider session is required')
@@ -649,7 +759,7 @@ class _OrdinaryTurnChecker:
             {'chat_id': chat_id, 'title': 'Проверка EVM — ' + request.model_id})
         self.service.chat_model(record.workspace_id, chat_id, {'model_ref': request.model_id})
         result = self.service.submit_turn(record.workspace_id, chat_id,
-            {'idempotency_key': uuid4().hex, 'model_ref': request.model_id, 'text': request.message})
+            {'idempotency_key': uuid4().hex, 'model_ref': request.model_id, 'text': request.message}, diagnostic=True)
         if result.get('execution_mode') != 'REAL':
             raise CheckRefusedError('The provider did not execute a real Turn')
         if result.get('state') == 'SUCCEEDED' and result.get('answer'):

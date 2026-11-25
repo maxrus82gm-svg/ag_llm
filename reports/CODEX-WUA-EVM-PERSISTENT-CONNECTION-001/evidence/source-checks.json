@@ -1,0 +1,171 @@
+{
+  "result": "PASS",
+  "python_compile": 19,
+  "routes_compatible": true,
+  "launcher_cmd_brand_only": true,
+  "profiles_compatible": true,
+  "source_files": [
+    {
+      "path": "gigachat_runtime.py",
+      "bytes": 28730,
+      "sha256": "f2a01992e5ba9a11c2c176e2bb570052ea0242374f93dd260ae566df941180be",
+      "before_sha256": "53e518cbcab622d01fb05fe4cf9f2f9183de6d2f6f5bf515ea6853671be97c21"
+    },
+    {
+      "path": "rt002_multimodel_reconciliation.json",
+      "bytes": 4255,
+      "sha256": "cb3b8652e3f41358ab763b2234617a3bdb96a785aea70bb4dbf1288e1e2e1408"
+    },
+    {
+      "path": "web_alarm/standard_live.py",
+      "bytes": 12388,
+      "sha256": "765db819e2fb05e9c0b2283be8bb6cd6f099118571419e7688505cca948359a8",
+      "before_sha256": "93a9132802fc09e73fb77a1668e20cc8344b9ff5aa4486b2a81e8c91a55bebb4"
+    },
+    {
+      "path": "web_alarm/ordinary_provider.py",
+      "bytes": 43707,
+      "sha256": "67d36bf8ab6436fb38b1e3b1bed6eb979dc1e67ffd59fbb5f944ed6a6df16b99",
+      "before_sha256": "672f10cc422407e1c1888be8b85127664514d9c48f56ebd15cd98c2402abbd80"
+    },
+    {
+      "path": "web_alarm/model_cards.py",
+      "bytes": 68637,
+      "sha256": "ae3df6ef43c7d7a58108631b56326d126ea94ae4e58283696da322d0546f11f8",
+      "before_sha256": "e13fcc4beb391f8bd8048b4cb44c012e5d56adb15eda7fd455e99bb6ca4b2396"
+    },
+    {
+      "path": "web_alarm/turn_service.py",
+      "bytes": 71626,
+      "sha256": "fe662c9aaed952dadb4e1b3bde36e24d46e0d592b325e53bb5130df53d9d968a",
+      "before_sha256": "a7b31821b4e0a952d16e7b16f8d29ad85aabf4cf6fad408b2b2b7ac2699d5d40"
+    },
+    {
+      "path": "web_alarm/ui.py",
+      "bytes": 283049,
+      "sha256": "328779b164bf17ba0d3bc2adfb1fd587a7f6bea43e145ba71215f662f7466315",
+      "before_sha256": "0b0521a0aa661dfc5afcfa79a8386dca0770c9fcad1fa3adf20caee92277756c"
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "bytes": 65434,
+      "sha256": "4e104374a88d850a90aab4843c7f5004b0915a0ad538ab6c91ff4081a53e6d79",
+      "before_sha256": "e3c88fe288318eb9d9294854e98655fc06fc2d201f194fb90572aba1928387a6"
+    },
+    {
+      "path": "web_alarm/server.py",
+      "bytes": 81393,
+      "sha256": "cff1840e8aaacac9a9073843ea96b7e02c80a3dd383a03b7bb56381a3778e279",
+      "before_sha256": "70f76014e431ff495fe6f4210b02b10a70e95128079adafd2e306790bdf17006"
+    },
+    {
+      "path": "web_alarm/launcher.py",
+      "bytes": 28179,
+      "sha256": "932f010f42c1c60617af14db2636d3b5065614fb8e87ecfdacb3fe00eb2e2613",
+      "before_sha256": "232146bfa737e77193dd3ebdbed00fbf0a066ec0f56925d1eb6a2d8125b56768"
+    },
+    {
+      "path": "web_alarm/launch_config.json",
+      "bytes": 1804,
+      "sha256": "2b287c7f2dbc74ca2f45e53018b80f4950b60cbc9183315a40c9d1c2085b20bb",
+      "before_sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2"
+    },
+    {
+      "path": "web_alarm/launch_test_config.json",
+      "bytes": 715,
+      "sha256": "e2f8eb8610f101d5ef09f10555bbf0e0bc94183736b76b0a857ea5b9d96f9c09",
+      "before_sha256": "c6a7d08b3488574587dbf5697923056607fa3418aa6eff7c0d9b69361b461e1a"
+    },
+    {
+      "path": "web_alarm/ordinary_test_fixture.py",
+      "bytes": 2992,
+      "sha256": "4513548a7d51a75a94262ac4d0f5cbcdef0f26854f71554aacac63cf833b888a",
+      "before_sha256": "0b59f70121f8e68a24c00c47b4115266542e4a604e04bbe82a77064e89bc39c8"
+    },
+    {
+      "path": "web_alarm/blueprint_assets/editor.html",
+      "bytes": 10159,
+      "sha256": "5b1e7ebfe60e72b7672b3c11c628ad1a8b76ef5bded44897910e182179373902",
+      "before_sha256": "b738b93f1b6b04d7868bc7c94bb033d75eea607bfb813fd00031e43c47ba3173"
+    },
+    {
+      "path": "web_alarm/blueprint_assets/editor.js",
+      "bytes": 41052,
+      "sha256": "3a71e248b98a0b2794273e0857f03ee4adde3b5dc9cff9c614c35c0cde84826d",
+      "before_sha256": "53a20665c5cbc87565926558c5407952632f268750c71b28d84e0cfd51680e06"
+    },
+    {
+      "path": "Start_WebAlarm_Standard.cmd",
+      "bytes": 926,
+      "sha256": "d078f557930a0428790a1fdf4ba565f2c048f48ba8afc38ebd282218ff2f80e4",
+      "before_sha256": "79468ca15e53bc595521278f67ed147304787a2789567ab33096e3075e3dc372"
+    },
+    {
+      "path": "Start_WebAlarm_Test.cmd",
+      "bytes": 1203,
+      "sha256": "70259cf25d8f4a907133761585ef3572008edb88809c175396da3d21cc323df6",
+      "before_sha256": "157091918484c159ecef497a60c78e95b45068fbc42c38c2682b6709a12bb6e3"
+    },
+    {
+      "path": "WEB_ALARM_START.md",
+      "bytes": 3839,
+      "sha256": "97bc4b12b29660e8f5c0be16ffe2e6266729ff595cc23477860999e49366db17",
+      "before_sha256": "124b51db87263cc65d77a2e6f0590a1f3e7278691a771f27cad4f40c9938753d"
+    },
+    {
+      "path": "test_rt002_s1_routes.py",
+      "bytes": 134162,
+      "sha256": "2744d3575e6f6ec76345be581d8d0bc93dbbdea45ec61f43feeb0a41409557a0"
+    },
+    {
+      "path": "test_rt002_s2_budget_policy.py",
+      "bytes": 152073,
+      "sha256": "3a25735d99809e31eb867e6dbefc22b7701d33f516d0c3c064f4afb1a921c802"
+    },
+    {
+      "path": "test_web_alarm_gigachat_live_control.py",
+      "bytes": 5441,
+      "sha256": "8116e94f4e281ea69221e6fe27e76914d0f2c54822f1acb004f7879feacf291b"
+    },
+    {
+      "path": "test_web_alarm_gigachat_multimodel.py",
+      "bytes": 41075,
+      "sha256": "b62f2a91c44bacbaf9755d97d80186fac87165f53c859adde5cb95727621f916"
+    },
+    {
+      "path": "test_web_alarm_evm_unified.py",
+      "bytes": 4370,
+      "sha256": "f7e4608a35d151b1774c7b18b7eb5e7ff85ba630f5783599d50cc657d0a08d77"
+    },
+    {
+      "path": "test_web_alarm_launcher.py",
+      "bytes": 27087,
+      "sha256": "3c5c39890d57778229c2b5233286893ffe35c8079b1adc8ecb8487d239b981bb"
+    },
+    {
+      "path": "test_web_alarm_ui.py",
+      "bytes": 5886,
+      "sha256": "e74b4781958aa69b2df9569ca12481e9c12e79ad9d2b9a891bc071f8a5b73614"
+    },
+    {
+      "path": "test_web_alarm_evm_ui.js",
+      "bytes": 114651,
+      "sha256": "8ca86594d51ea3e09345cbb39270d63f53eefe910efceee9d312d401c8922ff7"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_ui.js",
+      "bytes": 120129,
+      "sha256": "ca29598ed3a309edff689a1c35e5a88d2e002a174b1147e57285264c9ec1ccfd"
+    },
+    {
+      "path": "test_web_alarm_ordinary_test_activation.py",
+      "bytes": 8353,
+      "sha256": "3f1774c430ce98f60afc1f7fae4c89224b26d22c39021250b6b3d96203ea9bc8"
+    },
+    {
+      "path": "test_web_alarm_persistent_connection.py",
+      "bytes": 10906,
+      "sha256": "cecf3e8d07b85e2b01ee997d3456e562293e31ce9e8fb7cde71905c8cd035ece"
+    }
+  ]
+}

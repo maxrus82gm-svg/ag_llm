@@ -1,11 +1,11 @@
 @echo off
 setlocal
-title Web Alarm Ultra - STANDARD
+title Neuropolis Studio - STANDARD
 set "WA_EXIT=1"
 pushd "%~dp0"
 if errorlevel 1 goto root_error
 if not exist "%~dp0.venv\Scripts\python.exe" goto python_error
-echo [STANDARD] Web Alarm Ultra - normal persistent user data.
+echo [STANDARD] Neuropolis Studio - normal persistent user data.
 echo This entry always uses the built-in standard launch.
 echo.
 "%~dp0.venv\Scripts\python.exe" -B -u -X utf8 -m web_alarm.launcher --standard

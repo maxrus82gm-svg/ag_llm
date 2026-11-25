@@ -204,10 +204,12 @@ class ProtocolTests(s5.Fixture):
         marker = BudgetLedger(root, wid)._marker()
         marker.parent.mkdir(exist_ok=True)
         marker.write_text('not-json', encoding='utf-8')
+        self.assertFalse(self.app.chat_model(ws, chat_id, {'model_ref':'gigachat_2_pro'})['enrolled'])
         with self.assertRaisesRegex(UltraChatError, 'Workspace audit needs review'):
-            self.app.chat_model(ws, chat_id, {'model_ref':'gigachat_2_pro'})
+            self.app.submit_turn(ws, chat_id, self.body('Blocked by damaged audit', 'gigachat_2_pro'))
+        self.assertEqual(marker.read_text(encoding='utf-8'), 'not-json')
         self.assertEqual(len(self.posts()), before)
-        self.assertFalse(self.app.chat_model(ws, chat_id)['persisted'])
+        self.assertTrue(self.app.chat_model(ws, chat_id)['persisted'])
 
     def test_evm_profile_timeout_is_bound_to_existing_provider_adapter(self):
         from web_alarm.ordinary_chat_bridge import OrdinaryCoreAdapter
@@ -545,7 +547,8 @@ class ProtocolTests(s5.Fixture):
         analysis=census.analyze_module(path.name,source)
         self.assertEqual(analysis['reconciliation_issues'],[])
         self.assertEqual(len(analysis['sites']),2)
-        mutated=source.replace("session.check()\n                admission.check", "await client.post('https://example.invalid')\n                admission.check")
+        mutated=source.replace("response = await client.send(request, stream=True)",
+            "await client.post('https://example.invalid')\n                response = await client.send(request, stream=True)")
         self.assertNotEqual(mutated,source)
         self.assertTrue(census.analyze_module(path.name,mutated)['reconciliation_issues'])
         weakened=source.replace("and _FIRST_LITE_VERSION.fullmatch(observed) is not None)",

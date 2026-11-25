@@ -70,11 +70,11 @@ class UltraChatAccess:
 
     def require(self, headers: Any) -> None:
         if self._token is None:
-            raise UltraChatError(403, "ultra_chat_unavailable", "Ultra Chat reading is not available on this server")
+            raise UltraChatError(403, "ultra_chat_unavailable", "Neuropolis Chat reading is not available on this server")
         values = headers.get_all(ULTRA_CHAT_TOKEN_HEADER, [])
         if (len(values) != 1 or not values[0] or len(values[0]) > 200 or not values[0].isascii()
                 or not secrets.compare_digest(values[0], self._token)):
-            raise UltraChatError(403, "ultra_chat_token_invalid", "A valid Ultra Chat read capability is required")
+            raise UltraChatError(403, "ultra_chat_token_invalid", "A valid Neuropolis Chat read capability is required")
 
 
 class UltraChatWriteAccess:
@@ -94,11 +94,11 @@ class UltraChatWriteAccess:
 
     def require(self, headers: Any) -> None:
         if self._token is None:
-            raise UltraChatError(403, "ultra_chat_write_unavailable", "Ultra Chat changes are not available on this server")
+            raise UltraChatError(403, "ultra_chat_write_unavailable", "Neuropolis Chat changes are not available on this server")
         values = headers.get_all(ULTRA_CHAT_WRITE_TOKEN_HEADER, [])
         if (len(values) != 1 or not values[0] or len(values[0]) > 200 or not values[0].isascii()
                 or not secrets.compare_digest(values[0], self._token)):
-            raise UltraChatError(403, "ultra_chat_write_token_invalid", "A valid Ultra Chat write capability is required")
+            raise UltraChatError(403, "ultra_chat_write_token_invalid", "A valid Neuropolis Chat write capability is required")
 
 
 def parse_query(raw_query: str, allowed: frozenset[str]) -> dict[str, str]:
@@ -168,7 +168,7 @@ class UltraChatService:
             return lambda: self.messages(wa_workspace_id, chat_id, before, limit)
         if self._is_rename_path(parts) or self._is_workspace_rename_path(parts):
             raise UltraChatError(405, "method_not_allowed", "Renaming requires POST")
-        raise UltraChatError(404, "not_found", "Unknown Ultra Chat route")
+        raise UltraChatError(404, "not_found", "Unknown Neuropolis Chat route")
 
     # --- stage 2: create and rename (POST only, write capability) ------------------------------------------
 
@@ -211,7 +211,7 @@ class UltraChatService:
         if self._is_workspace_rename_path(parts):
             wa_workspace_id = _wa_id(parts[3])
             return lambda body: self.rename_workspace(wa_workspace_id, body)
-        raise UltraChatError(404, "not_found", "Unknown Ultra Chat route")
+        raise UltraChatError(404, "not_found", "Unknown Neuropolis Chat route")
 
     def _turn_request(self, action, wa_workspace_id, chat_id, value, body=None):
         root, workspace_id = self._writable_workspace(_core(),wa_workspace_id)
@@ -305,7 +305,7 @@ class UltraChatService:
         try:
             return self.registry.get(wa_workspace_id)
         except WorkspaceRegistryError:
-            raise UltraChatError(404, "unknown_workspace", "Workspace is not registered in Web Alarm") from None
+            raise UltraChatError(404, "unknown_workspace", "Workspace is not registered in Neuropolis Studio") from None
 
     def workspaces(self) -> dict[str, Any]:
         core = _core()

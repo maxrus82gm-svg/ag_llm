@@ -1,0 +1,94 @@
+{
+  "task_id": "CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+  "status": "PARTIAL / SUBMITTED / AWAITING INDEPENDENT VERIFICATION",
+  "date": "2026-11-25",
+  "files": [
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/evidence/card-before.json",
+      "bytes": 292,
+      "sha256": "84e31351923f39a687dff0eccac691540a4b4f02850e5de4b3606b798abaf68a"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/evidence/chromium.json",
+      "bytes": 207,
+      "sha256": "dc1da13023584cd7a6373acf5ab81b2e4b89a918b53c481ee4f21a56f8b10e80"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/evidence/cmd.json",
+      "bytes": 173,
+      "sha256": "6d4ff436bb8fac66921a7f48e105412424da1008ac74a897b06615d1c95ad5c7"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/evidence/evm-chromium.png",
+      "bytes": 87967,
+      "sha256": "ea5036c2a49e1a04bf21a02c8a5f0690387872717754852430ca97a540391c54"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/evidence/historical-evidence-check.json",
+      "bytes": 1142,
+      "sha256": "45fd921aa3ae81e5cf364736a19ba7ceb226deb92c0d88cbfc21484e0ac92a51"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/evidence/source-checks.json",
+      "bytes": 6635,
+      "sha256": "7f52696ae97f5232afab5f8677fae9928374138a39b1ba6481a9d9274929c4c5"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/evidence/test-summary.json",
+      "bytes": 2083,
+      "sha256": "e7721e04746edf5570efeafa3b27eecaa198758978d25cfef42106a5501b398f"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/finish.json",
+      "bytes": 5105,
+      "sha256": "8e628996b0822642fd2fc0dadfa0a934fd9334a60fcb20d2de477c1b9f0bd7b8"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/handoff_task.md",
+      "bytes": 31883,
+      "sha256": "c08a9372a08ea30dc662db328d5e1c674ebccc849b2d6b62ee6c821cb3f2c13f"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/live-acceptance.md",
+      "bytes": 2205,
+      "sha256": "841cc5ea29c89da3a23f0c12833d06e75db0f304333aadf6d3643b4d67002a7c"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/naming.md",
+      "bytes": 4975,
+      "sha256": "41293225ce2e49f74632cf7e053c263efd9ea7831fc703f40e54bded6e5bad39"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/report.md",
+      "bytes": 7978,
+      "sha256": "da1535f6a4f0d282fdc99a6642e2c5d8fab8a5bd1ae3f505a6f64edb696e5f4d"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/root-cause.md",
+      "bytes": 8795,
+      "sha256": "48c61bb1c6781f79e355eac6fa98dcad9e150260beaa2349d33edd181322cb53"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/task_record.json",
+      "bytes": 839,
+      "sha256": "a56399b6158f6d3ab08473a279d2dceb002d1adccf99ad6aa6dc7d62f598ae19"
+    },
+    {
+      "path": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/tests.md",
+      "bytes": 7912,
+      "sha256": "1eb8ecd3bda9e8eb3599222b11509d141ee4e79dd1f897b7f4f458f725e9b6bb"
+    }
+  ],
+  "source_manifest": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/evidence/source-checks.json",
+  "tests": "reports/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001/evidence/test-summary.json",
+  "local_raw_evidence": "reports/_local/CODEX-WUA-EVM-PERSISTENT-CONNECTION-001",
+  "history_id": "H-CODEX-000044",
+  "closeout": {
+    "result": "ROTATED",
+    "block1": "WAITING",
+    "blocks_2_to_4_byte_verified": true,
+    "record": "task_record.json",
+    "snapshot": "handoff_task.md",
+    "procedure": "finish.json"
+  }
+}

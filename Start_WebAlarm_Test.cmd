@@ -1,11 +1,11 @@
 @echo off
 setlocal
-title Web Alarm Ultra - OFFLINE TEST
+title Neuropolis Studio - OFFLINE TEST
 set "WA_EXIT=1"
 pushd "%~dp0"
 if errorlevel 1 goto root_error
 if not exist "%~dp0.venv\Scripts\python.exe" goto python_error
-echo [TEST] Web Alarm Ultra - disposable TEST data only.
+echo [TEST] Neuropolis Studio - disposable TEST data only.
 echo The current test profile is selected in web_alarm\launch_test_config.json.
 echo The selected TEST profile opens below. The default interface is Web.
 echo Allow five seconds for the existing TEST warning.

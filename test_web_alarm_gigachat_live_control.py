@@ -25,12 +25,16 @@ class SyntheticSession:
         if self.closed:
             from ordinary_chat_service import PreSendDenied
             raise PreSendDenied('inactive')
+        if self._check_user_permission is not None:
+            self._check_user_permission()
 
     async def discover_models(self):
         self._available = frozenset(m.provider_model_id for m in list_model_specs())
         return self._available
 
-    def close(self):
+    def close(self, *, before_release=None):
+        if before_release is not None:
+            before_release()
         self.closed = True
 
 

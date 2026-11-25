@@ -6,7 +6,7 @@ INDEX_HTML = r'''<!doctype html>
 <meta charset="utf-8">
 <meta id="waUiVersion" name="web-alarm-ui-version" content="__WA_UI_VERSION__">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Web Alarm Ultra</title>
+<title>Студия Нейрополис</title>
 <style>
 :root{color-scheme:dark;--bg:#10151d;--panel:#17212c;--line:#344454;--text:#edf3fa;--muted:#adbdcd;--blue:#8ec9ff;--green:#8ee0ba;--amber:#ffd28e;--red:#ffaaaa;--purple:#d1b4ff;font-family:system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
 
@@ -100,7 +100,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .skip{position:absolute;left:12px;top:-80px}
 .skip:focus{top:12px;z-index:10;background:var(--panel);padding:12px;color:var(--text)}
 
-/* Ultra Chat: Workspace -> nested chats. All controls remain visible and keyboard accessible. */
+/* Чат Нейрополис: Workspace -> nested chats. All controls remain visible and keyboard accessible. */
 .chat-workspace-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 0 8px}
 .chat-workspace-heading button{font-size:12px;padding:7px 9px;white-space:normal;text-align:center}
 .chat-workspace-group{border:1px solid var(--line);border-radius:10px;margin-bottom:8px;overflow:hidden}
@@ -136,7 +136,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .path-row{display:flex;gap:8px;align-items:center}.path-row input{min-width:0;flex:1}.path-row button{flex-shrink:0;white-space:nowrap}
 .mobile-toggle{display:none}.report-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
 /* WUA-1 EVM tab: connections of the shared Ultra core (API | MCP / agents | local LLM). */
-.top-nav{display:flex;gap:6px;flex:1;justify-content:center;flex-wrap:wrap}
+.top-nav{display:flex;gap:6px;flex:1 1 400px;min-width:0;justify-content:center;flex-wrap:wrap}
 .top-nav button[aria-pressed=true]{background:#213b50;border-color:var(--blue);box-shadow:inset 0 -2px var(--blue)}
 .evm{max-width:2000px;margin:auto;height:calc(100dvh - 73px);overflow:auto;padding:26px 28px 44px;overflow-anchor:none}
 .evm-board{overflow-anchor:none;margin-bottom:56px}
@@ -253,7 +253,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 .output-label{font:700 11px system-ui,Segoe UI,sans-serif;letter-spacing:.1em;color:var(--muted);margin:0 0 6px}
 .composer-actions{display:flex;gap:8px;align-items:center;flex:none}
 @media(max-width:640px){.form-grid{grid-template-columns:1fr}.mcard{padding:14px 12px 12px 16px}.mcard-name{font-size:21px}.facts-list{grid-template-columns:1fr}.evm-info-grid{grid-template-columns:1fr}}
-/* Ultra Chat (programme No.37 stage 1): read-only history of the shared Ultra core; the default view. */
+/* Чат Нейрополис (programme No.37 stage 1): read-only history of the shared Ultra core; the default view. */
 .chat-layout{display:grid;grid-template-columns:300px minmax(0,1fr);max-width:2000px;margin:auto;height:calc(100dvh - 73px);min-height:0}
 .chat-side{padding:20px 14px;background:#121c27;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:10px;overflow:auto;min-height:0}
 .chat-main{min-width:0;min-height:0;display:flex;flex-direction:column;gap:12px;padding:22px 28px 18px}
@@ -277,10 +277,10 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 .chat-request-status button{font-size:12px;padding:6px 9px;white-space:normal}
 .chat-composer .row{justify-content:space-between;flex-wrap:nowrap}
 @media(max-width:1200px){.layout{grid-template-columns:190px minmax(0,1fr) 240px}.columns{grid-template-columns:1fr}main{padding:22px 18px}.overview h2{font-size:24px}}
-@media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}.top-nav{order:3;width:100%;justify-content:flex-start}.evm{height:auto;padding:18px 12px;overflow:visible}.evm-columns{grid-template-columns:1fr}}
+@media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}.top-nav{order:3;flex-basis:100%;width:100%;justify-content:flex-start}.evm{height:auto;padding:18px 12px;overflow:visible}.evm-columns{grid-template-columns:1fr}}
 @media(max-width:850px){.chat-layout{display:flex;flex-direction:column;height:auto}.chat-side{border-right:0;border-bottom:1px solid var(--line);overflow:visible;max-height:none}.chat-main{padding:16px 12px}.chat-history{overflow:visible}.chat-composer .row{flex-wrap:wrap}}
 
-/* Ultra Chat: Colibri visual language; deliberately scoped to chat, not the other workspaces. */
+/* Чат Нейрополис: Colibri visual language; deliberately scoped to chat, not the other workspaces. */
 #chatView{--chat-bg:#0c1017;--chat-panel:#151b25;--chat-card:#1c2634;--chat-accent:#8f8cff;--chat-line:#303d50;--chat-muted:#91a0b2;background:var(--chat-bg)}
 #chatView .chat-side{background:var(--chat-bg);padding:16px 12px;border-color:#283140}
 #chatView .chat-main{background:var(--chat-panel);padding:16px 20px 12px;gap:9px}
@@ -392,23 +392,24 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 }
 @media(max-width:850px){#chatView .chat-main{padding:12px 10px}#chatView .msg{max-width:95%}}
 
+.activity-stamp{color:var(--muted);font-size:11px;font-weight:400;white-space:nowrap}
 </style>
 </head>
 <body>
 <a class="skip" id="skipLink" href="#chatMain">К истории диалога</a>
 <header class="top">
 <div class="brand">
-<span class="logo" aria-hidden="true">WA</span>
+<span class="logo" aria-hidden="true">Н</span>
 <div>
-<h1>Web Alarm Ultra</h1>
+<h1>Студия Нейрополис</h1>
 <div class="live">Постановки · этапы · восстановление</div>
 </div>
 </div>
-<nav class="top-nav" aria-label="Разделы Web Alarm">
-<button type="button" id="viewChat" aria-pressed="true" aria-controls="chatView" title="Сохранённые диалоги Ultra">Ultra Chat</button>
-<button type="button" id="viewBlueprint" aria-pressed="false" aria-controls="blueprintView">Блюпринт LLM</button>
+<nav class="top-nav" aria-label="Разделы Студии Нейрополис">
+<button type="button" id="viewChat" aria-pressed="true" aria-controls="chatView" title="Сохранённые диалоги">Чат Нейрополис</button>
+<button type="button" id="viewBlueprint" aria-pressed="false" aria-controls="blueprintView">Конструктор Нейрополис</button>
 <button type="button" id="viewOperator" aria-pressed="false" aria-controls="layout">Операторская панель</button>
-<button type="button" id="viewEvm" aria-pressed="false" aria-controls="evmView" title="Подключения моделей общего ядра Ultra">EVM · Подключения Ultra</button>
+<button type="button" id="viewEvm" aria-pressed="false" aria-controls="evmView" title="Подключения моделей">EVM · Подключения</button>
 </nav>
 <div class="top-actions">
 <span class="connection" id="serverStatus" role="status" data-state="checking">Проверяем соединение…</span>
@@ -417,7 +418,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <label>
 <input type="checkbox" id="autoRefresh"> Наблюдать · 15 с</label>
 <button id="refresh">↻ Обновить</button>
-<button type="button" id="shutdownWebAlarm">Завершить Web Alarm</button>
+<button type="button" id="shutdownWebAlarm">Завершить Студию Нейрополис</button>
 <button type="button" id="cleanupInstances">Очистить лишние экземпляры</button>
 </div>
 </header>
@@ -426,7 +427,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <section id="chatView" class="chat-view" aria-labelledby="chatHeading">
 <div class="chat-layout">
 <nav class="chat-side" aria-label="Workspace и диалоги Ultra">
-<div class="section-head"><div><p class="side-title">ULTRA CHAT</p><h2 id="chatHeading" tabindex="-1">Диалоги Ultra</h2></div><button type="button" id="chatRefresh" title="Перечитать Workspace, диалоги и модель">↻</button></div>
+<div class="section-head"><div><p class="side-title">ЧАТ НЕЙРОПОЛИС</p><h2 id="chatHeading" tabindex="-1">Диалоги</h2></div><button type="button" id="chatRefresh" title="Перечитать Workspace, диалоги и модель">↻</button></div>
 <p id="chatAccess" class="live" role="status">Проверяем доступ к истории…</p>
 <div id="chatError" class="notice error" role="alert" hidden></div>
 <div class="chat-personal-heading"><span class="side-title">ЛИЧНЫЕ ЧАТЫ</span><button type="button" id="chatPersonalNew" hidden>+ Новый чат</button><button type="button" id="chatPersonalToggle" class="compact-section-toggle" aria-expanded="true" aria-controls="chatPersonalList" aria-label="Свернуть личные чаты" hidden>▾</button></div>
@@ -461,7 +462,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <p id="chatSidebarNote" class="muted spaced">Нажмите на Workspace, чтобы раскрыть чаты. «+» создаёт диалог, карандаш меняет название. История остаётся в исходной папке. Отправка сообщений пока отключена.</p>
 </nav>
 <div id="chatMain" class="chat-main" tabindex="-1" role="region" aria-labelledby="chatTitle">
-<div class="chat-head"><div><span class="eyebrow" id="chatWorkspaceName">Ultra Chat</span><h2 id="chatTitle">Выберите диалог</h2></div><span id="chatModel" class="tag" title="Модель, выбранная в EVM">Модель: —</span></div>
+<div class="chat-head"><div><span class="eyebrow" id="chatWorkspaceName">Чат Нейрополис</span><h2 id="chatTitle">Выберите диалог</h2></div><span id="chatModel" class="tag" title="Модель, выбранная в EVM">Модель: —</span></div>
 <div id="chatNotice" class="notice" role="status" hidden></div>
 <button type="button" id="chatOlder" hidden>Показать ранее</button>
 <ol id="chatHistory" class="chat-history" aria-label="История диалога"></ol>
@@ -472,18 +473,18 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <button id="chatAnswerExtended" type="button">20 000 (расширенный)</button> <button id="chatPreferencesSave" type="button">Сохранить</button>
 <p class="muted">Предпочтения этого чата. Порог сжатия не равен окну модели. Автосжатие выключено. Применение к провайдеру не подтверждено; TEST использует прежние пределы, REAL закрыт до S3b.</p>
 <p id="chatPreferencesStatus" role="status" aria-live="polite"></p></details>
-<div id="chatTurnControls" class="chat-request-status" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><div id="chatColibriProgress" hidden><details open><summary>Рассуждения Colibri</summary><div id="chatColibriReasoning" class="msg-text"></div></details><p id="chatColibriPartialLabel" hidden>Незавершённый ответ (не сохранён как итоговый)</p><div id="chatColibriPartial" class="msg-text" hidden></div></div><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button><p id="chatTurnCheckResult" class="muted" role="status" aria-live="polite"></p></div>
+<div id="chatTurnControls" class="chat-request-status" hidden><p id="chatTurnStatus" role="status" aria-live="polite"></p><div id="chatColibriProgress" hidden><details open><summary>Рассуждения локальной модели</summary><div id="chatColibriReasoning" class="msg-text"></div></details><p id="chatColibriPartialLabel" hidden>Незавершённый ответ (не сохранён как итоговый)</p><div id="chatColibriPartial" class="msg-text" hidden></div></div><button type="button" id="chatTurnCheck" title="Если ответ не появился или связь прервалась, проверьте состояние отправленного запроса.">Проверить состояние запроса</button> <button type="button" id="chatTurnCancel">Отменить</button> <button type="button" id="chatTurnNew" hidden>Новый отдельный запрос</button><p id="chatTurnCheckResult" class="muted" role="status" aria-live="polite"></p></div>
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
-<div class="row"><label for="chatInput">Сообщение</label><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Выбрать модель для следующего сообщения">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button></span></div>
-<p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p>
+<div class="row"><label for="chatInput">Сообщение</label><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Выбрать модель для следующего сообщения">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Чата Нейрополис" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button></span></div>
+<p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Чат Нейрополис читает сохранённую историю, создаёт и переименовывает диалоги.</p>
 <button type="button" id="chatComposerGrip" class="chat-resize" role="separator" aria-label="Высота поля сообщения" aria-orientation="horizontal" aria-valuemin="72" aria-valuemax="420" aria-valuenow="140" title="Потяните вверх или вниз; стрелки клавиатуры меняют высоту"></button>
 <div class="chat-input-wrap"><textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea><button type="button" id="chatSend" disabled data-recover="false" title="Отправить (Enter)">Отправить</button></div>
 </form>
 </div>
 </div>
 </section>
-<section id="blueprintView" class="bp-view" aria-label="Блюпринт LLM" hidden>
-<h2 id="blueprintHeading" class="bp-sr-only" tabindex="-1">Блюпринт LLM</h2>
+<section id="blueprintView" class="bp-view" aria-label="Конструктор Нейрополис" hidden>
+<h2 id="blueprintHeading" class="bp-sr-only" tabindex="-1">Конструктор Нейрополис</h2>
 <!-- BLUEPRINT_CONTENT -->
 </section>
 <div class="layout" id="layout" hidden>
@@ -670,16 +671,16 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 </div>
 <section id="evmView" class="evm" aria-labelledby="evmHeading" hidden>
 <div class="evm-head">
-<div><span class="eyebrow">EVM · общее ядро Ultra</span><h2 id="evmHeading" tabindex="-1">Подключения Ultra</h2>
+<div><span class="eyebrow">EVM · Модели</span><h2 id="evmHeading" tabindex="-1">Подключения</h2>
 <p class="muted">Модели берутся из общего реестра Ultra. Статус API считает сервер по подтверждённым ответам; подключение и проверка выполняются только по вашему действию.</p></div>
 <div class="row"><span id="evmState" class="live" role="status">Реестр ещё не загружен</span><button type="button" id="evmRefresh">↻ Обновить список</button></div>
 </div>
 <div class="evm-toasts"><div id="evmError" class="notice error" role="alert" hidden></div>
 <div id="evmNotice" class="notice success" role="status" hidden></div></div>
 <div class="card spaced evm-info"><div class="evm-info-grid">
-<div><p class="side-title">Модель Ultra Chat</p><p id="evmSelection">—</p><p class="muted">Выбирается в Ultra Chat, у поля ввода сообщения.</p></div>
-<div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ ответ подтверждён · ! подтверждение устарело · × ошибка · ○ ещё не проверена или исход неизвестен</p></div>
-<div><p class="side-title">GigaChat · все модели</p><p id="evmLiveState">Состояние подключения не проверено</p><div class="row"><button type="button" id="evmLiveStart" disabled>Подключить GigaChat</button><button type="button" id="evmLiveStop" disabled>Отключить GigaChat</button></div><p class="muted">Используются те же подключение и история, что в Ultra Chat. Подключение может обратиться к API; отправка сообщения выполняется отдельно.</p></div>
+<div><p class="side-title">Модель Чата Нейрополис</p><p id="evmSelection">—</p><p class="muted">Выбирается в Чате Нейрополис, у поля ввода сообщения.</p></div>
+<div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ доступность подтверждена · ! не подтверждена или проверка устарела · × ошибка · ○ отключена</p></div>
+<div><p class="side-title">GigaChat · все модели</p><p id="evmLiveState">Состояние подключения не проверено</p><div class="row"><button type="button" id="evmLiveStart" disabled>Подключить GigaChat</button><button type="button" id="evmLiveStop" disabled>Отключить GigaChat</button></div><p class="muted">Используются те же подключение и история, что в Чате Нейрополис. Подключение может обратиться к API; отправка сообщения выполняется отдельно.</p></div>
 <div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Нажмите на карточку — она раскроется. Ctrl + наведение — просмотр; Ctrl + клик или ⧉ закрепляют панель внутри страницы. ↗ открывает отдельное окно Windows. Карточки можно перетаскивать и добавлять в избранное.</p></div>
 </div></div>
 <div class="evm-columns evm-board">
@@ -1222,7 +1223,7 @@ if(evmChannel)evmChannel.onmessage=()=>{if(evm.view==='evm'||EXTERNAL_MODEL)load
 const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
 function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
 // Sections share one shell; their URL hashes also support direct navigation.
-const VIEWS={chat:['chatView','viewChat','#chatMain','К истории диалога'],blueprint:['blueprintView','viewBlueprint','#blueprintHeading','К редактору схемы'],operator:['layout','viewOperator','#main','К состоянию TASK'],evm:['evmView','viewEvm','#evmHeading','К подключениям Ultra']};
+const VIEWS={chat:['chatView','viewChat','#chatMain','К истории диалога'],blueprint:['blueprintView','viewBlueprint','#blueprintHeading','К редактору схемы'],operator:['layout','viewOperator','#main','К состоянию TASK'],evm:['evmView','viewEvm','#evmHeading','К подключениям']};
 function initialView(){
   try{return {'#operator':'operator','#evm':'evm','#chat':'chat','#blueprint':'blueprint'}[typeof location==='undefined'?'':String(location.hash||'')]||'chat'}catch(_){return 'chat'}
 }
@@ -1253,10 +1254,10 @@ function validEvm(data){
 }
 function evmSelectionText(s){
   if(s.state==='SAVED')return 'Выбрана: '+s.display_name+' · '+s.model_id+' → '+s.provider_model_id+(s.selected_at?' · сохранено '+s.selected_at:'');
-  if(s.state==='CORRUPT')return 'Сохранённый выбор повреждён и не используется. Выберите модель заново в Ultra Chat.';
-  if(s.state==='INVALID_REFERENCE')return 'Сохранённая модель недоступна в реестре ('+(s.connection_id||'—')+'). Выберите модель заново в Ultra Chat.';
+  if(s.state==='CORRUPT')return 'Сохранённый выбор повреждён и не используется. Выберите модель заново в Чате Нейрополис.';
+  if(s.state==='INVALID_REFERENCE')return 'Сохранённая модель недоступна в реестре ('+(s.connection_id||'—')+'). Выберите модель заново в Чате Нейрополис.';
   if(s.state==='REGISTRY_UNAVAILABLE')return 'Сохранённый выбор ('+(s.connection_id||'—')+') сейчас не проверить: общий реестр моделей недоступен.';
-  return 'Модель для Ultra Chat ещё не выбрана.'
+  return 'Модель для Чата Нейрополис ещё не выбрана.'
 }
 function validCards(d){
   return !!d&&Array.isArray(d.cards)&&Array.isArray(d.role_definitions)&&Array.isArray(d.providers)&&Array.isArray(d.profiles)&&!!d.settings&&!!d.limits&&!!d.live_check&&
@@ -1265,10 +1266,12 @@ function validCards(d){
       (c.enabled===undefined||typeof c.enabled==='boolean')&&Array.isArray(c.roles)&&!!c.api&&['green','orange','red','gray'].includes(c.api.color))
 }
 const API_TEXT={CONFIRMED:'Ответ модели подтверждён',STALE:'Подтверждение устарело',NEVER_CONFIRMED:'Успешной проверки ещё не было',LAST_OUTCOME_UNKNOWN:'Исход последнего обращения неизвестен',SETTINGS_CHANGED:'Настройки подключения изменились — нужна новая проверка',
+  MODEL_DISABLED:'Модель отключена',PROVIDER_INACTIVE:'Разрешение на API отсутствует',PROVIDER_RESTORE_REQUIRED:'Подключение будет восстановлено при отправке',
+  PROVIDER_BLOCKED:'Подключение заблокировано',MODEL_UNAVAILABLE:'Модели нет в каталоге аккаунта',MODEL_NOT_APPROVED:'Модель вне допуска текущей сессии',
   LAST_CHECK_FAILED:'Последняя проверка завершилась отказом',STATE_CORRUPT:'Сведения о проверках повреждены',TIMESTAMP_INVALID:'Дата проверки некорректна',ADAPTER_MISSING:'Для провайдера нет адаптера',REGISTRY_DISABLED:'Модель отключена в реестре'};
 const API_MARK={green:'✓',orange:'!',red:'×',gray:'○'};
 function apiText(a){
-  const base=API_TEXT[a.reason]||String(a.reason||'Статус неизвестен');
+  const base=(API_TEXT[a.reason]||String(a.reason||'Статус неизвестен'))+(a.runtime_reason?' · '+providerReason(a.runtime_reason):'');
   return a.age_days==null?base:base+': '+a.age_days+' дн. назад, срок актуальности '+a.freshness_days+' дн.'
 }
 function apiDot(a){  // one component and one server status for the card header and the diagnostic window
@@ -1288,6 +1291,18 @@ function roleItem(def,state){
 }
 function paramsText(v){return (typeof v==='number'?String(v).replace('.',','):'—')+' млрд'}
 function fmtTime(iso){const d=new Date(iso);return isNaN(d.getTime())?String(iso):d.toLocaleString('ru-RU')}
+function activityLabel(iso, empty){
+  const date=iso?new Date(iso):null;
+  if(!date||isNaN(date.getTime()))return empty;
+  const day=d=>Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());
+  const days=Math.max(0,(day(new Date())-day(date))/86400000);
+  return days===0?'Сегодня':days===1?'Вчера':days+' дн. назад'
+}
+function activityStamp(iso, empty){
+  const stamp=element('small',activityLabel(iso,empty),'activity-stamp');
+  if(iso)stamp.title=fmtTime(iso);
+  return stamp
+}
 function cardData(id){return evm.cards?.cards.find(c=>c.model_id===id)||null}
 const SECTIONS=[['favorites','evmFavList','evmFavEmpty'],['api','evmApiList',null,'api'],['mcp','evmMcpList','evmMcpEmpty','mcp_agents'],['local','evmLocalList','evmLocalEmpty','local_llm']];
 const KIND_LABEL={api:'API',mcp:'MCP / агент',local:'Локальная'};
@@ -1304,14 +1319,14 @@ function modelCard(c,data,section,inst){
   const params=element('span',paramsText(c.params_billion),'params');params.setAttribute('title',c.params_billion==null?'Количество параметров не указано':'Количество параметров, указано пользователем');
   const provider=data.providers.find(p=>p.provider_id===c.provider_id);
   const source=c.is_local&&c.local_target?
-    'Colibri · '+c.local_target.manager_name+' / '+c.local_target.slot_id:
+    'Менеджер Нейрополис · '+c.local_target.manager_name+' / '+c.local_target.slot_id:
     provider?provider.display_name:c.provider_id;
-  head.append(element('h4',c.display_name,'mcard-name'),apiDot(c.api),params,element('span',source,'mcard-side'));
+  head.append(element('h4',c.display_name,'mcard-name'),apiDot(c.api),activityStamp(c.api.last_success_at,'Не проверена'),params,element('span',source,'mcard-side'));
   const permitted=c.enabled!==false;
   const providerState=c.provider_id==='gigachat'?(evm.liveBusy?(evm.liveAction==='start'?'Подключение выполняется':'Отключение выполняется'):
-    evm.liveFailure?(evm.liveFailure==='disconnect'?'Ошибка отключения':'Ошибка подключения'):evm.live?.real_available?'GigaChat подключён':evm.live?.mode==='ORDINARY'?'GigaChat отключён':'Состояние неизвестно'):
-    c.provider_id==='colibri'?(c.local_target?.status==='READY'?'Colibri · READY (OFFLINE)':
-      'Colibri · '+(c.local_target?.status||'недоступен')):'Подключение этого провайдера не подтверждено';
+    evm.liveFailure?(evm.liveFailure==='disconnect'?'Ошибка отключения':'Ошибка подключения'):evm.live?.real_available?'GigaChat подключён':evm.live?.mode==='ORDINARY'?providerStatus(evm.live):'Состояние неизвестно'):
+    c.provider_id==='colibri'?(c.local_target?.status==='READY'?'Менеджер Нейрополис · READY (OFFLINE)':
+      'Менеджер Нейрополис · '+(c.local_target?.status||'недоступен')):'Подключение этого провайдера не подтверждено';
   const stateLine=element('p','Модель: '+(permitted?'включена':'отключена')+' · Провайдер: '+providerState+' · Работоспособность: '+apiText(c.api),'mcard-note');
   const sub=element('div',null,'mcard-sub');sub.append(element('strong','Назначенные роли'),element('span','Наведите на название для описания','mcard-note'));
   const states=new Map(c.roles.map(r=>[r.role,r.state]));
@@ -1351,7 +1366,7 @@ function rolesSourceText(cards){
   if(!cards)return 'Назначения ролей не загружены.';
   const r=cards.roles_source,tk={SAVED:'настройки прежней Ultra (Tkinter)',DEFAULTS:'значения прежней Ultra по умолчанию: её файл настроек не найден',
     UNREADABLE:'файл настроек прежней Ultra не читается, поэтому её роли показаны как «?»',NOT_CONNECTED:'этот запуск не подключён к настройкам прежней Ultra, поэтому её роли показаны как «?»'}[r.state]||String(r.state);
-  return 'Источник ролей: «Чат» — выбор в Ultra Chat; остальные — '+tk+'.'+(r.fallbacks?.length?' Сохранённая модель '+r.fallbacks.length+' роли(ей) отсутствует в реестре, Ultra использует свою модель по умолчанию.':'')
+  return 'Источник ролей: «Чат» — выбор в Чате Нейрополис; остальные — '+tk+'.'+(r.fallbacks?.length?' Сохранённая модель '+r.fallbacks.length+' роли(ей) отсутствует в реестре, Ultra использует свою модель по умолчанию.':'')
 }
 function summaryText(cards){
   if(!cards)return 'нет данных';
@@ -1392,7 +1407,7 @@ function compactCard(id,section){
   const open=fk(element('button',null,'copen'),inst,'open');open.type='button';open.setAttribute('aria-expanded',String(expanded));
   open.setAttribute('aria-label',name+' — '+(KIND_LABEL[e.kind]||e.kind)+'. Раскрыть карточку; Alt+↑/↓ — переставить');
   const title=element('div',null,'ctitle');title.append(element('span',name,'cname'));
-  if(e.card)title.append(apiDot(e.card.api));
+  if(e.card)title.append(apiDot(e.card.api),activityStamp(e.card.api.last_success_at,'Не проверена'));
   if(typeof e.card?.params_billion==='number')title.append(element('span',paramsText(e.card.params_billion),'params'));
   const provider=e.card?(evm.cards.providers.find(p=>p.provider_id===e.card.provider_id)?.display_name||e.card.provider_id):(e.base.provider||'');
   const body=element('div',null,'cbody');body.append(title,element('span',[KIND_LABEL[e.kind]||e.kind,provider].filter(Boolean).join(' · '),'csub'));
@@ -1439,6 +1454,22 @@ function headClick(ev,id,section){
   if(ev?.ctrlKey){pinModel(id,section,'open',false);return}  // Ctrl + click pins the model in its own window
   toggleExpanded(id,section)
 }
+const PROVIDER_REASONS={
+  credentials_or_scope_invalid:'проверьте ключ API и профиль PERS',consent_credentials_changed:'ключ API изменён, требуется новое согласие',
+  consent_policy_changed:'условия допуска изменились, требуется новое согласие',consent_storage_unavailable:'запись согласия недоступна',
+  provider_session_state_unverifiable:'запись runtime-сессии требует проверки',account_owner_live:'аккаунт используется другим процессом',
+  account_owner_unresolved_legacy_active:'запись старого владельца требует проверки',provider_control_request_failed:'сетевой запрос не выполнен',
+  oauth_http_rejected:'OAuth отклонён',catalog_http_rejected:'каталог отклонён',
+  personal_storage_unavailable:'личное хранилище требует проверки',user_permission_required:'нужно разрешение в EVM'
+};
+function providerReason(reason){return PROVIDER_REASONS[reason]||reason||''}
+function providerStatus(live){
+  const reason=providerReason(live?.provider_reason);
+  if(live?.real_available)return 'GigaChat подключён';
+  if(live?.provider_state==='RESTORE_REQUIRED')return 'Разрешение сохранено. Сессия восстановится при отправке'+(reason?' · '+reason:'');
+  if(live?.provider_state==='BLOCKED')return 'GigaChat недоступен · '+reason;
+  return 'GigaChat отключён · история доступна'
+}
 function renderEvm(){
   const data=evm.data;if(!data)return;
   const cols=data.columns,s=data.selection.chat,cards=evm.cards;
@@ -1446,9 +1477,9 @@ function renderEvm(){
   text('evmLiveState',!ready?'Управление доступно только в локальном STANDARD':evm.liveBusy?
     (evm.liveAction==='start'?'Подключение выполняется':'Отключение выполняется'):evm.liveFailure?
     (evm.liveFailure==='disconnect'?'Ошибка отключения':'Ошибка подключения')+' · проверьте состояние перед повтором':live.real_available?
-    'GigaChat подключён · реальные отправки разрешены':'GigaChat отключён · история доступна');
+    'GigaChat подключён · реальные отправки разрешены':providerStatus(live));
   $('evmLiveStart').disabled=!ready||live.real_available||evm.liveBusy;
-  $('evmLiveStop').disabled=!ready||!live.real_available||evm.liveBusy;
+  $('evmLiveStop').disabled=!ready||!(live.real_available||['RESTORE_REQUIRED','BLOCKED'].includes(live.provider_state))||evm.liveBusy;
   $('evmApiState').replaceChildren(evmTag(cols.api.state));
   $('evmMcpState').replaceChildren(evmTag(cols.mcp_agents.state));
   $('evmLocalState').replaceChildren(evmTag(cols.local_llm.state));
@@ -1504,7 +1535,7 @@ function openExternal(id){
   const e=entryOf(id);if(!e||stage5Offline)return;
   const url=String(location.pathname||'/')+'?evm_window='+encodeURIComponent(id)+'#evm';
   const child=window.open(url,'wua_evm_'+id.replace(/[^a-zA-Z0-9_]/g,'_'),'popup=yes,width=540,height=740,resizable=yes,scrollbars=yes');
-  if(!child){notice('evmError','Браузер заблокировал внешнее окно. Разрешите всплывающие окна для локального Web Alarm и повторите действие.');return}
+  if(!child){notice('evmError','Браузер заблокировал внешнее окно. Разрешите всплывающие окна для Студии Нейрополис и повторите действие.');return}
   child.focus?.();
 }
 async function toggleModel(id,enabled){
@@ -1958,11 +1989,11 @@ async function loadEvm(){
     notice('evmError','Не удалось получить подключения: '+e.message);text('evmState','Список не обновлён')
   }finally{$('evmRefresh').disabled=false}
 }
-const GIGACHAT_CONNECT_PROMPT='Подключить провайдера GigaChat на срок действующей сессии (до 24 часов)? Это не включает и не проверяет отдельные модели. Каждая отправка требует вашего действия. Предпочтительный максимум ответа задаётся в настройках чата (до 20 000 токенов); технический предел запроса 4096 байт. API может быть платным. Автоматических повторов нет.';
+const GIGACHAT_CONNECT_PROMPT='Разрешить GigaChat использовать настроенный API? Разрешение сохраняется между запусками до отключения в EVM или изменения условий допуска. Подключение проверяет доступный каталог. Генерация может тарифицироваться и запускается только по вашему действию.';
 async function evmLiveControl(start){
   const live=evm.live;
   if(stage5Offline||evm.liveBusy||chatTurn.liveBusy||live?.mode!=='ORDINARY'||live.execution_mode==='PROTOCOL_TEST'||
-      (start?live.real_available:!live.real_available))return;
+      (start?live.real_available:!(live.real_available||['RESTORE_REQUIRED','BLOCKED'].includes(live.provider_state))))return;
   if(start&&!window.confirm(GIGACHAT_CONNECT_PROMPT))return;
   evm.liveBusy=true;evm.liveAction=start?'start':'stop';evm.liveFailure=null;chatTurn.liveBusy=true;renderEvm();renderTurnComposer();
   let committed=false,error='';
@@ -1982,8 +2013,9 @@ async function evmLiveControl(start){
     if(chat.started){try{await loadChatAccess();await loadChatWorkspaces()}catch(_){/* EVM readback stays authoritative */}}
     renderEvm();renderTurnComposer();
   }
-  if(committed)evmSay(start?'GigaChat подключён. В Ultra Chat доступны включённые модели.':'GigaChat отключён. История сохранена.');
-  else notice('evmError','Состояние не изменено или не подтверждено: '+error+'. Проверьте его перед повтором.');
+  if(committed)evmSay(start?'GigaChat подключён. В Чате Нейрополис доступны включённые модели.':'GigaChat отключён. История сохранена.');
+  else notice('evmError',error+'. '+providerStatus(evm.live)+'. Проверьте состояние перед повтором.');
+  evmChannel?.postMessage({kind:'model_state'});
 }
 // Settings and diagnostics windows. Only one is shown at a time; closing or switching keeps the draft of every
 // model and the last diagnostic answer, so opening one window never destroys the state of the other.
@@ -2176,7 +2208,7 @@ if(typeof window!=='undefined'&&window.addEventListener){
   window.addEventListener('resize',()=>{if(evm.peek.id)positionPeek();placeAllPins()});
   window.addEventListener('scroll',()=>{if(evm.peek.id)positionPeek()},true)  // narrow screens scroll the page, not the board
 }
-// Ultra Chat (programme No.37 stage 1): saved dialogues of the shared Ultra core, read-only. The read token
+// Чат Нейрополис (programme No.37 stage 1): saved dialogues of the shared Ultra core, read-only. The read token
 // lives only in this object and goes only to /ultra/chat/* in its own header; nothing here writes anything.
 const CHAT_TOKEN_HEADER='X-WebAlarm-Ultra-Chat-Token',CHAT_PAGE=50;
 const stage5Offline=document.body?.getAttribute?.('data-stage5-offline')==='true';
@@ -2189,6 +2221,15 @@ function chatModelLabel(m){
     m.display_name+' · '+m.manager_name+' / '+m.slot_id:m.display_name;
 }
 function turnScope(){return chat.workspace&&chat.chat?(chatTurn.ordinary?'webAlarm.ordinaryTurn.':'webAlarm.testTurn.')+chat.workspace+'.'+chat.chat:null}
+function chatDraftKey(){return turnScope()+'.draft'}
+function saveChatDraft(value){
+  if(!chatTurn.ordinary||!chat.workspace||!chat.chat)return;
+  try{if(value)localStorage.setItem(chatDraftKey(),value);else localStorage.removeItem(chatDraftKey())}catch(_){}
+}
+function readChatDraft(){
+  if(!chatTurn.ordinary||!chat.workspace||!chat.chat)return '';
+  try{return localStorage.getItem(chatDraftKey())||''}catch(_){return ''}
+}
 function turnPending(){try{return JSON.parse(localStorage.getItem(turnScope())||'null')}catch(_){return null}}
 function testChatSelection(){try{return JSON.parse(localStorage.getItem(chatTurn.ordinary?'webAlarm.ordinaryChatSelection':'webAlarm.testChatSelection')||'null')}catch(_){return null}}
 function turnBase(){return '/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats/'+encodeURIComponent(chat.chat)+'/turns'}
@@ -2245,9 +2286,9 @@ function renderTurnComposer(){
   const liveVisible=chatTurn.ordinary&&!stage5Offline;
   const enabled=chatTurn.available&&!!chat.workspace&&!!chat.chat;
   const pending=turnPending();
-  $('chatInput').disabled=!enabled||chatTurn.busy;$('chatSend').disabled=!enabled||chatTurn.busy;
-  $('chatTurnControls').hidden=!enabled;
-  $('chatTurnCheck').disabled=!enabled||!!chatTurn.checking;
+  $('chatInput').disabled=chatTurn.ordinary?!(chat.workspace&&chat.chat):!enabled||chatTurn.busy;$('chatSend').disabled=!enabled||chatTurn.busy;
+  $('chatTurnControls').hidden=!(enabled||chatTurn.ordinary&&chat.workspace&&chat.chat);
+  $('chatTurnCheck').disabled=$('chatTurnControls').hidden||!!chatTurn.checking;
   $('chatTurnCancel').disabled=!enabled||!pending||(modelChat()&&!!chatTurn.state&&!['READY','ATTEMPTING'].includes(chatTurn.state));
   $('chatModelPick').disabled=modelChat()?!chatTurn.models.length:chatTurn.available;
   if(chatTurn.testModelPreferences)$('chatModelPick').disabled=chatTurn.testModelBusy||!chat.workspace||!chat.chat||!chatTurn.models.length;
@@ -2264,21 +2305,21 @@ function renderTurnComposer(){
     text('chatSidebarNote','TEST · история хранится общим ядром Ultra.');
     if(chatTurn.ordinary){
       text('chatModel',selected?'Модель: '+chatModelLabel(selected):'Выберите модель');
-      $('chatInput').placeholder=chatTurn.available?'Сообщение TEST-имитатору':'Отправка GigaChat пока закрыта';
-      text('chatComposerNote',chatTurn.available?'TEST · проверка штатного чата без обращения к GigaChat.':'GigaChat не подключён в этом процессе. Подключите провайдера через EVM; если подключение отклонено, проверьте указанную там причину. История и настройки доступны.');
+      $('chatInput').placeholder=chatTurn.executionMode==='OFFLINE_APPLICATION'?'Сообщение TEST-имитатору':'Напишите сообщение';
+      text('chatComposerNote',chatTurn.executionMode==='OFFLINE_APPLICATION'?'TEST · проверка штатного чата без обращения к GigaChat.':providerStatus(chatTurn.provider));
       text('chatSidebarNote','История хранится общим ядром Ultra.');
       if(chatTurn.model&&!selected){
         $('chatSend').disabled=true;
         text('chatModel','Модель отключена в EVM: '+chatTurn.model);
         text('chatComposerNote','Выбранная модель отключена или больше не поддерживается. История сохранена; включите модель в EVM либо выберите другую.');
       }
-      if(chatTurn.executionMode==='REAL'){
+      if(chatTurn.executionMode==='REAL'&&selected){
         $('chatInput').placeholder='Сообщение GigaChat';
         text('chatComposerNote','GigaChat · ограниченный серверный допуск. Enter — отправить, Shift+Enter — новая строка.');
       }
       if(selected?.is_local){
-        $('chatInput').placeholder='Сообщение локальной модели Colibri';
-        text('chatComposerNote','Colibri · изолированный OFFLINE Bridge. История хранится общим ядром.');
+        $('chatInput').placeholder='Сообщение локальной модели';
+        text('chatComposerNote','Клиент Нейрополис · изолированный OFFLINE Bridge. История хранится общим ядром.');
       }
       if(selected?.availability==='UNAVAILABLE'){
         $('chatSend').disabled=true;
@@ -2306,7 +2347,7 @@ function renderTurnComposer(){
     }
   }
   else if(chatTurn.available){text('chatComposerNote','TEST · локальный имитатор. Выбранная модель не вызывается. Enter — отправить, Shift+Enter — новая строка.');$('chatInput').placeholder='Сообщение TEST-имитатору';text('chatModel','TEST · локальный имитатор');text('chatModelPick','TEST · без LLM');text('chatSidebarNote','TEST: ответы создаёт локальный имитатор. История хранится общим ядром Ultra.')}
-  else{text('chatComposerNote','Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.')}
+  else{text('chatComposerNote','Отправка сообщений появится на следующем этапе. Сейчас Чат Нейрополис читает сохранённую историю, создаёт и переименовывает диалоги.')}
   $('chatSend').textContent=turnPending()?'Повторить / восстановить':'Отправить';
   $('chatSend').setAttribute('data-recover',String(Boolean(turnPending())));$('chatSend').title=turnPending()?'Повторить / восстановить':'Отправить (Enter)';
   if(chatTurn.testModelPreferences){
@@ -2341,7 +2382,7 @@ function pollColibriProgress(base,scope,key){
       if(result?.execution_mode==='COLIBRI_OFFLINE'&&result.idempotency_key===key){
         if(['ACCEPTING','READY','ATTEMPTING'].includes(result.state)){
           chatTurn.state=result.state;renderColibriProgress(result);renderTurnComposer();
-          text('chatTurnStatus','Colibri обрабатывает запрос…');
+          text('chatTurnStatus','Локальная модель обрабатывает запрос…');
         }else if(!chatTurn.busy){
           showTurn(result);await loadChatHistory(false);return;
         }
@@ -2360,7 +2401,7 @@ function showTurn(result){
   else if(result.execution_mode==='COLIBRI_OFFLINE'&&!chatTurn.busy&&turnPending()?.key)
     pollColibriProgress(turnBase(),turnScope(),turnPending().key);
   const labels={ACCEPTING:'Приём не завершён. Для продолжения нужен исходный текст.',READY:'Принято. Ожидает явного продолжения.',ATTEMPTING:'Выполняется: TEST-имитатор обрабатывает запрос…',SUCCEEDED:'TEST: ответ сохранён.',FAILED:'TEST: выполнение завершилось ошибкой.',CANCELLED:'Отменено до выполнения.',UNKNOWN:'Исход неизвестен. Повтор ключа проверит сохранённые факты; повторного исполнения нет.'};
-  if(result.execution_mode==='COLIBRI_OFFLINE')Object.assign(labels,{ATTEMPTING:'Colibri обрабатывает запрос…',SUCCEEDED:'Ответ Colibri сохранён (OFFLINE).',FAILED:'Запрос Colibri завершился ошибкой.'});
+  if(result.execution_mode==='COLIBRI_OFFLINE')Object.assign(labels,{ATTEMPTING:'Локальная модель обрабатывает запрос…',SUCCEEDED:'Ответ локальной модели сохранён (OFFLINE).',FAILED:'Запрос к локальной модели завершился ошибкой.'});
   if(result.execution_mode==='REAL')Object.assign(labels,{ATTEMPTING:'GigaChat обрабатывает запрос…',SUCCEEDED:'Ответ GigaChat сохранён.',FAILED:'Запрос GigaChat завершился ошибкой.'});
   const detail=modelChat()?' · '+result.references.model_ref+(result.usage?.total_tokens==null?'':' · usage '+result.usage.total_tokens):'';
   text('chatTurnStatus',labels[result.state]+detail+(typeof result.diagnostic_code==='string'?' · '+result.diagnostic_code:'')+
@@ -2370,12 +2411,12 @@ function showTurn(result){
   if(['SUCCEEDED','FAILED','CANCELLED'].includes(result.state)){
     const hadPending=!!turnPending();
     localStorage.removeItem(turnScope());
-    if(modelChat()?hadPending:result.state==='SUCCEEDED')$('chatInput').value=''
+    if(modelChat()?hadPending:result.state==='SUCCEEDED'){$('chatInput').value='';saveChatDraft('')}
   }
   renderTurnComposer();
 }
 async function checkTurn(manual=false){
-  renderTurnComposer();let pending=turnPending();if(!chatTurn.available||!turnScope()||(!pending&&!modelChat()))return;
+  renderTurnComposer();let pending=turnPending();if((!chatTurn.available&&!chatTurn.ordinary)||!turnScope()||(!pending&&!modelChat()))return;
   const epoch=chat.epoch,revision=chatTurn.revision,ticket=++chatTurn.checkRevision;
   const count=manual?++chatTurn.checkCount:0;
   chatTurn.checking=ticket;
@@ -2426,7 +2467,7 @@ async function stopGigaChat(){
 }
 async function sendTurn(){
   if(chatTurn.testModelPreferences&&(chatTurn.testModelBusy||(!chatTurn.testModelLoaded&&!turnPending()?.model)))return;
-  if(!chatTurn.available||chatTurn.busy||!chat.workspace||!chat.chat||!$('chatInput').value.trim()||(modelChat()&&!chatTurn.model&&!(chatTurn.testModelPreferences&&turnPending()?.model)))return;
+  if($('chatSend').disabled||!chatTurn.available||chatTurn.busy||!chat.workspace||!chat.chat||!$('chatInput').value.trim()||(modelChat()&&!chatTurn.model&&!(chatTurn.testModelPreferences&&turnPending()?.model)))return;
   if(chatTurn.ordinary&&chatTurn.executionMode==='REAL'&&
       (chatTurn.models.find(m=>m.model_id===chatTurn.model)?.availability!=='AVAILABLE'||
        (turnPending()?.model&&turnPending().model!==chatTurn.model)))return;
@@ -2435,7 +2476,7 @@ async function sendTurn(){
      chatTurn.models.find(m=>m.model_id===chatTurn.model)?.availability!=='AVAILABLE'&&!turnPending())return;
   const localRequest=chatTurn.colibri&&String(turnPending()?.model||chatTurn.model||'').startsWith('tgt_');
   if(localRequest)renderColibriProgress(null);
-  chatTurn.busy=true;renderTurnComposer();text('chatTurnStatus',localRequest?'Принимаем запрос Colibri…':'Принимаем TEST-запрос…');
+  chatTurn.busy=true;renderTurnComposer();text('chatTurnStatus',localRequest?'Принимаем запрос к локальной модели…':'Принимаем TEST-запрос…');
   try{
     let pending=JSON.parse(localStorage.getItem(scope)||'null');
     if(!pending){
@@ -2456,14 +2497,16 @@ async function sendTurn(){
     if(localRequest)pollColibriProgress(base,scope,pending.key);
     const result=await chatPost(base,request);
     if(epoch===chat.epoch){showTurn(result);await loadChatHistory(false)}
+    if(chatTurn.ordinary){evmChannel?.postMessage({kind:'model_state'});await loadChatAccess().catch(()=>{})}
   }catch(e){
+    const providerHold=chatTurn.ordinary&&['ordinary_real_hold','ordinary_model_disabled','ordinary_workspace_not_enrolled','live_storage_unavailable','ordinary_model_selection_changed'].includes(e.code);
     const invalid=modelChat()&&['invalid_turn_request','invalid_offline_request','request_too_large'].includes(e.code);
     // A local admission rejection happens before creation of a Turn. Do not
     // discard a saved key for ambiguous post-dispatch errors.
     const preflight=localRequest&&['unsupported_capability','model_disabled','ordinary_model_disabled','local_provider_unavailable'].includes(e.code);
-    if(invalid||preflight)localStorage.removeItem(scope);
-    if(epoch===chat.epoch)text('chatTurnStatus',preflight?(e.code==='unsupported_capability'?
-      'Colibri MVP1 не поддерживает системные инструкции этого контекста. Текст запроса не отправлен.':
+    if(invalid||preflight||providerHold)localStorage.removeItem(scope);
+    if(epoch===chat.epoch)text('chatTurnStatus',providerHold?providerReason(String(e.message||e.code).replace(/^GigaChat: /,'')):preflight?(e.code==='unsupported_capability'?
+      'Клиент Нейрополис не поддерживает системные инструкции этого контекста. Текст запроса не отправлен.':
       'Локальная модель недоступна или отключена. Текст запроса не отправлен.'):invalid?'TEST · исправьте текст или выбор модели.':
       e.code==='idempotency_conflict'?'Конфликт ключа: верните исходный текст. Перезаписи нет.':'Ответ не подтверждён. Ключ сохранён. Проверьте состояние запроса перед повтором.')
   }
@@ -2474,7 +2517,7 @@ async function cancelTurn(){
   try{const current=await chatGet(turnBase()+'/by-key/'+encodeURIComponent(pending.key));const result=await chatPost(turnBase()+'/'+current.turn_id+'/cancel',{});if(epoch===chat.epoch){showTurn(result);await loadChatHistory(false)}}
   catch(_){if(epoch===chat.epoch)text('chatTurnStatus','Отмена не подтверждена. Проверьте состояние запроса.')}
 }
-const CHAT_REASON={missing_history:'В папке нет истории Ultra',missing_path:'Папка недоступна',not_directory:'Путь не является папкой',invalid_metadata:'Данные Ultra повреждены',unsupported_version:'Данные Ultra более новой версии',unsafe_storage_link:'Внутри хранилища Ultra ссылка вместо папки или файла — чтение запрещено',unreadable:'Данные не читаются',unsupported_registration_id:'Эта регистрация не поддерживается Ultra Chat',registry_unavailable:'Реестр Workspace недоступен',too_many_workspaces:'Слишком много Workspace',chats_listing_too_large:'Слишком много диалогов для просмотра',history_too_large:'История слишком большая для просмотра',foreign_identity:'Диалог принадлежит другому Workspace',chat_damaged:'Диалог повреждён',ultra_core_unavailable:'Общее ядро Ultra недоступно'};
+const CHAT_REASON={missing_history:'В папке нет истории Ultra',missing_path:'Папка недоступна',not_directory:'Путь не является папкой',invalid_metadata:'Данные Ultra повреждены',unsupported_version:'Данные Ultra более новой версии',unsafe_storage_link:'Внутри хранилища Ultra ссылка вместо папки или файла — чтение запрещено',unreadable:'Данные не читаются',unsupported_registration_id:'Эта регистрация не поддерживается Чатом Нейрополис',registry_unavailable:'Реестр Workspace недоступен',too_many_workspaces:'Слишком много Workspace',chats_listing_too_large:'Слишком много диалогов для просмотра',history_too_large:'История слишком большая для просмотра',foreign_identity:'Диалог принадлежит другому Workspace',chat_damaged:'Диалог повреждён',ultra_core_unavailable:'Общее ядро Ultra недоступно'};
 const CHAT_OUTCOME={failed:['Ошибка выполнения (старая запись), не ответ модели','bad'],no_answer:['Ответ не сохранён','warn'],interrupted:['Прервано · исход неизвестен','unknown'],unknown:['Исход неизвестен','unknown'],pending:['Ожидает выполнения','warn'],running:['Выполняется','active'],cancelled:['Отменено до выполнения','warn'],request_failed:['Выполнение завершилось ошибкой','bad']};
 function chatReason(code){return CHAT_REASON[code]||'Недоступно ('+String(code)+')'}
 function chatTime(value){return typeof value==='string'?value.replace('T',' ').slice(0,19):''}
@@ -2485,6 +2528,7 @@ async function loadChatAccess(){
   chatTurn.compact=access?.turn_test?.compact_sidebar===true;
   chatTurn.colibri=access?.turn_test?.colibri_offline===true;
   chatTurn.executionMode=access?.turn_test?.execution_mode;
+  chatTurn.provider=access?.turn_test;
   chatTurn.personalWorkspaceId=typeof access?.turn_test?.personal_workspace_id==='string'?access.turn_test.personal_workspace_id:null;
   chatTurn.liveWorkspaceId=typeof access?.turn_test?.live_workspace_id==='string'?access.turn_test.live_workspace_id:null;
   chatTurn.testModelPreferences=stage5Offline&&access?.turn_test?.mode==='TEST_OFFLINE'&&access.turn_test.chat_model_preferences===true;
@@ -2493,15 +2537,15 @@ async function loadChatAccess(){
   if(modelChat()){
     chatTurn.models=Array.isArray(access.turn_test.models)?access.turn_test.models:[];
     if(!chatTurn.models.some(m=>m.model_id===chatTurn.model)&&
-       !(chatTurn.ordinary&&chat.chat&&String(chatTurn.model||'').startsWith('tgt_')))
+       !(chatTurn.ordinary&&chat.chat&&chatTurn.model))
       chatTurn.model=chatTurn.models[0]?.model_id??null;
     if(chatTurn.testModelPreferences){chatTurn.model=null;chatTurn.testModelLoaded=false;}
   }
   renderTurnComposer();
   if(!c||typeof c.available!=='boolean'||c.header!==CHAT_TOKEN_HEADER)throw Error('Некорректный ответ сервера о доступе к истории');
   chat.token=c.available&&typeof c.token==='string'&&c.token.length>=32?c.token:null;
-  if(!chat.token)throw Object.assign(Error(c.reason==='disabled'?'Чтение истории Ultra Chat выключено при запуске сервера.':
-    c.reason==='non_loopback_bind'?'Чтение истории Ultra Chat недоступно: сервер запущен не на локальном адресе.':'Чтение истории Ultra Chat недоступно в этом режиме сервера.'),{chatUnavailable:true});
+  if(!chat.token)throw Object.assign(Error(c.reason==='disabled'?'Чтение истории Чата Нейрополис выключено при запуске сервера.':
+    c.reason==='non_loopback_bind'?'Чтение истории Чата Нейрополис недоступно: сервер запущен не на локальном адресе.':'Чтение истории Чата Нейрополис недоступно в этом режиме сервера.'),{chatUnavailable:true});
 }
 async function chatGet(path){
   if(!chat.token)await loadChatAccess();
@@ -2517,7 +2561,7 @@ function chatFailure(e){
   if(e.chatUnavailable){text('chatAccess',e.message);notice('chatError','');chat.workspaces=[];chat.chats=[];renderChatWorkspaces();renderChatList();text('chatWorkspaceState','');text('chatListState','');return}
   notice('chatError',e.chatTokenRejected?'Доступ к истории недействителен — обновите страницу.':
     e.httpStatus===403?'Сервер не разрешил чтение истории. Проверьте доступ и нажмите «Обновить».':
-    'Не удалось загрузить данные Ultra Chat. Проверьте, запущен ли Web Alarm, и нажмите «Обновить».')
+    'Не удалось загрузить данные Чата Нейрополис. Проверьте, запущена ли Студия Нейрополис, и нажмите «Обновить».')
 }
 function chatPick(label,detail,current,onclick){
   const b=element('button',null,'chat-pick');b.type='button';b.setAttribute('aria-current',String(current));
@@ -2673,6 +2717,7 @@ function compactDialogRow(w,c){
     if(chat.workspace===ws&&chat.chat!==c.chat_id)await selectChat(c.chat_id)
   });
   b.title=label;b.disabled=!ok;b.setAttribute('data-status',c.status);
+  if(ok&&Object.hasOwn(c,'last_activity_at'))b.append(activityStamp(c.last_activity_at,'Нет сообщений'));
   row.append(compactNameControl(b,ws,c.chat_id),compactIcon('✎','Переименовать чат «'+label+'»',()=>beginCompactName(ws,c.chat_id,label),ok&&!chatEdit.busy,'edit'),compactIcon('×','Убрать чат «'+label+'» в архив',()=>archiveCompact(ws,c.chat_id),ok&&!chatEdit.busy,'trash'));
   return row
 }
@@ -2859,7 +2904,7 @@ function clearChatHistory(title){
   if(modelChat()){
     chatTurn.state=null;
     $('chatTurnNew').hidden=true;
-    $('chatInput').value=turnPending()?.text??'';
+    $('chatInput').value=turnPending()?.text??readChatDraft();
   }
   text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true;text('chatTurnStatus','');renderChatUsage(null);
   chatPreferencesRevision++;chatPreferencesLoadedFor=null;$('chatPreferences').hidden=true;preferencesBusy(true);text('chatPreferencesStatus','');renderTurnComposer()
@@ -2900,7 +2945,13 @@ function validChatHistory(d){
 }
 function renderChatHistory(data,older=false){
   text('chatTitle',data.chat?.title||chat.chats.find(c=>c.chat_id===chat.chat)?.title||'Диалог');
-  if(chatTurn.compact&&typeof data.chat?.title==='string'){const item=chat.chats.find(c=>c.chat_id===chat.chat);if(item&&item.title!==data.chat.title){item.title=data.chat.title;renderCompactWorkspaces()}}
+  if(chatTurn.compact&&typeof data.chat?.title==='string'){
+    const item=chat.chats.find(c=>c.chat_id===chat.chat);
+    const activity=!older&&data.messages?.length?data.messages.at(-1).created_at:item?.last_activity_at;
+    if(item&&(item.title!==data.chat.title||item.last_activity_at!==activity)){
+      item.title=data.chat.title;item.last_activity_at=activity;renderCompactWorkspaces()
+    }
+  }
   const notes=[];
   if(data.history_state==='unavailable')notes.push(['error','История недоступна: '+chatReason(data.reason)+'.']);
   else if(data.history_state==='too_large')notes.push(['error',chatReason('history_too_large')+'. История не показана и не обрезана.']);
@@ -2947,10 +2998,8 @@ async function loadChatModel(){
       const epoch=chat.epoch,revision=++ordinaryModelRevision;chatTurn.model=null;renderTurnComposer();
       try{const selected=await chatGet(turnBase().replace(/\/turns$/,'/model'));
         if(epoch===chat.epoch&&revision===ordinaryModelRevision){
-          chatTurn.model=selected.enrolled===false?null:
-            typeof selected.model_ref==='string'?selected.model_ref:null;
-          if(selected.enrolled===false)notice('chatModelError',
-            'Для этого Workspace выберите модель: журнал новых GigaChat-запросов подготовится при выборе.');
+          chatTurn.model=typeof selected.model_ref==='string'?selected.model_ref:null;
+          notice('chatModelError','');
         }
       }catch(_){if(epoch===chat.epoch&&revision===ordinaryModelRevision)text('chatModelError','Выбор модели не подтверждён.');}
       if(epoch!==chat.epoch||revision!==ordinaryModelRevision)return;
@@ -3053,12 +3102,12 @@ async function loadChatWorkspaces(){
     if(epoch!==chat.epoch)return;
     if(chatTurn.compact)chatTurn.personalWorkspaceId=data.personal_workspace_id??null;
     if(!validChatWorkspaces(data))throw Error('Некорректный ответ сервера о Workspace');
-    text('chatAccess',chatTurn.ordinary?(chatTurn.available?'GigaChat · провайдер подключён':'Личные чаты доступны · отправка GigaChat пока закрыта'):
+    text('chatAccess',chatTurn.ordinary?(chatTurn.available?'GigaChat · провайдер подключён':'Личные чаты доступны · отправка GigaChat пока недоступна'):
       chatTurn.available?'TEST · локальный имитатор · без LLM':'Данные проверяет сервер · сообщения не отправляются');chat.workspaces=data.workspaces;
     text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.some(w=>!chatTurn.compact||!w.personal)?'':chatTurn.compact?'Нет Workspace':'Нет зарегистрированных Workspace. Нажмите «+ Создать Workspace».');
     if(chat.workspace&&!chat.workspaces.some(w=>w.wa_workspace_id===chat.workspace)){chat.workspace=null;chat.expanded=null;chat.chat=null;chat.chats=[];renderChatList();clearChatHistory('Выберите диалог')}
     const selected=chat.workspaces.find(w=>w.wa_workspace_id===chat.workspace);
-    text('chatWorkspaceName',selected?selected.display_name:'Ultra Chat');
+    text('chatWorkspaceName',selected?selected.display_name:'Чат Нейрополис');
     if(chatTurn.compact&&selected)chat.chats=selected.chats||[];
     renderChatWorkspaces();
     if(chat.workspace){await loadChatList();return true}
@@ -3079,7 +3128,7 @@ function selectChatWorkspace(id){
   closeChatName();
   $('chatNameForm').hidden=true;// a pending save of the old Workspace must not expose its editor in the new one
   chat.epoch++;chat.workspace=id;chat.expanded=id;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;chat.olderBusy=false;
-  const w=chat.workspaces.find(item=>item.wa_workspace_id===id);if(chatTurn.compact)chat.chats=w?.chats||[];text('chatWorkspaceName',w?w.display_name:'Ultra Chat');
+  const w=chat.workspaces.find(item=>item.wa_workspace_id===id);if(chatTurn.compact)chat.chats=w?.chats||[];text('chatWorkspaceName',w?w.display_name:'Чат Нейрополис');
   renderChatWorkspaces();renderChatList();clearChatHistory('Выберите диалог');
   return loadChatList()
 }
@@ -3126,7 +3175,7 @@ async function loadChatHistory(older){
   finally{if(older&&epoch===chat.epoch&&request===chat.historyRevision){chat.olderBusy=false;$('chatOlder').disabled=false}}
 }
 function startChat(){if(chat.started)return;chat.started=true;return loadChatWorkspaces().then(()=>{if(!chatTurn.ordinary&&!chatTurn.testModelPreferences)return loadChatModel()})}
-// Ultra Chat stage 2: create and rename a dialogue in the shared Ultra core. The write token is a second capability
+// Чат Нейрополис stage 2: create and rename a dialogue in the shared Ultra core. The write token is a second capability
 // of its own scope, asked for only when the user saves a change, kept only here and sent only with these POSTs in
 // its own header; the read token never goes with a write. The list is always re-read from the server afterwards.
 const CHAT_WRITE_HEADER='X-WebAlarm-Ultra-Chat-Write-Token';
@@ -3329,7 +3378,7 @@ $('evmExternalRefresh').onclick=()=>loadEvm();
 $('evmExternalClose').onclick=()=>window.close();
 $('shutdownWebAlarm').onclick=async()=>{
   const busy=chatTurn.busy||chatTurn.liveBusy||evm.liveBusy;
-  if(!window.confirm('Завершить Web Alarm в этом окне? '+
+  if(!window.confirm('Завершить Студию Нейрополис в этом окне? '+
       (busy?'Есть выполняющиеся операции: сервер дождётся их завершения в пределах тайм-аута. ':'')+
       'Настройки EVM, модели, история и бюджеты сохранятся.'))return;
   $('shutdownWebAlarm').disabled=true;
@@ -3337,7 +3386,7 @@ $('shutdownWebAlarm').onclick=async()=>{
     if(!chatEdit.token)await loadChatWriteAccess();
     const result=await api('/ui/shutdown',{method:'POST',headers:{[CHAT_WRITE_HEADER]:chatEdit.token},body:{confirmation:'SHUTDOWN WEB ALARM'}});
     if(result.state!=='STOPPING')throw Error('Сервер не подтвердил остановку');
-    text('shutdownResult','Web Alarm завершает работу. Дождитесь остановки сервера; эту вкладку можно закрыть.');
+    text('shutdownResult','Студия Нейрополис завершает работу. Дождитесь остановки сервера; эту вкладку можно закрыть.');
     $('shutdownResult').hidden=false;
   }catch(error){
     text('shutdownResult','Остановка не подтверждена: '+(error.message||'неизвестная ошибка'));
@@ -3372,7 +3421,8 @@ async function checkPageInstance(){
     }
   }catch(_){/* Older server: diagnostics unavailable, no automatic action. */}
 }
-$('chatInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();return sendTurn()}};
+$('chatInput').oninput=()=>saveChatDraft($('chatInput').value);
+$('chatInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!$('chatSend').disabled){e.preventDefault();return sendTurn()}};
 $('chatTurnCheck').onclick=()=>checkTurn(true);
 $('chatTurnCancel').onclick=cancelTurn;
 $('chatTurnNew').onclick=()=>{if(chatTurn.state==='UNKNOWN'&&(!modelChat()||!chatTurn.busy)){

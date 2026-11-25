@@ -1281,14 +1281,14 @@ class _JsonHandler(BaseHTTPRequestHandler):
         # independent of the folder picker; local UI transport, never a WebAlarmApi authority route.
         # Order: origin, method, route and query, size and type, token, body, data.
         body, body_problem = self._ultra_chat_body() if self.command not in {'GET', 'HEAD'} else (b'', None)
-        self._require_local_ui_origin('ultra_chat_forbidden', 'Ultra Chat')
+        self._require_local_ui_origin('ultra_chat_forbidden', 'Neuropolis Chat')
         service = self.server.web_alarm_ultra_chat
         query = urlsplit(self.path).query
         if self.command == 'POST' and service.is_write_path(path):
             self._ultra_chat_write(path, query, body, body_problem)
             return
         if self.command != 'GET':
-            raise ApiError(405, 'method_not_allowed', 'Ultra Chat reading is GET only')
+            raise ApiError(405, 'method_not_allowed', 'Neuropolis Chat reading is GET only')
         access = self.server.web_alarm_ultra_chat_access
         try:
             if path in {ULTRA_CHAT_CAPABILITY_PATH, ULTRA_CHAT_WRITE_CAPABILITY_PATH}:
@@ -1336,7 +1336,7 @@ class _JsonHandler(BaseHTTPRequestHandler):
 
     def _blueprint_request(self, path: str) -> None:
         # A separate local design capability. It grants no model, Chat, TASK or RUN execution authority.
-        self._require_local_ui_origin('blueprint_forbidden', 'Blueprint editor')
+        self._require_local_ui_origin('blueprint_forbidden', 'Neuropolis Blueprint')
         if urlsplit(self.path).query:
             raise ApiError(400, 'invalid_blueprint_request', 'Query parameters are not supported')
         service = self.api.blueprints
@@ -1359,7 +1359,7 @@ class _JsonHandler(BaseHTTPRequestHandler):
                         or self.headers.get('Transfer-Encoding') is not None):
                     raise ApiError(400, 'invalid_blueprint_request', 'A fixed JSON body is required')
                 if not 0 < int(lengths[0]) <= BLUEPRINT_MAX_BYTES:
-                    raise ApiError(413, 'request_too_large', 'Blueprint request is too large')
+                    raise ApiError(413, 'request_too_large', 'Neuropolis Blueprint request is too large')
                 if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
                     raise ApiError(415, 'unsupported_media_type', 'Content-Type must be application/json')
                 body = self._read_body()
@@ -1425,7 +1425,7 @@ class _JsonHandler(BaseHTTPRequestHandler):
                 if urlsplit(self.path).path == '/ui/shutdown':
                     self._shutdown_request()
                     return
-                self._send_json(503, {'error': {'code': 'application_stopping', 'message': 'Web Alarm is stopping'}})
+                self._send_json(503, {'error': {'code': 'application_stopping', 'message': 'Neuropolis Studio is stopping'}})
                 return
             tracker['active'] += 1
         try:
@@ -1587,9 +1587,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--allow-non-loopback", action="store_true")
     parser.add_argument("--disable-ultra-chat", action="store_true",
-                        help="Turn off the read-only Ultra Chat history routes; the operator panel and EVM keep working")
+                        help="Turn off the read-only Neuropolis Chat history routes; the operator panel and EVM keep working")
     parser.add_argument("--disable-ultra-chat-write", action="store_true",
-                        help="Keep Ultra Chat read-only: no chat creation or renaming from the web page")
+                        help="Keep Neuropolis Chat read-only: no chat creation or renaming from the web page")
     return parser
 
 
@@ -1611,7 +1611,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 2
 
     host, port = server.server_address[:2]
-    print(f"Web Alarm Server listening on http://{host}:{port}", flush=True)
+    print(f"Neuropolis Studio listening on http://{host}:{port}", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

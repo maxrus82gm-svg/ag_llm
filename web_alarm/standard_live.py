@@ -7,7 +7,11 @@ after explicit console consent; existing workspaces and chats are never adopted.
 from __future__ import annotations
 
 import os
+import hashlib
+import hmac
+from dataclasses import asdict
 from pathlib import Path
+import platform
 import secrets
 import stat
 import time
@@ -23,9 +27,103 @@ MODEL_ID = "gigachat_2"
 OBSERVED_MODEL = "GigaChat-2:2.0.30.01"
 MAX_WIRE_BYTES = 8192
 MAX_ANSWER_TOKENS = 20000  # user preference ceiling, not a provider output claim
-LIFETIME_SECONDS = 86400  # finite local authority; reconnect requires an owner action
+LIFETIME_SECONDS = 86400  # runtime grant only
 PERSONAL_DIRNAME = "personal_chats"
 PERSONAL_LABEL = "Личные чаты"
+_CONSENT = (core.ULTRA_DIRNAME, "provider_sessions", "gigachat_standard_consent.json")
+_SCOPE = "GIGACHAT_API_PERS"
+_ACCOUNT = "existing-windows-gigachat-pers-account"
+_REQUEST_BYTES = 4096
+
+
+def standard_approval():
+    """Use the same six-model contract for explicit consent and runtime renewal."""
+    from model_registry import list_model_specs
+    contracts = tuple(
+        ModelContract(m.model_id, 128000 if m.model_id.startswith("gigachat_2") or m.model_id == "gigachat_ultra" else 32768,
+                      MAX_ANSWER_TOKENS, (OBSERVED_MODEL,) if m.model_id == MODEL_ID else (),
+                      "STANDARD six-model admission and bounded operator output preference",
+                      version_mode="EXACT" if m.model_id == MODEL_ID else "DISCOVER_FAMILY")
+        for m in list_model_specs() if m.enabled and m.provider == "gigachat" and not m.is_local
+    )
+    if len(contracts) != 6:
+        raise PreSendDenied("live_registry_changed")
+    return LiveApproval(
+        grant_id="InAppGigaChat" + secrets.token_hex(16),
+        user_go="local owner GIGACHAT 6 consent bound to the STANDARD provider profile",
+        independent_review="Bounded offline verification required before owner merge; general release HOLD",
+        account_id=_ACCOUNT, scope=_SCOPE, expires_at=time.time() + LIFETIME_SECONDS,
+        contracts=contracts, max_oauth=None, max_catalog=1, max_inference=None,
+        max_liability_tokens=None, max_request_bytes=_REQUEST_BYTES,
+        max_answer_tokens=MAX_ANSWER_TOKENS, user_turn_mode=True,
+    )
+
+
+def _consent_binding(approval):
+    from gigachat_runtime import MODELS_URL
+    from gigachat_transport import CHAT_URL, OAUTH_URL
+    from model_registry import get_model_spec
+
+    host = platform.node()
+    if not host:
+        raise PreSendDenied("consent_host_unverifiable")
+    policy = asdict(approval)
+    for runtime_field in ("grant_id", "expires_at", "user_go", "independent_review"):
+        del policy[runtime_field]
+    policy["provider_models"] = [get_model_spec(c.model_id).provider_model_id for c in approval.contracts]
+    policy["endpoints"] = [OAUTH_URL, MODELS_URL, CHAT_URL]
+    policy["host_installation"] = [host, str(Path.home())]
+    return hashlib.sha256(core._json_bytes(policy)).hexdigest()
+
+
+def standard_credentials():
+    value = os.environ.get("GIGACHAT_CREDENTIALS", "")
+    if (not 0 < len(value) <= 8192 or any(not 33 <= ord(c) <= 126 for c in value)
+            or os.environ.get("GIGACHAT_SCOPE", _SCOPE) != _SCOPE):
+        raise PreSendDenied("credentials_or_scope_invalid")
+    return value
+
+
+def _credential_binding(salt, credential):
+    return hashlib.sha256(bytes.fromhex(salt) + credential.encode("ascii")).hexdigest()
+
+
+def read_standard_consent(root, wid, approval):
+    try:
+        consent = core.read_ultra_json_bounded(root, _CONSENT[1:], max_bytes=4096)
+        if (type(consent) is not dict or consent.get("schema") != 1
+                or consent.get("workspace_id") != wid):
+            raise ValueError
+        if consent.get("state") == "REVOKED":
+            return None
+        salt = consent["salt"]
+        if consent.get("state") != "ALLOWED" or type(salt) is not str or len(salt) != 64:
+            raise ValueError
+        if consent["policy"] != _consent_binding(approval):
+            raise PreSendDenied("consent_policy_changed")
+        if not hmac.compare_digest(consent["credential_binding"], _credential_binding(salt, standard_credentials())):
+            raise PreSendDenied("consent_credentials_changed")
+        return consent
+    except core.StorageReadError as exc:
+        if exc.code == "missing":
+            return None
+        raise PreSendDenied("consent_storage_unavailable") from None
+    except PreSendDenied:
+        raise
+    except (KeyError, TypeError, ValueError):
+        raise PreSendDenied("consent_storage_unavailable") from None
+
+
+def save_standard_consent(root, wid, approval=None, *, credential=None):
+    consent = {"schema": 1, "workspace_id": wid, "state": "REVOKED"}
+    if approval is not None:
+        salt = secrets.token_hex(32)
+        consent.update(state="ALLOWED", salt=salt, policy=_consent_binding(approval),
+                       credential_binding=_credential_binding(salt, credential))
+    with core._existing_workspace_writer(root, wid) as writer:
+        core._ensure_write_directory(writer.anchor, _CONSENT[:-1])
+        core._replace_verified(writer.anchor, _CONSENT, core._json_bytes(consent))
+    return consent
 
 
 def eligible_workspaces(api):

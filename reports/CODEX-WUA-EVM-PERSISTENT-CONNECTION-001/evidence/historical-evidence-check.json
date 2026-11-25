@@ -1,0 +1,26 @@
+{
+  "path": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/evidence/cmd.stdout.txt",
+  "expected_sha256": "d7a488d104855196ca95e4023060e5d082e4836de18f3c3cad5b33916dec9347",
+  "current_sha256": "dfa3b655cf8f065b867952084c3e1e975f570325fbdf8ad2feccaf90509d0a8f",
+  "result": "ORIGINAL_NOT_RECOVERED",
+  "other_known_cmd_artifacts_verified": [
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/evidence/cmd_result.json",
+      "matches": true
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/evidence/first_cmd.stdout.txt",
+      "matches": true
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/evidence/passed_before_pipe_cleanup_cmd.stdout.txt",
+      "matches": true
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-ORDINARY-TEST-ACTIVATION-001/evidence/passed_before_pipe_cleanup_cmd_result.json",
+      "matches": true
+    }
+  ],
+  "cause": "Historical test wrote its output into a fixed prior evidence path.",
+  "future_test_behavior": "No writes to historical package; system browser opener replaced in subprocess."
+}

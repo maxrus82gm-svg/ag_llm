@@ -50,6 +50,11 @@ class _AccountOwnerLock:
             core._release_lock_byte(handle)
 
 
+def account_owner_lock(account_id, synthetic=False):
+    lock_name = hashlib.sha256((account_id + ':' + str(synthetic)).encode()).hexdigest()
+    return _AccountOwnerLock(Path(tempfile.gettempdir()) / ('web-alarm-gigachat-owner-' + lock_name + '.lock'))
+
+
 @dataclass(frozen=True)
 class ModelContract:
     model_id: str
@@ -195,6 +200,9 @@ class ProviderSession:
         self.trust_identity = hashlib.sha256(b''.join(sorted(self._tls.get_ca_certs(binary_form=True)))).hexdigest()
         self._mutex = threading.Lock()
         self._closed = False
+        self._close_error = False
+        self._check_user_permission = None
+        self._model_enabled = None
         self._available = frozenset()
         self._confirmed_versions = {}
         self._counts = dict(oauth=0, catalog=0, inference=0, liability=0)
@@ -202,8 +210,7 @@ class ProviderSession:
         self._account_parts = self._parts[:-1]+('account_'+hashlib.sha256(self.account_id.encode()).hexdigest()+'.json',)
         # Held for the whole runtime session. An OS lock survives neither a crash
         # nor process exit; legacy ACTIVE records have no such proof of death.
-        lock_name = hashlib.sha256((self.account_id + ':' + str(self.synthetic)).encode()).hexdigest()
-        self._owner_lock = _AccountOwnerLock(Path(tempfile.gettempdir()) / ('web-alarm-gigachat-owner-' + lock_name + '.lock'))
+        self._owner_lock = account_owner_lock(self.account_id, self.synthetic)
         self._owner_lock.acquire()
         # Explicit enrollment, never on a browser send or read. No automatic
         # historical ledger adoption; a previously initialized S3a is required.
@@ -234,10 +241,12 @@ class ProviderSession:
                     # The old owner cannot still hold this lock. Keep its exact
                     # account state as evidence; do not rewrite the old grant.
                     recovery = self._parts[:-1] + ('recovery_' + prior['grant_id'] + '.json',)
-                    if core._read_existing_raw(writer, recovery) is not None:
+                    evidence = {'schema': 1, 'reason': 'owner_os_lock_released', 'previous': prior}
+                    existing = core._read_existing_raw(writer, recovery)
+                    if existing is not None and existing != evidence:
                         raise PreSendDenied('account_recovery_evidence_exists')
-                    core._replace_verified(writer.anchor, recovery, core._json_bytes(
-                        {'schema': 1, 'reason': 'owner_os_lock_released', 'previous': prior}))
+                    if existing is None:
+                        core._replace_verified(writer.anchor, recovery, core._json_bytes(evidence))
                 self._confirmed_versions = dict(pinned)
                 self._save(writer)
                 core._replace_verified(writer.anchor, self._account_parts, core._json_bytes(self._account_record()))
@@ -285,6 +294,8 @@ class ProviderSession:
                 raise PreSendDenied('provider_session_changed')
             if core._read_existing_raw(writer, self._account_parts) != self._account_record():
                 raise PreSendDenied('account_owner_changed')
+            if self._check_user_permission is not None:
+                self._check_user_permission()
 
     def credentials(self):
         self.check()
@@ -325,6 +336,8 @@ class ProviderSession:
 
     def validate_wire(self, model_id, wire):
         c = self.contract(model_id)
+        if self._model_enabled is not None and not self._model_enabled(model_id):
+            raise PreSendDenied('ordinary_model_disabled')
         body = json.loads(wire)
         output = body.get('max_tokens')
         if (get_model_spec(model_id).provider_model_id not in self._available
@@ -384,17 +397,38 @@ class ProviderSession:
         finally:
             self._mutex.release()
 
-    def close(self):
+    def close(self, *, before_release=None):
+        if self._close_error:
+            raise PreSendDenied('provider_session_close_unverified')
         if self._closed:
             return
-        with _LOCK:
-            if (self.account_id, self.synthetic) in _ACTIVE or self._mutex.locked():
-                raise PreSendDenied('provider_account_busy')
-        self._closed = True
-        with core._existing_workspace_writer(self.root, self.workspace_id) as writer:
-            self._save(writer)
-            core._replace_verified(writer.anchor, self._account_parts, core._json_bytes(self._account_record()))
-        self._owner_lock.release()
+        if not self._mutex.acquire(blocking=False):
+            raise PreSendDenied('provider_account_busy')
+        try:
+            if self._close_error:
+                raise PreSendDenied('provider_session_close_unverified')
+            if self._closed:
+                return
+            with _LOCK:
+                if (self.account_id, self.synthetic) in _ACTIVE:
+                    raise PreSendDenied('provider_account_busy')
+                self._closed = True  # Fence an inference between validate_wire and acquiring _LOCK.
+            try:
+                with core._existing_workspace_writer(self.root, self.workspace_id) as writer:
+                    if (core._read_existing_raw(writer, self._parts) != {**self._record(), 'state': 'ACTIVE'}
+                            or core._read_existing_raw(writer, self._account_parts) !=
+                            {**self._account_record(), 'state': 'ACTIVE'}):
+                        raise PreSendDenied('provider_close_owner_unverifiable')
+                    if before_release is not None:
+                        before_release()
+                    self._save(writer)
+                    core._replace_verified(writer.anchor, self._account_parts, core._json_bytes(self._account_record()))
+            except BaseException:
+                self._close_error = True
+                raise
+            self._owner_lock.release()
+        finally:
+            self._mutex.release()
 
 
 class RealGigaChatTransport:
@@ -419,7 +453,7 @@ class RealGigaChatTransport:
         # workspace's durable single-use grant fences restart/replay as well.
         key = (session.account_id, session.synthetic)
         with _LOCK:
-            if key in _ACTIVE:
+            if session._closed or key in _ACTIVE:
                 raise PreSendDenied('provider_account_busy')
             _ACTIVE.add(key)
         try:
@@ -436,7 +470,7 @@ class RealGigaChatTransport:
                     'Content-Type': 'application/json; charset=utf-8'})
                 if request.content != wire or str(request.url) != CHAT_URL or request.method != 'POST':
                     raise PreSendUncertain('physical_request_changed')
-                session.check()
+                session.validate_wire(self.model_id, wire)
                 admission.check(wire, self, physical=True)
                 response = await client.send(request, stream=True)
                 try:

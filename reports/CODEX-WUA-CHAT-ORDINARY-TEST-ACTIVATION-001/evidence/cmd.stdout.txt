@@ -1,4 +1,4 @@
-[TEST] Web Alarm Ultra - disposable TEST data only.
+[TEST] Neuropolis Studio - disposable TEST data only.
 The current test profile is selected in web_alarm\launch_test_config.json.
 The selected TEST profile opens below. The default interface is Web.
 Allow five seconds for the existing TEST warning.
@@ -9,7 +9,7 @@ In Web mode press Enter here to stop and remove temporary TEST chats.
 ВНИМАНИЕ! НЕСТАНДАРТНЫЙ ТЕСТОВЫЙ ЗАПУСК
 ================================================================
 
-Конфигурация: ordinary-core-offline — Ordinary Core Chat · OFFLINE TEST
+Конфигурация: ordinary-core-offline — Чат Нейрополис · OFFLINE TEST
 Приложение: тестовый скрипт web_alarm/ordinary_test_fixture.py; адрес и данные определяет он сам.
 Браузер этот запуск не помечает — ориентируйтесь на это окно.
 Вернуть стандартный запуск: в web_alarm\launch_config.json указать "active": "standard".
@@ -19,7 +19,48 @@ In Web mode press Enter here to stop and remove temporary TEST chats.
 Тестовый скрипт запустится через 3 с.
 Тестовый скрипт запустится через 2 с.
 Тестовый скрипт запустится через 1 с.
-TEST OFFLINE · Ordinary Core Chat · только fake transport
+TEST OFFLINE · Чат Нейрополис · только синтетический транспорт
 Нажмите Enter в окне запуска, чтобы остановить TEST и удалить временные чаты.
-ORDINARY_TEST_READY {"url": "http://127.0.0.1:57982/", "root": "C:\\Users\\REX\\AppData\\Local\\Temp\\ordinary_core_TEST_x9ptn3eb", "core_bridge": true, "real_available": false, "browser_requested": true, "browser_opened": true}
-ORDINARY_TEST_CLEANED
+ORDINARY_TEST_READY {"url": "http://127.0.0.1:61542/", "root": "M:\\GitHub\\ag_llm\\_ultra_agent_test\\scratch\\pcneg\\temp\\ordinary_core_TEST_t3lzs4d8", "core_bridge": true, "real_available": false, "browser_requested": true, "browser_opened": true}
+Traceback (most recent call last):
+  File "<frozen os>", line 366, in walk
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\guard\sitecustomize.py", line 91, in _audit
+    _deny(event, "repository_live_storage")
+  File "M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-ORDINARY-CORE-BRIDGE-001\guard\sitecustomize.py", line 22, in _deny
+    raise PermissionError("OFFLINE guard: " + boundary)
+PermissionError: OFFLINE guard: repository_live_storage
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\web_alarm\ordinary_test_fixture.py", line 68, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\ordinary_test_fixture.py", line 23, in main
+    with tempfile.TemporaryDirectory(prefix="ordinary_core_TEST_") as directory:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\tempfile.py", line 950, in __exit__
+    self.cleanup()
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\tempfile.py", line 954, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\tempfile.py", line 934, in _rmtree
+    _shutil.rmtree(name, onexc=onexc)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shutil.py", line 781, in rmtree
+    return _rmtree_unsafe(path, onexc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shutil.py", line 623, in _rmtree_unsafe
+    for dirpath, dirnames, filenames in results:
+                                        ^^^^^^^
+  File "<frozen os>", line 369, in walk
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shutil.py", line 621, in onerror
+    onexc(os.scandir, err.filename, err)
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\tempfile.py", line 905, in onexc
+    _resetperms(_os.path.dirname(path))
+                ^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 277, in dirname
+  File "<frozen ntpath>", line 241, in split
+TypeError: expected str, bytes or os.PathLike object, not NoneType
+
+[ERROR] TEST launch failed with code 1. Read the details above.
+This window will stay open until you press a key.
+��� �த������� ������ ���� ������� . . . 

@@ -576,6 +576,33 @@ class TurnService:
             raise UltraChatError(400,'invalid_turn_request','Invalid retry key')
         return self.get(root,workspace_id,chat_id,identities(workspace_id,chat_id,key)['turn_id'])
 
+    def recover_existing_ordinary(self, root, workspace_id, chat_id, body, *, provider_mode):
+        """Reconcile already-started work without constructing a provider sender."""
+        key = body['idempotency_key']
+        raw = body['text']
+        try:
+            valid_text = type(raw) is str and raw.strip() and len(raw.encode('utf-8')) <= 2048
+        except UnicodeError:
+            valid_text = False
+        if type(key) is not str or not KEY.fullmatch(key) or not valid_text:
+            raise UltraChatError(400, 'invalid_turn_request', 'Expected a small message and a stable retry key')
+        with self._session(root, workspace_id, chat_id):
+            try:
+                turn = self._load(root, workspace_id, chat_id, identities(workspace_id, chat_id, key)['turn_id'])
+            except UltraChatError as exc:
+                if exc.code in ('turn_not_found', 'turn_acceptance_incomplete'):
+                    return None
+                raise
+            if (turn['schema_version'] != 2
+                    or turn.get('ordinary_admission', {}).get('provider_mode') != provider_mode):
+                raise UltraChatError(403, 'ordinary_real_hold', 'Turn belongs to a different execution mode')
+            if _digest({**turn['references'], **body}) != turn['request_sha256']:
+                raise UltraChatError(409, 'idempotency_conflict', 'This key already belongs to different content')
+            if turn['state'] in ('ACCEPTING', 'READY'):
+                return None
+            runs.recover_run_records(root, turn['run_id'])
+            return self._settle_offline(root, turn)
+
     def submit(self, root, workspace_id, chat_id, body):
         body = self._body(body)
         ids = identities(workspace_id, chat_id, body['idempotency_key'])

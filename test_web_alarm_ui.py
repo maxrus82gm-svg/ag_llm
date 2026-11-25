@@ -55,7 +55,7 @@ class WebAlarmUiTests(unittest.TestCase):
         self.tempdir.cleanup()
 
     def test_static_ui_contains_required_sections_and_safe_text_rendering(self):
-        self.assertIn("Web Alarm Workspace", INDEX_HTML)
+        self.assertIn("Студия Нейрополис", INDEX_HTML)
         self.assertIn("Новая TASK", INDEX_HTML)
         self.assertIn("RAW TASK", INDEX_HTML)
         self.assertIn("Manifest / Snapshot", INDEX_HTML)
@@ -123,7 +123,7 @@ class WebAlarmUiTests(unittest.TestCase):
                 body = response.read().decode("utf-8")
                 self.assertEqual(response.status, 200)
                 self.assertTrue(response.headers["Content-Type"].startswith("text/html"))
-                self.assertIn("Web Alarm Workspace", body)
+                self.assertIn("Студия Нейрополис", body)
                 self.assertIn("/tasks/", body)
         finally:
             server.shutdown()

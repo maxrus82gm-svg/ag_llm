@@ -166,9 +166,8 @@ class Role:
 
 
 ROLES = (
-    Role("chat", "Чат", "Модель обычного Ultra Chat в браузере: будет отвечать пользователю в диалоге. Выбирается в "
-         "Web Alarm — сейчас в EVM над карточками, позже у поля ввода сообщения. Пока Ultra Chat только читает "
-         "историю, эта роль ничего не отправляет.", runs=False),
+    Role("chat", "Чат", "Модель Чата Нейрополис. Для каждого диалога её можно выбрать у поля ввода сообщения.",
+         runs=False),
     Role("planner", "Планировщик", "Составляет план TASK по этапам до начала работы и пересматривает его по фактам "
          "сервера; сам ничего не выполняет. Модель и включение — в настройках прежней Ultra (Tkinter).",
          field="planner_model_id", enabled_field="planner_enabled"),
@@ -425,6 +424,7 @@ class ModelCards:
         self.connections = connections
         self.tk_state_path = tk_state_path
         self.checker: ApiChecker = checker or LiveCheckNotAuthorized()
+        self.gigachat_runtime = None
         self.environ = os.environ if environ is None else environ
         self.now = now
         self.lock_timeout = lock_timeout
@@ -493,7 +493,7 @@ class ModelCards:
             loaded, data, revision = {"state": "CORRUPT", "reason": "unreadable"}, {}, None
         builtins=dict(BUILTIN_PROVIDERS)
         if self.connections.has_colibri:
-            builtins["colibri"]=Provider("colibri","Colibri","Локально",
+            builtins["colibri"]=Provider("colibri","Клиент Нейрополис","Локально",
                 "web_alarm.colibri_bridge_transport","Bearer Token · защищённый локальный Bridge")
         result = {"state": loaded["state"], "revision": revision, "ignored": 0,
                   "providers": builtins, "profiles": {}, "models": {}, "invalid_enabled": set()}
@@ -577,7 +577,7 @@ class ModelCards:
                 "scope": {"value": scope, "label": SCOPE_LABELS.get(scope, "Нестандартное значение" if scope else "—")}}
 
     def _settings_version(self, spec: Any, provider: Provider | None, profile: dict[str, Any],
-                          facts: dict[str, Any]) -> str:
+                          facts: dict[str, Any], permission_revision: str | None = None) -> str:
         """Changes when the key, the API profile, an endpoint or the called model changes; card text,
         parameter count and the freshness period are deliberately outside."""
         material = {
@@ -588,6 +588,8 @@ class ModelCards:
             "api_url": provider.api_url if provider else None, "provider_model_id": spec.provider_model_id,
             "timeout_seconds": profile["timeout_seconds"],
         }
+        if permission_revision is not None:
+            material["permission_revision"] = permission_revision
         canonical = json.dumps(material, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical.encode("ascii")).hexdigest()[:16]
 
@@ -603,6 +605,10 @@ class ModelCards:
             "freshness_days": freshness_days, "settings_version": settings_version,
             "last_success_at": record.get("last_success_at") if success_at else None,
             "last_success_source": record.get("last_success_source") if success_at else None,
+            "last_generation_at": record.get("last_generation_at") or
+                (record.get("last_success_at") if success_at and record.get("last_success_source") == "chat" else None),
+            "last_diagnostic_at": record.get("last_diagnostic_at") or
+                (record.get("last_success_at") if success_at and record.get("last_success_source") == "diagnostic" else None),
             "last_failure_at": record.get("last_failure_at") if failure_at else None,
             "last_failure": record.get("last_failure") if failure_at else None,
             "age_days": None,
@@ -781,6 +787,7 @@ class ModelCards:
         return {"registry":registry,"snapshot":snapshot,
                 "targets":{t["target_id"]:t for t in targets},
                 "settings":self._settings(),"checks":self._checks(),
+                "gigachat_runtime":self.gigachat_runtime() if self.gigachat_runtime else None,
                 "tk":read_tk_assignments(self.tk_state_path,_registry()),
                 "chat":self.connections.selection("chat",registry=registry)}
 
@@ -797,7 +804,9 @@ class ModelCards:
         provider = settings["providers"].get(spec.provider)
         profile = self._profile_for(settings, spec)
         facts = self._connection_facts(provider)
-        version = self._settings_version(spec, provider, profile, facts)
+        runtime = ctx.get("gigachat_runtime") if spec.provider == "gigachat" else None
+        revision = getattr(runtime[2], "_permission_revision", None) if runtime is not None else None
+        version = self._settings_version(spec, provider, profile, facts, revision)
         connection_id = connection_id_for(spec)
         record = ctx["checks"]["checks"].get(connection_id)
         entry = settings["models"].get(spec.model_id, {})
@@ -805,6 +814,34 @@ class ModelCards:
         status = self.api_status(record, settings_version=version, freshness_days=profile["freshness_days"],
                                  checks_state=ctx["checks"]["state"], registry_enabled=bool(spec.enabled),
                                  adapter_state=_adapter_state(provider) if provider else "MISSING")
+        enabled = (settings["state"] != "CORRUPT" and spec.model_id not in settings["invalid_enabled"]
+                   and bool(entry.get("enabled", True)))
+        availability = None
+        if runtime is not None:
+            state, reason, session = runtime
+            availability = state if state != "INACTIVE" else "UNVERIFIED"
+            if state == "ACTIVE":
+                if spec.provider_model_id not in session._available:
+                    availability = "UNAVAILABLE"
+                elif not any(c.model_id == spec.model_id for c in session.approval.contracts):
+                    availability = "NOT_APPROVED"
+                else:
+                    availability = "AVAILABLE"
+            status = {**status, "runtime_reason": reason, "availability": availability}
+            if status["reason"] == "STATE_CORRUPT" or settings["state"] == "CORRUPT":
+                status.update(color=RED, reason="STATE_CORRUPT")
+            elif not spec.enabled or not enabled:
+                status.update(color=GRAY, reason="MODEL_DISABLED")
+            elif state == "BLOCKED":
+                status.update(color=RED, reason="PROVIDER_BLOCKED")
+            elif availability in ("UNAVAILABLE", "NOT_APPROVED"):
+                status.update(color=RED, reason="MODEL_" + availability)
+            elif status["color"] != RED and state != "ACTIVE":
+                status.update(color=ORANGE, reason="PROVIDER_" + state)
+            elif status["color"] == GRAY:
+                status.update(color=ORANGE)
+        elif not enabled:
+            status.update(color=GRAY, reason="MODEL_DISABLED")
         last_output = None
         if isinstance(record, dict) and isinstance(record.get("last_output"), dict):
             out = record["last_output"]
@@ -820,7 +857,7 @@ class ModelCards:
             "connection_id": connection_id, "model_id": spec.model_id, "display_name": spec.display_name,
             "provider_id": spec.provider, "provider_model_id": spec.provider_model_id,
             "registry_enabled": bool(spec.enabled),
-            "enabled": settings["state"] != "CORRUPT" and spec.model_id not in settings["invalid_enabled"] and bool(entry.get("enabled", True)), "is_local": bool(spec.is_local),
+            "enabled": enabled, "is_local": bool(spec.is_local),
             "params_billion": params, "params_source": "user" if params is not None else "unknown",
             "description": entry.get("description", ""), "profile_id": profile["profile_id"],
             "settings_version": version, "roles": role_states(spec.model_id, ctx["tk"], ctx["chat"]),
@@ -1007,6 +1044,8 @@ class ModelCards:
         def update(record: dict[str, Any]) -> None:
             record.update(settings_version=settings_version, last_success_at=at,
                           last_success_source=source, last_event="success")
+            if source == "diagnostic":
+                record["last_diagnostic_at"] = at
             if reply is not None:
                 record["last_output"] = {"kind": "reply", "at": at, "text": safe_text(reply, 8192)}
             record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
@@ -1046,25 +1085,29 @@ class ModelCards:
 
         self._record(connection_id, update)
 
-    def record_chat_success(self, model_id: str, settings_version: str, *, turn_id: str | None = None) -> bool:
+    def record_chat_success(self, model_id: str, settings_version: str, *, turn_id: str | None = None,
+                            diagnostic: bool = False) -> bool:
         """Extension point for an ordinary Ultra Chat answer: it refreshes the confirmation only when the
         server knows the exact model and the settings version the answer was produced with."""
         card = self.card(model_id)
         if settings_version != card["settings_version"] or not card["registry_enabled"]:
             return False
         at = self.now().isoformat()
+        source = "diagnostic" if diagnostic else "chat"
         def update(record: dict[str, Any]) -> bool:
             if turn_id is not None and not self._mark_chat_turn(record, turn_id):
                 return False
             record.update(settings_version=settings_version, last_success_at=at,
-                          last_success_source="chat", last_success_turn_id=turn_id, last_event="success")
+                          last_success_source=source, last_success_turn_id=turn_id, last_event="success")
+            record["last_diagnostic_at" if diagnostic else "last_generation_at"] = at
             record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
-                                 {"at": at, "outcome": "CONFIRMED", "source": "chat",
+                                 {"at": at, "outcome": "CONFIRMED", "source": source,
                                   "settings_version": settings_version, "turn_id": turn_id}]
             return True
         return self._record(card["connection_id"], update)
 
-    def record_chat_failure(self, model_id: str, settings_version: str, *, code: str, turn_id: str) -> bool:
+    def record_chat_failure(self, model_id: str, settings_version: str, *, code: str, turn_id: str,
+                            diagnostic: bool = False) -> bool:
         """A failed or uncertain REAL Turn invalidates a prior confirmation once."""
         card = self.card(model_id)
         if settings_version != card["settings_version"] or not card["registry_enabled"]:
@@ -1076,13 +1119,16 @@ class ModelCards:
                 return False
             record.update(last_failure_at=at, last_failure={"code": safe_code, "message": "Turn did not succeed"},
                           failure_settings_version=settings_version, last_failure_turn_id=turn_id, last_event="failure")
+            if diagnostic:
+                record["last_diagnostic_at"] = at
             record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
                                  {"at": at, "outcome": "FAILED", "source": "chat", "code": safe_code,
                                   "settings_version": settings_version, "turn_id": turn_id}]
             return True
         return self._record(card["connection_id"], update)
 
-    def record_chat_unknown(self, model_id: str, settings_version: str, *, turn_id: str) -> bool:
+    def record_chat_unknown(self, model_id: str, settings_version: str, *, turn_id: str,
+                            diagnostic: bool = False) -> bool:
         card = self.card(model_id)
         if settings_version != card["settings_version"] or not card["registry_enabled"]:
             return False
@@ -1091,6 +1137,8 @@ class ModelCards:
             if not self._mark_chat_turn(record, turn_id):
                 return False
             record.update(last_unknown_at=at, last_unknown_turn_id=turn_id, last_event="unknown")
+            if diagnostic:
+                record["last_diagnostic_at"] = at
             record["history"] = [*((record.get("history") if type(record.get("history")) is list else [])[-49:]),
                                  {"at": at, "outcome": "UNKNOWN", "source": "chat",
                                   "settings_version": settings_version, "turn_id": turn_id}]

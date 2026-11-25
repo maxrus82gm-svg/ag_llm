@@ -127,14 +127,14 @@ class BannerAndPageTests(Base):
     def test_b1_standard_banner_is_green_and_test_banner_is_red_with_the_profile_name(self):
         standard = launcher.standard_launch()
         text = launcher.banner(standard, "http://127.0.0.1:8765/", "store", colors=True)
-        self.assertIn(launcher.ESC + "[1;97;42m " + "СТАНДАРТНЫЙ ЗАПУСК — WEB ALARM ULTRA", text)
+        self.assertIn(launcher.ESC + "[1;97;42m " + "СТАНДАРТНЫЙ ЗАПУСК — СТУДИЯ НЕЙРОПОЛИС", text)
         self.assertNotIn("НЕСТАНДАРТНЫЙ", text)
         test = launcher.load_launch(config(self.base, "isolated-empty"))
         text = launcher.banner(test, "http://127.0.0.1:8766/", "tmp", colors=True)
         self.assertIn(launcher.ESC + "[1;97;41m " + "ВНИМАНИЕ! НЕСТАНДАРТНЫЙ ТЕСТОВЫЙ ЗАПУСК", text)
         self.assertIn("isolated-empty", text)
         self.assertIn('"active": "standard"', text)
-        self.assertNotIn("СТАНДАРТНЫЙ ЗАПУСК — WEB ALARM ULTRA", text)
+        self.assertNotIn("СТАНДАРТНЫЙ ЗАПУСК — СТУДИЯ НЕЙРОПОЛИС", text)
         plain = launcher.banner(test, "u", "s", colors=False)
         self.assertNotIn(launcher.ESC, plain)
         self.assertIn("ВНИМАНИЕ! НЕСТАНДАРТНЫЙ ТЕСТОВЫЙ ЗАПУСК", plain)
@@ -162,7 +162,7 @@ class RunTests(Base):
         self.assertEqual((data["standard"], data["storage_is_default"], data["page_unchanged_from_ui"],
                           data["page_marked_as_test"], data["ultra_chat_available"], data["stopped"]),
                          (True, True, True, False, True, True))
-        self.assertIn("СТАНДАРТНЫЙ ЗАПУСК — WEB ALARM ULTRA", text)
+        self.assertIn("СТАНДАРТНЫЙ ЗАПУСК — СТУДИЯ НЕЙРОПОЛИС", text)
         self.assertTrue(default_storage_root().is_dir())
 
     def test_r2_test_profile_uses_its_own_temp_storage_and_marks_the_page(self):

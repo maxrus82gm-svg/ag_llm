@@ -2,7 +2,7 @@
 
 The standard launch is built in and cannot be redefined: the main application (web_alarm.server) with its usual
 persistent storage (``default_storage_root()``), loopback 127.0.0.1, the folder picker and Ultra Chat on. It prints
-a green "СТАНДАРТНЫЙ ЗАПУСК — WEB ALARM ULTRA". Anything else is a named test profile from ``launch_config.json``:
+a green "СТАНДАРТНЫЙ ЗАПУСК — СТУДИЯ НЕЙРОПОЛИС". Anything else is a named test profile from ``launch_config.json``:
 a red "ВНИМАНИЕ! НЕСТАНДАРТНЫЙ ТЕСТОВЫЙ ЗАПУСК" with the profile name, a pause before the browser opens and, when the
 profile runs the main application, a red frame and badge on every page. A test profile can never use the standard
 storage or the standard port. Returning to normal: ``"active": "standard"`` in launch_config.json.
@@ -45,7 +45,7 @@ STANDARD_PORT = 8765
 HOST = "127.0.0.1"
 TEST_WARNING_SECONDS = 5
 ESC = chr(27)
-STANDARD_TEXT = "СТАНДАРТНЫЙ ЗАПУСК — WEB ALARM ULTRA"
+STANDARD_TEXT = "СТАНДАРТНЫЙ ЗАПУСК — СТУДИЯ НЕЙРОПОЛИС"
 TEST_TEXT = "ВНИМАНИЕ! НЕСТАНДАРТНЫЙ ТЕСТОВЫЙ ЗАПУСК"
 RETURN_HINT = 'Вернуть стандартный запуск: в web_alarm\\launch_config.json указать "active": "standard".'
 _CONFIG_KEYS = {"_comment", "schema_version", "active", "test_profiles"}
@@ -88,7 +88,7 @@ def standard_port() -> int:
 
 
 def standard_launch() -> Launch:
-    return Launch(name=STANDARD, title="Web Alarm Ultra", standard=True, port=standard_port())
+    return Launch(name=STANDARD, title="Студия Нейрополис", standard=True, port=standard_port())
 
 
 def _strict_object(pairs):
@@ -207,7 +207,7 @@ def set_console_title(title: str) -> None:
 def banner(launch: Launch, url: str, storage: str, colors: bool) -> str:
     if launch.standard:
         lines = ["", paint(STANDARD_TEXT, 42, colors), "",
-                 f"Приложение: основное Web Alarm Ultra · адрес {url}",
+                 f"Приложение: Студия Нейрополис · адрес {url}",
                  f"Хранилище: штатное постоянное ({storage})"]
         if launch.port != STANDARD_PORT:
             lines.append(f"Порт {launch.port} задан машинной настройкой WEB_ALARM_PORT.")
@@ -215,7 +215,7 @@ def banner(launch: Launch, url: str, storage: str, colors: bool) -> str:
         lines = ["", paint("=" * 64, 41, colors), paint(TEST_TEXT, 41, colors), paint("=" * 64, 41, colors), "",
                  f"Конфигурация: {launch.name} — {launch.title}"]
         if launch.kind == "web_alarm":
-            lines += [f"Приложение: основное Web Alarm Ultra с тестовыми данными · адрес {url}",
+            lines += [f"Приложение: Студия Нейрополис с тестовыми данными · адрес {url}",
                       f"Хранилище: временное тестовое ({storage}); удаляется при остановке, "
                       "штатные данные не затрагиваются.",
                       "В браузере тестовый режим отмечен красной рамкой и надписью."]
@@ -361,7 +361,7 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
                 opener(url)
             return 0
         out.write("\n" + paint(f"Порт {bind_port} занят другой программой, другой версией или другим режимом "
-                               "Web Alarm. Закройте прежнее окно Web Alarm и запустите снова.", 41, colors) + "\n")
+                               "Студии Нейрополис. Закройте прежнее окно Студии Нейрополис и запустите снова.", 41, colors) + "\n")
         return 3
     except Exception as exc:
         if server is not None:
@@ -382,7 +382,7 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
         from .instance_control import register
         register(server, profile=launch.name, storage=storage_text, ui_version=wa_server.UI_VERSION)
     url = f"http://{HOST}:{server.server_port}/"
-    set_console_title(("Web Alarm Ultra — " + STANDARD_TEXT) if launch.standard else (f"[ТЕСТ] {launch.name} — " + TEST_TEXT))
+    set_console_title(("Студия Нейрополис — " + STANDARD_TEXT) if launch.standard else (f"[ТЕСТ] {launch.name} — " + TEST_TEXT))
     out.write(banner(launch, url, storage_text, colors))
     out.write(f"Версия интерфейса: {page_version(expected_page)}\n")
     out.flush()
@@ -513,7 +513,7 @@ def _refresh_standard_gigachat_environment() -> None:
 
 
 def main(argv: list[str] | None = None, out: TextIO | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="Start_WebAlarm.bat", description="Web Alarm Ultra launcher")
+    parser = argparse.ArgumentParser(prog="Start_WebAlarm.bat", description="Neuropolis Studio launcher")
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--config", type=Path, default=CONFIG_PATH, help="other launch_config.json (tests)")
     selection.add_argument("--standard", action="store_true", help="built-in standard launch, ignoring active config")

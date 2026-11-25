@@ -8,26 +8,32 @@
       "get_access_token": "ca63e40816fdfcefb536115be8950a2fe41655c3ca66b9f27daafda572e11c33"
     },
     "gigachat_runtime.py": {
-      "ProviderSession": "7cf53c15dbfec8f2dfa8e056f6facf5078ecc70821da431df3fcab88e19613d7",
-      "RealGigaChatTransport": "93df6e92721084fcb1a0495109da4e4073be4558465e745eaa6a301211f09557",
+      "ProviderSession": "5ec5a633174e267da473e242fbc18c98395f7697f2a3991618ca4359d92ea9b9",
+      "RealGigaChatTransport": "5c23005542e57148b0ddbf01fa573018b95fc3a559f4c42ae0234cb7de0c6086",
       "ModelContract": "b1332b332c55b2e4da3e12055f892b3b73c3dd532c2c15f34fa302ea189e385c",
       "LiveApproval": "dd920ed7ab346b8fbb9836ef4e8dd876eacafdee9e1ad3dcf6cad1dda641fffa",
       "MODELS_URL": "a1312290ce191768f42b57e363c8d8126ac9526d9bb63a858857b11d41e2b4b0",
       "response_model_allowed": "67d170f7a9bdfdb919cc053bc4c4d96971b406d1bac866f2a93a6c9f60800c5d",
-      "_FIRST_LITE_VERSION": "6a59c391a30164a21a3095c7b43d4022e44c80d5c8e4fd624c9e4b1df26288ca"
+      "_FIRST_LITE_VERSION": "6a59c391a30164a21a3095c7b43d4022e44c80d5c8e4fd624c9e4b1df26288ca",
+      "account_owner_lock": "e4ab08d7bfd106d0aab3078d4f7bc055b5d7b57ecdd369f7251dc28b0eea32f3"
     },
     "ordinary_chat_bridge.py": {
       "OrdinaryCoreAdapter": "51dc44722d74b5c8813d11d1c2c7256ca7e3ba53b0935740c05bf446b0d81c1d",
       "_UsageCapture": "e39c1c6ed5f4c98a514c8e4ea138ec34f6f5944a7aaa449e5859511a4e8c0d55"
     },
     "launcher.py": {
-      "run_web_alarm": "ca2a4775899c265a154064139df1b03b9ff011e4c8ba4d85bf7f67aefdc8175e",
-      "main": "517005aec4329552b7515c14e1662c1987c6a7240b8c7d5b68f2b0dbd1125e2b"
+      "run_web_alarm": "a0a0dbd215996403fc554b19488c63d61ccf0b93598322e400ee167d35178377",
+      "main": "591e40a8c848e50cf927d4b33e24870f05b43a40d104115c695bbbe4618a527a",
+      "standard_launch": "2c2858bb727c36cddc2fb4b8f9ea872f5273d82998a7b09d6a079a9c628e2a48"
     },
     "model_cards.py": {
-      "ModelCards._settings_version": "a6d7b8beedabf6c6fcc9c104f781cde470f0edbda7ac2fda39c22bcd5cf814e1",
+      "ModelCards._settings_version": "c365c1c01c99bed7b2a6971f3f465de4e14772a91e3d53dfa3c8bc8863d1110d",
       "ModelCards.run_check": "d682dd5d1ce8e808a4b05c749ce97af2bfe61e9986a7834e01e8281929a79774",
-      "ModelCards.catalog": "854db1d0fa6fdb343ff355439a8e8b52b17b84c7f83e73ed1ff6f2d554b026f3"
+      "ModelCards.catalog": "854db1d0fa6fdb343ff355439a8e8b52b17b84c7f83e73ed1ff6f2d554b026f3",
+      "ModelCards.__init__": "57d0eb76c14c0b91ad94ebb8135d61271c906f37adc47d69133ff2275abefa31"
+    },
+    "standard_live.py": {
+      "_consent_binding": "3ffb11c04322dcf8cadbfc891b7d618724735257faeba87b72d0a81141b5e8ed"
     }
   },
   "references": {
@@ -36,17 +42,17 @@
     "gigachat_runtime.py": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
     "ordinary_chat_bridge.py": "3b5abf8d7e78f3311f02edb3e2fbd1180636385259cdb37fe813f30061b5c06a",
     "launcher.py": "2ca3f78cbdbd75914a41332ff84fece7880a9ff03b08ed21583536aa38870bc9",
-    "model_cards.py": "91d56c0519a62add9f56f2426c56754a0b88a9f3694196937377e5b7598919fb"
+    "model_cards.py": "09ad164da585e402dca54c0284147003569da2faa30f488d1775299c4d2f66b9"
   },
   "policy_gates": {
-    "web_alarm.ordinary_provider": "a4a4173c23d48f69b733c2a8a2322b286a9ac62c827f8ffb7dc0b7149fae229e",
+    "web_alarm.ordinary_provider": "c460de776ac1d1b676805d2806b43cb9153109f240980ada7c228bf61642ba64",
     "web_alarm.ordinary_chat_bridge": "6efbff365a61efe062a531b0782d5a0771fa280ffa4e8d666c14e0d7744c2517",
-    "web_alarm.turn_service": "3e815a681e2f8c6f105842dc85069221131a0f9a0fc4afe605720ad8287591e7",
-    "web_alarm.ultra_chat": "9e691bdd766ea585be0952e2c80fcf6c2ecc0057f386baff7a1e143c3dd9ede5",
+    "web_alarm.turn_service": "dfc3b97c0bf2f9515ea5d4da465a5ad3bf23510c69deaa4e8ec7ed689e0afcc1",
+    "web_alarm.ultra_chat": "873325865aa02ab2c7a738ff3a0a51af52242fa1eb0fed3af40dc341f31d8907",
     "gigachat_admission": "c902f1faf5e810117284d92d0861fdfd44f131d19cb5fcc72599f085650428ce",
-    "gigachat_runtime": "60a44e424641b6be0fdbd77258fa6678ab77eb61604d56e8344df9d4902a04cd",
+    "gigachat_runtime": "784755ddcca1811c90202b6f8eb1568ab3b0922209426753ce8880a319abd357",
     "web_alarm.live_bootstrap": "2afc0692a542b4d5f6619120009b93d7cfc92395bcbf5f7dcb866d6784155fbd",
-    "web_alarm.standard_live": "d08486580ff286ee53e1c579048e3ed4613c1743ec330c093ddd84667458bc1b"
+    "web_alarm.standard_live": "447274d81ef9ca8644fe9170a733a40d230408595ca9ee6a147c42e777cd3cfd"
   },
-  "review_note": "#666 source review: launcher main only authorises interactive standard --live; EVM run_check refuses Colibri LIVE and catalog reads snapshots; pinned original S1 reference census remains, extra dynamic EVM caller now exact. S2 current budget policy/ledger import gates explicitly pinned; unknown import root and opaque imports still DENY. Pure TEST model catalog separated from history read adapter. No production activation."
+  "review_note": "#666 source review: launcher main only authorises interactive standard --live; EVM run_check refuses Colibri LIVE and catalog reads snapshots; pinned original S1 reference census remains, extra dynamic EVM caller now exact. S2 current budget policy/ledger import gates explicitly pinned; unknown import root and opaque imports still DENY. Pure TEST model catalog separated from history read adapter. No production activation. Persistent STANDARD consent: reviewed existing account lease, runtime renewal and read-only Ordinary reconciliation; exact S1/S2 pins updated without adding network sinks or budget import roots."
 }

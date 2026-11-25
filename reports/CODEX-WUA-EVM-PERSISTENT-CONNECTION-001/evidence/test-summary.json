@@ -1,0 +1,73 @@
+{
+  "results": [
+    {
+      "suite": "core-final",
+      "result": "137 passed, 177 subtests passed in 350.25s (0:05:50)",
+      "exit_code": 0,
+      "raw_log_sha256": "3df075e52d2030a68e860bdf53d2293cbce9384401e1f5e321dd0f8cceadf2f1"
+    },
+    {
+      "suite": "ui-final",
+      "result": "107 passed, 1 skipped, 200 subtests passed in 179.42s (0:02:59)",
+      "exit_code": 0,
+      "raw_log_sha256": "58cd0b8339072e3fd2ed8cf8df719e402cb9083efb475af44702b5a687a4b5e0"
+    },
+    {
+      "suite": "consent-final",
+      "result": "14 passed in 32.05s",
+      "exit_code": 0,
+      "raw_log_sha256": "a9a61a2d2a20ce8fc02d8db86e9adc3dffcdc80bb5f5c45d13d294dc2d2a87b0"
+    },
+    {
+      "suite": "s1-seal",
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "counts": {
+        "run": 69,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "isolation_violations": [],
+      "raw_log_sha256": "43a5b0f46da94d4f20f3a2fa70e58bd70c2037954a3f73f3a0edb1c8adba2e31"
+    },
+    {
+      "suite": "s2-seal",
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "counts": {
+        "run": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "isolation_violations": [],
+      "raw_log_sha256": "1e64f641fbb0de33b5b2a10ed1d3941a661d0cf2720f2adb27b0b824b32b5142"
+    },
+    {
+      "suite": "node",
+      "passed": 207,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log_sha256": "79a731cfdf10abc319e3aaa542f3f659e777f707ace0d6ea34fe964b658e740e"
+    }
+  ],
+  "chromium": "PASS",
+  "actual_CMD_isolated_start_and_exit": "2 PASS",
+  "ordinary_TEST_permanent_write": "BLOCKED: existing guard denies .ultra paths in repository scratch",
+  "real_provider_calls": {
+    "oauth": 0,
+    "catalog": 0,
+    "inference": 0
+  }
+}

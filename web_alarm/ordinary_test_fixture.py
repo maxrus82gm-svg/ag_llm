@@ -38,7 +38,7 @@ def main(argv=None):
         worker.start()
         url = f"http://127.0.0.1:{server.server_address[1]}/"
         try:
-            print("TEST OFFLINE · Ordinary Core Chat · только fake transport", flush=True)
+            print("TEST OFFLINE · Чат Нейрополис · только синтетический транспорт", flush=True)
             print("Нажмите Enter в окне запуска, чтобы остановить TEST и удалить временные чаты.", flush=True)
             opened = False
             if not args.no_browser:

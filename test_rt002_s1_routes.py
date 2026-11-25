@@ -1437,6 +1437,9 @@ def analyze_module(module_name: str, source: str) -> dict:
             'ProviderSession.request', 'RealGigaChatTransport.send_bytes', '<module>'})
         metadata_values.update(id(n) for n in ast.walk(tree) if isinstance(n, ast.Constant)
             and n.value == 'https://api.giga.chat/v1/models')
+    if reconciled and module_name == 'standard_live.py':
+        # Exact consent fingerprint only. Any call using these URLs is still inventoried.
+        allowed.update(id(ref) for ref, owner in references if owner == '_consent_binding')
     unexplained = []
     seen = set()
     for ref, owner in references:
