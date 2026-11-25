@@ -1,0 +1,110 @@
+{
+  "python": {
+    "status": "PASS",
+    "exit_code": 0,
+    "passed": 98,
+    "subtests_passed": 210,
+    "elapsed": "66.70s (0:01:06)",
+    "local_log": {
+      "path": "reports/_local/CODEX-WUA-COLIBRI-REAL-CATALOG-001/python-sealed-serial.log",
+      "sha256": "d13e83c1b8a4762ba33618c4ebb49972207dda515a3c1090b8bf78d668d274d7",
+      "bytes": 229
+    }
+  },
+  "javascript": {
+    "status": "PASS",
+    "exit_code": 0,
+    "tests": 210,
+    "pass": 210,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "local_log": {
+      "path": "reports/_local/CODEX-WUA-COLIBRI-REAL-CATALOG-001/js.log",
+      "sha256": "197ca9746aa9dbc41277e0a611147bb5c602e6d1ba3fd18931736b4195ea8343",
+      "bytes": 51880
+    }
+  },
+  "cmd": {
+    "status": "PASS",
+    "exit_code": 0,
+    "standard_cmd": "PASS",
+    "test_cmd": "PASS",
+    "scope": "isolated startup, local capability and exit",
+    "provider_calls": 0,
+    "test_evm_indication": "GET/POST denied; no settings file",
+    "local_log": {
+      "path": "reports/_local/CODEX-WUA-COLIBRI-REAL-CATALOG-001/cmd.log",
+      "sha256": "43c1498403a7ddb1dc077325ac354e50a888da60d27bff1ef152029252afe742",
+      "bytes": 183
+    }
+  },
+  "s1": {
+    "gate": {
+      "status": "PASS",
+      "exit_code": 0,
+      "reasons": []
+    },
+    "counts": {
+      "run": 69,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0
+    },
+    "manifest_size": 69,
+    "isolation_violations": [],
+    "evidence_problems": [],
+    "local_log": {
+      "path": "reports/_local/CODEX-WUA-COLIBRI-REAL-CATALOG-001/s1-sealed.log",
+      "sha256": "be80aac9744ffd24e9bce7da823798fd07e88fc91b186368c6b55c74f09dcce2",
+      "bytes": 87764
+    }
+  },
+  "s2": {
+    "gate": {
+      "status": "PASS",
+      "exit_code": 0,
+      "reasons": []
+    },
+    "counts": {
+      "run": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0
+    },
+    "manifest_size": 73,
+    "isolation_violations": [],
+    "problems": [],
+    "local_log": {
+      "path": "reports/_local/CODEX-WUA-COLIBRI-REAL-CATALOG-001/s2-sealed.log",
+      "sha256": "8bf12856ec4ee781aa8f480fc8828f1a9963de167730e211b2b6e3fbe08e6f6f",
+      "bytes": 901
+    }
+  },
+  "real_network_calls": 0,
+  "parallel_python_observation": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "passed": 97,
+    "failed": 1,
+    "subtests_passed": 210,
+    "test": "Http.test_indication_write_requires_local_origin_and_write_capability",
+    "error": "ConnectionAbortedError (WinError 10053), loopback HTTP",
+    "local_log": {
+      "path": "reports/_local/CODEX-WUA-COLIBRI-REAL-CATALOG-001/python-sealed.log",
+      "sha256": "5eb9b84d427b57ab495a805f46e4b8e4a72702c4d083db7a232436d38f47d360",
+      "bytes": 3083
+    }
+  },
+  "not_run": [
+    "owner GUI",
+    "real READ_ONLY preflight",
+    "real Client Bridge and generation",
+    "independent review"
+  ]
+}

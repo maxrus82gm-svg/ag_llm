@@ -390,6 +390,41 @@ class StableEntryTests(Base):
         self.assertTrue(run.call_args.args[0].standard)
         self.assertEqual(run.call_args.args[0].storage, "default")
 
+    def test_readonly_colibri_requires_both_flags_and_explicit_standard(self):
+        profile = ["--colibri-readonly-profile", str(self.base / "unused-profile")]
+        identity = ["--colibri-bridge-id", "a" * 32]
+        from web_alarm.colibri_bridge_transport import ReadOnlyColibriTransport
+        with patch.object(launcher, "_refresh_standard_gigachat_environment"), \
+                patch.object(launcher, "run_web_alarm", return_value=0) as run, \
+                patch("web_alarm.colibri_bridge_transport._discover") as discover:
+            for args in (profile, identity, profile + identity, ["--standard"] + profile,
+                         ["--standard"] + profile + identity + ["--live"],
+                         ["--standard"] + profile + identity + ["--require-test"],
+                         ["--standard"] + profile + identity + ["--self-test", "unused.json"],
+                         ["--standard", "--colibri-readonly-profile", "relative"] + identity,
+                         ["--standard"] + profile + ["--colibri-bridge-id", "invalid"]):
+                with self.subTest(args=args):
+                    self.assertEqual(launcher.main(args, out=io.StringIO()), 2)
+            run.assert_not_called()
+            self.assertEqual(launcher.main(["--standard"] + profile + identity, out=io.StringIO()), 0)
+            self.assertIs(type(run.call_args.kwargs["readonly_colibri"]), ReadOnlyColibriTransport)
+            self.assertEqual(run.call_args.kwargs["readonly_colibri"].profile, self.base / "unused-profile")
+            discover.assert_not_called()
+
+    def test_run_binds_readonly_before_creating_http_and_does_not_probe_at_startup(self):
+        from web_alarm.colibri_bridge_transport import ReadOnlyColibriTransport
+        transport = ReadOnlyColibriTransport(self.base / "unused-profile", expected_bridge_id="a" * 32)
+        def create(api, **opts):
+            self.assertEqual(api.ultra_connections.colibri_mode, "READ_ONLY")
+            raise RuntimeError("end startup fixture before listen")
+        with patch.object(launcher, "create_server", side_effect=create) as create_http, \
+                patch.object(transport, "catalog") as probe:
+            code = launcher.run_web_alarm(launcher.standard_launch(), out=io.StringIO(), colors=False,
+                                          port=0, readonly_colibri=transport, open_browser=False)
+        self.assertEqual(code, 5)
+        create_http.assert_called_once()
+        probe.assert_not_called()
+
     def test_test_entry_refuses_missing_standard_and_broken_profiles_before_starting(self):
         standard = config(self.base, "standard")
         broken = self.base / "broken.json"

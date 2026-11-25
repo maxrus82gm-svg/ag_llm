@@ -1,0 +1,66 @@
+{
+  "task_id": "CODEX-WUA-COLIBRI-REAL-CATALOG-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "date": "2026-11-26",
+  "files": [
+    {
+      "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/evidence/card-before.json",
+      "sha256": "a75b0551ff7daec23062c3d0c9ab681286b9fe50fc722fa817fbdc9228691a6e",
+      "bytes": 847
+    },
+    {
+      "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/evidence/checks.json",
+      "sha256": "39aead312af80f7d52fd56a5be2c50adb9e8629d95d01b83f092d6d2f0ae51f1",
+      "bytes": 3097
+    },
+    {
+      "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/evidence/source.json",
+      "sha256": "f852adc42302bff1cc40b2fd7dfc9a5157f2f24e7d94286a25f42de10becbefc",
+      "bytes": 3330
+    },
+    {
+      "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/finish.json",
+      "sha256": "d76cc79e597b3fd47ccd394f00d618c787acf46fbb96b4ee45d80b4ad372d7e3",
+      "bytes": 4827
+    },
+    {
+      "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/handoff_task.md",
+      "sha256": "c922036e642341ab41ae172289d37eaa08108bf3c0897e7ed5fd6f0e9c500423",
+      "bytes": 12274
+    },
+    {
+      "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/report.md",
+      "sha256": "29b0fa7ef6a364ec76baa1af98ff55ec534cb71fb125afec32e1ac6bea3fb791",
+      "bytes": 10269
+    },
+    {
+      "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/task_record.json",
+      "sha256": "9226d0a85ce781b9b35e2e2cd624670424f270968703928553d9bbb99dbb39fe",
+      "bytes": 714
+    },
+    {
+      "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/tests.md",
+      "sha256": "4d186fed825b0a4cb2c3506491eed3fceee4e4b26eb3ec2f2a5667b99a37d82a",
+      "bytes": 6885
+    }
+  ],
+  "history_id": "H-CODEX-000046",
+  "closeout": {
+    "result": "ROTATED",
+    "history_id": "H-CODEX-000046",
+    "block1": "WAITING",
+    "blocks_2_to_4_unchanged": true,
+    "previous_history_unchanged": "H-CODEX-000045",
+    "card_after_sha256": "fa63317cfc8e0b445c864a31d9eca6532bcb67d65cdc156f2b9175c5c8c601aa",
+    "history_sources": {
+      "assignment": {
+        "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/handoff_task.md",
+        "sha256": "c922036e642341ab41ae172289d37eaa08108bf3c0897e7ed5fd6f0e9c500423"
+      },
+      "report": {
+        "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/report.md",
+        "sha256": "29b0fa7ef6a364ec76baa1af98ff55ec534cb71fb125afec32e1ac6bea3fb791"
+      }
+    }
+  }
+}

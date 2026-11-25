@@ -1560,6 +1560,44 @@ test('global thresholds validate, save and reset with revision; all card surface
   assert.deepEqual(h.posts(thresholdPath).map(x=>x.base_revision), [4,5]);
 });
 
+test('read-only local catalog shows both Managers without generation controls and preserves stale cards', async () => {
+  const local = ['one','two'].map((key,i)=>({
+    connection_id:'local:colibri:'+key,kind:'local',provider:'colibri',
+    model_id:key,display_name:'Shared Model',manager_name:'Manager '+(i+1),slot_id:'slot-'+(i+1)
+  }));
+  const listed = cards(local.map((entry,i)=>mcard(entry.model_id,entry.display_name,{
+    connection_id:entry.connection_id,provider_id:'colibri',is_local:true,
+    api:api('unknown','LOCAL_CATALOG_ONLY',{indicator:'UNKNOWN'}),
+    local_target:{bridge_mode:'READ_ONLY',catalog_state:'AVAILABLE',status:'READY',
+      manager_name:entry.manager_name,slot_id:'slot-'+(i+1)}
+  })));
+  listed.view.sections.local = local.map(entry=>entry.connection_id);
+  const modelCatalog = catalog([],undefined,[],local);
+  modelCatalog.columns.local_llm.mode='READ_ONLY';
+  const h=harness(); await settle();
+  await h.openEvm([], listed);
+  h.routes.set('/ultra/connections',()=>modelCatalog);
+  await h.run('loadEvm()');
+  assert.match(h.el('evmLocalCatalogStatus').textContent,/Каталог подключён\. Генерация пока недоступна/);
+  assert.equal(h.list('evmLocalList').length,2);
+  await h.click(h.list('evmLocalList')[0]);
+  const card=h.inline(h.list('evmLocalList')[0]);
+  assert.match(card.textContent,/Manager 1 \/ slot-1/);
+  assert.match(card.textContent,/READY/);
+  assert.doesNotMatch(card.textContent,/OFFLINE|Проверить чат|Включить|Отключить/);
+  assert.equal(h.dot(card).getAttribute('data-indicator'),'UNKNOWN');
+  h.run("openWindow('check','one')");
+  assert.equal(h.el('evmCheckWindow').hidden,true);
+
+  Object.assign(modelCatalog.columns.local_llm,{state:'UNAVAILABLE',reason:'transport_error'});
+  for(const card of listed.cards)Object.assign(card.local_target,{status:'UNKNOWN',catalog_state:'UNAVAILABLE'});
+  await h.run('loadEvm()');
+  assert.equal(h.list('evmLocalList').length,2);
+  assert.match(h.el('evmLocalCatalogStatus').textContent,/Каталог недоступен/);
+  assert.match(h.inline(h.list('evmLocalList')[0]).textContent,/UNKNOWN/);
+  assert.equal(h.posts().length,0);
+});
+
 test('open chat picker refreshes indicators and keeps selection independent of age', async () => {
   let models = [{model_id:'alpha',display_name:'Alpha',availability:'AVAILABLE',
     api:api('red','STALE',{indicator:'RED_CLOCK',age_days:30})}];

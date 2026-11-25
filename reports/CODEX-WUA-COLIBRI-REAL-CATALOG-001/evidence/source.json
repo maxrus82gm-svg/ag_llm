@@ -1,0 +1,83 @@
+{
+  "amended_files": [
+    {
+      "path": "web_alarm/colibri_bridge_transport.py",
+      "before_sha256": "5e874138c20a5815c16f4d37e199570aa428880d9a74134d252672c532b4bb72",
+      "after_sha256": "986a21e4830492cc1eb910948f7b7d12e931e57f0374514091492fb7b1f92ee7",
+      "after_bytes": 30907
+    },
+    {
+      "path": "web_alarm/ultra_connections.py",
+      "before_sha256": "4ccc471126c4d6660b7fe5648aaa1022e0ddb532704166069931651b58f10fcf",
+      "after_sha256": "f2c228d10c69c9c6b45d0be91262797af53a0e713014e95cad803256afc4f788",
+      "after_bytes": 17299
+    },
+    {
+      "path": "web_alarm/launcher.py",
+      "before_sha256": "932f010f42c1c60617af14db2636d3b5065614fb8e87ecfdacb3fe00eb2e2613",
+      "after_sha256": "63627463896a43be1c004d9d7648435dcd7a6ca6a5c39fff2734d0f3a0a82c2e",
+      "after_bytes": 29914
+    },
+    {
+      "path": "web_alarm/model_cards.py",
+      "before_sha256": "d919d00e01087ac168d8acd221e97252033e536f056e52fa8fd8d2d2aeae82e6",
+      "after_sha256": "d7eb4d64ec4abcbf2acf36ef1c4d1108511d6c5af700975da1e5895a12db01ef",
+      "after_bytes": 71638
+    },
+    {
+      "path": "web_alarm/ui.py",
+      "before_sha256": "4c49fc4c1410bb7952e25f0574037288bbe3f139b2afc1285a8d882dee920166",
+      "after_sha256": "2653ed7bb0e585a609dc60b2c8d6981cf343e5af311281ae93f74b73e39237cd",
+      "after_bytes": 290176
+    },
+    {
+      "path": "rt002_multimodel_reconciliation.json",
+      "before_sha256": "b039bbd10265f7e486654c1bf3dfcad4d496a2fd8c9e208203307d2f12bc85d6",
+      "after_sha256": "680e7e4ad2bff54a940ed0cd6077d0985b80eedaecda0027917b7cab05e7f140",
+      "after_bytes": 4255
+    },
+    {
+      "path": "test_web_alarm_colibri_bridge_transport.py",
+      "before_sha256": "caafc7836a7c94d227f613b6bfde9853a8d7e099584f2a703fd5ad8d1e737932",
+      "after_sha256": "743d2b4183a6aefb4caff7d2eb933b0de1872778579194b59b43a965425d1ee9",
+      "after_bytes": 15739
+    },
+    {
+      "path": "test_web_alarm_launcher.py",
+      "before_sha256": "3c5c39890d57778229c2b5233286893ffe35c8079b1adc8ecb8487d239b981bb",
+      "after_sha256": "10615e11e74b64483b0b2b709d61c2c680dcaec2f49c40f0b768046cbaae366a",
+      "after_bytes": 29587
+    },
+    {
+      "path": "test_web_alarm_evm_ui.js",
+      "before_sha256": "cf77e1e560bed32669fba9b07c9ae0e2fa1f53c5bbd21085862d4fbdfc584a6d",
+      "after_sha256": "b8713623bc36d4daa6f59d195a1821c0991c0ecbe9171a8a8290695413e71118",
+      "after_bytes": 120620
+    }
+  ],
+  "byte_identical_cmd": [
+    {
+      "path": "Start_WebAlarm_Standard.cmd",
+      "sha256": "d078f557930a0428790a1fdf4ba565f2c048f48ba8afc38ebd282218ff2f80e4",
+      "bytes": 926
+    },
+    {
+      "path": "Start_WebAlarm_Test.cmd",
+      "sha256": "70259cf25d8f4a907133761585ef3572008edb88809c175396da3d21cc323df6",
+      "bytes": 1203
+    }
+  ],
+  "checked_contract_v1": [
+    {
+      "path": "web_alarm/colibri_contract_v1/openapi.yaml",
+      "sha256": "84e082cd3f5e4eacf384bd48f52b4c229381e68948aecbe43663399fe40895f4",
+      "bytes": 44506
+    },
+    {
+      "path": "web_alarm/colibri_contract_v1/stream-events.schema.json",
+      "sha256": "da3c8aa30eb025a600c230169bf7a65a4d8bb03fdae0373b8d0578006525d4b7",
+      "bytes": 21022
+    }
+  ],
+  "backup_root": "Backups/CODEX-WUA-COLIBRI-REAL-CATALOG-001"
+}

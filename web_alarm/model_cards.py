@@ -802,7 +802,9 @@ class ModelCards:
     def _context(self, *, snapshot=None) -> dict[str, Any]:
         from .ultra_connections import _registry  # the one registry import of the EVM
 
-        snapshot=self.connections.registry_snapshot() if snapshot is None else snapshot
+        if snapshot is None:
+            # Cloud chat readback and execution settings must not wait for Client.
+            snapshot = self.connections.registry_snapshot(refresh=self.connections.colibri_mode != "READ_ONLY")
         registry,targets,_state=snapshot
         return {"registry":registry,"snapshot":snapshot,
                 "targets":{t["target_id"]:t for t in targets},
@@ -854,11 +856,14 @@ class ModelCards:
             last_output = {"kind": out.get("kind"), "at": out.get("at"),
                            "text": safe_text(out.get("text", ""), profile["diagnostic_limit_chars"])}
         target=ctx.get("targets",{}).get(spec.model_id)
+        catalog_only = target is not None and self.connections.colibri_mode == "READ_ONLY"
         indicator, reason = status["indicator"], status["reason"]
         if settings["state"] == "CORRUPT" or spec.model_id in settings["invalid_enabled"]:
             indicator, reason = "UNKNOWN", "STATE_CORRUPT"
         elif not enabled:
             indicator, reason = "GRAY", "MODEL_DISABLED"
+        elif catalog_only:
+            indicator, reason = "UNKNOWN", "LOCAL_CATALOG_ONLY"
         elif spec.enabled and target is not None:
             # Discovery of a synthetic Manager does not confirm a model response.
             indicator, reason = "UNKNOWN", "LOCAL_OFFLINE_UNVERIFIED"
@@ -866,8 +871,10 @@ class ModelCards:
             indicator, reason = "RED_CROSS", "MODEL_UNAVAILABLE"
         status.update(indicator=indicator, color=INDICATOR_COLORS[indicator], reason=reason)
         return {
-            **({"local_target":{k:target[k] for k in ("target_id","instance_id","status","manager_name",
-                "slot_id","execution_mode","capabilities","limits")}} if target is not None else {}),
+            **({"local_target": {**{k:target[k] for k in ("target_id","instance_id","model_id","status",
+                "manager_name","slot_id","execution_mode","capabilities","limits")},
+                "bridge_mode": self.connections.colibri_mode, "catalog_state": ctx["snapshot"][2]}}
+                if target is not None else {}),
             "connection_id": connection_id, "model_id": spec.model_id, "display_name": spec.display_name,
             "provider_id": spec.provider, "provider_model_id": spec.provider_model_id,
             "registry_enabled": bool(spec.enabled),
@@ -879,8 +886,8 @@ class ModelCards:
         }
 
     def catalog(self) -> dict[str, Any]:
-        """Everything the EVM cards show; reads only, creates nothing, sends nothing."""
-        ctx = self._context()
+        """Everything the EVM cards show, including explicitly bound catalog reads."""
+        ctx = self._context(snapshot=self.connections.registry_snapshot())
         settings, tk = ctx["settings"], ctx["tk"]
         providers = []
         for provider in settings["providers"].values():

@@ -1,9 +1,8 @@
-"""WUA-side Client Bridge v1 transport, explicitly isolated OFFLINE only.
+"""WUA-side Client Bridge v1 catalog and isolated OFFLINE transport.
 
-A caller supplies its already frozen Turn identity and ordered context. This
-module does not own chats, run journals, EVM, accounting, or live authority.
-It is not wired into the ordinary application until those boundaries support
-a provider-neutral snapshot/result. No implicit retries or provider fallback.
+Only the isolated executor accepts a frozen Turn identity and ordered context.
+The read-only mode exposes the authenticated catalog. No implicit retries or
+provider fallback.
 """
 from __future__ import annotations
 
@@ -17,6 +16,7 @@ import os
 import re
 import stat
 import tempfile
+import threading
 import time
 from typing import Callable
 
@@ -115,7 +115,7 @@ class Contract:
 
 
 def _windows_private_acl(path):
-    """Fail closed on weak Windows DACLs for this explicit test-only Bridge.
+    """Fail closed on weak Windows DACLs for Bridge discovery files.
 
     Checking mode bits on NT is insufficient. The actual descriptor and token
     must be owned by the current process identity, without read/write ACEs
@@ -324,40 +324,28 @@ class StreamResult:
     complete: bool = False
 
 
-class OfflineColibriTransport:
-    """Backend-only test transport; explicit disposable profile, no production wiring."""
+class _ColibriCatalog:
+    """Shared validated HTTP and catalog projection for explicitly bound profiles."""
 
-    def __init__(self, profile, *, expected_bridge_id, idle_timeout=300):
-        p = Path(profile).absolute()
-        try:
-            if (p.resolve(strict=True) != p or not p.is_dir() or
-                    Path(tempfile.gettempdir()).resolve() not in p.parents):
-                raise BridgeFault("offline_profile_required")
-            # Reject junction/reparse paths inside the disposable profile.
-            if getattr(p.lstat(), "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT:
-                raise BridgeFault("offline_profile_required")
-        except OSError:
-            raise BridgeFault("offline_profile_required") from None
-        if type(expected_bridge_id) is not str or not HEX32.fullmatch(expected_bridge_id):
-            raise BridgeFault("identity_mismatch")
-        if type(idle_timeout) is not int or not 1 <= idle_timeout <= 3600:
-            raise BridgeFault("invalid_timeout")
-        self.profile, self.expected, self.idle_timeout = p, expected_bridge_id, idle_timeout
-        self.contract = Contract()
-        self._descriptor = _discover(p, expected_bridge_id)
-        self._health()  # authenticate before any catalog/Turn traffic
+    _JSON_TIMEOUT = 15
+    _CONNECT_TIMEOUT = 5.0
+    _CATALOG_ONLY = False
+    _READS = {"/health": "Health", "/models": "Catalog"}
 
     def _fresh(self):
         d = _discover(self.profile, self.expected)
         # A changed origin/launch must be explicitly re-bound before a new
         # request. A token rotation alone is not a new request identity.
+        return self._same_launch(d)
+
+    def _same_launch(self, d):
         if (d.origin, d.launch_identity) != (self._descriptor.origin, self._descriptor.launch_identity):
             raise BridgeFault("identity_mismatch")
         return d
 
     def _client(self, read_timeout):
         return httpx.Client(follow_redirects=False, trust_env=False,
-                            timeout=httpx.Timeout(float(read_timeout), connect=5.0),
+                            timeout=httpx.Timeout(float(read_timeout), connect=self._CONNECT_TIMEOUT),
                             headers={"Accept-Encoding":"identity"})
 
     @staticmethod
@@ -379,9 +367,12 @@ class OfflineColibriTransport:
             raise BridgeFault("transport_error") from None
 
     def _json(self, path, name, body=None):
+        if self._CATALOG_ONLY and (body is not None or type(path) is not str
+                                   or path not in self._READS or name != self._READS[path]):
+            raise BridgeFault("readonly_route_refused")
         d = self._fresh()
         try:
-            with self._client(15) as client, client.stream(
+            with self._client(self._JSON_TIMEOUT) as client, client.stream(
                     "GET" if body is None else "POST", d.origin + "/bridge/v1" + path,
                     headers=self._headers(d), content=None if body is None else canonical(body)) as response:
                 if response.status_code != 200:
@@ -425,6 +416,69 @@ class OfflineColibriTransport:
                 raise BridgeFault("identity_mismatch")
             seen.add(t["target_id"])
         return cat
+
+class ReadOnlyColibriTransport(_ColibriCatalog):
+    """Explicit local Client profile, only the two versioned catalog reads."""
+
+    _CATALOG_ONLY = True
+    _JSON_TIMEOUT = 3
+    _CONNECT_TIMEOUT = 2.0
+
+    def __init__(self, profile, *, expected_bridge_id):
+        p = Path(profile)
+        if not p.is_absolute() or p.drive.startswith("\\\\") or ".." in p.parts:
+            raise BridgeFault("unsafe_profile")
+        if type(expected_bridge_id) is not str or not HEX32.fullmatch(expected_bridge_id):
+            raise BridgeFault("identity_mismatch")
+        self.profile, self.expected = p, expected_bridge_id
+        self._descriptor = None
+        self._discovery_lock = threading.Lock()
+        self.contract = None
+
+    def _fresh(self):
+        with self._discovery_lock:
+            if os.name == "nt":
+                import ctypes
+                # DRIVE_FIXED. Disallow network mappings and device/remote profiles.
+                if ctypes.windll.kernel32.GetDriveTypeW(ctypes.c_wchar_p(self.profile.anchor)) != 3:
+                    raise BridgeFault("unsafe_profile")
+            try:
+                st = self.profile.lstat()
+                if (not stat.S_ISDIR(st.st_mode) or self.profile.resolve(strict=True) != self.profile
+                        or getattr(st, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT):
+                    raise BridgeFault("unsafe_profile")
+                if os.name != "nt" and (st.st_uid != os.getuid() or st.st_mode & 0o022):
+                    raise BridgeFault("unsafe_profile")
+            except (OSError, ValueError):
+                raise BridgeFault("discovery_unavailable") from None
+            descriptor = _discover(self.profile, self.expected)
+            if self._descriptor is None:
+                self.contract = Contract()
+                self._descriptor = descriptor
+            return self._same_launch(descriptor)
+
+class OfflineColibriTransport(_ColibriCatalog):
+    """Backend-only test transport; explicit disposable profile, no production wiring."""
+
+    def __init__(self, profile, *, expected_bridge_id, idle_timeout=300):
+        p = Path(profile).absolute()
+        try:
+            if (p.resolve(strict=True) != p or not p.is_dir() or
+                    Path(tempfile.gettempdir()).resolve() not in p.parents):
+                raise BridgeFault("offline_profile_required")
+            # Reject junction/reparse paths inside the disposable profile.
+            if getattr(p.lstat(), "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+                raise BridgeFault("offline_profile_required")
+        except OSError:
+            raise BridgeFault("offline_profile_required") from None
+        if type(expected_bridge_id) is not str or not HEX32.fullmatch(expected_bridge_id):
+            raise BridgeFault("identity_mismatch")
+        if type(idle_timeout) is not int or not 1 <= idle_timeout <= 3600:
+            raise BridgeFault("invalid_timeout")
+        self.profile, self.expected, self.idle_timeout = p, expected_bridge_id, idle_timeout
+        self.contract = Contract()
+        self._descriptor = _discover(p, expected_bridge_id)
+        self._health()  # authenticate before any catalog/Turn traffic
 
     def prepare(self, *, request_id, target_id, messages, conversation_id, turn_id,
                 enabled_targets, options=None, expected_instance_id=None):

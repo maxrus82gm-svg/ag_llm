@@ -99,9 +99,9 @@ class UltraConnections:
         self.lock_timeout = lock_timeout
         self.model_cards = None  # Bound by the existing Web Alarm API; no second settings store.
         self._colibri_transport = None
+        self.colibri_mode = "NOT_CONNECTED"
         self._catalog_lock = threading.RLock()
-        self._local_targets = ()
-        self._local_state = "NOT_CONNECTED"
+        self._local_catalog = ((), "NOT_CONNECTED", None)
 
     @property
     def has_colibri(self):
@@ -116,6 +116,15 @@ class UltraConnections:
                 or self._colibri_transport is not None and self._colibri_transport is not transport):
             raise ValueError("Only the same isolated server may bind Colibri")
         self._colibri_transport=transport
+        self.colibri_mode = "OFFLINE"
+
+    def bind_readonly_colibri(self, transport):
+        from .colibri_bridge_transport import ReadOnlyColibriTransport
+        if (type(transport) is not ReadOnlyColibriTransport
+                or self._colibri_transport is not None and self._colibri_transport is not transport):
+            raise ValueError("Only the explicitly configured read-only Bridge may be bound")
+        self._colibri_transport = transport
+        self.colibri_mode = "READ_ONLY"
 
     def registry_snapshot(self, *, refresh=True):
         """Read authenticated discovery once, fail closed without erasing known IDs.
@@ -125,27 +134,33 @@ class UltraConnections:
         if not self.has_colibri:
             return registry, (), "NOT_CONNECTED"
         from .colibri_bridge_transport import BridgeFault
-        with self._catalog_lock:
-            if refresh:
+        if refresh:
+            with self._catalog_lock:
                 try:
                     catalog=self._colibri_transport.catalog()
                     targets=deepcopy(catalog["targets"])
                     if len(targets)>500:
                         raise BridgeFault("response_limit")
-                    self._local_targets=tuple(targets)
-                    self._local_state="AVAILABLE"
-                except BridgeFault:
-                    self._local_targets=tuple({**t,"status":"UNKNOWN","allowed_operations":[]}
-                                              for t in self._local_targets)
-                    self._local_state="UNAVAILABLE"
-            targets=deepcopy(self._local_targets)
-            return registry.ModelRegistryView(targets),targets,self._local_state
+                    if self.colibri_mode == "READ_ONLY":
+                        # The shared registry uses allowed_operations for execution eligibility.
+                        for target in targets:
+                            target["allowed_operations"] = []
+                    self._local_catalog = (tuple(targets), "AVAILABLE", None)
+                except BridgeFault as exc:
+                    previous = self._local_catalog[0]
+                    targets = tuple({**t, "status": "UNKNOWN", "allowed_operations": []} for t in previous)
+                    self._local_catalog = (targets, "UNAVAILABLE", exc.code)
+        targets, state, _ = self._local_catalog
+        targets = deepcopy(targets)
+        return registry.ModelRegistryView(targets), targets, state
 
     def local_target(self, model_id, *, refresh=True):
         _reg,targets,_state=self.registry_snapshot(refresh=refresh)
         return next((t for t in targets if t["target_id"]==model_id),None)
 
     def enabled_local_targets(self):
+        if self.colibri_mode == "READ_ONLY":
+            return set()
         registry,_,_=self.registry_snapshot()
         return {s.model_id for s in registry.list_model_specs()
                 if s.is_local and s.enabled and self.model_cards is not None
@@ -157,7 +172,8 @@ class UltraConnections:
     def _spec(self, connection_id: Any, registry=None):
         """The registry model a connection_id names (unknown/disabled are refused)."""
         kind,provider,model_id = _parse_connection_id(connection_id)
-        registry = registry if registry is not None else self.registry_snapshot()[0]
+        if registry is None:
+            registry = self.registry_snapshot(refresh=self.colibri_mode != "READ_ONLY")[0]
         spec = registry.MODEL_REGISTRY.get(model_id)
         if spec is None or spec.provider != provider or spec.is_local != (kind=="local"):
             raise UnknownConnectionError(f"no model {model_id!r} of provider {provider!r} in the shared registry")
@@ -238,7 +254,7 @@ class UltraConnections:
         return result
 
     def catalog(self, *, snapshot=None) -> dict[str, Any]:
-        """The three EVM columns. Only explicitly bound offline Colibri may do discovery reads."""
+        """The three EVM columns. Colibri reads require an explicit binding."""
         local={"state":"NOT_CONNECTED","connections":[]}
         try:
             registry,targets,state=snapshot if snapshot is not None else self.registry_snapshot()
@@ -253,6 +269,10 @@ class UltraConnections:
                 "manager_name":by_id[s.model_id]["manager_name"],
                 "slot_id":by_id[s.model_id]["slot_id"]}
                 for s in specs if s.is_local]}
+            if self.has_colibri:
+                local["mode"] = self.colibri_mode
+            if self.colibri_mode == "READ_ONLY" and state == "UNAVAILABLE":
+                local["reason"] = self._local_catalog[2]
         except RegistryUnavailableError as exc:
             selection=self.selection("chat")
             api={"state":"REGISTRY_UNAVAILABLE","connections":[],"reason":str(exc)}

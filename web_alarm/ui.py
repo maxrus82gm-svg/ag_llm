@@ -696,7 +696,7 @@ body.evm-external .evm{height:auto;min-height:100dvh;padding:12px;overflow:auto}
 <section class="evm-col" aria-labelledby="evmFavTitle" id="evmFavCol"><div class="section-head"><h3 id="evmFavTitle">★ Избранное</h3><span id="evmFavState" class="tag">0</span></div><div id="evmFavList" class="evm-list" aria-label="Избранное"></div><p id="evmFavEmpty" class="muted">Перетащите модель сюда или отметьте её звёздочкой ☆. Здесь хранится ссылка: модель остаётся в своей колонке.</p></section>
 <section class="evm-col" aria-labelledby="evmApiTitle" id="evmApiCol"><div class="section-head"><h3 id="evmApiTitle">API</h3><span id="evmApiState" class="tag">—</span></div><div id="evmApiList" class="evm-list" aria-label="Модели API"></div><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
 <section class="evm-col" aria-labelledby="evmMcpTitle" id="evmMcpCol"><div class="section-head"><h3 id="evmMcpTitle">MCP / Агенты</h3><span id="evmMcpState" class="tag">—</span></div><div id="evmMcpList" class="evm-list" aria-label="Подключения MCP и агентов"></div><p id="evmMcpEmpty" class="muted">Подключений пока нет: источник MCP и агентов не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
-<section class="evm-col" aria-labelledby="evmLocalTitle" id="evmLocalCol"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<section class="evm-col" aria-labelledby="evmLocalTitle" id="evmLocalCol"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><p id="evmLocalCatalogStatus" class="muted" role="status" hidden></p><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
 </div>
 <div id="evmPins" class="evm-pins" role="group" aria-label="Закреплённые окна моделей"></div>
 <div id="evmExternal" hidden><div class="evm-external-head"><strong id="evmExternalTitle">Карточка модели</strong><div class="row"><button type="button" id="evmTopmost">Поверх всех окон: ВЫКЛ</button><button type="button" id="evmExternalRefresh">↻ Обновить</button><button type="button" id="evmExternalClose">Закрыть окно ×</button></div></div><p id="evmExternalMove" class="evm-external-move">Перенос на другой монитор: перетаскивайте окно за системный заголовок браузера, а не за карточку. В Windows также работает Win + Shift + ←/→.</p><div id="evmExternalCard" class="evm-external-card"></div></div>
@@ -1229,7 +1229,7 @@ let externalPip=null;
 if(EXTERNAL_MODEL&&document.body?.getAttribute?.('data-stage5-offline')!=='true')document.body.classList.add('evm-external');
 const evmChannel=typeof BroadcastChannel==='function'?new BroadcastChannel('web-alarm-evm-v1'):null;
 if(evmChannel)evmChannel.onmessage=()=>{if(evm.view==='evm'||EXTERNAL_MODEL)loadEvm();if(chat.started)loadChatAccess()};
-const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
+const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],READ_ONLY:['Только каталог',''],READ_ONLY_UNAVAILABLE:['Каталог недоступен','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
 function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
 // Sections share one shell; their URL hashes also support direct navigation.
 const VIEWS={chat:['chatView','viewChat','#chatMain','К истории диалога'],blueprint:['blueprintView','viewBlueprint','#blueprintHeading','К редактору схемы'],operator:['layout','viewOperator','#main','К состоянию TASK'],evm:['evmView','viewEvm','#evmHeading','К подключениям']};
@@ -1274,7 +1274,7 @@ function validCards(d){
     d.cards.every(c=>c&&['connection_id','model_id','display_name','provider_id','provider_model_id','profile_id','settings_version','description'].every(k=>typeof c[k]==='string')&&
       (c.enabled===undefined||typeof c.enabled==='boolean')&&Array.isArray(c.roles)&&!!c.api&&Boolean(apiIndicator(c.api)))
 }
-const API_TEXT={AGE_YELLOW:'Достигнут жёлтый порог',AGE_ORANGE:'Достигнут оранжевый порог',LOCAL_OFFLINE_UNVERIFIED:'Ответ локальной модели не подтверждён',CONFIRMED:'Ответ модели подтверждён',STALE:'Подтверждение устарело',NEVER_CONFIRMED:'Успешной проверки ещё не было',LAST_OUTCOME_UNKNOWN:'Исход последнего обращения неизвестен',SETTINGS_CHANGED:'Настройки подключения изменились — нужна новая проверка',
+const API_TEXT={AGE_YELLOW:'Достигнут жёлтый порог',AGE_ORANGE:'Достигнут оранжевый порог',LOCAL_CATALOG_ONLY:'Доступен только каталог. Ответ модели не подтверждён',LOCAL_OFFLINE_UNVERIFIED:'Ответ локальной модели не подтверждён',CONFIRMED:'Ответ модели подтверждён',STALE:'Подтверждение устарело',NEVER_CONFIRMED:'Успешной проверки ещё не было',LAST_OUTCOME_UNKNOWN:'Исход последнего обращения неизвестен',SETTINGS_CHANGED:'Настройки подключения изменились — нужна новая проверка',
   MODEL_DISABLED:'Модель отключена',PROVIDER_INACTIVE:'Разрешение на API отсутствует',PROVIDER_RESTORE_REQUIRED:'Подключение будет восстановлено при отправке',
   PROVIDER_BLOCKED:'Подключение заблокировано',MODEL_UNAVAILABLE:'Модели нет в каталоге аккаунта',MODEL_NOT_APPROVED:'Модель вне допуска текущей сессии',
   LAST_CHECK_FAILED:'Последняя проверка завершилась отказом',STATE_CORRUPT:'Сведения о проверках повреждены',TIMESTAMP_INVALID:'Дата проверки некорректна',ADAPTER_MISSING:'Для провайдера нет адаптера',REGISTRY_DISABLED:'Модель отключена в реестре'};
@@ -1338,11 +1338,15 @@ function modelCard(c,data,section,inst){
     provider?provider.display_name:c.provider_id;
   head.append(element('h4',c.display_name,'mcard-name'),apiDot(c.api),activityStamp(c.api.last_success_at,'Не проверена'),params,element('span',source,'mcard-side'));
   const permitted=c.enabled!==false;
+  const catalogOnly=c.local_target?.bridge_mode==='READ_ONLY';
   const providerState=c.provider_id==='gigachat'?(evm.liveBusy?(evm.liveAction==='start'?'Подключение выполняется':'Отключение выполняется'):
     evm.liveFailure?(evm.liveFailure==='disconnect'?'Ошибка отключения':'Ошибка подключения'):evm.live?.real_available?'GigaChat подключён':evm.live?.mode==='ORDINARY'?providerStatus(evm.live):'Состояние неизвестно'):
     c.provider_id==='colibri'?(c.local_target?.status==='READY'?'Менеджер Нейрополис · READY (OFFLINE)':
       'Менеджер Нейрополис · '+(c.local_target?.status||'недоступен')):'Подключение этого провайдера не подтверждено';
-  const stateLine=element('p','Модель: '+(permitted?'включена':'отключена')+' · Провайдер: '+providerState+' · Работоспособность: '+apiText(c.api),'mcard-note');
+  const stateLine=element('p',catalogOnly?
+    (c.local_target.catalog_state==='AVAILABLE'?'Каталог подключён. Генерация пока недоступна.':
+      'Связь с каталогом недоступна. Генерация пока недоступна.')+' Статус модели — '+c.local_target.status+'.':
+    'Модель: '+(permitted?'включена':'отключена')+' · Провайдер: '+providerState+' · Работоспособность: '+apiText(c.api),'mcard-note');
   const sub=element('div',null,'mcard-sub');sub.append(element('strong','Назначенные роли'),element('span','Наведите на название для описания','mcard-note'));
   const states=new Map(c.roles.map(r=>[r.role,r.state]));
   const roles=element('div',null,'roles');roles.append(...data.role_definitions.map(def=>roleItem(def,states.get(def.role))));
@@ -1360,9 +1364,10 @@ function modelCard(c,data,section,inst){
   const external=fk(editButton('↗ Внешнее окно',c),inst,'external');external.onclick=()=>openExternal(c.connection_id);
   const actions=element('div',null,'mcard-actions');
   if(c.is_local&&c.provider_id==='colibri'){
-    // Profile/diagnostic execution is not authorised in MVP1 OFFLINE.
+    // Local profiles and diagnostics are owned outside these cards.
     edit.disabled=true;strengths.onclick=null;strengths.removeAttribute('tabindex');
-    actions.append(toggle,external);
+    if(!catalogOnly)actions.append(toggle);
+    actions.append(external);
   }else actions.append(settings,check,toggle,external);
   card.append(head,stateLine,sub,roles,label,strengths,actions);
   if(evm.drafts[c.model_id])card.append(element('p','Есть несохранённые изменения настроек.','mcard-note'));
@@ -1538,7 +1543,23 @@ function renderEvm(){
   $('evmLiveStop').disabled=!ready||!(live.real_available||['RESTORE_REQUIRED','BLOCKED'].includes(live.provider_state))||evm.liveBusy;
   $('evmApiState').replaceChildren(evmTag(cols.api.state));
   $('evmMcpState').replaceChildren(evmTag(cols.mcp_agents.state));
-  $('evmLocalState').replaceChildren(evmTag(cols.local_llm.state));
+  const local=cols.local_llm;
+  const catalogOnly=local.mode==='READ_ONLY', catalogAvailable=local.state==='AVAILABLE';
+  $('evmLocalState').replaceChildren(evmTag(catalogOnly?
+    (catalogAvailable?'READ_ONLY':'READ_ONLY_UNAVAILABLE'):local.state));
+  const diagnostics={unsafe_profile:'Нужен абсолютный локальный профиль Клиента.',
+    unsafe_discovery:'Не подтверждена защита файлов профиля.',
+    discovery_unavailable:'Файлы профиля недоступны.',
+    identity_mismatch:'Не совпадает идентификатор Bridge или его запуска.',
+    unsafe_origin:'Адрес Bridge не является допустимым loopback.',
+    unauthorized:'Bridge отклонил реквизиты.',forbidden:'Bridge не предоставил доступ к каталогу.',
+    protocol_error:'Получен некорректный ответ Bridge.'};
+  notice('evmLocalCatalogStatus',!catalogOnly?'':catalogAvailable?
+    'Каталог подключён. Генерация пока недоступна':
+    'Каталог недоступен. '+(diagnostics[local.reason]||'Проверьте подключение Клиента.'));
+  text('evmLocalEmpty',catalogOnly?
+    (catalogAvailable?'Каталог пока не содержит моделей.':'Сохранённых моделей для этого подключения пока нет.'):
+    'Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.');
   text('evmSelection',evmSelectionText(s));text('evmSummary',summaryText(cards));text('evmRolesSource',rolesSourceText(cards));
   if(cols.api.state!=='AVAILABLE')notice('evmError','Общий реестр моделей недоступен: '+(cols.api.reason||cols.api.state));
   const focusKey=document.activeElement?.getAttribute?.('data-fk')||null;  // the keyboard comes back to the same control
@@ -2091,7 +2112,7 @@ function facts(id,rows){
   $(id).replaceChildren(...list)
 }
 function openWindow(kind,id,tab,from){
-  const c=cardData(id);if(!c)return;
+  const c=cardData(id);if(!c||kind==='check'&&c.local_target?.bridge_mode==='READ_ONLY')return;
   evm.returnTo={key:from||null,id:c.connection_id};  // the control that opened the window gets the keyboard back
   if(evm.peek.id&&!evm.promote)closePeek();  // pressed inside the preview: it becomes a pinned window after this click
   evm.window={kind,id};evm.setError='';

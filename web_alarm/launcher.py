@@ -316,7 +316,11 @@ def _stop_on_break() -> None:
 def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bool = True,
                   self_test: Path | None = None, port: int | None = None,
                   sleep: Callable[[float], None] = time.sleep, opener: Callable[[str], Any] = webbrowser.open,
-                  request_live: bool = False, shutdown_wait_seconds: float = 20.0) -> int:
+                  request_live: bool = False, shutdown_wait_seconds: float = 20.0,
+                  readonly_colibri=None) -> int:
+    if readonly_colibri is not None and (not launch.standard or self_test is not None or request_live):
+        out.write("Каталог Colibri допускается только в обычном STANDARD.\n")
+        return 2
     storage_root = None if launch.standard else Path(tempfile.mkdtemp(prefix=f"wa-test-launch-{launch.name}-"))
     storage_text = str(default_storage_root() if launch.standard else storage_root)
     bind_port = launch.port if port is None else port
@@ -328,6 +332,9 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
         if bind_port and (claim is None or _port_in_use(bind_port)):
             raise OSError("port busy")
         api = WebAlarmApi(storage_root)
+        if readonly_colibri is not None:
+            api.ultra_connections.bind_readonly_colibri(readonly_colibri)
+            out.write("Чтение каталога Colibri настроено. Состояние подключения отображается в EVM.\n")
         if launch.standard and request_live and self_test is None and sys.stdin.isatty():
             from .standard_live import offer_standard_live
             live_session = offer_standard_live(api, input, out)
@@ -355,7 +362,7 @@ def run_web_alarm(launch: Launch, *, out: TextIO, colors: bool, open_browser: bo
         url = f"http://{HOST}:{bind_port}/"
         out.write(banner(launch, url, storage_text, colors))
         reuse_storage = default_storage_root() if launch.standard else None
-        if self_test is None and _already_running(url, expected_page, reuse_storage) == "same":
+        if readonly_colibri is None and self_test is None and _already_running(url, expected_page, reuse_storage) == "same":
             out.write("Этот запуск уже работает (та же версия интерфейса и то же хранилище). Открываю браузер.\n")
             if open_browser:
                 opener(url)
@@ -522,9 +529,24 @@ def main(argv: list[str] | None = None, out: TextIO | None = None) -> int:
     parser.add_argument("--no-browser", action="store_true")
     parser.add_argument("--live", action="store_true",
                         help="explicit operator-only LIVE consent; never used by permanent CMD shortcuts")
+    parser.add_argument("--colibri-readonly-profile", type=Path, help="absolute local Client Bridge profile for catalog reads")
+    parser.add_argument("--colibri-bridge-id", help="expected Client Bridge identity")
     args = parser.parse_args(argv)
     out = out or sys.stdout
     colors = enable_colors(out)
+    colibri = {}
+    if args.colibri_readonly_profile is not None or args.colibri_bridge_id is not None:
+        if (args.colibri_readonly_profile is None or args.colibri_bridge_id is None
+                or not args.standard or args.require_test or args.self_test is not None or args.live):
+            out.write("Оба аргумента каталога Colibri допустимы только вместе в обычном --standard.\n")
+            return 2
+        from .colibri_bridge_transport import BridgeFault, ReadOnlyColibriTransport
+        try:
+            colibri["readonly_colibri"] = ReadOnlyColibriTransport(args.colibri_readonly_profile,
+                                                               expected_bridge_id=args.colibri_bridge_id)
+        except BridgeFault as exc:
+            out.write("Настройки каталога Colibri отклонены (" + exc.code + ").\n")
+            return 2
     if args.live and (not args.standard or args.require_test or args.self_test is not None):
         out.write("LIVE допускается только при отдельном интерактивном --standard --live; TEST и self-test запрещены.\n")
         return 2
@@ -543,7 +565,7 @@ def main(argv: list[str] | None = None, out: TextIO | None = None) -> int:
     if launch.standard and args.self_test is None:
         _refresh_standard_gigachat_environment()
     return run_web_alarm(launch, out=out, colors=colors, open_browser=not args.no_browser,
-                         self_test=args.self_test, request_live=args.live)
+                         self_test=args.self_test, request_live=args.live, **colibri)
 
 
 if __name__ == "__main__":
