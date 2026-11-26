@@ -1,5 +1,8 @@
 # AG LLM Connect
 
+**26.11.2026 · RES-NEUROPOLIS-IDE-MCP-001 — RESEARCH PARTIAL / PLANNED.** Владелец поручил исследовать внешний IDE-клиент Нейрополиса: собственный VSIX, локальное API/MCP, одна или несколько LLM через Studio/Blueprint. Возможности VSIX и MCP документально подтверждены; подпись, TLS, политика установленной IDE и реальный прототип NOT RUN. Источники, ограничения и будущие gates: [[AG LLM Visual Studio — исследование VSIX и MCP]]. Не coding TASK, не LIVE GO, не изменение заморозки ChatGPT Desktop MCP.
+
+
 [[00_Главная - карта проекта]]
 
 - [[AG LLM Unreal]]
