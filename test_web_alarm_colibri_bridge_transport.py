@@ -19,6 +19,18 @@ from web_alarm.colibri_bridge_transport import (
 )
 
 
+def windows_process_user():
+    import win32api
+    import win32con
+    import win32security as acl
+
+    token = acl.OpenProcessToken(win32api.GetCurrentProcess(), win32con.TOKEN_QUERY)
+    try:
+        return acl.GetTokenInformation(token, acl.TokenUser)[0]
+    finally:
+        token.Close()
+
+
 def protect(path, *, public=False):
     """Make the actual fixture ACL match the consumer's production requirements."""
     if os.name != "nt":
@@ -26,15 +38,18 @@ def protect(path, *, public=False):
         return
     import win32con
     import win32security as acl
-    desc = acl.GetNamedSecurityInfo(str(path), acl.SE_FILE_OBJECT, acl.OWNER_SECURITY_INFORMATION)
+
+    # Elevated Windows tokens may create files with a group as the default owner.
+    # Discovery requires TokenUser both as owner and as the private DACL grantee.
+    actor = windows_process_user()
     dacl = acl.ACL()
-    dacl.AddAccessAllowedAce(acl.ACL_REVISION, win32con.GENERIC_ALL, desc.GetSecurityDescriptorOwner())
+    dacl.AddAccessAllowedAce(acl.ACL_REVISION, win32con.GENERIC_ALL, actor)
     if public:
         everyone = acl.CreateWellKnownSid(acl.WinWorldSid, None)
         dacl.AddAccessAllowedAce(acl.ACL_REVISION, win32con.GENERIC_READ, everyone)
     acl.SetNamedSecurityInfo(str(path), acl.SE_FILE_OBJECT,
-                             acl.DACL_SECURITY_INFORMATION | acl.PROTECTED_DACL_SECURITY_INFORMATION,
-                             None, None, dacl, None)
+                             acl.OWNER_SECURITY_INFORMATION | acl.DACL_SECURITY_INFORMATION
+                             | acl.PROTECTED_DACL_SECURITY_INFORMATION, actor, None, dacl, None)
 
 
 class DecodeTests(unittest.TestCase):
@@ -73,9 +88,9 @@ class DecodeTests(unittest.TestCase):
     def test_discovery_strict_loopback_and_expected_identity(self):
         with TemporaryDirectory() as td:
             p = Path(td).resolve()
+            protect(p)
             token = p/"bridge-wua.token"
             token.write_text("X"*64,encoding="ascii")
-            protect(p)
             protect(token)
             d = p/"bridge-discovery.json"
             value=dict(bridge_id="a"*32,protocol_version="1.0.0",origin="http://127.0.0.1:12345",
@@ -178,6 +193,49 @@ class ReadOnlyCatalogTests(unittest.TestCase):
         self.assertEqual(self.calls, [])
         self.assertEqual(self.transport.catalog()["targets"], self.targets)
         self.assertEqual(self.calls, [("GET", "/bridge/v1/health"), ("GET", "/bridge/v1/models")])
+
+    @unittest.skipUnless(os.name == "nt", "Windows security descriptors")
+    def test_windows_fixture_owner_and_protected_dacl_match_process_user(self):
+        import win32security as acl
+
+        actor = windows_process_user()
+        flags = acl.OWNER_SECURITY_INFORMATION | acl.DACL_SECURITY_INFORMATION
+        for path in (self.profile, self.profile / "bridge-discovery.json", self.token):
+            with self.subTest(file=path.name):
+                descriptor = acl.GetNamedSecurityInfo(str(path), acl.SE_FILE_OBJECT, flags)
+                self.assertEqual(descriptor.GetSecurityDescriptorOwner(), actor)
+                self.assertTrue(descriptor.GetSecurityDescriptorControl()[0] & acl.SE_DACL_PROTECTED)
+                dacl = descriptor.GetSecurityDescriptorDacl()
+                self.assertEqual(dacl.GetAceCount(), 1)
+                ace, _, grantee = dacl.GetAce(0)
+                self.assertEqual(ace, (acl.ACCESS_ALLOWED_ACE_TYPE, 0))
+                self.assertEqual(grantee, actor)
+
+    @unittest.skipUnless(os.name == "nt", "Windows security descriptors")
+    def test_windows_foreign_owner_is_refused_with_an_otherwise_private_dacl(self):
+        import win32security as acl
+
+        foreign = acl.CreateWellKnownSid(acl.WinBuiltinAdministratorsSid, None)
+        self.assertNotEqual(foreign, windows_process_user())
+        read_security_info = acl.GetNamedSecurityInfo
+        for subject in (self.profile, self.profile / "bridge-discovery.json", self.token):
+            def read_with_foreign_owner(name, kind, flags):
+                descriptor = read_security_info(name, kind, flags)
+                if Path(name) != subject:
+                    return descriptor
+                # Restricted Windows accounts cannot assign a foreign owner to
+                # a file. Change only the owner in a native descriptor with the
+                # real on-disk DACL, leaving production's decisions intact.
+                alternate = acl.SECURITY_DESCRIPTOR()
+                alternate.SetSecurityDescriptorOwner(foreign, False)
+                alternate.SetSecurityDescriptorDacl(True, descriptor.GetSecurityDescriptorDacl(), False)
+                return alternate
+
+            with self.subTest(file=subject.name), patch.object(
+                    acl, "GetNamedSecurityInfo", side_effect=read_with_foreign_owner):
+                with self.assertRaisesRegex(BridgeFault, "unsafe_discovery"):
+                    self.transport.catalog()
+                self.assertEqual(self.calls, [])
 
     def test_discovery_acl_origin_and_launch_identity_refuse_before_http(self):
         with self.assertRaisesRegex(BridgeFault, "unsafe_profile"):

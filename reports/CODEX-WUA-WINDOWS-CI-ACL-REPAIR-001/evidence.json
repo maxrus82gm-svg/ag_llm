@@ -1,0 +1,398 @@
+{
+  "task_id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "assignment": {
+    "sha256": "7d47f4b6a5a170709811176a1dbd37e5c65a797f891e7fcf79cb6ce5eaf7f26c",
+    "tail_sha256": "295b5842d498a63392b0e734e7c915953b70118b621007a380b336169d33ebd0",
+    "previous_history": "H-CODEX-000046",
+    "previous_record": {
+      "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/task_record.json",
+      "sha256": "9226d0a85ce781b9b35e2e2cd624670424f270968703928553d9bbb99dbb39fe",
+      "bytes": 714
+    },
+    "previous_sources": {
+      "assignment": {
+        "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/handoff_task.md",
+        "sha256": "c922036e642341ab41ae172289d37eaa08108bf3c0897e7ed5fd6f0e9c500423"
+      },
+      "report": {
+        "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/report.md",
+        "sha256": "29b0fa7ef6a364ec76baa1af98ff55ec534cb71fb125afec32e1ac6bea3fb791"
+      }
+    }
+  },
+  "hosted_baseline_reported_by_assignment": {
+    "main_677": "3ee748e19dc0ad1f28f4ed2344c79978b3145bac",
+    "gpt_682": "4f2d6cb5240f51ff98b1e052e4b104bcacfc61ec",
+    "technical_681": "d0d8927c94673ea22b675fc1751e3274b31ce170",
+    "run_id": 45702959182,
+    "job_id": 139714802863,
+    "attempts_reproduced": 2,
+    "pass": 28,
+    "fail": 4,
+    "error": 5,
+    "javascript": "NOT RUN",
+    "local_git_identity": "NOT RUN"
+  },
+  "source_files": {
+    "test_web_alarm_colibri_bridge_transport.py": {
+      "before_sha256": "4f178cfb53ef7f1a5651317a19860ef29dd7eddd5b630c0b8c8daaad18326301",
+      "after_sha256": "47af00003295ef5a48eb2282e07f95c7358c44dc91b33263105c85400fc1a112",
+      "changed": true
+    },
+    ".github/workflows/gpt-wua-666-safety-gates.yml": {
+      "before_sha256": "489e48a54f065057eeba7aafcf7bb03db746e4a002f6e494fbc75c0fc4806d7c",
+      "after_sha256": "e201276468ecb6df643bfa8868c9e4f56adc6bd6dee220c2d89d91ca5e4b81bc",
+      "changed": true
+    },
+    "web_alarm/colibri_bridge_transport.py": {
+      "before_sha256": "3669bac4871a03990a4f56e4ac3a0382b5fc7b880c9c9997f1ed07f98b85e39e",
+      "after_sha256": "3669bac4871a03990a4f56e4ac3a0382b5fc7b880c9c9997f1ed07f98b85e39e",
+      "changed": false
+    },
+    "web_alarm/colibri_binding.py": {
+      "before_sha256": "31d95a8f898d4026fcb78efd71861f54d98e72839b42b0a1bf3e5769ca21d5e7",
+      "after_sha256": "31d95a8f898d4026fcb78efd71861f54d98e72839b42b0a1bf3e5769ca21d5e7",
+      "changed": false
+    },
+    "web_alarm/launcher.py": {
+      "before_sha256": "63627463896a43be1c004d9d7648435dcd7a6ca6a5c39fff2734d0f3a0a82c2e",
+      "after_sha256": "63627463896a43be1c004d9d7648435dcd7a6ca6a5c39fff2734d0f3a0a82c2e",
+      "changed": false
+    },
+    "rt002_multimodel_reconciliation.json": {
+      "before_sha256": "3dcef4bf0ca7b87e1973c7efc1bd3ff900e57ad7f7d8f5d0b9ad97102b0f5b3d",
+      "after_sha256": "3dcef4bf0ca7b87e1973c7efc1bd3ff900e57ad7f7d8f5d0b9ad97102b0f5b3d",
+      "changed": false
+    },
+    "Start_WebAlarm_Standard.cmd": {
+      "before_sha256": "d078f557930a0428790a1fdf4ba565f2c048f48ba8afc38ebd282218ff2f80e4",
+      "after_sha256": "d078f557930a0428790a1fdf4ba565f2c048f48ba8afc38ebd282218ff2f80e4",
+      "changed": false
+    },
+    "Start_WebAlarm_Test.cmd": {
+      "before_sha256": "70259cf25d8f4a907133761585ef3572008edb88809c175396da3d21cc323df6",
+      "after_sha256": "70259cf25d8f4a907133761585ef3572008edb88809c175396da3d21cc323df6",
+      "changed": false
+    }
+  },
+  "checks": {
+    "baseline": {
+      "exit_code": 0,
+      "passed": 37,
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/baseline.log",
+        "sha256": "fd674f378f5986e4a2fd0efc59c05cb012d2bfe4aeefb10177f138761a545670",
+        "bytes": 6750
+      }
+    },
+    "bridge": {
+      "exit_code": 1,
+      "passed": 38,
+      "errors": 1,
+      "failure": "WinError 5 on token ACL after parent update",
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/bridge.log",
+        "sha256": "2d1477b18e8576d1f8071d3eb1104efe09880b12c8ede2ca8b400b742b1a82af",
+        "bytes": 7922
+      }
+    },
+    "bridge-final": {
+      "exit_code": 0,
+      "passed": 39,
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/bridge-final.log",
+        "sha256": "ce85d3ff3b69ef3fb793644d7008267a4e958183d52731317843c74659f311aa",
+        "bytes": 7160
+      }
+    },
+    "s1static": {
+      "exit_code": 0,
+      "passed": 16,
+      "isolation_violations": 0,
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/s1static.log",
+        "sha256": "9f7466e5c6f6cb72d82871accce00deb78ff87cf325673308f02b8b8f78269c7",
+        "bytes": 3079
+      }
+    },
+    "d8": {
+      "exit_code": 0,
+      "passed": 6,
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/d8.log",
+        "sha256": "dd8aa33ce86bbfe1f88e193dc77cc3244fc8f726fd4e510f962ee10a7d2de7bb",
+        "bytes": 922
+      }
+    },
+    "chat": {
+      "exit_code": 0,
+      "passed": 36,
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/chat.log",
+        "sha256": "a2f2de95d75624885fe1867ba030fd9700c287e003cbc60433ac392f2b718432",
+        "bytes": 6504
+      }
+    },
+    "s1": {
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "counts": {
+        "run": 69,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "isolation_violations": [],
+      "evidence_problems": [],
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/s1.log",
+        "sha256": "8ad8b4c476d53eb8374bc039fb110e973cf91e28b3ad22a367e0a5f891e19c0f",
+        "bytes": 87750
+      }
+    },
+    "s2": {
+      "gate": {
+        "status": "PASS",
+        "exit_code": 0,
+        "reasons": []
+      },
+      "counts": {
+        "run": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "isolation_violations": [],
+      "problems": [],
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/s2.log",
+        "sha256": "d86eb0375314cb1c92cebf73998399ff418f3342fd0967bd0818f81c15833376",
+        "bytes": 887
+      }
+    },
+    "s1pin": {
+      "exit_code": 0,
+      "result": {
+        "r031/executor.jsonl": true,
+        "r031/server.jsonl": true,
+        "r031/executor_base.json": true,
+        "r031/summary.json": true,
+        "r026/executor.jsonl": true,
+        "r026/summary.json": true
+      },
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/s1pin.log",
+        "sha256": "32474a691088a3367b965682156ff4c1e2d48d0d26b8c1991642f11071dbc99e",
+        "bytes": 174
+      }
+    },
+    "cmd": {
+      "exit_code": 0,
+      "result": {
+        "standard_cmd": "PASS",
+        "test_cmd": "PASS",
+        "scope": "isolated startup, local capability and exit",
+        "provider_calls": 0,
+        "test_evm_indication": "GET/POST denied; no settings file"
+      },
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/cmd.log",
+        "sha256": "43c1498403a7ddb1dc077325ac354e50a888da60d27bff1ef152029252afe742",
+        "bytes": 183
+      }
+    },
+    "acl-before": {
+      "exit_code": 0,
+      "result": {
+        "elevated": false,
+        "token_owner_is_token_user": true,
+        "birth": {
+          "profile": {
+            "owner_is_token_user": true,
+            "protected_dacl": false,
+            "inherited_aces": 3
+          },
+          "bridge-discovery.json": {
+            "owner_is_token_user": true,
+            "protected_dacl": false,
+            "inherited_aces": 3
+          },
+          "bridge-wua.token": {
+            "owner_is_token_user": true,
+            "protected_dacl": false,
+            "inherited_aces": 3
+          }
+        },
+        "native_alternate_owner": {
+          "applied": false,
+          "winerror": 1307
+        },
+        "original_fixture_same_user": "PASS",
+        "changed_owner_descriptor": "unsafe_discovery",
+        "original_fixture_request": {
+          "owner_security_requested": false,
+          "owner_ace_is_admin": true,
+          "owner_ace_is_token_user": false
+        },
+        "current_fixture_request": {
+          "owner_security_requested": false,
+          "owner_ace_is_admin": true,
+          "owner_ace_is_token_user": false
+        },
+        "current_fixture_acl": {
+          "profile": {
+            "owner_is_token_user": true,
+            "protected_dacl": true,
+            "inherited_aces": 0
+          },
+          "bridge-discovery.json": {
+            "owner_is_token_user": true,
+            "protected_dacl": true,
+            "inherited_aces": 0
+          },
+          "bridge-wua.token": {
+            "owner_is_token_user": true,
+            "protected_dacl": true,
+            "inherited_aces": 0
+          }
+        },
+        "public_oracle": "unsafe_discovery"
+      },
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/acl-before.json",
+        "sha256": "7e641bbd2f03ff090e898243798790a3c2c9d4d2c178c3c6eb0fc561f4883234",
+        "bytes": 1399
+      }
+    },
+    "acl-after": {
+      "exit_code": 0,
+      "result": {
+        "elevated": false,
+        "token_owner_is_token_user": true,
+        "birth": {
+          "profile": {
+            "owner_is_token_user": true,
+            "protected_dacl": false,
+            "inherited_aces": 3
+          },
+          "bridge-discovery.json": {
+            "owner_is_token_user": true,
+            "protected_dacl": false,
+            "inherited_aces": 3
+          },
+          "bridge-wua.token": {
+            "owner_is_token_user": true,
+            "protected_dacl": false,
+            "inherited_aces": 3
+          }
+        },
+        "native_alternate_owner": {
+          "applied": false,
+          "winerror": 1307
+        },
+        "original_fixture_same_user": "PASS",
+        "changed_owner_descriptor": "unsafe_discovery",
+        "original_fixture_request": {
+          "owner_security_requested": false,
+          "owner_ace_is_admin": true,
+          "owner_ace_is_token_user": false
+        },
+        "current_fixture_request": {
+          "owner_security_requested": true,
+          "owner_ace_is_admin": false,
+          "owner_ace_is_token_user": true
+        },
+        "current_fixture_acl": {
+          "profile": {
+            "owner_is_token_user": true,
+            "protected_dacl": true,
+            "inherited_aces": 0
+          },
+          "bridge-discovery.json": {
+            "owner_is_token_user": true,
+            "protected_dacl": true,
+            "inherited_aces": 0
+          },
+          "bridge-wua.token": {
+            "owner_is_token_user": true,
+            "protected_dacl": true,
+            "inherited_aces": 0
+          }
+        },
+        "public_oracle": "unsafe_discovery"
+      },
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/acl-after.json",
+        "sha256": "1d64fdf88a7234e0e29b597cd48e871422f13e486c0e0a647800b95433a53a7d",
+        "bytes": 1398
+      }
+    },
+    "sparse": {
+      "exit_code": 0,
+      "result": {
+        "old": {
+          "isolated-empty": "PASS",
+          "ultra-chat-demo": "Профиль 'ultra-chat-demo': скрипт 'reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/tools/demo_ultra_chat.py' не найден внутри проекта.",
+          "wa4o-review": "PASS"
+        },
+        "new": {
+          "isolated-empty": "PASS",
+          "ultra-chat-demo": "PASS",
+          "wa4o-review": "PASS"
+        },
+        "directory_added": "reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/tools",
+        "dependencies_already_in_cone": [
+          "context_storage",
+          "run_store",
+          "web_alarm.server"
+        ],
+        "other_workflow_lines_identical": true,
+        "unrelated_nested_reports_excluded": true
+      },
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/sparse.json",
+        "sha256": "34b9cd3cec156109d5e2b2b545e0f06b6ebc2f8779fc6550b8df1c01fb04baed",
+        "bytes": 652
+      }
+    },
+    "mcp": {
+      "exit_code": 0,
+      "sdk": "2.2.0",
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/mcp.log",
+        "sha256": "6b26556e146295f0346297541d5a87dbb351f5a34d9e52baa16fb3373720a7fe",
+        "bytes": 30
+      }
+    },
+    "js": {
+      "exit_code": 0,
+      "tests": 211,
+      "pass": 211,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "log": {
+        "path": "reports/_local/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/js.log",
+        "sha256": "f9a4249f4d7305d4b802ae17ec5217f5736a490531c1fa51284ede9b5791063c",
+        "bytes": 52141
+      }
+    }
+  },
+  "real_network_calls": 0,
+  "not_run": [
+    "hosted rerun or original hosted owner SID readback",
+    "LIVE",
+    "paid or OAuth traffic",
+    "real STANDARD/Client/Manager/models",
+    "independent verification"
+  ]
+}

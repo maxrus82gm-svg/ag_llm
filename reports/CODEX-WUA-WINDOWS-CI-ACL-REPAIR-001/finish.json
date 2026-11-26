@@ -1,0 +1,137 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "7d47f4b6a5a170709811176a1dbd37e5c65a797f891e7fcf79cb6ce5eaf7f26c",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 357,
+    "b11b": 363,
+    "b11e": 692
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+    "problems": [],
+    "title": "Исправление Windows CI — ACL и подключение Client",
+    "lines": 308
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-COLIBRI-REAL-CATALOG-001",
+    "copy_sha256": "2eec389466cbcdcbaaa24ec7b8dbe579aa28e5beba8b87f5528105524aa16f35",
+    "history_id": "H-CODEX-000046",
+    "history_record": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "7d47f4b6a5a170709811176a1dbd37e5c65a797f891e7fcf79cb6ce5eaf7f26c",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-COLIBRI-REAL-CATALOG-001",
+    "copy_sha256": "2eec389466cbcdcbaaa24ec7b8dbe579aa28e5beba8b87f5528105524aa16f35",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/handoff_task.md",
+    "archive_sha256": "c922036e642341ab41ae172289d37eaa08108bf3c0897e7ed5fd6f0e9c500423"
+   },
+   "history_id": "H-CODEX-000047",
+   "new_card_sha256": "09a7df67fbaaf5a6acb9795402da6962d809598c5a76c4479e2cbceecbaada39",
+   "copy_sha256_lf": "b974d4f5edab099b11bb5b24e2104cca981663ca8fb1b762ec124bed2d3d5696",
+   "copy_lines": 308,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  },
+  {
+   "command": "apply",
+   "mode": "apply",
+   "task_id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "7d47f4b6a5a170709811176a1dbd37e5c65a797f891e7fcf79cb6ce5eaf7f26c",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-COLIBRI-REAL-CATALOG-001",
+    "copy_sha256": "2eec389466cbcdcbaaa24ec7b8dbe579aa28e5beba8b87f5528105524aa16f35",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/handoff_task.md",
+    "archive_sha256": "c922036e642341ab41ae172289d37eaa08108bf3c0897e7ed5fd6f0e9c500423"
+   },
+   "history_id": "H-CODEX-000047",
+   "new_card_sha256": "09a7df67fbaaf5a6acb9795402da6962d809598c5a76c4479e2cbceecbaada39",
+   "copy_sha256_lf": "b974d4f5edab099b11bb5b24e2104cca981663ca8fb1b762ec124bed2d3d5696",
+   "copy_lines": 308,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "history": {
+    "id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+    "history_id": "H-CODEX-000047",
+    "record": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/task_record.json",
+    "status": "SUBMITTED / REVIEW PENDING",
+    "review": "NOT VERIFIED"
+   },
+   "snapshot_sha256": "5a07d9bc5021009981c67fd40cee95ea7ba271d46a9b65efec97f0a6268db476",
+   "result": "ROTATED",
+   "card_unchanged": false
+  },
+  {
+   "command": "readback",
+   "card_sha256": "09a7df67fbaaf5a6acb9795402da6962d809598c5a76c4479e2cbceecbaada39",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 48,
+    "b1e": 50,
+    "b11b": 56,
+    "b11e": 367
+   },
+   "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+    "copy_sha256": "b974d4f5edab099b11bb5b24e2104cca981663ca8fb1b762ec124bed2d3d5696",
+    "history_id": "H-CODEX-000047",
+    "history_record": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/task_record.json",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  }
+ ],
+ "result": "ROTATED",
+ "task_id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+ "history": {
+  "id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+  "history_id": "H-CODEX-000047",
+  "record": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/task_record.json",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "review": "NOT VERIFIED"
+ }
+}

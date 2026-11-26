@@ -1,0 +1,56 @@
+{
+  "task_id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "date": "2026-11-26",
+  "files": [
+    {
+      "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/evidence.json",
+      "sha256": "d64698398cf510bc415b4e85aa7767fff4b87e36f8e8e6a92a8a77b9237ba5be",
+      "bytes": 13553
+    },
+    {
+      "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/finish.json",
+      "sha256": "8279ce766e927cfc12a917558695348ebb9d20b31be0a19591f2ec3669c8ed53",
+      "bytes": 4819
+    },
+    {
+      "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/handoff_task.md",
+      "sha256": "5a07d9bc5021009981c67fd40cee95ea7ba271d46a9b65efec97f0a6268db476",
+      "bytes": 14766
+    },
+    {
+      "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/report.md",
+      "sha256": "5ca73baba3ba07d5552e76a8a69180c26de49a0073ec3bb8c35da31dc4032175",
+      "bytes": 12996
+    },
+    {
+      "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/task_record.json",
+      "sha256": "52bf2d0fb9a48b5749da72e82b658fd8dcac5782b170a980237894bb21e5d6a6",
+      "bytes": 703
+    },
+    {
+      "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/tests.md",
+      "sha256": "8febbeaefb41240b73d3414e238e990b6fed4f23439ca9d70a94e9c36c698f8b",
+      "bytes": 5292
+    }
+  ],
+  "history_id": "H-CODEX-000047",
+  "closeout": {
+    "result": "ROTATED",
+    "history_id": "H-CODEX-000047",
+    "block1": "WAITING",
+    "blocks_2_to_4_unchanged": true,
+    "previous_history_unchanged": "H-CODEX-000046",
+    "card_after_sha256": "09a7df67fbaaf5a6acb9795402da6962d809598c5a76c4479e2cbceecbaada39",
+    "history_sources": {
+      "assignment": {
+        "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/handoff_task.md",
+        "sha256": "5a07d9bc5021009981c67fd40cee95ea7ba271d46a9b65efec97f0a6268db476"
+      },
+      "report": {
+        "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/report.md",
+        "sha256": "5ca73baba3ba07d5552e76a8a69180c26de49a0073ec3bb8c35da31dc4032175"
+      }
+    }
+  }
+}

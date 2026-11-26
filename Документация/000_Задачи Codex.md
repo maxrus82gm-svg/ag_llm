@@ -54,334 +54,316 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 # БЛОК 1.1 — ПОСЛЕДНЯЯ СДАННАЯ ЗАДАЧА
 
 ###### ▼ НАЧАЛО КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:BEGIN
-**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-WUA-COLIBRI-REAL-CATALOG-001` · перенесено 2026-11-26 · SHA-256 копии `2eec389466cbcdcbaaa24ec7b8dbe579aa28e5beba8b87f5528105524aa16f35` · CHAT-ONLY AMENDMENT: нет · снимок `reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/handoff_task.md` · отчёт `reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/report.md` · HISTORY ID `H-CODEX-000046` · запись `reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/task_record.json`
+**SUBMITTED / REVIEW PENDING** · TASK ID `CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001` · перенесено 2026-11-26 · SHA-256 копии `b974d4f5edab099b11bb5b24e2104cca981663ca8fb1b762ec124bed2d3d5696` · CHAT-ONLY AMENDMENT: нет · снимок `reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/handoff_task.md` · отчёт `reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/report.md` · HISTORY ID `H-CODEX-000047` · запись `reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/task_record.json`
 
-# Подключение реального каталога локальных LLM к EVM
+Уважаемый агент 007 (Codex)!
 
-**TASK ID:** `CODEX-WUA-COLIBRI-REAL-CATALOG-001`
+# Исправление Windows CI — ACL и подключение Client
 
-**Приоритет:** P0.
-**Исполнитель:** Codex.
-**Координатор:** ChatGPT.
-**Рабочая директория:** M:\GitHub\ag_llm
+**TASK ID:** `CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001`
 
-## 1. Режим выполнения
+**Дата:** 26.11.2026.
 
-Архитектурный анализ выполнен координатором.
+**Приоритет:** P0 — блокирует независимую техническую приёмку.
 
-Не проводить повторное исследование всего проекта.
-Не читать полные архивы предыдущих задач.
+**Исполнитель:** Codex 007.
 
-Использовать эту постановку как техническую инструкцию.
-Читать только персональные правила Codex, применимые
-правила изоляции и сдачи, указанные ниже функции
-и непосредственно связанные с ними тесты.
+**Координатор:** ChatGPT / WEB 36.
 
-Базовые версии, проверенные координатором:
+**Источник назначения:** OWNER GO 26.11.2026.
 
-WUA main:
-861c7df4f48704eb9874a0bdaa0f30f6547ce21d
+**Рабочая директория:** `M:\GitHub\ag_llm`
 
-Colibri main:
-8df5b5ec5cb363b1ad522516865fc7f4d2a8ebbe
+**PRIMARY PROFILE:** Web Alarm Ultra / Windows CI.
 
-Client Bridge API v1.0.0.
-Контракт совместим с существующим адаптером WUA.
+**SECONDARY PROFILE:** EVM / Colibri Client Bridge.
 
-## 2. Цель
+## 1. Исходное состояние
 
-Добавить управляемый серверный режим подключения
-к настоящему Client Bridge для чтения каталога.
+Координатор выполнил анализ через GitHub.
 
-В EVM, в колонке «Локальные LLM», должны
-отображаться модели, полученные от Клиента Неополис.
+- main: №677 — `3ee748e19dc0ad1f28f4ed2344c79978b3145bac`.
+- GPT: №682 — `4f2d6cb5240f51ff98b1e052e4b104bcacfc61ec`.
+- Последний технический коммит: №681 — `d0d8927c94673ea22b675fc1751e3274b31ce170`.
+- №682 содержит документационные изменения.
 
-На данном этапе только чтение health и models.
+Независимый Windows CI:
 
-Реальную генерацию пока не активировать.
+- Run ID: `45702959182`.
+- Attempt: 2.
+- Job ID: `139714802863`.
+- Результат: FAILURE.
 
-## 3. Файл colibri_bridge_transport.py
+Две попытки завершились одинаковым результатом:
 
-Путь:
-web_alarm/colibri_bridge_transport.py
+- 28 PASS.
+- 4 FAIL.
+- 5 ERROR.
+- JavaScript regression — NOT RUN.
 
-Координатор проверил:
+Первоначальные отрицательные результаты сохранить.
 
-- _windows_private_acl
-- _private_temp_file
-- _discover
-- Discovery
-- OfflineColibriTransport
-- _fresh
-- _json
-- _health
-- catalog
+## 2. Координация и общий план
 
-Ввести отдельный ReadOnlyColibriTransport.
+LOCAL-PLAN-01 выполнен координатором 26.11.2026.
 
-Переиспользовать существующие механизмы:
+PLAN_READ SHA256:
 
-- Чтение защищённого discovery.
-- Проверку токена и идентификатора Bridge.
-- Проверку Windows ACL.
-- Проверку loopback origin.
-- Contract.
-- Проверку JSON и размеров ответа.
-- Проверку target_id и instance_id.
+`b215ef9882542d5e38590965b8635b8c8039320eaf87f7626f9c7137c97831ee`
 
-Выделить общие операции чтения в общий внутренний
-компонент, без дублирования HTTP-транспорта.
+Integration ID: `WUA-COLIBRI-BRIDGE-001/MVP1`.
 
-Существующий OfflineColibriTransport оставить
-строго изолированным внутри TEMP.
+Общий этап остаётся IN_PROGRESS.
 
-ReadOnlyColibriTransport принимает явно переданные:
+M1-10 LIVE — HOLD.
 
-- Абсолютный путь профиля Client.
-- Ожидаемый bridge_id.
+Настоящая задача не разрешает изменение общего плана или переход к LIVE.
 
-Разрешены исключительно:
+## 3. Цель
 
-GET /bridge/v1/health
-GET /bridge/v1/models
+Установить точную причину воспроизводимых ошибок Windows CI и устранить её без ослабления существующих механизмов безопасности.
 
-Любые POST, другие маршруты и наличие тела запроса
-запрещать до сетевого обращения.
+Восстановить полный проход адресного Windows OFFLINE workflow, включая ранее пропущенную JavaScript-регрессию.
 
-Не предоставлять методы генерации, отмены,
-запуска или остановки моделей.
+Не проводить повторное исследование всей архитектуры проекта.
 
-Не сканировать порты и директории.
+## 4. REUSE CHECK
 
-Не разрешать редиректы, прокси, внешние адреса
-и автоматический выбор другого Bridge.
+Координатор предварительно проверил существующие механизмы:
 
-Проверки защищённого чтения не ослаблять.
-Оставшиеся ограничения защиты файлов явно указать
-в отчёте как LIVE gate.
+**web_alarm/colibri_bridge_transport.py**
 
-## 4. Файл ultra_connections.py
+- `_windows_private_acl`
+- `_private_temp_file`
+- `_discover`
+- `ReadOnlyColibriTransport`
+- `catalog`
+- `_fresh`
 
-Путь:
-web_alarm/ultra_connections.py
+**test_web_alarm_colibri_bridge_transport.py**
 
-Использовать существующие функции:
+- `protect`
+- `DecodeTests`
+- `ReadOnlyCatalogTests`
 
-- bind_offline_colibri
-- registry_snapshot
-- local_target
-- catalog
+**web_alarm/colibri_binding.py**
 
-Добавить отдельный серверный метод:
+- `_read`
+- `act`
 
-bind_readonly_colibri
+**web_alarm/launcher.py**
 
-Не менять защитные условия bind_offline_colibri.
+- `_profile`
+- `load_launch`
 
-Ввести явное различие режимов:
+**CI:**
 
-- NOT_CONNECTED
-- OFFLINE
-- READ_ONLY
+`.github/workflows/gpt-wua-666-safety-gates.yml`
 
-Использовать существующий ModelRegistryView.
+Переиспользовать существующие механизмы. Не создавать новый транспорт, отдельный реестр, альтернативную систему авторизации или параллельную базу тестов.
 
-Не создавать второй реестр моделей.
+## 5. Проблема A — Windows ACL
 
-При получении каталога сохранить:
+Подтверждённые сообщения CI:
 
-- target_id
-- instance_id
-- model_id
-- manager_name
-- slot_id
-- status
-- execution_mode
-- capabilities
-- limits
+`BridgeFault: unsafe_discovery`
 
-При потере связи известные модели не удалять.
-Отображать их как UNKNOWN с запрещёнными
-операциями выполнения.
+`AssertionError: "identity_mismatch" does not match "unsafe_discovery"`
 
-Состояние READY не считать доказательством
-отсутствия активных или ожидающих запросов.
+`AssertionError: "redirect_refused" does not match "unsafe_discovery"`
 
-## 5. Файл launcher.py
+`AssertionError: 409 != 200`
 
-Путь:
-web_alarm/launcher.py
+Восемь неуспешных тестов относятся к Bridge Transport:
 
-Точки изменения:
+- test_discovery_strict_loopback_and_expected_identity
+- test_failed_rebind_and_corrupt_store_never_overwrite
+- test_managed_binding_restart_stale_reconnect_and_disconnect
+- test_only_health_and_models_get_with_empty_body
+- test_catalog_projection_is_read_only_and_keeps_stale_targets
+- test_discovery_acl_origin_and_launch_identity_refuse_before_http
+- test_managed_http_requires_registered_standard_origin_and_write_token
+- test_redirect_and_invalid_instance_are_refused
 
-- main
-- run_web_alarm
+Предварительное направление диагностики:
 
-Добавить два явных аргумента запуска:
-
---colibri-readonly-profile
---colibri-bridge-id
-
-Принимать только совместно, только в STANDARD,
-без --require-test, --self-test и --live.
-
-После создания WebAlarmApi использовать
-bind_readonly_colibri до создания HTTP-сервера.
-
-При отсутствии аргументов поведение STANDARD
-должно оставаться прежним.
-
-При недоступном Bridge показывать безопасную
-диагностику, не блокируя работу облачного чата.
-
-Не изменять постоянные CMD и ярлыки.
-Не включать реальное подключение по умолчанию.
-
-Физический запуск нового режима — отдельное
-действие владельца после согласования preflight.
-
-## 6. Файл model_cards.py
-
-Путь:
-web_alarm/model_cards.py
-
-Использовать существующие функции:
-
-- _context
-- _card
-- catalog
-
-Добавить причину статуса:
-
-LOCAL_CATALOG_ONLY
-
-Локальные модели отображать в существующей
-колонке EVM «Локальные LLM».
-
-Сохранить текущую общую систему индикаторов H45.
-
-Каталог и READY не являются подтверждением
-успешного ответа нейросети.
-
-Не устанавливать зелёную галочку только
-на основании получения каталога.
-
-## 7. Файл ui.py
-
-Путь:
-web_alarm/ui.py
-
-Адресные точки:
-
-- API_TEXT.
-- Отображение local_target.
-- Подпись READY (OFFLINE).
-- Кнопка «Проверить чат» локальной карточки.
-
-Для READ_ONLY отображать:
-
-«Каталог подключён. Генерация пока недоступна».
-
-Показывать имя Manager, слот и статус модели.
-Не показывать обозначение OFFLINE для настоящего
-каталога.
-
-Запретить запуск диагностики локальной модели
-в режиме READ_ONLY.
-
-Не переделывать дизайн, навигацию или EVM H45.
-
-## 8. Чат и Turn
-
-Не расширять права выполнения в следующих файлах:
-
-web_alarm/ordinary_provider.py
-web_alarm/colibri_turn.py
-web_alarm/turn_service.py
-
-Существующие OFFLINE-ограничения сохранить.
-
-Реальный каталог не должен автоматически давать
-возможность выбирать модель для генерации.
-
-Прямой HTTP-запрос локального Turn должен
-по-прежнему отклоняться до отправки в Bridge.
-
-История ранее сохранённых чатов доступна.
-
-## 9. Проверки
-
-Создать адресные тесты ReadOnlyColibriTransport
-и подключения каталога через EVM.
-
-Использовать существующие тестовые фикстуры.
+Функция `protect()` формирует Windows DACL на основании владельца объекта, тогда как `_windows_private_acl()` сравнивает владельца с SID текущего процесса.
 
 Проверить:
 
-1. По умолчанию сетевых обращений к Bridge нет.
-2. Разрешены только два GET-маршрута.
-3. POST и генерация отклоняются до сети.
-4. Некорректный bridge_id отклоняется.
-5. Небезопасный discovery, ACL и origin отклоняются.
-6. Смена launch_identity отклоняется.
-7. Каталог двух имитированных Manager отображается.
-8. Потеря связи не удаляет известные модели.
-9. STANDARD и TEST остаются изолированными.
-10. Существующие тесты Colibri и H45 проходят.
+- SID текущего процесса.
+- Фактического владельца временного каталога.
+- Владельцев discovery и token-файлов.
+- DACL и наследование разрешений.
+- Различия между локальной Windows и GitHub-hosted Windows.
+- Момент установки и повторной проверки ACL.
 
-Для регрессии использовать адресные тесты:
+Несовпадение владельцев является рабочей гипотезой, а не доказанной первопричиной.
 
-test_web_alarm_colibri_bridge_transport.py
-test_web_alarm_model_cards.py
-test_web_alarm_persistent_connection.py
-test_web_alarm_launcher.py
-test_web_alarm_evm_ui.js
+Сначала воспроизвести проблему на синтетических файлах. Затем установить конкретное условие отказа.
 
-Дополнительно применимые S1/S2.
-Не ослаблять защиту ради прохождения тестов.
+Если ошибка находится исключительно в подготовке тестового окружения — исправлять тестовые fixtures, не production-защиту.
 
-Реальные сетевые вызовы: 0.
+Если доказан дефект production-кода — выполнить минимальное адресное исправление с сохранением всех защитных инвариантов.
+
+Не разрешать посторонние SID ради прохождения теста.
+
+Не отключать ACL-проверку и не подменять её безусловным mock PASS.
+
+## 6. Проблема B — неполный sparse checkout
+
+Подтверждённая ошибка:
+
+`LaunchConfigError: Профиль 'ultra-chat-demo': скрипт не найден внутри проекта.`
+
+Отсутствующий путь:
+
+`reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/tools/demo_ultra_chat.py`
+
+Координатор подтвердил наличие этого файла в репозитории.
+
+Исправить состав sparse checkout в:
+
+`.github/workflows/gpt-wua-666-safety-gates.yml`
+
+Добавить минимальную необходимую область файлов с учётом фактических зависимостей скрипта.
+
+Сохранить:
+
+- Поддержку Windows Long Paths.
+- Изолированную CI-среду.
+- Ограничение выборки исторических архивов.
+- `persist-credentials: false`.
+- Минимальные permissions.
+- Все существующие проверки.
+
+Не заменять sparse checkout необоснованным полным checkout.
+
+Не удалять проверку профиля `ultra-chat-demo`.
+
+## 7. Разрешённая область чтения
+
+- Персональная карточка Codex и её правила.
+- №36.1 — TEST-ENG-01 и TEST-FULL-CYCLE-01.
+- №36.2 — применимые проверки Web Alarm.
+- №18 — изоляция, отчётность и сдача слота.
+- Указанные исходники, тесты и workflow.
+- Непосредственные зависимости указанных компонентов.
+
+Полные исторические архивы и чужие проекты не исследовать без необходимости.
+
+## 8. Разрешённая область записи
+
+Основная:
+
+- `test_web_alarm_colibri_bridge_transport.py`
+- `.github/workflows/gpt-wua-666-safety-gates.yml`
+
+Условная, только при доказанной необходимости:
+
+- `web_alarm/colibri_bridge_transport.py`
+- `rt002_multimodel_reconciliation.json` — только при подтверждённом изменении соответствующего source fingerprint, с объяснением и повторной проверкой S1.
+
+Отчётная:
+
+- `reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/`
+
+Персональная карточка:
+
+- `Документация/000_Задачи Codex.md` — исключительно штатная скриптовая сдача собственной TASK.
+
+Расширение write scope — только после согласования.
+
+## 9. Обязательные проверки
+
+Выполнить самостоятельный инженерный анализ по TEST-ENG-01, не ограничиваясь существующими автотестами.
+
+Обязательные группы:
+
+1. Bridge Transport и managed Client Binding — все применимые тесты.
+2. Launcher — все применимые тесты.
+3. Windows ACL — реальные синтетические DACL и owner SID.
+4. Отрицательные проверки неправильного владельца и публичных разрешений.
+5. Запрет неизвестной identity, внешних origin, redirect, POST и недопустимого body.
+6. Сохранение каталога и UNKNOWN при потере соединения.
+7. Сохранение binding при ошибочном reconnect.
+8. S1 — статические проверки и применимые полные проверки при наличии защищённых fixtures.
+9. S2 FULL — 73 случая.
+10. D8 и существующие negative controls.
+11. Ultra Chat HTTP и Ordinary Application.
+12. JavaScript UI regression.
+13. Изолированный launcher smoke согласно штатному регламенту.
+
+Обязательно сохранить ожидаемые отрицательные результаты.
+
+Нельзя исключать падающие тесты или ослаблять assertions для получения зелёного статуса.
+
+Для недоступных проверок указать NOT RUN и причину.
 
 ## 10. Ограничения
 
-Не использовать Git/GitHub.
-Не менять проект local_LLM.
-Не запускать и не останавливать Manager.
-Не запускать реальные модели.
-Не активировать Bridge самостоятельно.
-Не изменять STANDARD-хранилище.
-Не обращаться к платным API.
-Не менять контракты v1.
-Не устранять посторонние дефекты.
+Строго OFFLINE.
 
-Если обнаружена необходимость архитектурного
-расширения — сообщить координатору,
-не реализовывать её самостоятельно.
+Запрещается:
 
-## 11. Сдача
+- Изменять рабочий STANDARD.
+- Изменять работающий Client или Manager.
+- Запускать, останавливать или перенастраивать реальные модели.
+- Менять существующие подключения и пользовательские данные.
+- Использовать реальные Bridge-токены.
+- Выполнять платные запросы или OAuth.
+- Активировать M1-10 LIVE.
+- Изменять общий план №34.1.
+- Работать с Git/GitHub без отдельного разрешения.
+- Выполнять merge или push самостоятельно.
 
-Отчёт и evidence:
+Синтетические рабочие материалы размещать согласно WORKSPACE-ISOLATION-01.
 
-reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/
+При несовпадении локальной версии с указанным baseline — сообщить BLOCKED, не исправлять устаревшую копию вслепую.
 
-Соблюдать WORKSPACE-ISOLATION-01.
+## 11. Критерии завершения
 
-Указать изменённые файлы, тесты, ограничения
-и точную инструкцию будущего запуска READ_ONLY.
+RESULT READY допускается после выполнения разрешённого объёма работ и сохранения:
 
-Выполнить штатный task_slot_rotate.py finish.
-Получить HISTORY ID.
+- Доказанной причины каждого исправленного дефекта.
+- Первоначальных FAIL и результатов повторных проверок.
+- Точных изменённых файлов и функций.
+- Команд, версий среды, exit codes и количества тестов.
+- Доказательств сохранения защитных механизмов.
+- Перечня OPEN, ограничений и NOT RUN.
+- DOC IMPACT.
 
-## 12. NEXT
+Отчёт сохранить:
 
-Координатор проверяет исходники через GitHub.
+`reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/report.md`
 
-После отдельного согласования производится
-подключение настоящего Client Bridge.
+Также сохранить manifest и безопасные evidence.
 
-Затем следующая задача:
-реальный потоковый ответ локальной LLM
-в существующем чате Нейрополис.
+При невозможности полного исправления подготовить честный PARTIAL/BLOCKED с установленными фактами.
+
+## 12. Сдача задачи
+
+После завершения итогового пакета выполнить штатную команду:
+
+```powershell
+python -B -X utf8 tools/task_slot_rotate.py finish --card "Документация/000_Задачи Codex.md" --task-id CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001 --no-chat-amendment --headless --apply
+```
+
+При наличии AMENDMENT использовать установленный регламент их сохранения.
+
+Не переносить БЛОК 1 вручную.
+
+Не присваивать HISTORY ID самостоятельно.
+
+Не изменять БЛОКИ 2–4 и общие реестры.
+
+Итоговый статус:
+
+RESULT READY / AWAITING INDEPENDENT VERIFICATION
+
+NEXT: передать пакет координатору WEB 36 для публикации в установленном порядке и независимой проверки GitHub Actions на новом точном SHA.
+
+Нового LIVE GO данная задача не предоставляет.
 ###### ▲ КОНЕЦ КОПИИ СДАННОЙ ЗАДАЧИ — заполняет только скрипт · TASK-SLOT:BLOCK-1.1:END
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
