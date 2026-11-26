@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Подключение реального каталога локальных LLM к EVM",
   "date": "2026-11-26",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "SUBMITTED / DOC RECORDED / AUTHOR OFFLINE PASS / SCOPED WINDOWS CI PASS; LIVE/GUI OPEN",
+  "review": "PARTIAL / exact merge 0e7adfb run 45804549718 H46/binding/launcher and regressions PASS; broader/physical/actual catalogue NOT RUN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/handoff_task.md",
@@ -15,7 +15,49 @@
     "report": {
       "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/report.md",
       "sha256": "29b0fa7ef6a364ec76baa1af98ff55ec534cb71fb125afec32e1ac6bea3fb791"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB36-H47-REVIEW-20261126/review.md",
+      "sha256": "a61b4794c7f7ec10d75e114c284b22d8a8b1f01db556c1e2c2badf34aa00314a"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-COLIBRI-REAL-CATALOG-001",
+      "history_id": "H-CODEX-000046",
+      "agent": "codex",
+      "title": "Подключение реального каталога локальных LLM к EVM",
+      "date": "2026-11-26",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/handoff_task.md",
+          "sha256": "c922036e642341ab41ae172289d37eaa08108bf3c0897e7ed5fd6f0e9c500423"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-COLIBRI-REAL-CATALOG-001/report.md",
+          "sha256": "29b0fa7ef6a364ec76baa1af98ff55ec534cb71fb125afec32e1ac6bea3fb791"
+        }
+      }
+    }
+  ],
+  "independent_review": {
+    "date": "2026-11-26",
+    "source_commit": "1457ba433b4b24a61c4cc374b77587af5e2ef12b",
+    "ci_commit": "0e7adfb692c65a6d329e1d8e17fb65b05f6b4f16",
+    "run_id": 45804549718,
+    "job_id": 139856212527,
+    "review_path": "reports/CHATGPT-WEB36-H47-REVIEW-20261126/review.md",
+    "verdict": "PARTIAL / exact merge 0e7adfb run 45804549718 H46/binding/launcher and regressions PASS; broader/physical/actual catalogue NOT RUN",
+    "not_run": [
+      "private-RAW S1 FULL independent",
+      "physical CMD/GUI",
+      "real Client/Manager/model",
+      "paid/OAuth",
+      "full packaging"
+    ],
+    "real_authorized": false
+  }
 }

@@ -368,28 +368,32 @@ NEXT: передать пакет координатору WEB 36 для пуб�
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
 
-Старые БЛОКИ 2–4 сохранены в `reports/CHATGPT-WEB29-H35-REVIEW-20261114/prior_closeout_snapshot.md`; B1/1.1 неизменны. Авторский `finish` H35 не означает полной REAL/UX-приёмки.
+Предыдущая редакция БЛОКОВ 2–4 сохранена в immutable Git 0e7adfb; прежние snapshots и все records остаются. B1/1.1 неизменны.
 
-- **14.11 / H-CODEX-000035:** STANDARD → Ordinary Core per-chat model/settings/history, actual HTTP fixture; independent Windows 3 jobs PASS, author PARTIAL, REAL/USER UX HOLD.
-- **14.11 / H-CODEX-000034:** seven legacy GigaChat send-site bounded independent Windows OFFLINE PASS; REAL HOLD.
-- **13.11 / H-CODEX-000033:** GigaChat MockTransport exact bytes/Turn/usage bounded OFFLINE PASS.
-- **13.11 / H-CODEX-000032:** Ordinary fake send S2/S3a/Turn/RAW bounded OFFLINE PASS.
-- **12.11 / H-CODEX-000031:** launcher F-01 guard PASS, physical CMD NOT RUN.
+- **26.11 / H-CODEX-000047:** Windows CI ACL fixture + sparse checkout; bounded independent OFFLINE PASS, LIVE HOLD.
+- **26.11 / H-CODEX-000046:** READ_ONLY реального каталога; scoped Windows CI PASS / PARTIAL, real GUI/catalogue NOT RUN.
+- **26.11 / H-CODEX-000045:** EVM common indicators; owner GUI bounded PASS, independent technical/REAL OPEN.
+- **25.11 / H-CODEX-000044:** persistent consent / GigaChat; owner restart bounded PASS, author PARTIAL, independent OPEN.
+- **17.11 / H-CODEX-000043:** graceful exit/legacy recovery; author PARTIAL, personal account recovery bounded, full CI/REAL OPEN.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **H36:** TEST each chat persists its own model across switch/F5; owner GUI PASS 15.11; independent CI 43635085454 2/2; REAL HOLD.
-- **H35:** standard `create_server` now builds `OrdinaryApplicationChatService`; one `GigaChat 2 Pro` model, per-chat persisted preference/settings, history/usage UNKNOWN when not known, real HOLD fail-closed. Source18/18; CI 43598906253 3/3 PASS. **USER GUI BOUNDED ACCEPTED 15.11 (history/settings/F5); TECHNICAL REAL NOT READY**.
-- **H34:** all seven legacy send-sites synthetic owner-gated through S2/S3a/H33; REAL blocked.
-- **H33:** byte-accurate GigaChat HTTP mock→durable terminal/Turn/RAW accepted.
-- **H32:** Ordinary fake one-send guard accepted.
-- **H31:** launcher F-01 guard accepted; physical GUI still separate.
+- **H47:** exact 0e7adfb Windows run 45804549718 SUCCESS; 39 Bridge/binding/launcher, 211 JS, S1 STATIC16, S2 73, D8+5, HTTP36. Prior failure preserved. H47 repair DOC CLOSED, real HOLD.
+- **H46:** 39 combined scoped CI PASS; no actual catalogue/physical GUI, broader gates OPEN.
+- **H45:** author OFFLINE, owner restart/defaults/F5 bounded PASS; full TEST, independent, live OPEN.
+- **H44:** owner real restart bounded PASS; expiry/technical and remaining model cases OPEN.
+- **H43:** author PARTIAL; owner-authorised personal recovery separate; independent/real gates remain.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
+
+## WEB36 / 26.11.2026 — H-CODEX-000047 — BOUNDED INDEPENDENT WINDOWS OFFLINE PASS
+
+**TASK:** `CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001`; source #683 `47191f3`, tested merge `0e7adfb692c65a6d329e1d8e17fb65b05f6b4f16`. [CI 45804549718](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/45804549718), job 139856212527: 39 Bridge/binding/launcher, S1 STATIC16, S2 73, D8 1, negatives5, HTTP36, JS211 PASS. [Smoke 45804549500](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/45804549500) four PASS, one skipped. Author FULL S1/isolated CMD remain author evidence. H47 DOC CLOSED repair only; H46 PARTIAL, H27 observed CI no self-review. Actual Client/Manager/model, GUI, full S1 independent, broad packaging NOT RUN. Review `reports/CHATGPT-WEB36-H47-REVIEW-20261126/review.md`. M1-10/11 separate GO. B1/1.1 unchanged.
+
 ---
 
 ## WEB30 / 15.11.2026 — H-CODEX-000036 — TEST per-chat model persistence owner+CI accepted

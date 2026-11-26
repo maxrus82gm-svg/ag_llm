@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Исправление Windows CI — ACL и подключение Client",
   "date": "2026-11-26",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC CLOSED / H47 BOUNDED INDEPENDENT WINDOWS OFFLINE PASS; LIVE HOLD",
+  "review": "PASS / exact merge 0e7adfb run 45804549718: 39 Bridge/binding/launcher, S1 STATIC16, S2 73, D8+5, HTTP36, JS211; H47 repair only; S1 FULL/physical GUI/REAL NOT RUN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/handoff_task.md",
@@ -15,7 +15,49 @@
     "report": {
       "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/report.md",
       "sha256": "5ca73baba3ba07d5552e76a8a69180c26de49a0073ec3bb8c35da31dc4032175"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB36-H47-REVIEW-20261126/review.md",
+      "sha256": "a61b4794c7f7ec10d75e114c284b22d8a8b1f01db556c1e2c2badf34aa00314a"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001",
+      "history_id": "H-CODEX-000047",
+      "agent": "codex",
+      "title": "Исправление Windows CI — ACL и подключение Client",
+      "date": "2026-11-26",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/handoff_task.md",
+          "sha256": "5a07d9bc5021009981c67fd40cee95ea7ba271d46a9b65efec97f0a6268db476"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-WINDOWS-CI-ACL-REPAIR-001/report.md",
+          "sha256": "5ca73baba3ba07d5552e76a8a69180c26de49a0073ec3bb8c35da31dc4032175"
+        }
+      }
+    }
+  ],
+  "independent_review": {
+    "date": "2026-11-26",
+    "source_commit": "47191f3c26b64a66f8f0749abea6a0db9f9ccefd",
+    "ci_commit": "0e7adfb692c65a6d329e1d8e17fb65b05f6b4f16",
+    "run_id": 45804549718,
+    "job_id": 139856212527,
+    "review_path": "reports/CHATGPT-WEB36-H47-REVIEW-20261126/review.md",
+    "verdict": "PASS / exact merge 0e7adfb run 45804549718: 39 Bridge/binding/launcher, S1 STATIC16, S2 73, D8+5, HTTP36, JS211; H47 repair only; S1 FULL/physical GUI/REAL NOT RUN",
+    "not_run": [
+      "private-RAW S1 FULL independent",
+      "physical CMD/GUI",
+      "real Client/Manager/model",
+      "paid/OAuth",
+      "full packaging"
+    ],
+    "real_authorized": false
+  }
 }

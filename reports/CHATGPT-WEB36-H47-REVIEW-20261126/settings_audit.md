@@ -1,0 +1,18 @@
+# Переносимые настройки — аудит Studio / Colibri
+
+26.11.2026, требование владельца: обычные настройки, меняющиеся от компьютера, модели, профиля или сеанса, должны быть доступны через UI или проверяемую сохраняемую локальную конфигурацию, без редактирования кода/переменных/CMD. Source `0e7adfb692c65a6d329e1d8e17fb65b05f6b4f16`. Аудит интеграции Studio по исходникам, не проверка фактически установленного UI или всего producer. Новые функции отдельными задачами, #684 код не меняет.
+
+| Параметр | Фактическое состояние | Требование к UI |
+| --- | --- | --- |
+| Путь профиля Client, Bridge ID | ui.py:699, 1530–1578; colibri_binding.py ManagedClient; поля, «Обзор…», connect/refresh/disconnect | Уже в EVM. Проверить у Colibri выдачу копируемых пути/ID, версии и состояния read grant; при отсутствии — добавить. Токен не вводить. |
+| Origin/launch identity/порт | Protected descriptor, colibri_bridge_transport.py _fresh/_same_launch; IPv4 loopback | Автоопределение, безопасное отображение версии/identity/диагностики, явный rebind при изменении; не вводить произвольный LAN endpoint. Manager network/tunnel — Client/Manager. |
+| Credentials/permissions | Protected discovery/token, read grant; метаданные binding в storage_root/ultra/colibri_binding.json, не токен | Producer-managed grant/revoke; chat grant отдельно и по target, никаких отключаемых ACL. |
+| Restore / диагностика | ManagedClient._restore без I/O; refresh вручную; launcher.py:532–546 отдельные --colibri-readonly-profile/--colibri-bridge-id | Обычная настройка через EVM, CLI только диагностика. Понятное состояние reconnect/версии, safe recovery конфликтной/повреждённой привязки. |
+| Refresh/timeout | UI 35000 ms, folder picker 125000 ms; READ_ONLY connect 2 s, JSON 3 s; manual refresh | Первое испытание default. Если измерена необходимость, ограниченные advanced settings с validated range/default/reset, без retry storm и ложного error для long thinking. |
+| Manager/slot/model/CPU/CUDA/GPU/threads/context/thinking/start/stop | Studio read-only, producer caps/limits | Управлять через Client/Manager UI, не дублировать, не hardcode. M1-11 Studio выбирает только допущенную цель и поддерживаемые chat parameters. Будущее управление профилями только согласованным API. |
+| Generation/output/idle | OfflineColibriTransport idle_timeout=300 тестовый; producer limits idle_timeout_seconds/context/output | Real path отдельно; поддерживаемые настройки профиля/per-chat UI, без искусственного токен-потолка/обрезания ответа, timeout bounds и UNKNOWN/recovery. |
+| Статистика | v1 nullable fields, companion doc | Manager измеряет/хранит, Client агрегирует, Studio LIVE/AVG/UNKNOWN; wire согласовать, не выдумывать измерения и не привязывать к железу. |
+| Protocol pins/ACL/loopback/route allowlist/identity/bytes/catalog500/TEST/ledger/idempotency | Safety invariants | Не пользовательские переключатели; только reviewed versioned changes. |
+| Install/launch config | STANDARD и отдельные диагностические args | UI/installer/config с проверенными machine paths; no new permanent CMD, no routine code editing. |
+
+Критерий последующей задачи: два разных компьютера с разными локальными путями/ID/Manager и настройками модели, без исходных правок; сохранение/reset/reconnect, F5/restart, validation/negative controls, недоступные возможности с объяснением, никакого экспорта секретов, independent CI и owner GUI. Producer gaps подтверждать с Colibri. FOLLOWUP-WUA-LOCAL-PORTABLE-CONFIG-001 и FOLLOWUP-WUA-LOCAL-LIVE-TURN-001 в №05. M1-10 source-side existing EVM достаточно, если actual onboarding не выявит блокер. Никакого нового назначения или LIVE GO.
